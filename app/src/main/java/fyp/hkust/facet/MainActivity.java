@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         {
             startActivity(new Intent(MainActivity.this,PostActivity.class));
         }
+
         return super.onOptionsItemSelected(item);
     }
 }
