@@ -30,7 +30,11 @@ public class MainActivity extends AppCompatActivity {
         {
             startActivity(new Intent(MainActivity.this,PostActivity.class));
         }
+<<<<<<< Updated upstream
 
+=======
+        
+>>>>>>> Stashed changes
         return super.onOptionsItemSelected(item);
     }
 }
