@@ -32,7 +32,7 @@ dependencies {
     // FirebaseUI Database only
     compile 'com.firebaseui:firebase-ui-database:0.6.0'
     compile 'com.rengwuxian.materialedittext:library:2.1.4'
-
+    compile 'info.hoang8f:fbutton:1.0.5'
     testCompile 'junit:junit:4.12'
 
 }
