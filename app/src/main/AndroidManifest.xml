@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="fyp.hkust.facet">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -16,7 +18,18 @@
             </intent-filter>
         </activity>
         <activity android:name=".PostActivity" />
+<<<<<<< HEAD
         <activity android:name=".MainMenuActivity"></activity>
+=======
+<<<<<<< HEAD
+        <activity android:name=".MainMenuActivity" />
+        <activity android:name=".RegisterActivity" />
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".SetupActivity"></activity>
+=======
+        <activity android:name=".MainMenuActivity"></activity>
+>>>>>>> 08d26b95cd40a6d9bbd0a1481e74e5ba044784aa
+>>>>>>> b0e6327961cf20098884c5f17836f8ea290ebe90
     </application>
 
 </manifest>

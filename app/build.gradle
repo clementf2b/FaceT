@@ -27,12 +27,22 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.android.support:cardview-v7:24.0.+'
     compile 'com.android.support:recyclerview-v7:24.0.+'
+
+    compile 'com.google.android.gms:play-services-auth:9.6.0'
+
+    compile 'com.google.firebase:firebase-auth:9.6.0'
     compile 'com.google.firebase:firebase-database:9.6.0'
     compile 'com.google.firebase:firebase-storage:9.6.0'
     // FirebaseUI Database only
     compile 'com.firebaseui:firebase-ui-database:0.6.0'
     compile 'com.rengwuxian.materialedittext:library:2.1.4'
+<<<<<<< HEAD
     compile 'info.hoang8f:fbutton:1.0.5'
+=======
+
+    compile 'com.squareup.picasso:picasso:2.5.2'
+
+>>>>>>> b0e6327961cf20098884c5f17836f8ea290ebe90
     testCompile 'junit:junit:4.12'
 
 }
