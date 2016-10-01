@@ -18,10 +18,14 @@
             </intent-filter>
         </activity>
         <activity android:name=".PostActivity" />
+<<<<<<< HEAD
         <activity android:name=".MainMenuActivity" />
         <activity android:name=".RegisterActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".SetupActivity"></activity>
+=======
+        <activity android:name=".MainMenuActivity"></activity>
+>>>>>>> 08d26b95cd40a6d9bbd0a1481e74e5ba044784aa
     </application>
 
 </manifest>
