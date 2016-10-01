@@ -47,16 +47,6 @@
         app:met_errorColor="#ddaa00"
         android:singleLine="true" />
 
-    <Button
-        android:text="Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/photo_desc"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="14dp"
-        android:id="@+id/submit_btn"
-        style="@style/Widget.AppCompat.Button.Borderless"/>
-
 
     <Button
         android:layout_width="wrap_content"
