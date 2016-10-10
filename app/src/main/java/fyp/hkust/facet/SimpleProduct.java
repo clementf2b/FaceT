@@ -2,6 +2,7 @@ package fyp.hkust.facet;
 
 import android.app.Application;
 
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.OkHttpDownloader;
@@ -18,7 +19,9 @@ public class SimpleProduct extends Application {
         super.onCreate();
 
         //enable the offline capability for firebase
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        if(!FirebaseApp.getApps(this).isEmpty()) {
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        }
 
         Picasso.Builder builder = new Picasso.Builder(this);
         builder.downloader(new OkHttpDownloader(this,Integer.MAX_VALUE));

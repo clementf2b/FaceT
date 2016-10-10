@@ -1,36 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="20dp">
+    xmlns:card_view="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="300dp"
+    android:layout_height="300dp"
+    android:layout_margin="10dp"
+    card_view:cardElevation="0dp"
+    app:cardPreventCornerOverlap="false"
+    app:cardCornerRadius="0dp"
+    app:cardUseCompatPadding="false">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        >
+        android:weightSum="1"
+        android:id="@+id/product_card">
+
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/product_image"
             android:background="@mipmap/upload_default"
-            android:layout_margin="15dp"/>
+            android:layout_margin="10dp"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/p_title"
             android:text="title...."
             android:padding="10dp"
-            android:layout_margin="15dp"
+            android:layout_margin="10dp"
             android:textSize="16dp"
-            android:textStyle="bold"/>
+            android:textStyle="bold|italic"
+            android:textAllCaps="true" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/p_desc"
             android:text="desc..."
             android:padding="10dp"
-            android:layout_margin="15dp"/>
+            android:layout_margin="10dp"
+            android:layout_weight="0.04" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/p_username"
+            android:text="username"
+            android:padding="10dp"
+            android:layout_margin="10dp"
+            android:textSize="10dp"
+            android:textAllCaps="true" />
 
     </LinearLayout>
+
 </android.support.v7.widget.CardView>

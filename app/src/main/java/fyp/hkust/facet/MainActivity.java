@@ -25,6 +25,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
@@ -63,8 +65,10 @@ public class MainActivity extends AppCompatActivity {
         mDatabaseUsers.keepSynced(true);
 
         mProductList = (RecyclerView) findViewById(R.id.product_list);
-        mgr=new GridLayoutManager(this,3);
+        mgr=new GridLayoutManager(this,2);
         mProductList.setLayoutManager(mgr);
+
+        checkUserExist();
 
     }
 
@@ -73,9 +77,6 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
 
         mAuth.addAuthStateListener(mAuthListener);
-
-        if(mAuth.getCurrentUser() != null)
-            checkUserExist();
 
         FirebaseRecyclerAdapter<Product,ProductViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Product, ProductViewHolder>(
 
@@ -100,24 +101,25 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkUserExist() {
 
-        final String user_id = mAuth.getCurrentUser().getUid();
+        if(mAuth.getCurrentUser() != null) {
+            final String user_id = mAuth.getCurrentUser().getUid();
 
-        mDatabaseUsers.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.hasChild(user_id))
-                {
-                    Intent mainIntent = new Intent(MainActivity.this,SetupActivity.class);
-                    mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(mainIntent);
+            mDatabaseUsers.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (!dataSnapshot.hasChild(user_id)) {
+                        Intent mainIntent = new Intent(MainActivity.this, SetupActivity.class);
+                        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(mainIntent);
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
+        }
     }
 
 
@@ -142,14 +144,26 @@ public class MainActivity extends AppCompatActivity {
             product_desc.setText(desc);
         }
 
-        public void setImage(Context ctx, String image)
+        public void setImage(final Context ctx,final  String image)
         {
-            ImageView post_image = (ImageView) mView.findViewById(R.id.product_image);
-            Picasso.with(ctx)
-                    .load(image)
-                    .resize(100, 100)
-                    .centerCrop()
-                    .into(post_image);
+            final ImageView post_image = (ImageView) mView.findViewById(R.id.product_image);
+            Picasso.with(ctx).load(image).networkPolicy(NetworkPolicy.OFFLINE).into(post_image, new Callback() {
+                @Override
+                public void onSuccess() {
+
+                }
+
+                @Override
+                public void onError() {
+
+                    Picasso.with(ctx)
+                            .load(image)
+                            .resize(100, 100)
+                            .centerCrop()
+                            .into(post_image);
+                }
+            });
+
         }
     }
     @Override
@@ -172,6 +186,11 @@ public class MainActivity extends AppCompatActivity {
         if(item.getItemId() == R.id.action_logout)
         {
             logout();
+        }
+
+        if(item.getItemId() == R.id.action_account)
+        {
+            startActivity(new Intent(MainActivity.this,AccountActivity.class));
         }
 
         return super.onOptionsItemSelected(item);
