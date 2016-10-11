@@ -6,6 +6,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 
 import org.opencv.android.JavaCameraView;
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
 
 import java.io.FileOutputStream;
 import java.util.List;
@@ -54,13 +56,22 @@ public class CameraView extends JavaCameraView implements Camera.PictureCallback
         return mCamera.getParameters().getPreviewSize();
     }
 
+    public String getmPictureFileName()
+    {
+        return  mPictureFileName;
+    }
+
+    public void setmPictureFileName(String fileName)
+    {
+        mPictureFileName = fileName;
+    }
+
     public void takePicture(final String fileName) {
         Log.i(TAG, "Taking picture");
         this.mPictureFileName = fileName;
         // Postview and jpeg are sent in the same buffers if the queue is not empty when performing a capture.
         // Clear up buffers to avoid mCamera.takePicture to be stuck because of a memory issue
         mCamera.setPreviewCallback(null);
-
         // PictureCallback is implemented by the current class
         mCamera.takePicture(null, null, this);
     }

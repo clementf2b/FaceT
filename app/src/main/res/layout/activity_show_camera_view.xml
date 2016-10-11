@@ -5,9 +5,35 @@
     <!--
         <org.opencv.android.JavaCameraView
         -->
+
+
+
     <fyp.hkust.facet.CameraView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="502dp"
+        android:layout_height="454dp"
         android:id="@+id/fd_activity_surface_view" />
 
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <Button
+            android:text="Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/button"
+            android:onClick="jump"
+            android:layout_gravity="top"
+            android:layout_weight="1"/>
+
+
+    </LinearLayout>
+
+
 </LinearLayout>
+
+
