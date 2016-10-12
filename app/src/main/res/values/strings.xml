@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">FaceT</string>
+
+    <string name="save_message1">"You don't have chosen converted picture to save"</string>
+    <string name="save_message2">"Saved successfully"</string>
+    <string name="save_message3">"Saving in the original quality can take a while"</string>
+
+    <string name="wait">"Pictures are loading"</string>
+    <string name="too_large_image">"Picture is too large, choose smaller one"</string>
+
+
 </resources>
