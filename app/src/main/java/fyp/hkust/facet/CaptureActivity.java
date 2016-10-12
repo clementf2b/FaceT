@@ -75,11 +75,6 @@ public class CaptureActivity extends AppCompatActivity {
 
     private ProgressDialog barProgressDialog;
 
-    private Handler mUI_Handler = new Handler();
-    private Handler mThreadHandler;
-    private HandlerThread mThread;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,8 +83,6 @@ public class CaptureActivity extends AppCompatActivity {
         Intent intent = this.getIntent();
         String path = intent.getStringExtra("path");
         String color = intent.getStringExtra("color");
-
-        barProgressDialog = new ProgressDialog(this);
 
         imageButtons = new ImageButton[]{
                 (ImageButton) findViewById(R.id.original_image),
@@ -106,102 +99,55 @@ public class CaptureActivity extends AppCompatActivity {
         File f = new File(path);
         originalBitmap = BitmapFactory.decodeFile(f.getAbsolutePath());
         changeDimensions();
+        scaledBitmap = createScaledBitmap(originalBitmap, scaledWidth, scaledHeight, false);
+        //Log.d("path", path);
 
-        //聘請一個特約工人，有其經紀人派遣其工人做事 (另起一個有Handler的Thread)
-
-        mThread = new HandlerThread("name");
-
-        //讓Worker待命，等待其工作 (開啟Thread)
-
-        mThread.start();
-
-        //找到特約工人的經紀人，這樣才能派遣工作 (找到Thread上的Handler)
-
-        mThreadHandler=new Handler(mThread.getLooper());
-
-        //請經紀人指派工作名稱 r，給工人做
-
-        mThreadHandler.post(r1);
-
-        mImgButton1.setImageBitmap(scaledBitmap);
-        mImgResult.setImageBitmap(convertedBitmap);
-        imageButtons[0].setImageBitmap(scaledBitmap);
-        imageButtons[1].setImageBitmap(convertedBitmap);
-
-        barProgressDialog.dismiss();
-
-        Mat demo = new Mat();
-        Utils.bitmapToMat(convertedBitmap,demo);
-        Mat gray_demo = new Mat();
-        Imgproc.cvtColor(demo, gray_demo, Imgproc.COLOR_RGB2GRAY);
-
+        MyTask myTask = new MyTask();
+        myTask.execute();
 
         colorresult = (TextView) findViewById(R.id.textView2);
         colorresult.setText(color);
     }
 
-    //工作名稱 r1 的工作內容
-
-    private Runnable r1=new Runnable () {
-
-        public void run() {
-
-            // TODO Auto-generated method stub
-
-            //.............................
-
-            //做了很多事
-
-            scaledBitmap = createScaledBitmap(originalBitmap, scaledWidth, scaledHeight, false);
-
+    private class MyTask extends AsyncTask<String, Integer, Integer>{
+        @Override
+        protected Integer doInBackground(String... param) {
             GrayWorld grayWorldS = new GrayWorld(scaledBitmap);
             convertedBitmap = grayWorldS.getConvertedBitmap();
-            //Log.d("path", path);
-            //請經紀人指派工作名稱 r，給工人做
-            mUI_Handler.post(r2);
+            return null;
         }
+        @Override
+        protected void onPostExecute(Integer result) {
+            super.onPostExecute(result);
 
-    };
+            mImgButton1.setImageBitmap(scaledBitmap);
+            mImgResult.setImageBitmap(convertedBitmap);
+            imageButtons[0].setImageBitmap(scaledBitmap);
+            imageButtons[1].setImageBitmap(convertedBitmap);
 
 
-    //工作名稱 r2 的工作內容
+            Mat demo = new Mat();
+            Utils.bitmapToMat(convertedBitmap,demo);
+            Mat gray_demo = new Mat();
+            Imgproc.cvtColor(demo, gray_demo, Imgproc.COLOR_RGB2GRAY);
 
-    private Runnable r2=new Runnable () {
+            barProgressDialog.dismiss();
+        }
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
 
-        public void run() {
-
-            // TODO Auto-generated method stub
-            barProgressDialog.setTitle("Image Processing ...");
-            barProgressDialog.setMessage("Image in progress ...");
-            barProgressDialog.setProgressStyle(barProgressDialog.STYLE_HORIZONTAL);
+        }
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            barProgressDialog = new ProgressDialog(CaptureActivity.this);
+            barProgressDialog.setMessage("Image Processing");
             barProgressDialog.show();
-            //.............................
-            //顯示畫面的動作
-        }
-
-    };
-
-    protected void onDestroy() {
-
-        super.onDestroy();
-
-        //移除工人上的工作
-
-        if (mThreadHandler != null) {
-
-            mThreadHandler.removeCallbacks(r1);
 
         }
-
-        //解聘工人 (關閉Thread)
-
-        if (mThread != null) {
-
-            mThread.quit();
-
-        }
-
     }
+
 
     private Scalar converScalarHsv2Rgba(Scalar hsvColor) {
         Mat pointMatRgba = new Mat();
