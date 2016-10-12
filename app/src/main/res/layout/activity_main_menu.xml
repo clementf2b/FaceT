@@ -14,32 +14,6 @@
 
 
     <ImageButton
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:background="@mipmap/ic_photo_camera_white_36dp"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/photo_camera" />
-
-    <ImageButton
-        android:layout_width="65dp"
-        android:layout_height="65dp"
-        android:background="@mipmap/ic_shopping_basket_white_36dp"
-        android:layout_above="@+id/photo_camera"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/shopping_button"
-        />
-
-    <ImageButton
-        android:layout_width="65dp"
-        android:layout_height="65dp"
-        android:background="@mipmap/ic_account_circle_white_36dp"
-        android:layout_above="@+id/photo_camera"
-        android:layout_alignParentRight="true"
-        android:id="@+id/account_button" />
-
-    <ImageButton
         android:layout_width="65dp"
         android:layout_height="65dp"
         android:background="@mipmap/ic_location_on_white_36dp"
@@ -56,18 +30,6 @@
         android:layout_below="@+id/photo_camera"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
-
-    <TextView
-        android:id="@+id/product_text"
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="All Products"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
-        android:layout_below="@+id/shopping_button"
-        android:layout_alignRight="@+id/shopping_button"
-        android:layout_alignEnd="@+id/shopping_button" />
 
     <TextView
         android:id="@+id/location_text"
@@ -118,5 +80,47 @@
         android:layout_above="@+id/fav_text"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="58dp" />
+
+    <ImageButton
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:background="@mipmap/ic_photo_camera_white_36dp"
+        android:id="@+id/photo_camera"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <ImageButton
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:background="@mipmap/ic_account_circle_white_36dp"
+        android:id="@+id/account_button"
+        android:layout_alignTop="@+id/shopping_button"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:id="@+id/product_text"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="All Products"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignBottom="@+id/account_text"
+        android:layout_below="@+id/account_button"
+        android:layout_alignRight="@+id/shopping_button"
+        android:layout_alignEnd="@+id/shopping_button" />
+
+    <ImageButton
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:background="@mipmap/ic_shopping_basket_white_36dp"
+        android:id="@+id/shopping_button"
+        android:layout_marginBottom="31dp"
+        android:layout_above="@+id/photo_camera"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>
