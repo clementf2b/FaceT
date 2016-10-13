@@ -144,7 +144,7 @@ public class CaptureActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             mView = new CatLoadingView();
-            mView.show(getSupportFragmentManager(), "");
+            mView.show(getSupportFragmentManager().beginTransaction(), "");
         }
     }
 
