@@ -30,7 +30,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.roger.catloadinglibrary.CatLoadingView;
+import fyp.hkust.facet.catloadinglibrary.CatLoadingView;
 
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;

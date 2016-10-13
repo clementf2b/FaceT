@@ -39,7 +39,6 @@ dependencies {
     compile 'info.hoang8f:fbutton:1.0.5'
     compile 'com.squareup.picasso:picasso:2.5.2'
 
-    compile 'com.roger.catloadinglibrary:catloadinglibrary:1.0.1'
     //android layout size for different devices
     compile 'com.theartofdev.edmodo:android-image-cropper:2.3.+'
     testCompile 'junit:junit:4.12'
