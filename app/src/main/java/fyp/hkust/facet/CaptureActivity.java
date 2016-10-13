@@ -30,6 +30,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.roger.catloadinglibrary.CatLoadingView;
+
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -73,7 +75,7 @@ public class CaptureActivity extends AppCompatActivity {
     private float                  mRelativeFaceSize   = 0.2f;
     private int                    mAbsoluteFaceSize   = 0;
 
-    private ProgressDialog barProgressDialog;
+    private CatLoadingView mView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,7 +133,7 @@ public class CaptureActivity extends AppCompatActivity {
             Mat gray_demo = new Mat();
             Imgproc.cvtColor(demo, gray_demo, Imgproc.COLOR_RGB2GRAY);
 
-            barProgressDialog.dismiss();
+            mView.dismiss();
         }
         @Override
         protected void onProgressUpdate(Integer... values) {
@@ -141,10 +143,8 @@ public class CaptureActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            barProgressDialog = new ProgressDialog(CaptureActivity.this);
-            barProgressDialog.setMessage("Image Processing");
-            barProgressDialog.show();
-
+            mView = new CatLoadingView();
+            mView.show(getSupportFragmentManager(), "");
         }
     }
 
