@@ -65,6 +65,7 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
 
     private Mat                    mRgba;
     private Mat                    mGray;
+
     private File                   mCascadeFile;
     private File                   mHaarCascadeEyeFile;
     private CascadeClassifier      mJavaDetector;
@@ -102,6 +103,8 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
 
 
     private static final int REQUEST_WRITE_STORAGE = 112;
+    //for Rotation
+    private WindowManager windowManager;
 
     public ShowCameraViewActivity() {
         Log.i(TAG, "Instantiated new " + this.getClass());
@@ -112,6 +115,8 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_show_camera_view);
+
+        windowManager = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -190,6 +195,7 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
     public void onCameraViewStarted(int i, int i1) {
         mGray = new Mat();
         mRgba = new Mat();
+
         mDetector = new ColorBlobDetector();
         mSpectrum = new Mat();
         mBlobColorRgba = new Scalar(255);
@@ -204,12 +210,13 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
         mRgba.release();
     }
 
+
     @Override
     public Mat onCameraFrame(CvCameraViewFrame cvCameraViewFrame) {
 
-
         mRgba = cvCameraViewFrame.rgba();
         mGray = cvCameraViewFrame.gray();
+
 
         if (mAbsoluteFaceSize == 0) {
             int height = mGray.rows();
