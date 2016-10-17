@@ -47,7 +47,8 @@
         <activity android:name=".MainActivity"></activity>
         <activity android:name=".PostActivity"></activity>
         <activity android:name=".MainMenuActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -55,8 +56,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".RegisterActivity"></activity>
-        <activity android:name=".LoginActivity"></activity>
-        <activity android:name=".SetupActivity"></activity>
+        <activity android:name=".LoginActivity"
+                  android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".SetupActivity"
+                  android:screenOrientation="portrait">
+        </activity>
         <activity android:name=".AccountActivity"></activity>
         <activity
             android:name=".ShowCameraViewActivity"
