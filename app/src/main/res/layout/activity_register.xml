@@ -1,156 +1,150 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/scroll_register"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:id="@+id/activity_register"
+    android:fitsSystemWindows="true"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/activity_horizontal_margin"
+    android:background="@mipmap/bg2"
     tools:context="fyp.hkust.facet.RegisterActivity">
 
-    <RelativeLayout
-        android:id="@+id/activity_register"
+    <TextView
+        android:text="SIGN UP WITH EMAIL"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="@dimen/activity_horizontal_margin"
-        android:background="@mipmap/bg">
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:id="@+id/textView"
+        android:textSize="32sp"
+        android:textAlignment="center"
+        android:textColor="@color/cardview_light_background" />
 
-        <TextView
-            android:text="SIGN UP WITH EMAIL"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:id="@+id/textView"
-            android:textSize="32sp"
-            android:textAlignment="center"
-            android:textColor="@color/cardview_light_background" />
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/emailfield"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Email Address"
+        app:met_underlineColor="#fff"
+        app:met_baseColor="#fff"
+        app:met_textColorHint="#fff"
+        app:met_primaryColor="#fff"
+        app:met_maxCharacters="100"
+        app:met_errorColor="#ddaa00"
+        android:singleLine="true"
+        app:met_floatingLabel="highlight"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:inputType="textEmailAddress" />
 
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/emailfield"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Email Address"
-            app:met_underlineColor="#fff"
-            app:met_baseColor="#fff"
-            app:met_textColorHint="#fff"
-            app:met_primaryColor="#fff"
-            app:met_maxCharacters="100"
-            app:met_errorColor="#ddaa00"
-            android:singleLine="true"
-            app:met_floatingLabel="highlight"
-            android:layout_below="@+id/textView"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:inputType="textEmailAddress" />
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/usernamefield"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Username"
+        app:met_underlineColor="#fff"
+        app:met_baseColor="#fff"
+        app:met_textColorHint="#fff"
+        app:met_primaryColor="#fff"
+        app:met_floatingLabel="highlight"
+        app:met_maxCharacters="100"
+        app:met_errorColor="#ddaa00"
+        android:singleLine="true"
+        android:layout_below="@+id/emailfield"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/usernamefield"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Username"
-            app:met_underlineColor="#fff"
-            app:met_baseColor="#fff"
-            app:met_textColorHint="#fff"
-            app:met_primaryColor="#fff"
-            app:met_floatingLabel="highlight"
-            app:met_maxCharacters="100"
-            app:met_errorColor="#ddaa00"
-            android:singleLine="true"
-            android:layout_below="@+id/emailfield"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/passwordfield"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Password"
+        app:met_underlineColor="#fff"
+        app:met_baseColor="#fff"
+        app:met_textColorHint="#fff"
+        app:met_primaryColor="#fff"
+        app:met_floatingLabel="highlight"
+        app:met_maxCharacters="100"
+        app:met_errorColor="#ddaa00"
+        android:singleLine="true"
+        android:layout_below="@+id/usernamefield"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:inputType="textPassword" />
 
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/passwordfield"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Password"
-            app:met_underlineColor="#fff"
-            app:met_baseColor="#fff"
-            app:met_textColorHint="#fff"
-            app:met_primaryColor="#fff"
-            app:met_floatingLabel="highlight"
-            app:met_maxCharacters="100"
-            app:met_errorColor="#ddaa00"
-            android:singleLine="true"
-            android:layout_below="@+id/usernamefield"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:inputType="textPassword" />
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/confirmpasswordfield"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Confirm Password"
+        app:met_textColorHint="#fff"
+        app:met_underlineColor="#fff"
+        app:met_baseColor="#fff"
+        app:met_primaryColor="#fff"
+        app:met_floatingLabel="highlight"
+        app:met_maxCharacters="100"
+        app:met_errorColor="#ddaa00"
+        android:singleLine="true"
+        android:layout_below="@+id/passwordfield"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:inputType="textPassword" />
 
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/confirmpasswordfield"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Confirm Password"
-            app:met_textColorHint="#fff"
-            app:met_underlineColor="#fff"
-            app:met_baseColor="#fff"
-            app:met_primaryColor="#fff"
-            app:met_floatingLabel="highlight"
-            app:met_maxCharacters="100"
-            app:met_errorColor="#ddaa00"
-            android:singleLine="true"
-            android:layout_below="@+id/passwordfield"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:inputType="textPassword" />
+    <!--<DatePicker-->
+    <!--android:id="@+id/dateofbirth"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_below="@+id/confirmpasswordfield" />-->
 
-        <!--<DatePicker-->
-            <!--android:id="@+id/dateofbirth"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_below="@+id/confirmpasswordfield" />-->
+    <!--<TextView-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:text="Gender (Opinial) "-->
+    <!--android:layout_below="@+id/dateofbirth"/>-->
 
-        <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="Gender (Opinial) "-->
-            <!--android:layout_below="@+id/dateofbirth"/>-->
+    <!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_below="@+id/dateofbirth"-->
+    <!--android:id="@+id/dateofbirth_group"-->
+    <!--&gt;-->
 
-        <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_below="@+id/dateofbirth"-->
-            <!--android:id="@+id/dateofbirth_group"-->
-            <!--&gt;-->
+    <!--<RadioGroup-->
+    <!--android:id="@+id/rgroup"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:orientation="horizontal" >-->
 
-            <!--<RadioGroup-->
-                <!--android:id="@+id/rgroup"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:orientation="horizontal" >-->
+    <!--<RadioButton-->
+    <!--android:id="@+id/warwick"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:text="warwick" />-->
 
-                <!--<RadioButton-->
-                    <!--android:id="@+id/warwick"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:text="warwick" />-->
+    <!--<RadioButton-->
+    <!--android:id="@+id/kyle"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:text="kyle" />-->
+    <!--<RadioButton-->
+    <!--android:id="@+id/twitch"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:text="twitch" />-->
+    <!--</RadioGroup>-->
+    <!--</LinearLayout>-->
 
-                <!--<RadioButton-->
-                    <!--android:id="@+id/kyle"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:text="kyle" />-->
-                <!--<RadioButton-->
-                    <!--android:id="@+id/twitch"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:text="twitch" />-->
-            <!--</RadioGroup>-->
-        <!--</LinearLayout>-->
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/joinus_btn"
+        android:text="JOIN US"
+        android:layout_below="@+id/confirmpasswordfield"
+        android:layout_centerHorizontal="true"
+        android:background="#3fffffff"
+        android:textColor="#fff"
+        />
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/joinus_btn"
-            android:text="JOIN US"
-            android:layout_below="@+id/confirmpasswordfield"
-            android:layout_centerHorizontal="true"
-            android:background="#3fffffff"
-            android:textColor="#fff"
-            />
-
-    </RelativeLayout>
-
-</ScrollView>
+</RelativeLayout>
