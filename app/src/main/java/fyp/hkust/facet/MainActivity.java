@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
                 viewHolder.setTitle(model.getTitle());
                 viewHolder.setDesc(model.getDesc());
                 viewHolder.setImage(getApplicationContext(),model.getImage());
+                viewHolder.setUsername(model.getUsername());
             }
         };
 
@@ -142,6 +143,12 @@ public class MainActivity extends AppCompatActivity {
         {
             TextView product_desc = (TextView) mView.findViewById(R.id.p_desc);
             product_desc.setText(desc);
+        }
+
+        public void setUsername(String username)
+        {
+            TextView product_username = (TextView) mView.findViewById(R.id.p_username);
+            product_username.setText(username);
         }
 
         public void setImage(final Context ctx,final  String image)

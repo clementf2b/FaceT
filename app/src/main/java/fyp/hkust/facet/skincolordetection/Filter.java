@@ -1,4 +1,4 @@
-package fyp.hkust.facet;
+package fyp.hkust.facet.skincolordetection;
 
 /**
  * Created by Vladimira Hezelova on 7. 12. 2015.

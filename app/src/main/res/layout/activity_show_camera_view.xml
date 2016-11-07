@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         >
 
-        <fyp.hkust.facet.CameraView
+        <fyp.hkust.facet.skincolordetection.CameraView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/fd_activity_surface_view"

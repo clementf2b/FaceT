@@ -9,6 +9,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 
+import fyp.hkust.facet.skincolordetection.ShowCameraViewActivity;
+
 public class MainMenuActivity extends AppCompatActivity {
 
     private ImageButton shoppingBtn;

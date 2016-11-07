@@ -59,7 +59,7 @@
         <activity android:name=".SetupActivity"></activity>
         <activity android:name=".AccountActivity"></activity>
         <activity
-            android:name=".ShowCameraViewActivity"
+            android:name=".skincolordetection.ShowCameraViewActivity"
             android:supportsRtl="true"
             android:configChanges="keyboardHidden|orientation"
             ></activity>
@@ -68,7 +68,8 @@
             android:theme="@style/Base.Theme.AppCompat" /> <!-- optional (needed if default theme has no action bar) -->
 
         <activity
-            android:name=".CaptureActivity"
+            android:name=".skincolordetection.CaptureActivity"
+            android:screenOrientation="portrait"
             ></activity><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
         <meta-data

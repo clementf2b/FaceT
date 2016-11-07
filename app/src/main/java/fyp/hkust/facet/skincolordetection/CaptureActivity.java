@@ -1,28 +1,17 @@
-package fyp.hkust.facet;
+package fyp.hkust.facet.skincolordetection;
 
-import android.app.ActivityManager;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.Point;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -30,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import fyp.hkust.facet.R;
 import fyp.hkust.facet.catloadinglibrary.CatLoadingView;
 
 import org.opencv.android.Utils;
@@ -38,12 +28,9 @@ import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 
-import fyp.hkust.facet.whiteBalance.algorithms.WhitePatch.WhitePatch;
 import fyp.hkust.facet.whiteBalance.algorithms.grayWorld.GrayWorld;
 import fyp.hkust.facet.whiteBalance.algorithms.histogramStretching.HistogramStretching;
 import fyp.hkust.facet.whiteBalance.algorithms.improvedWP.ImprovedWP;
@@ -70,7 +57,7 @@ public class CaptureActivity extends AppCompatActivity {
     private int scaledWidth = 0;
 
     private Bitmap scaledBitmap;
-    private Bitmap convertedBitmap;
+    private Bitmap[] convertedBitmaps;
 
     private float                  mRelativeFaceSize   = 0.2f;
     private int                    mAbsoluteFaceSize   = 0;
@@ -84,7 +71,7 @@ public class CaptureActivity extends AppCompatActivity {
 
         Intent intent = this.getIntent();
         String path = intent.getStringExtra("path");
-        String color = intent.getStringExtra("color");
+ //       String color = intent.getStringExtra("color");
 
         imageButtons = new ImageButton[]{
                 (ImageButton) findViewById(R.id.original_image),
@@ -100,6 +87,8 @@ public class CaptureActivity extends AppCompatActivity {
 
         File f = new File(path);
         originalBitmap = BitmapFactory.decodeFile(f.getAbsolutePath());
+
+        originalBitmap = RotateBitmap(originalBitmap,-90);
         changeDimensions();
         scaledBitmap = createScaledBitmap(originalBitmap, scaledWidth, scaledHeight, false);
         //Log.d("path", path);
@@ -108,14 +97,59 @@ public class CaptureActivity extends AppCompatActivity {
         myTask.execute();
 
         colorresult = (TextView) findViewById(R.id.textView2);
-        colorresult.setText(color);
+       // colorresult.setText(color);
+
+        imageButtons[0].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                mImgResult.setImageBitmap(convertedBitmaps[0]);
+            }
+        });
+
+        imageButtons[1].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                mImgResult.setImageBitmap(convertedBitmaps[1]);
+            }
+        });
+
+        imageButtons[2].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                mImgResult.setImageBitmap(convertedBitmaps[2]);
+            }
+        });
+
+        imageButtons[3].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                mImgResult.setImageBitmap(convertedBitmaps[3]);
+            }
+        });
     }
+
+
+    public static Bitmap RotateBitmap(Bitmap source, float angle)
+    {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
+    }
+
 
     private class MyTask extends AsyncTask<String, Integer, Integer>{
         @Override
         protected Integer doInBackground(String... param) {
-            GrayWorld grayWorldS = new GrayWorld(scaledBitmap);
-            convertedBitmap = grayWorldS.getConvertedBitmap();
+            GrayWorld grayWorld = new GrayWorld(scaledBitmap);
+            HistogramStretching histogramStretching = new HistogramStretching(scaledBitmap);
+            ImprovedWP improvedWP = new ImprovedWP(scaledBitmap);
+
+            convertedBitmaps = new Bitmap[] {
+                    scaledBitmap,
+                    histogramStretching.getConvertedBitmap(),
+                    grayWorld.getConvertedBitmap(),
+                    improvedWP.getConvertedBitmap()
+            };
             return null;
         }
         @Override
@@ -123,13 +157,14 @@ public class CaptureActivity extends AppCompatActivity {
             super.onPostExecute(result);
 
             mImgButton1.setImageBitmap(scaledBitmap);
-            mImgResult.setImageBitmap(convertedBitmap);
-            imageButtons[0].setImageBitmap(scaledBitmap);
-            imageButtons[1].setImageBitmap(convertedBitmap);
-
+            mImgResult.setImageBitmap(convertedBitmaps[1]);
+            imageButtons[0].setImageBitmap(convertedBitmaps[0]);
+            imageButtons[1].setImageBitmap(convertedBitmaps[1]);
+            imageButtons[2].setImageBitmap(convertedBitmaps[2]);
+            imageButtons[3].setImageBitmap(convertedBitmaps[3]);
 
             Mat demo = new Mat();
-            Utils.bitmapToMat(convertedBitmap,demo);
+            Utils.bitmapToMat(convertedBitmaps[1],demo);
             Mat gray_demo = new Mat();
             Imgproc.cvtColor(demo, gray_demo, Imgproc.COLOR_RGB2GRAY);
 

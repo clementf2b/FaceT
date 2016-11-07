@@ -1,7 +1,6 @@
-package fyp.hkust.facet;
+package fyp.hkust.facet.skincolordetection;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -15,7 +14,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -49,6 +47,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
+
+import fyp.hkust.facet.R;
+
 //AppCompatActivity
 public class ShowCameraViewActivity extends Activity implements CvCameraViewListener2, View.OnTouchListener {
 
@@ -285,9 +286,6 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
             mSpectrum.copyTo(spectrumLabel);
         }
 
-
-
-
         return mRgba;
     }
 
@@ -324,6 +322,7 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
         return true;
     }
 
+
     @SuppressLint("SimpleDateFormat")
     @Override
     public boolean onTouch(View v, MotionEvent event) {
@@ -345,6 +344,7 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
         }
 
         last_photo_name = fileName;
+
         int cols = mRgba.cols();
         int rows = mRgba.rows();
 
@@ -435,13 +435,13 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
         mAbsoluteFaceSize = 0;
     }
 
+    @SuppressLint("SimpleDateFormat")
     public void jump(View view)
     {
         Intent intent = new Intent();
         intent.setClass(ShowCameraViewActivity.this,CaptureActivity.class);
-
         intent.putExtra("path", last_photo_name);
-        intent.putExtra("color" , "" + mBlobColorHsv);
+        //intent.putExtra("color" , "" + mBlobColorHsv);
         startActivity(intent);
     }
 

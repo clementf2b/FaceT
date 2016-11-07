@@ -1,4 +1,4 @@
-package fyp.hkust.facet;
+package fyp.hkust.facet.skincolordetection;
 
 import android.util.Log;
 

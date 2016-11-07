@@ -1,25 +1,15 @@
-package fyp.hkust.facet;
+package fyp.hkust.facet.skincolordetection;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.ImageFormat;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.Surface;
-import android.view.WindowManager;
 import android.view.ViewGroup.LayoutParams;
 
-import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
-import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -27,7 +17,6 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import java.io.FileOutputStream;
-import java.util.Iterator;
 import java.util.List;
 /**
  * Created by meast on 2016/3/29.

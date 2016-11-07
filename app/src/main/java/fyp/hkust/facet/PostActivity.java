@@ -57,6 +57,7 @@ public class PostActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mStorage = FirebaseStorage.getInstance().getReference();
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Product");
+
         mCurrentUser = mAuth.getCurrentUser();
         mDatabaseUser = FirebaseDatabase.getInstance().getReference().child("Users").child(mCurrentUser.getUid());
 
@@ -109,10 +110,11 @@ public class PostActivity extends AppCompatActivity {
                         public void onDataChange(DataSnapshot dataSnapshot) {
 
                             newProduct.child("title").setValue(title_val);
-                            newProduct.child("dsec").setValue(desc_val);
+                            newProduct.child("desc").setValue(desc_val);
                             newProduct.child("image").setValue(downloadUrl.toString());
                             newProduct.child("uid").setValue(mCurrentUser.getUid());
-                            newProduct.child("username").setValue(dataSnapshot.child("name").getValue()).addOnCompleteListener(new OnCompleteListener<Void>() {
+
+                            newProduct.child("username").setValue(dataSnapshot.child("Name").getValue()).addOnCompleteListener(new OnCompleteListener<Void>() {
 
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
