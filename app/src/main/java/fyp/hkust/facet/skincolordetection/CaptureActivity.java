@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -34,6 +35,7 @@ import java.io.FileOutputStream;
 import fyp.hkust.facet.whiteBalance.algorithms.grayWorld.GrayWorld;
 import fyp.hkust.facet.whiteBalance.algorithms.histogramStretching.HistogramStretching;
 import fyp.hkust.facet.whiteBalance.algorithms.improvedWP.ImprovedWP;
+import id.zelory.compressor.Compressor;
 
 import static android.graphics.Bitmap.createScaledBitmap;
 
@@ -52,6 +54,7 @@ public class CaptureActivity extends AppCompatActivity {
     private ImageButton[] imageButtons;
 
     private Bitmap originalBitmap;
+    private Bitmap compressedBitmap;
 
     private int scaledHeight = 0;
     private int scaledWidth = 0;
@@ -86,11 +89,22 @@ public class CaptureActivity extends AppCompatActivity {
         mImgButton1 = (ImageButton) findViewById(R.id.image_result);
 
         File f = new File(path);
-        originalBitmap = BitmapFactory.decodeFile(f.getAbsolutePath());
+//        originalBitmap = BitmapFactory.decodeFile(f.getAbsolutePath());
 
-        originalBitmap = RotateBitmap(originalBitmap,-90);
+
+        compressedBitmap = new Compressor.Builder(this)
+                .setMaxWidth(600)
+                .setMaxHeight(900)
+                .setQuality(60)
+                .setCompressFormat(Bitmap.CompressFormat.WEBP)
+                .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_PICTURES).getAbsolutePath())
+                .build()
+                .compressToBitmap(f);
+
+        compressedBitmap = RotateBitmap(compressedBitmap,-90);
         changeDimensions();
-        scaledBitmap = createScaledBitmap(originalBitmap, scaledWidth, scaledHeight, false);
+        //scaledBitmap = createScaledBitmap(originalBitmap, scaledWidth, scaledHeight, false);
         //Log.d("path", path);
 
         MyTask myTask = new MyTask();
@@ -140,9 +154,9 @@ public class CaptureActivity extends AppCompatActivity {
     private class MyTask extends AsyncTask<String, Integer, Integer>{
         @Override
         protected Integer doInBackground(String... param) {
-            GrayWorld grayWorld = new GrayWorld(scaledBitmap);
-            HistogramStretching histogramStretching = new HistogramStretching(scaledBitmap);
-            ImprovedWP improvedWP = new ImprovedWP(scaledBitmap);
+            GrayWorld grayWorld = new GrayWorld(compressedBitmap);
+            HistogramStretching histogramStretching = new HistogramStretching(compressedBitmap);
+            ImprovedWP improvedWP = new ImprovedWP(compressedBitmap);
 
             convertedBitmaps = new Bitmap[] {
                     scaledBitmap,
@@ -156,7 +170,7 @@ public class CaptureActivity extends AppCompatActivity {
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
 
-            mImgButton1.setImageBitmap(scaledBitmap);
+            mImgButton1.setImageBitmap(compressedBitmap);
             mImgResult.setImageBitmap(convertedBitmaps[1]);
             imageButtons[0].setImageBitmap(convertedBitmaps[0]);
             imageButtons[1].setImageBitmap(convertedBitmaps[1]);
@@ -212,9 +226,9 @@ public class CaptureActivity extends AppCompatActivity {
         Log.i(TAG, "display width in dp: " + Integer.toString(widthDisplayDp));
         Log.i(TAG, "display height in dp: " + Integer.toString(heightDisplayDp));
 
-        int widthImage = originalBitmap.getWidth();
+        int widthImage = compressedBitmap.getWidth();
         int widthImageDp = pxToDp(widthImage);
-        int heightImage = originalBitmap.getHeight();
+        int heightImage = compressedBitmap.getHeight();
         int heightImageDp = pxToDp(heightImage);
 
         Log.i(TAG, "bitmap width in px: " + Integer.toString(widthImage));

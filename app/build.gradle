@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "24.0.0"
+    buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId "fyp.hkust.facet"
         minSdkVersion 16
@@ -42,8 +42,11 @@ dependencies {
     compile 'com.github.markushi:circlebutton:1.1'
     compile 'com.rengwuxian.materialedittext:library:2.1.4'
 
-    //android layout size for different devices
+    //image cropper
     compile 'com.theartofdev.edmodo:android-image-cropper:2.3.+'
+    //image compressor
+    compile 'id.zelory:compressor:1.0.3'
+
     testCompile 'junit:junit:4.12'
     compile(name:'openCVLibrary310-release', ext:'aar')
 }
