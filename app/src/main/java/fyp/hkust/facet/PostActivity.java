@@ -114,7 +114,7 @@ public class PostActivity extends AppCompatActivity {
                             newProduct.child("image").setValue(downloadUrl.toString());
                             newProduct.child("uid").setValue(mCurrentUser.getUid());
 
-                            newProduct.child("username").setValue(dataSnapshot.child("Name").getValue()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            newProduct.child("username").setValue(dataSnapshot.child("name").getValue()).addOnCompleteListener(new OnCompleteListener<Void>() {
 
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
