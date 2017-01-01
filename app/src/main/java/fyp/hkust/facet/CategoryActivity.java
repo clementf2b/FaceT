@@ -2,6 +2,7 @@ package fyp.hkust.facet;
 
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -12,6 +13,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 
 public class CategoryActivity extends AppCompatActivity {
 
@@ -25,6 +29,13 @@ public class CategoryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
+
+        //start layout animation
+        delayAction(0,Techniques.SlideInLeft,500,R.id.category_All);
+        delayAction(500,Techniques.SlideInLeft,500,R.id.category_Face);
+        delayAction(1000,Techniques.SlideInLeft,500,R.id.category_Eyes);
+        delayAction(1500,Techniques.SlideInLeft,500,R.id.category_Lips);
+        //end layout animation
 
         //start
 
@@ -71,6 +82,21 @@ public class CategoryActivity extends AppCompatActivity {
         navigateTo(view.getMenu().findItem(navItemId));
 
         //end
+    }
+
+    private void delayAction(int time,final Techniques action,final int duration, final int viewId)
+    {
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //Do something after time
+                YoYo.with(action)
+                        .duration(duration)
+                        .playOn(findViewById(viewId));
+                findViewById(viewId).setVisibility(View.VISIBLE);
+            }
+        }, time);
     }
 
     private void navigateTo(MenuItem menuItem){

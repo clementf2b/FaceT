@@ -43,25 +43,33 @@
             <ImageButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/category_All"/>
+                android:id="@+id/category_All"
+                android:background="@mipmap/app_icon"
+                android:visibility="invisible"/>
 
             <ImageButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/category_Face"
-                android:layout_below="@+id/category_All" />
+                android:layout_below="@+id/category_All"
+                android:background="@mipmap/app_icon"
+                android:visibility="invisible"/>
 
             <ImageButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/category_Eyes"
-                android:layout_below="@+id/category_Face" />
+                android:layout_below="@+id/category_Face"
+                android:background="@mipmap/app_icon"
+                android:visibility="invisible"/>
 
             <ImageButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/category_Lips"
-                android:layout_below="@+id/category_Eyes" />
+                android:layout_below="@+id/category_Eyes"
+                android:background="@mipmap/app_icon"
+                android:visibility="invisible"/>
 
         </LinearLayout>
 
