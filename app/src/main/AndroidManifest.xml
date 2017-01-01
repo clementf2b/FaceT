@@ -26,7 +26,6 @@
         android:smallScreens="true" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
@@ -42,11 +41,11 @@
         android:icon="@mipmap/app_icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        >
-        <activity android:name=".MainActivity"></activity>
-        <activity android:name=".PostActivity"></activity>
-        <activity android:name=".MainMenuActivity"
+        android:theme="@style/AppTheme">
+        <activity android:name=".MainActivity" />
+        <activity android:name=".PostActivity" />
+        <activity
+            android:name=".MainMenuActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -54,27 +53,33 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RegisterActivity"></activity>
-        <activity android:name=".LoginActivity"></activity>
-        <activity android:name=".SetupActivity"></activity>
-        <activity android:name=".AccountActivity"></activity>
+        <activity android:name=".RegisterActivity" />
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".SetupActivity" />
+        <activity
+            android:name=".AccountActivity"
+            android:theme="@style/AppTheme.NoActionBar_nav" />
         <activity
             android:name=".skincolordetection.ShowCameraViewActivity"
-            android:supportsRtl="true"
             android:configChanges="keyboardHidden|orientation"
-            ></activity>
+            android:supportsRtl="true" />
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" /> <!-- optional (needed if default theme has no action bar) -->
 
         <activity
             android:name=".skincolordetection.CaptureActivity"
-            android:screenOrientation="portrait"
-            ></activity><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
-     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+            android:screenOrientation="portrait" />
+        <!--
+ ATTENTION: This was auto-generated to add Google Play services to your project for
+     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
+        -->
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+        <activity android:name=".CategoryActivity"
+            android:theme="@style/AppTheme.NoActionBar_nav" ></activity>
     </application>
 
 </manifest>

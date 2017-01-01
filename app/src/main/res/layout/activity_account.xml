@@ -1,60 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_setup"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="fyp.hkust.facet.SetupActivity">
+    android:fitsSystemWindows="true"
+    tools:context=".MainActivity">
 
-    <ImageView
+    <android.support.v4.widget.DrawerLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
-        android:background="@drawable/listgrad"
-        android:id="@+id/imageView"
-        android:layout_height="100dp" />
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:text="Name"
-        android:layout_below="@+id/profilepic"
-        android:id="@+id/accountnamefield"
-        android:textSize="18sp"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        <!-- your content layout -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:id="@+id/account_layout"
+            >
+
+            <android.support.design.widget.AppBarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:theme="@style/AppTheme.AppBarOverlay"
+                app:elevation="0dp">
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="?attr/actionBarSize"
+                    app:elevation="0dp" />
+
+            </android.support.design.widget.AppBarLayout>
+
+            <!--content of account activity-->
+
+            <android.support.v4.widget.NestedScrollView
+                android:layout_height="fill_parent"
+                android:layout_width="fill_parent"
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:scrollbars="vertical"
+                >
+
+                <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:id="@+id/activity_setup"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:context=".AccountActivity">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:background="@drawable/listgrad"
+                        android:id="@+id/imageView"
+                        android:layout_height="100dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Name"
+                        android:layout_below="@+id/profilepic"
+                        android:id="@+id/accountnamefield"
+                        android:textSize="18sp"
+                        android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true" />
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Recently Match"
-        android:id="@+id/recentMatchTitle"
-        android:textSize="18sp"
-        android:layout_below="@+id/accountnamefield"
-        android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Recently Match"
+                        android:id="@+id/recentMatchTitle"
+                        android:textSize="18sp"
+                        android:layout_below="@+id/accountnamefield"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true" />
 
-    <android.support.v7.widget.RecyclerView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/recentMatchProductList"
-        android:layout_below="@+id/recentMatchTitle"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true">
-    </android.support.v7.widget.RecyclerView>
+                    <android.support.v7.widget.RecyclerView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/recentMatchProductList"
+                        android:layout_below="@+id/recentMatchTitle"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true">
+                    </android.support.v7.widget.RecyclerView>
 
-    <ImageButton
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        app:srcCompat="@mipmap/ic_account_circle_white_36dp"
-        android:id="@+id/profilepic"
-        android:background="@drawable/round_button"
-        android:layout_marginTop="21dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+                    <ImageButton
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
+                        app:srcCompat="@mipmap/ic_account_circle_white_36dp"
+                        android:id="@+id/profilepic"
+                        android:background="@drawable/round_button"
+                        android:layout_marginTop="21dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true" />
 
-</RelativeLayout>
+                </RelativeLayout>
+
+            </android.support.v4.widget.NestedScrollView>
+
+        </LinearLayout>
+
+        <android.support.design.widget.NavigationView
+            android:id="@+id/navigation_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            app:headerLayout="@layout/nav_header_main"
+            app:menu="@menu/drawer" />
+
+    </android.support.v4.widget.DrawerLayout>
+
+</android.support.design.widget.CoordinatorLayout>
