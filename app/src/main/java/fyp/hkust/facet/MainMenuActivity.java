@@ -39,7 +39,7 @@ public class MainMenuActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 Intent cameraViewIntent = new Intent(MainMenuActivity.this,ShowCameraViewActivity.class);
-                cameraViewIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                cameraViewIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(cameraViewIntent);
             }
         });
@@ -56,7 +56,7 @@ public class MainMenuActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 Intent accountIntent = new Intent(MainMenuActivity.this,MainActivity.class);
-                accountIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                accountIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(accountIntent);
 
             }

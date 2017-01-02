@@ -83,14 +83,14 @@
                         android:layout_height="75dp"
                         android:layout_gravity="center"
                         android:scaleType="fitCenter"
-                        android:contentDescription="original_image"
+                        android:contentDescription="@string/original_text"
                         style="?android:attr/borderlessButtonStyle"/>
 
                     <TextView
                         android:id="@+id/original_image_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="original_image_text"
+                        android:text="@string/original_text"
                         android:layout_below="@id/original_image"
                         android:layout_centerInParent="true"
                         android:gravity="center_horizontal"/>
@@ -109,14 +109,14 @@
                         android:layout_height="75dp"
                         android:layout_gravity="center"
                         android:scaleType="fitCenter"
-                        android:contentDescription="converted_image1"
+                        android:contentDescription="@string/converted_image1"
                         style="?android:attr/borderlessButtonStyle"/>
 
                     <TextView
                         android:id="@+id/converted_image1_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="converted_image1_text"
+                        android:text="@string/converted_image1"
                         android:layout_below="@id/converted_image1"
                         android:layout_centerInParent="true"
                         android:gravity="center_horizontal" />
@@ -134,13 +134,13 @@
                         android:layout_height="75dp"
                         android:layout_gravity="center"
                         android:scaleType="fitCenter"
-                        android:contentDescription="converted_image2"
+                        android:contentDescription="@string/converted_image2"
                         style="?android:attr/borderlessButtonStyle"/>
                     <TextView
                         android:id="@+id/converted_image2_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="converted_image2_text"
+                        android:text="@string/converted_image2"
                         android:layout_below="@id/converted_image2"
                         android:layout_centerInParent="true"
                         android:gravity="center_horizontal" />
@@ -163,7 +163,7 @@
                             android:layout_height="75dp"
                             android:layout_gravity="center"
                             android:scaleType="fitCenter"
-                            android:contentDescription="converted_image3"
+                            android:contentDescription="@string/converted_image3"
                             style="?android:attr/borderlessButtonStyle"/>
                         <ImageButton
                             android:id="@+id/icon_wp"
@@ -180,7 +180,7 @@
                         android:id="@+id/converted_image3_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="converted_image3_text"
+                        android:text="@string/converted_image3"
                         android:layout_below="@id/button4_with_icon"
                         android:layout_centerInParent="true"
                         android:gravity="center_horizontal"/>
@@ -199,13 +199,13 @@
                         android:layout_height="75dp"
                         android:layout_gravity="center"
                         android:scaleType="fitCenter"
-                        android:contentDescription="converted_image4"
+                        android:contentDescription="@string/converted_image4"
                         style="?android:attr/borderlessButtonStyle"/>
                     <TextView
                         android:id="@+id/converted_image4_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="converted_image4"
+                        android:text="@string/converted_image4"
                         android:layout_below="@id/converted_image4"
                         android:layout_centerInParent="true"
                         android:gravity="center_horizontal"  />

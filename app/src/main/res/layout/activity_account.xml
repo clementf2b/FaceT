@@ -65,7 +65,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Name"
+                        android:text="@string/user_name"
                         android:layout_below="@+id/profilepic"
                         android:id="@+id/accountnamefield"
                         android:textSize="18sp"
@@ -76,7 +76,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Recently Match"
+                        android:text="@string/recently_match_text"
                         android:id="@+id/recentMatchTitle"
                         android:textSize="18sp"
                         android:layout_below="@+id/accountnamefield"

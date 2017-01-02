@@ -10,14 +10,19 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
@@ -46,6 +51,9 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mLoginPasswordField;
     private Button mLoginBtn;
     private Button mGoRegister;
+    private ImageButton passwordVisibleButton;
+    private Button loginVisibleButton;
+    private boolean pw_shown;
 
     private FirebaseAuth mAuth;
 
@@ -70,6 +78,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00000000")) );
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Window window = getWindow();
@@ -94,8 +103,10 @@ public class LoginActivity extends AppCompatActivity {
         mProgress = new ProgressDialog(this);
 
         mLoginEmailField = (EditText) findViewById(R.id.loginemailfield);
+        mLoginEmailField.setBackgroundColor(111);
         mLoginPasswordField = (EditText) findViewById(R.id.loginpasswordfield);
-
+        loginVisibleButton = (Button) findViewById(R.id.email_login_visible);
+        passwordVisibleButton = (ImageButton) findViewById(R.id.passwordfield_visible_button);
         mLoginBtn = (Button) findViewById(R.id.login_btn);
         mGoRegister = (Button) findViewById(R.id.goregister_btn);
         mGoogleBtn = (SignInButton) findViewById(R.id.signingooglebtn);
@@ -106,12 +117,60 @@ public class LoginActivity extends AppCompatActivity {
                 checklogin();
             }
         });
+        //if clicked the simple login will fade in and social login will disappear
+        loginVisibleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                YoYo.with(Techniques.FlipOutX)
+                        .duration(1000)
+                        .playOn(findViewById(R.id.email_login_visible));
+                YoYo.with(Techniques.FlipOutX)
+                        .duration(1000)
+                        .playOn(findViewById(R.id.signingooglebtn));
+                loginVisibleButton.setVisibility(View.GONE);
+                mGoogleBtn.setVisibility(View.GONE);
+                passwordVisibleButton.setVisibility(View.VISIBLE);
+                mLoginEmailField.setVisibility(View.VISIBLE);
+                mLoginPasswordField.setVisibility(View.VISIBLE);
+                mLoginBtn.setVisibility(View.VISIBLE);
+                YoYo.with(Techniques.FlipInX)
+                        .duration(1000)
+                        .playOn(findViewById(R.id.passwordfield_visible_button));
+                YoYo.with(Techniques.FlipInX)
+                        .duration(1000)
+                        .playOn(findViewById(R.id.loginemailfield));
+                YoYo.with(Techniques.FlipInX)
+                        .duration(1000)
+                        .playOn(findViewById(R.id.loginpasswordfield));
+                YoYo.with(Techniques.FlipInX)
+                        .duration(1000)
+                        .playOn(findViewById(R.id.login_btn));
+            }
+        });
+
+        pw_shown = false;
+        passwordVisibleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (pw_shown == true) {
+                    //view pw
+                    mLoginPasswordField.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    passwordVisibleButton.setImageResource(R.mipmap.ic_visibility_white_24dp);
+                    pw_shown = false;
+                } else {
+                    //hide pw
+                    mLoginPasswordField.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    passwordVisibleButton.setImageResource(R.mipmap.ic_visibility_off_white_24dp);
+                    pw_shown = true;
+                }
+            }
+        });
 
         mGoRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent regIntent = new Intent(LoginActivity.this, RegisterActivity.class);
-                regIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                regIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(regIntent);
             }
         });
@@ -143,6 +202,12 @@ public class LoginActivity extends AppCompatActivity {
                 signIn();
             }
         });
+    }
+
+    @Override
+    public boolean onSupportNavigateUp(){
+        startActivity(new Intent(LoginActivity.this,MainMenuActivity.class));
+        return true;
     }
 
     private void signIn() {
@@ -241,11 +306,11 @@ public class LoginActivity extends AppCompatActivity {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.hasChild(user_id)) {
                         Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
-                        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(mainIntent);
                     } else {
                         Intent setupIntent = new Intent(LoginActivity.this, SetupActivity.class);
-                        setupIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                        setupIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(setupIntent);
                     }
                 }

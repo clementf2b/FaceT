@@ -63,7 +63,7 @@
         android:textSize="15sp"
         android:layout_centerHorizontal="true"
         android:textColor="#ffffff"
-        android:text="L O A D I N G ..."
+        android:text="@string/cat_loading_text"
         android:layout_height="wrap_content"
         android:layout_width="120dp"
         android:layout_below="@+id/mouse"
