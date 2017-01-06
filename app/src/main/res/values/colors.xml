@@ -11,5 +11,11 @@
     <color name="colorSecondaryText">#727272</color>
     <color name="colorDivider">#B6B6B6</color>
 
+    <color name="transparentBlack">#2FFFFFFF</color>
+
+    <color name="greenishBlue">#61C0BF</color>
+    <color name="googleRed">#EB1320</color>
+    <color name="facebookBlue">#3C539A</color>
+
 
 </resources>

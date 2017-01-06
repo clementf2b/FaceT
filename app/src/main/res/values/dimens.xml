@@ -12,4 +12,9 @@
 
     <dimen name="product_card_view_width">180dp</dimen>
     <dimen name="product_card_view_height">250dp</dimen>
+
+    <dimen name="small_text_size">16dp</dimen>
+    <dimen name="middle_text_size">24dp</dimen>
+    <dimen name="large_text_size">36dp</dimen>
+    <dimen name="larger_text_size">48dp</dimen>
 </resources>

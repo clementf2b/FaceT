@@ -8,7 +8,7 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingTop="@dimen/activity_horizontal_margin"
     android:background="@mipmap/bg2"
     tools:context="fyp.hkust.facet.LoginActivity">
 
@@ -23,43 +23,17 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
-    <com.rengwuxian.materialedittext.MaterialEditText
-        android:id="@+id/loginemailfield"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/email_hint"
-        android:drawableLeft="@mipmap/ic_email_white_24dp"
-        android:drawablePadding="@dimen/activity_horizontal_margin"
-        app:met_hideUnderline="true"
-        app:met_underlineColor="#fff"
-        app:met_baseColor="#fff"
-        app:met_textColorHint="#fff"
-        app:met_primaryColor="#fff"
-        app:met_autoValidate="true"
-        app:met_floatingLabel="highlight"
-        app:met_maxCharacters="100"
-        app:met_errorColor="#ddaa00"
-        android:singleLine="true"
-        android:layout_marginTop="100dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:visibility="gone"/>
-
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/login_btn"
         android:text="@string/login_text"
-        android:background="@drawable/listgrad"
+        android:background="@color/greenishBlue"
         android:textColor="#fff"
         android:layout_below="@+id/loginpasswordfield"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="20dp"
-        android:visibility="gone"
         />
 
     <com.rengwuxian.materialedittext.MaterialEditText
@@ -78,15 +52,16 @@
         app:met_errorColor="#ddaa00"
         android:singleLine="true"
         android:inputType="textPassword"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:drawablePadding="@dimen/activity_horizontal_margin"
         android:drawableLeft="@mipmap/ic_vpn_key_white_24dp"
         android:layout_below="@+id/loginemailfield"
-        android:layout_marginRight="@dimen/activity_vertical_margin"
+        android:layout_marginRight="36dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:visibility="gone"/>
+        />
 
     <ImageButton
         android:layout_width="wrap_content"
@@ -99,27 +74,116 @@
         android:layout_alignParentEnd="true"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:visibility="gone"/>
+        android:layout_marginRight="10dp"
+        />
 
-    <com.google.android.gms.common.SignInButton
+    <ImageView
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:id="@+id/signingooglebtn"
-        android:layout_marginTop="18dp"
-        android:layout_below="@+id/email_login_visible"
+        android:background="@color/transparentBlack"
+        android:id="@+id/loginpwbg"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/login_btn"
+        android:layout_alignTop="@+id/loginpasswordfield" />
+
+    <ImageView
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:background="@color/transparentBlack"
+        android:id="@+id/loginemailbg"
+        android:layout_alignTop="@+id/loginemailfield"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/loginpasswordfield" />
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/loginemailfield"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/email_hint"
+        android:drawableLeft="@mipmap/ic_email_white_24dp"
+        android:drawablePadding="@dimen/activity_horizontal_margin"
+        app:met_hideUnderline="true"
+        app:met_underlineColor="#fff"
+        app:met_baseColor="#fff"
+        app:met_textColorHint="#fff"
+        app:met_primaryColor="#fff"
+        app:met_autoValidate="true"
+        app:met_floatingLabel="highlight"
+        app:met_maxCharacters="100"
+        app:met_errorColor="#ddaa00"
+        android:singleLine="true"
+        android:layout_marginTop="34dp"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:layout_below="@+id/facebook_login_btn"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <!-- start or-divider -->
+
+    <TextView
+        android:id="@+id/orText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:textSize="@dimen/small_text_size"
+        android:text="@string/or_text"
+        android:layout_below="@id/facebook_login_btn"
+        android:textColor="#FFFFFF"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_toLeftOf="@id/orText"
+        android:layout_below="@id/facebook_login_btn"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:layout_marginBottom="@dimen/activity_horizontal_margin"
+        android:background="#fff"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_toRightOf="@id/orText"
+        android:layout_below="@id/facebook_login_btn"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:layout_marginBottom="@dimen/activity_horizontal_margin"
+        android:background="#fff"
+        />
+
+    <!--end of divider-->
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/email_login_visible"
-        android:text="@string/login_text"
-        android:background="@drawable/listgrad"
+        android:id="@+id/facebook_login_btn"
+        android:background="@color/facebookBlue"
         android:textColor="#fff"
-        android:layout_marginTop="108dp"
-        android:layout_below="@+id/passwordfield_visible_button"
-        android:layout_toRightOf="@+id/loginpasswordfield"
-        android:layout_toEndOf="@+id/loginpasswordfield" />
+        android:text="@string/login_with_facebook"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:layout_below="@+id/signingooglebtn"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_height="wrap_content"
+        android:text="@string/login_with_google"
+        android:textColor="#fff"
+        android:background="@color/googleRed"
+        android:layout_width="match_parent"
+        android:id="@+id/signingooglebtn"
+        android:layout_marginTop="84dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
 
 </RelativeLayout>

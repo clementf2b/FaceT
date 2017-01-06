@@ -3,6 +3,7 @@ package fyp.hkust.facet;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -51,15 +52,15 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mLoginPasswordField;
     private Button mLoginBtn;
     private Button mGoRegister;
+    private Button mFacebookBtn;
     private ImageButton passwordVisibleButton;
-    private Button loginVisibleButton;
     private boolean pw_shown;
 
     private FirebaseAuth mAuth;
 
     private DatabaseReference mDatabaseUsers;
 
-    private SignInButton mGoogleBtn;
+    private Button mGoogleBtn;
 
     private ProgressDialog mProgress;
 
@@ -79,6 +80,11 @@ public class LoginActivity extends AppCompatActivity {
 
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00000000")) );
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setLogo(R.mipmap.app_icon);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
+
+        Typeface iconFont = FontManager.getTypeface(getApplicationContext(), FontManager.FONTAWESOME);
+        FontManager.markAsIconContainer(findViewById(R.id.activity_login), iconFont);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Window window = getWindow();
@@ -105,11 +111,11 @@ public class LoginActivity extends AppCompatActivity {
         mLoginEmailField = (EditText) findViewById(R.id.loginemailfield);
         mLoginEmailField.setBackgroundColor(111);
         mLoginPasswordField = (EditText) findViewById(R.id.loginpasswordfield);
-        loginVisibleButton = (Button) findViewById(R.id.email_login_visible);
         passwordVisibleButton = (ImageButton) findViewById(R.id.passwordfield_visible_button);
         mLoginBtn = (Button) findViewById(R.id.login_btn);
         mGoRegister = (Button) findViewById(R.id.goregister_btn);
-        mGoogleBtn = (SignInButton) findViewById(R.id.signingooglebtn);
+        mGoogleBtn = (Button) findViewById(R.id.signingooglebtn);
+        mFacebookBtn = (Button) findViewById(R.id.facebook_login_btn);
 
         mLoginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,36 +124,15 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
         //if clicked the simple login will fade in and social login will disappear
-        loginVisibleButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                YoYo.with(Techniques.FlipOutX)
-                        .duration(1000)
-                        .playOn(findViewById(R.id.email_login_visible));
-                YoYo.with(Techniques.FlipOutX)
-                        .duration(1000)
-                        .playOn(findViewById(R.id.signingooglebtn));
-                loginVisibleButton.setVisibility(View.GONE);
-                mGoogleBtn.setVisibility(View.GONE);
-                passwordVisibleButton.setVisibility(View.VISIBLE);
-                mLoginEmailField.setVisibility(View.VISIBLE);
-                mLoginPasswordField.setVisibility(View.VISIBLE);
-                mLoginBtn.setVisibility(View.VISIBLE);
-                YoYo.with(Techniques.FlipInX)
-                        .duration(1000)
-                        .playOn(findViewById(R.id.passwordfield_visible_button));
-                YoYo.with(Techniques.FlipInX)
-                        .duration(1000)
-                        .playOn(findViewById(R.id.loginemailfield));
-                YoYo.with(Techniques.FlipInX)
-                        .duration(1000)
-                        .playOn(findViewById(R.id.loginpasswordfield));
-                YoYo.with(Techniques.FlipInX)
-                        .duration(1000)
-                        .playOn(findViewById(R.id.login_btn));
-            }
-        });
 
+        YoYo.with(Techniques.FlipInX).duration(700).playOn(findViewById(R.id.signingooglebtn));
+        YoYo.with(Techniques.FlipInX).duration(700).playOn(findViewById(R.id.passwordfield_visible_button));
+        YoYo.with(Techniques.FlipInX).duration(700).playOn(findViewById(R.id.loginemailfield));
+        YoYo.with(Techniques.FlipInX).duration(700).playOn(findViewById(R.id.loginpasswordfield));
+        YoYo.with(Techniques.FlipInX).duration(700).playOn(findViewById(R.id.login_btn));
+        YoYo.with(Techniques.FlipInX).duration(700).playOn(findViewById(R.id.facebook_login_btn));
+
+        //show pw
         pw_shown = false;
         passwordVisibleButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -202,6 +187,13 @@ public class LoginActivity extends AppCompatActivity {
                 signIn();
             }
         });
+
+        mFacebookBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //Facebook Login
+                    }
+                });
     }
 
     @Override

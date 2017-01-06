@@ -56,6 +56,8 @@
     <string name="password_hint">Password</string>
     <string name="or_text">Or</string>
     <string name="login_text">Login</string>
+    <string name="login_with_facebook">&#xf09a; &#160; &#160; Login in with Facebook</string>
+    <string name="login_with_google">&#xf1a0; &#160; &#160; Login in with Google</string>
 
     <!--activity_main_menu-->
     <string name="store_text">Store</string>
@@ -100,6 +102,12 @@
     <string name="recently_match_product_title_text">title...</string>
     <string name="recently_match_product_desc_text">desc...</string>
     <string name="recently_match_product_username_text">username</string>
+
+    <!--FontAwesome-->
+    <string name="fa_icon_areachart">&#xf1fe;</string>
+    <string name="fa_icon_piechart">&#xf200;</string>
+    <string name="fa_icon_linechart">&#xf201;</string>
+
 
 </resources>
 
