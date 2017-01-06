@@ -131,6 +131,7 @@
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:textSize="@dimen/small_text_size"
+        android:layout_marginTop="5dp"
         android:text="@string/or_text"
         android:layout_below="@id/facebook_login_btn"
         android:textColor="#FFFFFF"/>
