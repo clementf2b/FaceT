@@ -10,7 +10,8 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_horizontal_margin"
     android:background="@mipmap/bg2"
-    tools:context="fyp.hkust.facet.LoginActivity">
+    tools:context="fyp.hkust.facet.LoginActivity"
+    >
 
     <Button
         android:layout_width="match_parent"
@@ -47,15 +48,13 @@
         app:met_baseColor="#fff"
         app:met_textColorHint="#fff"
         app:met_primaryColor="#fff"
-        app:met_floatingLabel="highlight"
-        app:met_maxCharacters="100"
-        app:met_errorColor="#ddaa00"
         android:singleLine="true"
         android:inputType="textPassword"
         android:layout_marginTop="@dimen/activity_horizontal_margin"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:drawablePadding="@dimen/activity_horizontal_margin"
+        android:paddingTop="5dp"
         android:drawableLeft="@mipmap/ic_vpn_key_white_24dp"
         android:layout_below="@+id/loginemailfield"
         android:layout_marginRight="36dp"
@@ -72,8 +71,7 @@
         android:layout_above="@+id/login_btn"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginBottom="10dp"
         android:layout_marginRight="10dp"
         />
 
@@ -85,6 +83,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_above="@+id/login_btn"
+
         android:layout_alignTop="@+id/loginpasswordfield" />
 
     <ImageView
@@ -110,9 +109,7 @@
         app:met_textColorHint="#fff"
         app:met_primaryColor="#fff"
         app:met_autoValidate="true"
-        app:met_floatingLabel="highlight"
-        app:met_maxCharacters="100"
-        app:met_errorColor="#ddaa00"
+        android:paddingTop="5dp"
         android:singleLine="true"
         android:layout_marginTop="34dp"
         android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -165,6 +162,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textAlignment="center"
         android:id="@+id/facebook_login_btn"
         android:background="@color/facebookBlue"
         android:textColor="#fff"
@@ -178,6 +176,7 @@
         android:layout_height="wrap_content"
         android:text="@string/login_with_google"
         android:textColor="#fff"
+        android:textAlignment="center"
         android:background="@color/googleRed"
         android:layout_width="match_parent"
         android:id="@+id/signingooglebtn"
