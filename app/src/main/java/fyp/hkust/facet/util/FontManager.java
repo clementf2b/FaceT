@@ -1,4 +1,4 @@
-package fyp.hkust.facet;
+package fyp.hkust.facet.util;
 
 import android.content.Context;
 import android.graphics.Typeface;
