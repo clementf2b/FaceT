@@ -1,4 +1,4 @@
-package fyp.hkust.facet;
+package fyp.hkust.facet.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,8 +22,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +36,10 @@ import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
+
+import fyp.hkust.facet.Product;
+import fyp.hkust.facet.R;
+import fyp.hkust.facet.User;
 
 public class AccountActivity extends AppCompatActivity{
 

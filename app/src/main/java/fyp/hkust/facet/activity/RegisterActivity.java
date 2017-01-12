@@ -1,4 +1,4 @@
-package fyp.hkust.facet;
+package fyp.hkust.facet.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -21,6 +21,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import fyp.hkust.facet.R;
 
 public class RegisterActivity extends AppCompatActivity {
 

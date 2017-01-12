@@ -1,4 +1,4 @@
-package fyp.hkust.facet;
+package fyp.hkust.facet.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -25,6 +25,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
+import fyp.hkust.facet.R;
 
 public class PostActivity extends AppCompatActivity {
 

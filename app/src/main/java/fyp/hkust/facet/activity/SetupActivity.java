@@ -1,6 +1,5 @@
-package fyp.hkust.facet;
+package fyp.hkust.facet.activity;
 
-import android.accessibilityservice.GestureDescription;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -21,6 +20,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
+
+import fyp.hkust.facet.R;
 
 public class SetupActivity extends AppCompatActivity {
 

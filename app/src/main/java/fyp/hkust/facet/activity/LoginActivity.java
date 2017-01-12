@@ -1,4 +1,4 @@
-package fyp.hkust.facet;
+package fyp.hkust.facet.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -45,6 +45,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import fyp.hkust.facet.R;
 import fyp.hkust.facet.util.FontManager;
 
 public class LoginActivity extends AppCompatActivity {

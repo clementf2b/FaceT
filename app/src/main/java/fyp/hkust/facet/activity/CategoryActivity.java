@@ -1,4 +1,4 @@
-package fyp.hkust.facet;
+package fyp.hkust.facet.activity;
 
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -16,6 +16,8 @@ import android.widget.Toast;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
+
+import fyp.hkust.facet.R;
 
 public class CategoryActivity extends AppCompatActivity {
 

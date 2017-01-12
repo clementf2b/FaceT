@@ -1,4 +1,4 @@
-package fyp.hkust.facet;
+package fyp.hkust.facet.activity;
 
 import android.content.Intent;
 import android.os.Build;
@@ -9,6 +9,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 
+import fyp.hkust.facet.R;
 import fyp.hkust.facet.skincolordetection.ShowCameraViewActivity;
 
 public class MainMenuActivity extends AppCompatActivity {
@@ -16,6 +17,7 @@ public class MainMenuActivity extends AppCompatActivity {
     private ImageButton shoppingBtn;
     private ImageButton photoCameraBtn;
     private ImageButton accountBtn;
+    private ImageButton storeBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +35,7 @@ public class MainMenuActivity extends AppCompatActivity {
         photoCameraBtn = (ImageButton)findViewById(R.id.photo_camera);
         shoppingBtn = (ImageButton)findViewById(R.id.shopping_button);
         accountBtn = (ImageButton) findViewById(R.id.account_button);
+        storeBtn = (ImageButton) findViewById(R.id.store_button);
 
         photoCameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,6 +61,17 @@ public class MainMenuActivity extends AppCompatActivity {
                 Intent accountIntent = new Intent(MainMenuActivity.this,MainActivity.class);
 //                accountIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(accountIntent);
+
+            }
+        });
+
+        storeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent storeIntent = new Intent(MainMenuActivity.this,SwapFaceActivity.class);
+//                accountIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(storeIntent);
 
             }
         });
