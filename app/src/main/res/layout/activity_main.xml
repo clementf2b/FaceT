@@ -5,7 +5,7 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="fyp.hkust.facet.MainActivity"
+    tools:context="fyp.hkust.facet.activity.MainActivity"
     android:background="@color/cardview_light_background">
 
   <android.support.v7.widget.RecyclerView

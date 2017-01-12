@@ -9,8 +9,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_horizontal_margin"
-    android:background="@mipmap/bg2"
-    tools:context="fyp.hkust.facet.LoginActivity"
+    android:background="@drawable/backdround_image"
+    tools:context="fyp.hkust.facet.activity.LoginActivity"
     >
 
     <Button
@@ -22,7 +22,8 @@
         android:textColor="#fff"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:textSize="@dimen/small_text_size" />
 
     <Button
         android:layout_width="match_parent"
@@ -35,6 +36,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="20dp"
+        android:textSize="@dimen/small_text_size"
         />
 
     <com.rengwuxian.materialedittext.MaterialEditText
@@ -60,6 +62,7 @@
         android:layout_marginRight="36dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
+        android:textSize="@dimen/small_text_size"
         />
 
     <ImageButton
@@ -83,7 +86,6 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_above="@+id/login_btn"
-
         android:layout_alignTop="@+id/loginpasswordfield" />
 
     <ImageView
@@ -116,7 +118,8 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:layout_below="@+id/facebook_login_btn"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:textSize="@dimen/small_text_size" />
 
     <!-- start or-divider -->
 
@@ -168,10 +171,11 @@
         android:textColor="#fff"
         android:text="@string/login_with_facebook"
         android:layout_marginTop="@dimen/activity_horizontal_margin"
-        android:paddingRight="5dp"
+        android:paddingRight="10dp"
         android:layout_below="@+id/signingooglebtn"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:textSize="@dimen/small_text_size" />
 
     <Button
         android:layout_height="wrap_content"
@@ -182,10 +186,12 @@
         android:layout_width="match_parent"
         android:id="@+id/signingooglebtn"
         android:layout_marginTop="84dp"
-        android:paddingRight="5dp"
+        android:paddingRight="10dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:textSize="@dimen/small_text_size"
+        />
 
 
 </RelativeLayout>

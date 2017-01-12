@@ -3,7 +3,7 @@
     android:layout_width="180dp"
     android:layout_height="210dp"
     android:background="@drawable/background"
-    tools:context=".MainActivity">
+    tools:context=".activity.MainActivity">
 
     <ImageView
         android:layout_centerInParent="true"
