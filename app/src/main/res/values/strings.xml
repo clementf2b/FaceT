@@ -43,10 +43,9 @@
 
     <!--activity_capture-->
     <string name="original_text">Original</string>
-    <string name="converted_image1">Converted Image1</string>
-    <string name="converted_image2">Converted Image2</string>
-    <string name="converted_image3">Converted Image3</string>
-    <string name="converted_image4">Converted Image4</string>
+    <string name="converted_image1">Effect 1</string>
+    <string name="converted_image2">Effect 2</string>
+    <string name="converted_image3">Effect 3</string>
 
     <!--activity_category-->
 
@@ -56,8 +55,8 @@
     <string name="password_hint">Password</string>
     <string name="or_text">Or</string>
     <string name="login_text">Login</string>
-    <string name="login_with_facebook">&#xf09a; &#160; &#160; &#160; Login with Facebook</string>
-    <string name="login_with_google">&#xf1a0; &#160; &#160; &#160; Login with Google</string>
+    <string name="login_with_facebook">Login with Facebook</string>
+    <string name="login_with_google">Login with Google</string>
 
     <!--activity_main_menu-->
     <string name="store_text">Store</string>
@@ -84,7 +83,7 @@
     <string name="name_hint">Name ...</string>
 
     <!--activity_show_camera_view-->
-    <string name="capture_text">Button</string>
+    <string name="process_text">Start Processing</string>
 
     <!--catLoading_main-->
     <string name="cat_loading_text">L O A D I N G ...</string>
@@ -108,6 +107,8 @@
     <string name="fa_icon_piechart">&#xf200;</string>
     <string name="fa_icon_linechart">&#xf201;</string>
 
+    <!--whitebalance_menu-->
+    <string name="apply">Apply</string>
 
 </resources>
 

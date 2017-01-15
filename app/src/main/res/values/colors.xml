@@ -14,8 +14,9 @@
     <color name="transparentBlack">#2FFFFFFF</color>
 
     <color name="greenishBlue">#61C0BF</color>
-    <color name="googleRed">#DD4B39</color>
-    <color name="facebookBlue">#3C539A</color>
+    <color name="facebookBlue">#3c539a</color>
+    <color name="googleRed">#e83417</color>
+    <color name="sparkGreen">#00ce8e</color>
 
 
 </resources>

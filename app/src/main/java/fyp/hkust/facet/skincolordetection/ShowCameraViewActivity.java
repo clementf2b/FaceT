@@ -3,7 +3,9 @@ package fyp.hkust.facet.skincolordetection;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Build;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
@@ -46,12 +48,18 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.Toast;
 
+import com.nhaarman.supertooltips.ToolTip;
+import com.nhaarman.supertooltips.ToolTipRelativeLayout;
+import com.nhaarman.supertooltips.ToolTipView;
+
 import fyp.hkust.facet.R;
+import fyp.hkust.facet.activity.MainActivity;
 
 //AppCompatActivity
-public class ShowCameraViewActivity extends Activity implements CvCameraViewListener2, View.OnTouchListener {
+public class ShowCameraViewActivity extends Activity implements CvCameraViewListener2, View.OnTouchListener,View.OnClickListener,ToolTipView.OnToolTipViewClickedListener {
 
     private static final String    TAG                 = "AutoCam::MainActivity";
     private static final Scalar    FACE_RECT_COLOR     = new Scalar(0, 255, 0, 255);
@@ -95,6 +103,9 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
     private int face_middle_x;
     private int face_middle_y;
 
+    private ToolTipView mBlueToolTipView;
+    private ToolTipRelativeLayout toolTipRelativeLayout;
+    private Button btnJump;
     /**
      * Id to identify a camera permission request.
      */
@@ -133,6 +144,17 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
                     REQUEST_WRITE_STORAGE);
         }
 
+        //pop up hint
+        toolTipRelativeLayout = (ToolTipRelativeLayout) findViewById(R.id.activity_main_tooltipRelativeLayout);
+        findViewById(R.id.activity_main_redtv).setOnClickListener(this);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                addBlueToolTipView();
+            }
+        }, 1100);
+        //end of hint
 
         Log.i(TAG, "called onCreate");
         Camera.Size resolution = null;
@@ -143,7 +165,39 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
         mOpenCvCameraView.setCameraIndex( CameraBridgeViewBase.CAMERA_ID_FRONT);
     }
 
+    //adding the hints
+    @Override
+    public void onToolTipViewClicked(ToolTipView toolTipView) {
+        if (mBlueToolTipView == toolTipView) {
+            mBlueToolTipView = null;
+        }
+    }
 
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        if (id == R.id.activity_main_redtv) {
+            if (mBlueToolTipView == null) {
+                addBlueToolTipView();
+            } else {
+                mBlueToolTipView.remove();
+                mBlueToolTipView = null;
+            }
+
+        }
+    }
+
+    private void addBlueToolTipView() {
+        ToolTip toolTip = new ToolTip()
+                .withText("After face detection,Touch screen to capture photo and click the button to start processing.")
+                .withColor(getResources().getColor(R.color.colorPrimary))
+                .withTextColor(R.color.white)
+                .withAnimationType(ToolTip.AnimationType.FROM_MASTER_VIEW);
+
+        mBlueToolTipView = toolTipRelativeLayout.showToolTipForView(toolTip, findViewById(R.id.activity_main_redtv));
+        mBlueToolTipView.setOnToolTipViewClickedListener(this);
+    }
+    //end of the hint
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -178,6 +232,7 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
     @Override
     public void onResume() {
         super.onResume();
+
         if (!OpenCVLoader.initDebug()) {
             Log.d(TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, mLoaderCallback);
@@ -272,19 +327,19 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
 //            });
 //            t.start();
 //        }
-
-        if (mIsColorSelected) {
-            mDetector.process(mRgba);
-            List<MatOfPoint> contours = mDetector.getContours();
-            Log.e(TAG, "Contours count: " + contours.size());
-            Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR);
-
-            Mat colorLabel = mRgba.submat(4, 68, 4, 68);
-            colorLabel.setTo(mBlobColorRgba);
-
-            Mat spectrumLabel = mRgba.submat(4, 4 + mSpectrum.rows(), 70, 70 + mSpectrum.cols());
-            mSpectrum.copyTo(spectrumLabel);
-        }
+//
+//        if (mIsColorSelected) {
+//            mDetector.process(mRgba);
+//            List<MatOfPoint> contours = mDetector.getContours();
+//            Log.e(TAG, "Contours count: " + contours.size());
+//            Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR);
+//
+//            Mat colorLabel = mRgba.submat(4, 68, 4, 68);
+//            colorLabel.setTo(mBlobColorRgba);
+//
+//            Mat spectrumLabel = mRgba.submat(4, 4 + mSpectrum.rows(), 70, 70 + mSpectrum.cols());
+//            mSpectrum.copyTo(spectrumLabel);
+//        }
 
         return mRgba;
     }
@@ -376,24 +431,24 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
         Mat touchedRegionHsv = new Mat();
         Imgproc.cvtColor(touchedRegionRgba, touchedRegionHsv, Imgproc.COLOR_RGB2HSV_FULL);
 
-        // Calculate average color of touched region
-        mBlobColorHsv = Core.sumElems(touchedRegionHsv);
-        int pointCount = touchedRect.width*touchedRect.height;
-        for (int i = 0; i < mBlobColorHsv.val.length; i++)
-            mBlobColorHsv.val[i] /= pointCount;
-
-        //Add a Toast to display the HSV color
-        Toast.makeText(this, "HSV = " + mBlobColorHsv , Toast.LENGTH_SHORT).show();
-        mBlobColorRgba = converScalarHsv2Rgba(mBlobColorHsv);
-
-        Log.i(TAG, "Touched rgba color: (" + mBlobColorRgba.val[0] + ", " + mBlobColorRgba.val[1] +
-                ", " + mBlobColorRgba.val[2] + ", " + mBlobColorRgba.val[3] + ")");
-
-        mDetector.setHsvColor(mBlobColorHsv);
-
-        Imgproc.resize(mDetector.getSpectrum(), mSpectrum, SPECTRUM_SIZE);
-
-        mIsColorSelected = true;
+//        // Calculate average color of touched region
+//        mBlobColorHsv = Core.sumElems(touchedRegionHsv);
+//        int pointCount = touchedRect.width*touchedRect.height;
+//        for (int i = 0; i < mBlobColorHsv.val.length; i++)
+//            mBlobColorHsv.val[i] /= pointCount;
+//
+//        //Add a Toast to display the HSV color
+//        Toast.makeText(this, "HSV = " + mBlobColorHsv , Toast.LENGTH_SHORT).show();
+//        mBlobColorRgba = converScalarHsv2Rgba(mBlobColorHsv);
+//
+//        Log.i(TAG, "Touched rgba color: (" + mBlobColorRgba.val[0] + ", " + mBlobColorRgba.val[1] +
+//                ", " + mBlobColorRgba.val[2] + ", " + mBlobColorRgba.val[3] + ")");
+//
+//        mDetector.setHsvColor(mBlobColorHsv);
+//
+//        Imgproc.resize(mDetector.getSpectrum(), mSpectrum, SPECTRUM_SIZE);
+//
+//        mIsColorSelected = true;
 
         touchedRegionRgba.release();
         touchedRegionHsv.release();
@@ -438,11 +493,18 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
     @SuppressLint("SimpleDateFormat")
     public void jump(View view)
     {
-        Intent intent = new Intent();
-        intent.setClass(ShowCameraViewActivity.this,CaptureActivity.class);
-        intent.putExtra("path", last_photo_name);
-        //intent.putExtra("color" , "" + mBlobColorHsv);
-        startActivity(intent);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable(){
+            @Override
+            public void run() {
+                //過兩秒後要做的事情
+                Intent intent = new Intent();
+                intent.setClass(ShowCameraViewActivity.this,CaptureActivity.class);
+                intent.putExtra("path", last_photo_name);
+                intent.putExtra("activity","ShowCameraViewActivity");
+                //intent.putExtra("color" , "" + mBlobColorHsv);
+                startActivity(intent);
+            }}, 1700);
     }
 
 
@@ -463,6 +525,7 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
                         File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
                         String xmlDataFileName = "lbpcascade_frontalface.xml";
                         mCascadeFile = new File(cascadeDir, xmlDataFileName);
+
                         FileOutputStream os = new FileOutputStream(mCascadeFile);
 
                         byte[] buffer = new byte[4096];
@@ -475,6 +538,8 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
 
                         // eyes detect
                         mJavaDetector = new CascadeClassifier(mCascadeFile.getAbsolutePath());
+                        //must add this line
+                        mJavaDetector.load( mCascadeFile.getAbsolutePath() );
                         if (mJavaDetector.empty()) {
                             Log.e(TAG, "Failed to load cascade classifier");
                             mJavaDetector = null;

@@ -2,11 +2,29 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <LinearLayout
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:orientation="vertical" android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+            <TextView
+                android:id="@+id/capture_activity_redtv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:textColor="@color/white"
+                android:textSize="13dp"/>
+
+            <com.nhaarman.supertooltips.ToolTipRelativeLayout
+                android:id="@+id/capture_activity_tooltipRelativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/activity_vertical_margin"/>
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -19,68 +37,41 @@
             android:indeterminate="true">
         </ProgressBar>
 
-
-        <TextView
-            android:text="Result"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/textView"
-            android:textSize="30sp" />
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp">
-
-            <ImageButton
-                android:layout_width="450px"
-                app:srcCompat="@mipmap/ic_launcher"
-                android:id="@+id/image_result"
-                android:padding="10dp"
-                android:layout_margin="10dp"
-                android:layout_alignParentLeft="true"
-
-                android:layout_height="450px" />
+            android:layout_height="match_parent">
 
             <ImageView
-            android:layout_width="450px"
-                app:srcCompat="@mipmap/ic_launcher"
-            android:id="@+id/image_show"
-                android:padding="10dp"
-                android:layout_marginLeft="13dp"
-                android:layout_alignTop="@+id/image_result"
-                android:layout_toRightOf="@+id/image_result"
-                android:layout_toEndOf="@+id/image_result"
-                android:layout_height="450px" />
-        </RelativeLayout>
+                android:layout_width="match_parent"
+                android:layout_marginTop="2dp"
+                app:srcCompat="@mipmap/app_icon"
+                android:id="@+id/image_show"
+                android:layout_gravity="right"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"/>
 
-        <TextView
-            android:text="TextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/textView2"
-            android:layout_weight="0.20"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textSize="24sp" />
+        </FrameLayout>
 
-        <HorizontalScrollView
+        <LinearLayout
             android:id="@+id/scroll_view"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true">
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            >
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:layout_alignParentBottom="true">
+                android:layout_alignParentBottom="true"
+                android:layout_weight="1">
                 <RelativeLayout
                     android:id="@+id/button1"
-                    android:layout_width="wrap_content"
+                    android:layout_width="150px"
                     android:layout_height="wrap_content">
                     <ImageButton
                         android:id="@+id/original_image"
-                        android:layout_width="75dp"
-                        android:layout_height="75dp"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_gravity="center"
                         android:scaleType="fitCenter"
                         android:contentDescription="@string/original_text"
@@ -93,20 +84,22 @@
                         android:text="@string/original_text"
                         android:layout_below="@id/original_image"
                         android:layout_centerInParent="true"
-                        android:gravity="center_horizontal"/>
+                        android:gravity="center_horizontal"
+                        android:textColor="@color/white"/>
                 </RelativeLayout>
 
                 <RelativeLayout
                     android:id="@+id/button2"
-                    android:layout_width="wrap_content"
+                    android:layout_width="150px"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/button1"
                     android:layout_toEndOf="@id/button1"
-                    android:layout_alignBottom="@id/button1">
+                    android:layout_alignBottom="@id/button1"
+                    android:layout_weight="1">
                     <ImageButton
                         android:id="@+id/converted_image1"
-                        android:layout_width="75dp"
-                        android:layout_height="75dp"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_gravity="center"
                         android:scaleType="fitCenter"
                         android:contentDescription="@string/converted_image1"
@@ -119,19 +112,21 @@
                         android:text="@string/converted_image1"
                         android:layout_below="@id/converted_image1"
                         android:layout_centerInParent="true"
-                        android:gravity="center_horizontal" />
+                        android:gravity="center_horizontal"
+                        android:textColor="@color/white"/>
                 </RelativeLayout>
                 <RelativeLayout
                     android:id="@+id/button3"
-                    android:layout_width="wrap_content"
+                    android:layout_width="150px"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/button2"
                     android:layout_toEndOf="@id/button2"
-                    android:layout_alignBottom="@id/button2">
+                    android:layout_alignBottom="@id/button2"
+                    android:layout_weight="1">
                     <ImageButton
                         android:id="@+id/converted_image2"
-                        android:layout_width="75dp"
-                        android:layout_height="75dp"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_gravity="center"
                         android:scaleType="fitCenter"
                         android:contentDescription="@string/converted_image2"
@@ -143,37 +138,29 @@
                         android:text="@string/converted_image2"
                         android:layout_below="@id/converted_image2"
                         android:layout_centerInParent="true"
-                        android:gravity="center_horizontal" />
+                        android:gravity="center_horizontal"
+                        android:textColor="@color/white"/>
 
                 </RelativeLayout>
                 <RelativeLayout
                     android:id="@+id/button4"
-                    android:layout_width="wrap_content"
+                    android:layout_width="160px"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/button3"
                     android:layout_toEndOf="@id/button3"
-                    android:layout_alignBottom="@id/button3">
+                    android:layout_alignBottom="@id/button3"
+                    android:layout_weight="1">
                     <RelativeLayout
                         android:id="@+id/button4_with_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
                         <ImageButton
                             android:id="@+id/converted_image3"
-                            android:layout_width="75dp"
-                            android:layout_height="75dp"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
                             android:layout_gravity="center"
                             android:scaleType="fitCenter"
                             android:contentDescription="@string/converted_image3"
-                            style="?android:attr/borderlessButtonStyle"/>
-                        <ImageButton
-                            android:id="@+id/icon_wp"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:layout_gravity="center"
-                            android:scaleType="fitCenter"
-                            android:contentDescription="icon_wp"
-                            android:layout_centerInParent="true"
-                            android:gravity="center_horizontal"
                             style="?android:attr/borderlessButtonStyle"/>
                     </RelativeLayout>
                     <TextView
@@ -183,34 +170,11 @@
                         android:text="@string/converted_image3"
                         android:layout_below="@id/button4_with_icon"
                         android:layout_centerInParent="true"
-                        android:gravity="center_horizontal"/>
+                        android:gravity="center_horizontal"
+                        android:textColor="@color/white"/>
 
                 </RelativeLayout>
-                <RelativeLayout
-                    android:id="@+id/button5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/button4"
-                    android:layout_toEndOf="@id/button4"
-                    android:layout_alignBottom="@id/button4">
-                    <ImageButton
-                        android:id="@+id/converted_image4"
-                        android:layout_width="75dp"
-                        android:layout_height="75dp"
-                        android:layout_gravity="center"
-                        android:scaleType="fitCenter"
-                        android:contentDescription="@string/converted_image4"
-                        style="?android:attr/borderlessButtonStyle"/>
-                    <TextView
-                        android:id="@+id/converted_image4_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/converted_image4"
-                        android:layout_below="@id/converted_image4"
-                        android:layout_centerInParent="true"
-                        android:gravity="center_horizontal"  />
-                </RelativeLayout>
             </RelativeLayout>
-        </HorizontalScrollView>
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

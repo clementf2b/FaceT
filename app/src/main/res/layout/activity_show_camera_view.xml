@@ -24,27 +24,50 @@
             android:layout_alignParentEnd="true" />
 
         <RelativeLayout
-            android:layout_width="358dp"
+            android:layout_width="match_parent"
             android:layout_height="200px"
-            android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true">
+            android:layout_alignParentTop="true">
 
-            <at.markushi.ui.CircleButton
-                android:text="@string/capture_text"
+            <TextView
+                android:id="@+id/activity_main_redtv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:textColor="@color/white"
+                android:textSize="13dp"/>
+
+            <com.nhaarman.supertooltips.ToolTipRelativeLayout
+                android:id="@+id/activity_main_tooltipRelativeLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/button"
-                android:src="@mipmap/ic_photo_camera_black_24dp"
-                android:onClick="jump"
-                android:layout_gravity="top"
-                android:layout_weight="1"
-                app:cb_color="#fff"
-                app:cb_pressedRingWidth="8dip"
-                android:layout_alignParentBottom="true" />
+                android:layout_margin="@dimen/activity_vertical_margin"/>
 
             </RelativeLayout>
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="200px"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true">
+
+            <com.spark.submitbutton.SubmitButton
+                android:text="@string/process_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/button"
+                android:onClick="jump"
+                android:textColor="@color/fbutton_color_asbestos"
+                app:sub_btn_background="@color/white"
+                app:sub_btn_duration="1500"
+                app:sub_btn_line_color="@color/colorPrimary"
+                app:sub_btn_ripple_color="@color/colorPrimary"
+                app:sub_btn_tick_color="@color/white"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
+                />
+
+        </RelativeLayout>
     </RelativeLayout>
 
 </LinearLayout>
