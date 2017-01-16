@@ -9,7 +9,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_horizontal_margin"
-    android:background="@drawable/backdround_image"
+    android:background="@drawable/background_dark"
     tools:context="fyp.hkust.facet.activity.LoginActivity"
     >
 
@@ -163,7 +163,7 @@
     <!--end of divider-->
 
     <Button
-        android:drawableLeft="@mipmap/ic_facebook"
+        android:drawableLeft="@drawable/ic_facebook_logo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="center"
@@ -172,15 +172,20 @@
         android:textColor="#fff"
         android:text="@string/login_with_facebook"
         android:layout_marginTop="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingLeft="30dip"
+        android:paddingRight="30dp"
+        android:gravity="center"
         android:layout_below="@+id/signingooglebtn"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:textSize="@dimen/small_text_size"
-        tools:ignore="RtlSymmetry" />
+        tools:ignore="RtlSymmetry"
+        android:drawableTint="#ffffff"/>
 
     <Button
-        android:drawableLeft="@mipmap/ic_googleplus"
+        android:drawableLeft="@drawable/ic_google_glass_logo"
+        android:drawablePadding="20dip"
+        android:paddingLeft="30dip"
         android:layout_height="wrap_content"
         android:text="@string/login_with_google"
         android:textColor="#fff"
@@ -188,12 +193,15 @@
         android:layout_width="match_parent"
         android:id="@+id/signingooglebtn"
         android:layout_marginTop="84dp"
-        android:paddingRight="35dp"
+        android:paddingRight="65dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:textSize="@dimen/small_text_size"
-        android:background="@color/googleRed" />
+        android:background="@color/googleRed"
+        android:gravity="center"
+        android:drawableTint="#ffffff"
+    />
 
 
 </RelativeLayout>

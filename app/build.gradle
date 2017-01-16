@@ -10,6 +10,11 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+        sourceSets {
+            main {
+                jni.srcDirs = ['src/main/jni', 'src/main/jniLibs/']
+            }
+        }
     }
     buildTypes {
         release {
@@ -17,7 +22,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    sourceSets { main { jni.srcDirs = ['src/main/jni', 'src/main/jniLibs/'] } }
 }
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
