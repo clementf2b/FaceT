@@ -109,6 +109,7 @@
 
     <!--whitebalance_menu-->
     <string name="apply">Apply</string>
+    <string name="move_report_text">View Report</string>
 
 </resources>
 

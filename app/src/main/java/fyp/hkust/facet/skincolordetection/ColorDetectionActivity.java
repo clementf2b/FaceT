@@ -3,18 +3,32 @@ package fyp.hkust.facet.skincolordetection;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Point;
-import android.support.v7.app.AppCompatActivity;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.mikephil.charting.animation.Easing;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.PercentFormatter;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.roger.gifloadinglibrary.GifLoadingView;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -37,6 +51,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -44,7 +59,7 @@ import fyp.hkust.facet.R;
 
 import static android.graphics.Bitmap.createScaledBitmap;
 
-public class ColorDetectionActivity extends AppCompatActivity {
+public class ColorDetectionActivity extends AppCompatActivity implements OnChartValueSelectedListener {
 
     private static final String TAG = "ColorDetectionActivity";
     private static final Scalar FACE_RECT_COLOR     = new Scalar(0, 255, 0, 255);
@@ -90,9 +105,10 @@ public class ColorDetectionActivity extends AppCompatActivity {
     private GifLoadingView mColorDetectView;
     private int n;
     private Bitmap bmp;
+    private Typeface mTfLight;
     protected static final int STOP = 0x10000;
 
-
+    private PieChart rPieChart,gPieChart,bPieChart;
 
     public ColorDetectionActivity() {
         Log.i(TAG, "Instantiated new " + this.getClass());
@@ -110,6 +126,13 @@ public class ColorDetectionActivity extends AppCompatActivity {
         }
 
         color_result_text = (TextView) findViewById(R.id.color_result_text);
+        rPieChart = (PieChart) findViewById(R.id.r_chart);
+        gPieChart = (PieChart) findViewById(R.id.g_chart);
+        bPieChart = (PieChart) findViewById(R.id.b_chart);
+
+        color_result_text.setVisibility(View.INVISIBLE);
+
+//        mTfLight = Typeface.createFromAsset(getAssets(), "OpenSans-Light.ttf");
 
         try {
             // load cascade file from application resources
@@ -313,6 +336,13 @@ public class ColorDetectionActivity extends AppCompatActivity {
             Utils.matToBitmap(demo,convertedBitmap);
             gray_image.setImageBitmap(convertedBitmap);
 
+            seteffect(rPieChart);
+            seteffect(gPieChart);
+            seteffect(bPieChart);
+
+            setData(rPieChart,0,(int) mBlobColorRgba.val[0]);
+            setData(gPieChart,1,(int) mBlobColorRgba.val[1]);
+            setData(bPieChart,2,(int) mBlobColorRgba.val[2]);
             //end of the color detection and dismiss the progress bar
             mColorDetectView.dismiss();
 
@@ -321,6 +351,87 @@ public class ColorDetectionActivity extends AppCompatActivity {
         }
     }
 
+    private void seteffect(PieChart colorPie) {
+
+        colorPie.animateXY(2000, 2000 ,Easing.EasingOption.EaseInBounce, Easing.EasingOption.EaseInBounce);
+        colorPie.invalidate();
+        colorPie.setDrawHoleEnabled(true);
+        colorPie.setExtraOffsets(10, 10, 10, 10);
+
+        colorPie.setContentDescription("");
+        colorPie.setDragDecelerationFrictionCoef(0.95f);
+        colorPie.setDrawCenterText(true);
+
+        colorPie.setRotationAngle(0);
+        // enable rotation of the chart by touch
+        colorPie.setRotationEnabled(true);
+        colorPie.setHighlightPerTapEnabled(true);
+        colorPie.setDrawHoleEnabled(true);
+        colorPie.setHoleColor(Color.WHITE);
+
+        //disable the label and description
+        colorPie.getDescription().setEnabled(false);
+        colorPie.getLegend().setEnabled(false);
+
+        colorPie.setTransparentCircleColor(Color.WHITE);
+        colorPie.setTransparentCircleAlpha(80);
+        colorPie.setElevation(10f);
+        colorPie.setHoleRadius(60f);
+        colorPie.setTransparentCircleRadius(61f);
+
+        // add a selection listener
+        colorPie.setOnChartValueSelectedListener(this);
+
+    }
+
+    private void setData(PieChart colorPie,int order,int color) {
+
+        ArrayList<PieEntry> entries = new ArrayList<PieEntry>();
+        float colorValue = color/255f;
+        entries.add(new PieEntry(colorValue, 0));
+        entries.add(new PieEntry(1-colorValue ,1));
+        // NOTE: The order of the entries when being added to the entries array determines their position around the center of
+        // the chart.
+
+//        colorPie.setCenterTextTypeface(mTfLight);
+        colorPie.setCenterTextColor(ColorTemplate.getHoloBlue());
+
+        PieDataSet dataSet = new PieDataSet(entries, "");
+        dataSet.setSliceSpace(3f);
+        dataSet.setSelectionShift(3f);
+
+        // add a lot of colors
+        ArrayList<Integer> colors = new ArrayList<Integer>();
+        colors.clear();
+        switch (order)
+        {
+            case 0:
+                colors.add(Color.argb(100,color, 0, 0));
+                colorPie.setCenterText("Red");
+                break;
+            case 1:
+                colors.add(Color.argb(100,0,color, 0));
+                colorPie.setCenterText("Green");
+                break;
+            case 2:
+                colors.add(Color.argb(100,0, 0,color));
+                colorPie.setCenterText("Blue");
+                break;
+        }
+        colors.add(Color.argb(80, 214, 214, 214));
+        dataSet.setColors(colors);
+
+        PieData data = new PieData(dataSet);
+        data.setValueFormatter(new PercentFormatter());
+        data.setValueTextSize(0f);
+        data.setValueTextColor(Color.WHITE);
+        colorPie.setData(data);
+
+        // undo all highlights
+        colorPie.highlightValues(null);
+
+        colorPie.invalidate();
+    }
 
     @Override
     public void onResume() {
@@ -408,4 +519,19 @@ public class ColorDetectionActivity extends AppCompatActivity {
             }
         }
     };
+
+    @Override
+    public void onValueSelected(Entry e, Highlight h) {
+
+        if (e == null)
+            return;
+        Log.i("VAL SELECTED",
+                "Value: " + e.getY() + ", index: " + h.getX()
+                        + ", DataSet index: " + h.getDataSetIndex());
+    }
+
+    @Override
+    public void onNothingSelected() {
+        Log.i("PieChart", "nothing selected");
+    }
 }

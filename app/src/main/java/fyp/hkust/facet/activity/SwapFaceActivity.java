@@ -1,23 +1,14 @@
 package fyp.hkust.facet.activity;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
-import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfFloat6;
-import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.imgproc.Subdiv2D;
-
-import java.util.Iterator;
-import java.util.Vector;
 
 import fyp.hkust.facet.R;
 
-import static org.opencv.core.Core.BORDER_REFLECT_101;
 import static org.opencv.imgproc.Imgproc.INTER_LINEAR;
 
 public class SwapFaceActivity extends AppCompatActivity {

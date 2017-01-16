@@ -1,1 +1,1 @@
-include ':app', ':openCVLibrary310', ':ringprogresslibrary'
+include ':app', ':openCVLibrary310'

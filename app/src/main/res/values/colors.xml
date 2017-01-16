@@ -7,6 +7,9 @@
     <color name="gradient_start">#1cbee8</color>
     <color name="gradient_end">#b3e1d8</color>
 
+    <color name="button_gradient_start">#42bcec</color>
+    <color name="button_gradient_end">#19e7d7</color>
+
     <color name="colorPrimaryText">#212121</color>
     <color name="colorSecondaryText">#727272</color>
     <color name="colorDivider">#B6B6B6</color>
@@ -17,6 +20,5 @@
     <color name="facebookBlue">#3c539a</color>
     <color name="googleRed">#e83417</color>
     <color name="sparkGreen">#00ce8e</color>
-
 
 </resources>

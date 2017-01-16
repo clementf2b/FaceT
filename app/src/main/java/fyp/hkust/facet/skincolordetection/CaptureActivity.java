@@ -2,27 +2,23 @@ package fyp.hkust.facet.skincolordetection;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.app.ActionBar;
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.TransitionDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -34,23 +30,15 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.nhaarman.supertooltips.ToolTip;
 import com.nhaarman.supertooltips.ToolTipRelativeLayout;
 import com.nhaarman.supertooltips.ToolTipView;
 import com.roger.gifloadinglibrary.GifLoadingView;
 
-import cn.pedant.SweetAlert.SweetAlertDialog;
-import fyp.hkust.facet.R;
-import fyp.hkust.facet.activity.MainActivity;
-import fyp.hkust.facet.activity.MainMenuActivity;
-import fyp.hkust.facet.catloadinglibrary.CatLoadingView;
-
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
-import org.opencv.android.Utils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
@@ -59,17 +47,16 @@ import org.opencv.imgproc.Imgproc;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+import fyp.hkust.facet.R;
+import fyp.hkust.facet.activity.MainMenuActivity;
 import fyp.hkust.facet.whiteBalance.algorithms.grayWorld.GrayWorld;
 import fyp.hkust.facet.whiteBalance.algorithms.histogramStretching.HistogramStretching;
 import fyp.hkust.facet.whiteBalance.algorithms.improvedWP.ImprovedWP;
 import id.zelory.compressor.Compressor;
 import me.shaohui.advancedluban.Luban;
-
-
-import static android.graphics.Bitmap.createScaledBitmap;
 
 public class CaptureActivity extends AppCompatActivity implements View.OnClickListener, ToolTipView.OnToolTipViewClickedListener {
 
@@ -93,7 +80,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
     private int scaledHeight = 0;
     private int scaledWidth = 0;
     private int taskCounter;
-    private int photoQuality = 20;
+    private int photoQuality = 15;
     private int selectPhoto = 0;
 
     private Bitmap scaledBitmap;
@@ -175,9 +162,9 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        float width = size.x * 0.6f;
+        float width = size.x * 0.7f;
         float height = size.y * 0.6f;
-        mImgResult.setPadding((int) (size.x * 0.20), (int) (size.y * 0.05), (int) (size.x * 0.20), (int) (size.y * 0.05));
+        mImgResult.setPadding((int) (size.x * 0.15), (int) (size.y * 0.05), (int) (size.x * 0.15), (int) (size.y * 0.05));
         if (comeFromActivity.equals("ShowCameraViewActivity")) {
             width = size.x * 0.7f;
             height = size.y * 0.7f;
