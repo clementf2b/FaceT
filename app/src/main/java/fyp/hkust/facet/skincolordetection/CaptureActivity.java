@@ -351,7 +351,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         super.onResume();
         if (!OpenCVLoader.initDebug()) {
             Log.d("OpenCV", "Internal OpenCV library not found. Using OpenCV Manager for initialization");
-            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, mLoaderCallback);
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_1_0, this, mLoaderCallback);
         } else {
             Log.d("OpenCV", "OpenCV library found inside package. Using it!");
             mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);

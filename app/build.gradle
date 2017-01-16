@@ -17,6 +17,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    sourceSets { main { jni.srcDirs = ['src/main/jni', 'src/main/jniLibs/'] } }
 }
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
@@ -29,10 +30,8 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:24.0.0'
     compile 'com.google.android.gms:play-services-auth:9.8.0'
     compile 'com.google.android.gms:play-services:9.8.0'
-
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'io.reactivex:rxjava:1.1.6'
-
     // FirebaseUI Database only
     compile 'com.google.firebase:firebase-auth:9.8.0'
     compile 'com.google.firebase:firebase-database:9.8.0'
@@ -51,21 +50,19 @@ dependencies {
     //circle image
     compile 'de.hdodenhof:circleimageview:1.3.0'
     compile 'me.spark:submitbutton:1.0.1'
-
     //animation library
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.daimajia.easing:library:1.0.1@aar'
     compile 'com.daimajia.androidanimations:library:1.1.3@aar'
     compile 'com.roger.gifloadinglibrary:gifloadinglibrary:1.0.0'
-
     //hint library
     compile 'com.nhaarman.supertooltips:library:3.0.+'
     //sweet alert
     compile 'cn.pedant.sweetalert:library:1.3'
-
-    compile(name: 'openCVLibrary310-release', ext: 'aar')
-
     testCompile 'junit:junit:4.12'
+
+    compile project(':openCVLibrary310')
+    compile project(':ringprogresslibrary')
 }
 
 apply plugin: 'com.google.gms.google-services'

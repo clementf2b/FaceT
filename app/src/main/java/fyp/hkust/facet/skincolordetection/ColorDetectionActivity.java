@@ -12,7 +12,10 @@ import android.view.Display;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.roger.gifloadinglibrary.GifLoadingView;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
@@ -30,10 +33,12 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Random;
 
 import fyp.hkust.facet.R;
 
@@ -45,7 +50,6 @@ public class ColorDetectionActivity extends AppCompatActivity {
     private static final Scalar FACE_RECT_COLOR     = new Scalar(0, 255, 0, 255);
     public static final int        JAVA_DETECTOR       = 0;
 
-    private ProgressBar waitingCircle;
     private Bitmap originalBitmap;
 
     private int                    mDetectorType       = JAVA_DETECTOR;
@@ -55,7 +59,7 @@ public class ColorDetectionActivity extends AppCompatActivity {
 
     private CascadeClassifier      mJavaEyeDetector;
 
-
+    private TextView color_result_text;
     private ImageView o_image, gray_image;
 
     private int scaledHeight = 0;
@@ -83,7 +87,9 @@ public class ColorDetectionActivity extends AppCompatActivity {
     int avg_cr = 155;//YCbCr顏色空間膚色cr的平均值
     int skinRange = 22;//YCbCr顏色空間膚色的範圍
 
-    int progressStatus = 0;
+    private GifLoadingView mColorDetectView;
+    private int n;
+    private Bitmap bmp;
     protected static final int STOP = 0x10000;
 
 
@@ -98,7 +104,12 @@ public class ColorDetectionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_color_detection);
 
         // Load native library after(!) OpenCV initialization
-//        System.loadLibrary("opencv_java3");
+        if (!OpenCVLoader.initDebug()) {
+            Log.d(TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_1_0, this, mLoaderCallback);
+        }
+
+        color_result_text = (TextView) findViewById(R.id.color_result_text);
 
         try {
             // load cascade file from application resources
@@ -128,50 +139,47 @@ public class ColorDetectionActivity extends AppCompatActivity {
 
             cascadeDir.delete();
 
-//            InputStream is2 = getResources().openRawResource(R.raw.haarcascade_eye);
-//            File haarcascadeDir = getDir("haarcascade", Context.MODE_PRIVATE);
-//            String xmlDFName = "haarcascade_eye.xml";
-//            mHaarCascadeEyeFile = new File(haarcascadeDir, xmlDFName);
-//            FileOutputStream os2 = new FileOutputStream(mHaarCascadeEyeFile);
-//            byte[] buffer2 = new byte[4096];
-//            int bytesRead2;
-//            while((bytesRead2 = is2.read(buffer)) != -1) {
-//                os2.write(buffer, 0, bytesRead2);
-//            }
-//            is2.close();
-//            os2.close();
-//            mJavaEyeDetector = new CascadeClassifier(mHaarCascadeEyeFile.getAbsolutePath());
-//            if(mJavaEyeDetector.empty()) {
-//                Log.e(TAG, "Failed to load cascade classifier");
-//                mJavaEyeDetector = null;
-//            } else {
-//                Log.i(TAG, "Loaded cascade classifier from " + mHaarCascadeEyeFile.getAbsolutePath());
-//            }
-
-
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(TAG, "Failed to load cascade. Exception thrown: " + e);
         }
 
+        bmp = null;
+        String filename = getIntent().getStringExtra("image");
+        try {
+            FileInputStream is = this.openFileInput(filename);
+            bmp = BitmapFactory.decodeStream(is);
+            is.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        waitingCircle = (ProgressBar) findViewById(R.id.progressBar);
 
         try {
-            waitingCircle.setVisibility(View.VISIBLE);
-            originalBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.test2);
+//            originalBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.test2);
+            //get the image from intent
+            Random rand = new Random();
+            n = rand.nextInt(11) + 1;
+            //12 is the maximum and the 1 is our minimum
+            /*recycling unused objects in order to
+            make the memory they currently occupy available for quick reuse.*/
+            System.gc();
+            int id = getResources().getIdentifier("num" + n, "drawable", getPackageName());
+            mColorDetectView = new GifLoadingView();
+            mColorDetectView.setBackgroundResource(id);
+            mColorDetectView.show(getFragmentManager(), "");
+            mColorDetectView.setCancelable(false);
+            mColorDetectView.setDimming(true);
+            mColorDetectView.setRadius(1);
+
+            originalBitmap = bmp;
             changeDimensions();
             scaledBitmap = createScaledBitmap(originalBitmap, scaledWidth, scaledHeight, false);
             convertedBitmap = scaledBitmap;
-            o_image = (ImageView) findViewById(R.id.org_image);
             gray_image = (ImageView) findViewById(R.id.gray_image);
 
             // o_image.setImageBitmap(scaledBitmap);
             gray_image.setImageBitmap(convertedBitmap);
-
-            // 獲取耗時的完成百分比
-            progressStatus = 100;
-            waitingCircle.setVisibility(View.GONE);
 
             Mat demo = new Mat();
             Utils.bitmapToMat(convertedBitmap,demo);
@@ -276,6 +284,8 @@ public class ColorDetectionActivity extends AppCompatActivity {
 
             //Add a Toast to display the HSV color
             Log.i(TAG, "HSV = " + mBlobColorHsv.val[0] + " , " + mBlobColorHsv.val[1] + " , "+ mBlobColorHsv.val[2] + "");
+            // show the average color in textview
+            color_result_text.setText("HSV = [ " + mBlobColorHsv.val[0] + " , " + mBlobColorHsv.val[1] + " , "+ mBlobColorHsv.val[2] + " ]");
             Log.i(TAG, "Touched rgba color: (" + mBlobColorRgba.val[0] + ", " + mBlobColorRgba.val[1] +
                     ", " + mBlobColorRgba.val[2] + ", " + mBlobColorRgba.val[3] + ")");
 
@@ -288,20 +298,23 @@ public class ColorDetectionActivity extends AppCompatActivity {
             touchedRegionRgba.release();
             touchedRegionHsv.release();
 
-//            if (mIsColorSelected) {
-//                mDetector.process(demo);
-//                List<MatOfPoint> contours = mDetector.getContours();
-//                Log.e(TAG, "Contours count: " + contours.size());
-//                Imgproc.drawContours(demo, contours, -1, CONTOUR_COLOR);
-//
-//                Mat colorLabel = demo.submat(4, 68, 4, 68);
-//                colorLabel.setTo(mBlobColorRgba);
-//
-//                Mat spectrumLabel = demo.submat(4, 4 + mSpectrum.rows(), 70, 70 + mSpectrum.cols());
-//                mSpectrum.copyTo(spectrumLabel);
-//            }
-//            Utils.matToBitmap(demo,convertedBitmap);
-//            gray_image.setImageBitmap(convertedBitmap);
+            if (mIsColorSelected) {
+                mDetector.process(demo);
+                List<MatOfPoint> contours = mDetector.getContours();
+                Log.e(TAG, "Contours count: " + contours.size());
+                Imgproc.drawContours(demo, contours, -1, CONTOUR_COLOR);
+
+                Mat colorLabel = demo.submat(4, 68, 4, 68);
+                colorLabel.setTo(mBlobColorRgba);
+
+                Mat spectrumLabel = demo.submat(4, 4 + mSpectrum.rows(), 70, 70 + mSpectrum.cols());
+                mSpectrum.copyTo(spectrumLabel);
+            }
+            Utils.matToBitmap(demo,convertedBitmap);
+            gray_image.setImageBitmap(convertedBitmap);
+
+            //end of the color detection and dismiss the progress bar
+            mColorDetectView.dismiss();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -315,7 +328,7 @@ public class ColorDetectionActivity extends AppCompatActivity {
 
         if (!OpenCVLoader.initDebug()) {
             Log.d(TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
-            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, mLoaderCallback);
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_1_0, this, mLoaderCallback);
         } else {
             Log.d(TAG, "OpenCV library found inside package. Using it!");
             mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
