@@ -29,6 +29,7 @@ import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.jgabrielfreitas.core.BlurImageView;
 import com.roger.gifloadinglibrary.GifLoadingView;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -55,6 +56,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.util.FontAwesomeManager;
 import fyp.hkust.facet.util.FontManager;
@@ -76,8 +78,8 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
 
     private CascadeClassifier      mJavaEyeDetector;
 
-    private TextView color_result_text;
-    private ImageView o_image, gray_image;
+//    private TextView color_result_text;
+    private ImageView gray_image;
 
     private int scaledHeight = 0;
     private int scaledWidth = 0;
@@ -130,12 +132,12 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
         Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
         FontManager.markAsIconContainer(findViewById(R.id.activity_color_detection), fontType);
 
-        color_result_text = (TextView) findViewById(R.id.color_result_text);
+//        color_result_text = (TextView) findViewById(R.id.color_result_text);
         rPieChart = (PieChart) findViewById(R.id.r_chart);
         gPieChart = (PieChart) findViewById(R.id.g_chart);
         bPieChart = (PieChart) findViewById(R.id.b_chart);
 
-        color_result_text.setVisibility(View.INVISIBLE);
+//        color_result_text.setVisibility(View.INVISIBLE);
 
 //        mTfLight = Typeface.createFromAsset(getAssets(), "OpenSans-Light.ttf");
 
@@ -205,10 +207,9 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
             scaledBitmap = createScaledBitmap(originalBitmap, scaledWidth, scaledHeight, false);
             convertedBitmap = scaledBitmap;
             gray_image = (ImageView) findViewById(R.id.gray_image);
-
+//            grayImageBg = (BlurImageView) findViewById(R.id.gray_image_bg);
             // o_image.setImageBitmap(scaledBitmap);
             gray_image.setImageBitmap(convertedBitmap);
-
             Mat demo = new Mat();
             Utils.bitmapToMat(convertedBitmap,demo);
             Mat gray_demo = new Mat();
@@ -313,7 +314,7 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
             //Add a Toast to display the HSV color
             Log.i(TAG, "HSV = " + mBlobColorHsv.val[0] + " , " + mBlobColorHsv.val[1] + " , "+ mBlobColorHsv.val[2] + "");
             // show the average color in textview
-            color_result_text.setText("HSV = [ " + mBlobColorHsv.val[0] + " , " + mBlobColorHsv.val[1] + " , "+ mBlobColorHsv.val[2] + " ]");
+//            color_result_text.setText("HSV = [ " + mBlobColorHsv.val[0] + " , " + mBlobColorHsv.val[1] + " , "+ mBlobColorHsv.val[2] + " ]");
             Log.i(TAG, "Touched rgba color: (" + mBlobColorRgba.val[0] + ", " + mBlobColorRgba.val[1] +
                     ", " + mBlobColorRgba.val[2] + ", " + mBlobColorRgba.val[3] + ")");
 

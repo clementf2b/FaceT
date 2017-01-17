@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/activity_login"
+    android:id="@+id/activity_login_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
@@ -11,6 +11,7 @@
     android:paddingTop="@dimen/activity_horizontal_margin"
     android:background="@drawable/background_dark"
     tools:context="fyp.hkust.facet.activity.LoginActivity"
+
     >
 
     <Button

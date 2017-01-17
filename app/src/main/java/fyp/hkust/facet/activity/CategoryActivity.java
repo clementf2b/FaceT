@@ -1,6 +1,7 @@
 package fyp.hkust.facet.activity;
 
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,6 +19,7 @@ import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 
 import fyp.hkust.facet.R;
+import fyp.hkust.facet.util.FontManager;
 
 public class CategoryActivity extends AppCompatActivity {
 
@@ -38,6 +40,8 @@ public class CategoryActivity extends AppCompatActivity {
         delayAction(1000,Techniques.SlideInLeft,500,R.id.category_Eyes);
         delayAction(1500,Techniques.SlideInLeft,500,R.id.category_Lips);
         //end layout animation
+        Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
+        FontManager.markAsIconContainer(findViewById(R.id.activity_category_layout), fontType);
 
         //start
 

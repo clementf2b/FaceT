@@ -47,6 +47,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.util.FontAwesomeManager;
+import fyp.hkust.facet.util.FontManager;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -85,8 +86,8 @@ public class LoginActivity extends AppCompatActivity {
         getSupportActionBar().setLogo(R.mipmap.app_icon);
         getSupportActionBar().setDisplayUseLogoEnabled(true);
 
-        Typeface iconFont = FontAwesomeManager.getTypeface(getApplicationContext(), FontAwesomeManager.FONTAWESOME);
-        FontAwesomeManager.markAsIconContainer(findViewById(R.id.activity_login), iconFont);
+        Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
+        FontManager.markAsIconContainer(findViewById(R.id.activity_login_layout), fontType);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Window window = getWindow();

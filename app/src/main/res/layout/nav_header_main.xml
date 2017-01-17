@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="190dp"
     android:background="@drawable/listgrad"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:id="@+id/nav_header_main_layout">
 
     <de.hdodenhof.circleimageview.CircleImageView
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -11,7 +12,6 @@
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:src="@mipmap/app_icon"
-        app:border_color="#FF000000"
         android:layout_marginLeft="24dp"
         android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"

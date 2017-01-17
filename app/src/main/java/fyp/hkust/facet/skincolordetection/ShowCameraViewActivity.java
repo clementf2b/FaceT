@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
@@ -50,6 +51,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import fyp.hkust.facet.R;
+import fyp.hkust.facet.util.FontManager;
 
 //AppCompatActivity
 public class ShowCameraViewActivity extends Activity implements CvCameraViewListener2, View.OnTouchListener,View.OnClickListener,ToolTipView.OnToolTipViewClickedListener {
@@ -122,6 +124,9 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
         setContentView(R.layout.activity_show_camera_view);
 
         windowManager = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+
+        Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
+        FontManager.markAsIconContainer(findViewById(R.id.activity_show_camera_view_layout), fontType);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {

@@ -1,5 +1,6 @@
 package fyp.hkust.facet.activity;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
@@ -8,6 +9,7 @@ import org.opencv.core.MatOfPoint2f;
 import org.opencv.imgproc.Imgproc;
 
 import fyp.hkust.facet.R;
+import fyp.hkust.facet.util.FontManager;
 
 import static org.opencv.imgproc.Imgproc.INTER_LINEAR;
 
@@ -17,7 +19,11 @@ public class SwapFaceActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_swap_face);
+
+        Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
+        FontManager.markAsIconContainer(findViewById(R.id.activity_swap_face_layout), fontType);
     }
+
 
     // Apply affine transform calculated using srcTri and dstTri to src
     void applyAffineTransform(Mat warpImage, Mat src, MatOfPoint2f srcTri, MatOfPoint2f dstTri)

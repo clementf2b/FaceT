@@ -6,6 +6,7 @@
     android:layout_height="@dimen/product_card_view_height"
     card_view:cardPreventCornerOverlap="false"
     app:cardElevation="0dp"
+    android:id="@+id/product_row_layout"
     >
 
     <RelativeLayout

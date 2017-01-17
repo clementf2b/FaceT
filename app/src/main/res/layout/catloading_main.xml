@@ -3,7 +3,8 @@
     android:layout_width="180dp"
     android:layout_height="210dp"
     android:background="@drawable/background"
-    tools:context=".activity.MainActivity">
+    tools:context=".activity.MainActivity"
+    android:id="@+id/catloading_main_layout">
 
     <ImageView
         android:layout_centerInParent="true"

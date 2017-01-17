@@ -3,6 +3,7 @@ package fyp.hkust.facet.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -40,6 +41,7 @@ import com.squareup.picasso.Picasso;
 import fyp.hkust.facet.Product;
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.User;
+import fyp.hkust.facet.util.FontManager;
 
 public class AccountActivity extends AppCompatActivity{
 
@@ -68,6 +70,8 @@ public class AccountActivity extends AppCompatActivity{
         setContentView(R.layout.activity_account);
 
         //start
+        Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
+        FontManager.markAsIconContainer(findViewById(R.id.account_main_layout), fontType);
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setBackground(new ColorDrawable(Color.parseColor("#00000000")) );

@@ -6,8 +6,11 @@ import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
@@ -15,12 +18,15 @@ import android.graphics.Point;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
+import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -57,11 +63,14 @@ import java.util.Random;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.activity.MainMenuActivity;
+import fyp.hkust.facet.util.FontManager;
 import fyp.hkust.facet.whiteBalance.algorithms.grayWorld.GrayWorld;
 import fyp.hkust.facet.whiteBalance.algorithms.histogramStretching.HistogramStretching;
 import fyp.hkust.facet.whiteBalance.algorithms.improvedWP.ImprovedWP;
 import id.zelory.compressor.Compressor;
 import me.shaohui.advancedluban.Luban;
+
+import static android.support.v4.app.NotificationCompat.PRIORITY_HIGH;
 
 public class CaptureActivity extends AppCompatActivity implements View.OnClickListener, ToolTipView.OnToolTipViewClickedListener {
 
@@ -100,6 +109,8 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
     private ToolTipRelativeLayout toolTipRelativeLayout;
     private int n;
     private GifLoadingView mView;
+    private Handler handler; // declared before onCreate
+    private Runnable myRunnable;
 
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
@@ -115,6 +126,10 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.black)));
+
+
+        Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
+        FontManager.markAsIconContainer(findViewById(R.id.activity_color_detection), fontType);
 
         verifyStoragePermissions(this);
         intent = this.getIntent();
@@ -207,13 +222,12 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
             mView.setDimming(true);
             mView.setRadius(1);
 
-            MyTask myTask1 = new MyTask(this, 1);
+            final MyTask myTask1 = new MyTask(this, 1);
             myTask1.execute();
-            MyTask myTask2 = new MyTask(this, 2);
+            final MyTask myTask2 = new MyTask(this, 2);
             StartAsyncTaskInParallel(myTask2);
-            MyTask myTask3 = new MyTask(this, 3);
+            final MyTask myTask3 = new MyTask(this, 3);
             StartAsyncTaskInParallel(myTask3);
-
 
         } catch (Exception obj) {
 
@@ -432,61 +446,6 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
     }
 
-//    private Thread t1 = null;
-//    private Thread t2 = null;
-//    private Thread t3 = null;
-//
-//    private void initThreads() {
-//        Log.i(TAG, "Initializing Threads...");
-//        mView = new CatLoadingView();
-//        mView.setCancelable(false);
-//        mView.show(getSupportFragmentManager().beginTransaction(), "");
-//        convertedBitmaps = new ArrayList<Bitmap>(5);
-//        t1 = new Thread(new Runnable() {
-//
-//            @Override
-//            public void run() {
-//                Log.i(TAG, "Starting T1.");
-//                convertedBitmaps.add(compressedBitmap);
-//                GrayWorld grayWorld = new GrayWorld(compressedBitmap);
-//                convertedBitmaps.add(grayWorld.getConvertedBitmap());
-//                imageButtons[1].setImageBitmap(convertedBitmaps.get(1));
-//                Log.i(TAG, "Finishing T1.");
-//            }
-//        });
-//
-//        t2 = new Thread(new Runnable() {
-//
-//            @Override
-//            public void run() {
-//                Log.i(TAG, "Starting T2.");
-//                HistogramStretching histogramStretching = new HistogramStretching(compressedBitmap);
-//                convertedBitmaps.add(histogramStretching.getConvertedBitmap());
-//                imageButtons[2].setImageBitmap(convertedBitmaps.get(2));
-//                Log.i(TAG, "Finishing T2.");
-//            }
-//        });
-//
-//        t3 = new Thread(new Runnable() {
-//
-//            @Override
-//            public void run() {
-//                Log.i(TAG, "Starting T3.");
-//                ImprovedWP improvedWP = new ImprovedWP(compressedBitmap);
-//                convertedBitmaps.add(improvedWP.getConvertedBitmap());
-//                imageButtons[3].setImageBitmap(convertedBitmaps.get(3));
-//                Log.i(TAG, "Finishing T3.");
-//            }
-//        });
-//
-//        t1.start();
-//        t2.start();
-//        t3.start();
-//        mImgResult.setImageBitmap(compressedBitmap);
-//        imageButtons[0].setImageBitmap(compressedBitmap);
-//        mView.dismiss();
-//    }
-
     private class MyTask extends AsyncTask<String, Integer, Integer> {
         int number;
         private String content = null;
@@ -505,46 +464,21 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
 
         }
 
-        private void overrideFonts(final Context context, final View v) {
-            try {
-                if (v instanceof ViewGroup) {
-                    ViewGroup vg = (ViewGroup) v;
-                    for (int i = 0; i < vg.getChildCount(); i++) {
-                        View child = vg.getChildAt(i);
-                        overrideFonts(context, child);
-                    }
-                } else if (v instanceof TextView ) {
-                    ((TextView) v).setTypeface(Typeface.createFromAsset(context.getAssets(), "font.ttf"));
-                }
-            } catch (Exception e) {
-            }
-        }
+        private void createNotification(Context context, String message) {
+            Intent notificationIntent = new Intent(context, CaptureActivity.class);
+            notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+            PendingIntent intent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
 
-        private void createNotification(String contentTitle, String contentText) {
-
-            //Build the notification using Notification.Builder
-            Notification.Builder builder = new Notification.Builder(mContext)
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
                     .setSmallIcon(R.mipmap.app_icon)
-                    .setAutoCancel(true)
-                    .setContentTitle(contentTitle)
-                    .setContentText(contentText);
-
-            Intent intent = new Intent(mContext, CaptureActivity.class);
-            intent.setAction(Intent.ACTION_MAIN);
-            intent.addCategory(Intent.CATEGORY_LAUNCHER);
-
-            PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0,
-                    intent, 0);
-            builder.setContentIntent(pendingIntent);
-
-            //Get current notification
-            mNotification = builder.getNotification();
-
-            //Show the notification
-            mNotificationManager.notify(NOTIFICATION_ID, mNotification);
-
+                    .setContentTitle(context.getString(R.string.app_name))
+                    .setContentIntent(intent)
+                    .setPriority(PRIORITY_HIGH) //private static final PRIORITY_HIGH = 5;
+                    .setContentText(message)
+                    .setAutoCancel(true);
+            NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager.notify(0, mBuilder.build());
         }
-
 
         @Override
         protected Integer doInBackground(String... param) {
@@ -590,10 +524,9 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
             if (error) {
-                createNotification("Image Processing ended abnormally!", content);
+                createNotification(CaptureActivity.this, "Image Processing ended abnormally!");
 
-            } else
-            {
+            } else {
                 Log.d("taskcounter :", taskCounter + "");
                 mImgResult.setImageBitmap(compressedBitmap);
                 imageButtons[0].setImageBitmap(compressedBitmap);
@@ -614,9 +547,10 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
 //                    convertNumber.add(taskCounter-1);
                         break;
                 }
-                createNotification("Image processing is complete!", "");
-                Toast.makeText(mContext,"Image processing is complete!",Toast.LENGTH_SHORT).show();
+                createNotification(CaptureActivity.this, "Image processing is complete!");
+                Toast.makeText(mContext, "Image processing is complete!", Toast.LENGTH_SHORT).show();
             }
+
 
 //            demo= new Mat();
 //            Utils.bitmapToMat(convertedBitmaps[1],demo);
@@ -637,7 +571,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            createNotification("Image is in progress", "");
+            createNotification(CaptureActivity.this, "Image is in progress");
         }
     }
 

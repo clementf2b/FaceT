@@ -3,9 +3,11 @@ package fyp.hkust.facet.activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +21,7 @@ import android.widget.Toast;
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.skincolordetection.CaptureActivity;
 import fyp.hkust.facet.skincolordetection.ShowCameraViewActivity;
+import fyp.hkust.facet.util.FontManager;
 
 public class MainMenuActivity extends AppCompatActivity {
 
@@ -42,6 +45,8 @@ public class MainMenuActivity extends AppCompatActivity {
                     WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
                     WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
+        Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
+        FontManager.markAsIconContainer(findViewById(R.id.activity_main_menu_layout), fontType);
 
         photoCameraBtn = (ImageButton) findViewById(R.id.photo_camera);
         shoppingBtn = (ImageButton) findViewById(R.id.shopping_button);
@@ -123,11 +128,9 @@ public class MainMenuActivity extends AppCompatActivity {
 
         if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri pickedImage = data.getData();
+            Log.d(TAG, "selected!!!" + " : " + pickedImage.getPath());
             // Let's read picked image path using content resolver
-            String[] filePath = { MediaStore.Images.Media.DATA };
-            Cursor cursor = getContentResolver().query(pickedImage, filePath, null, null, null);
-            cursor.moveToFirst();
-            String imagePath = cursor.getString(cursor.getColumnIndex(filePath[0]));
+            String imagePath= getRealPathFromURI(pickedImage);
             Log.d(TAG + "Path:" , imagePath);
             Intent intent = new Intent();
             intent.setClass(MainMenuActivity.this,CaptureActivity.class);
@@ -135,6 +138,30 @@ public class MainMenuActivity extends AppCompatActivity {
             //intent.putExtra("color" , "" + mBlobColorHsv);
             startActivity(intent);
         }
+    }
+    public String getRealPathFromURI(Uri contentUri) {
+        String filePath = "";
+        String wholeID = DocumentsContract.getDocumentId(contentUri);
+
+        // Split at colon, use second item in the array
+        String id = wholeID.split(":")[1];
+
+        String[] column = { MediaStore.Images.Media.DATA };
+
+        // where id is equal to
+        String sel = MediaStore.Images.Media._ID + "=?";
+
+        Cursor cursor = this.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                column, sel, new String[]{ id }, null);
+
+        assert cursor != null;
+        int columnIndex = cursor.getColumnIndex(column[0]);
+
+        if (cursor.moveToFirst()) {
+            filePath = cursor.getString(columnIndex);
+        }
+        cursor.close();
+        return filePath;
     }
 
 }

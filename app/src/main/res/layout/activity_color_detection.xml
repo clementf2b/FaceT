@@ -7,28 +7,25 @@
     android:layout_height="match_parent"
     tools:context="fyp.hkust.facet.skincolordetection.ColorDetectionActivity">
 
-    <TextView
-        android:id="@+id/color_result_text"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/gray_image" />
-
-    <ImageView
-        android:id="@+id/gray_image"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:contentDescription="Result"
-        app:srcCompat="@mipmap/ic_launcher" />
+        android:layout_height="330dp"
+        android:id="@+id/gray_image_layout"
+        >
+        <ImageView
+            android:id="@+id/gray_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="Result" />
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/report_btn"
-        android:layout_below="@+id/color_result_text"
+        android:layout_below="@+id/gray_image_layout"
         android:orientation="horizontal">
 
         <RelativeLayout
