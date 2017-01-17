@@ -3,6 +3,9 @@ package fyp.hkust.facet.skincolordetection;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -30,6 +33,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.nhaarman.supertooltips.ToolTip;
 import com.nhaarman.supertooltips.ToolTipRelativeLayout;
@@ -202,11 +206,11 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
             mView.setDimming(true);
             mView.setRadius(1);
 
-            MyTask myTask1 = new MyTask(1);
+            MyTask myTask1 = new MyTask(this, 1);
             myTask1.execute();
-            MyTask myTask2 = new MyTask(2);
+            MyTask myTask2 = new MyTask(this, 2);
             StartAsyncTaskInParallel(myTask2);
-            MyTask myTask3 = new MyTask(3);
+            MyTask myTask3 = new MyTask(this, 3);
             StartAsyncTaskInParallel(myTask3);
 
 
@@ -261,7 +265,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         // Check if we have write permission
         int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (permission != PackageManager.PERMISSION_GRANTED) {
-        // We don't have permission so prompt the user
+            // We don't have permission so prompt the user
             ActivityCompat.requestPermissions(
                     activity,
                     PERMISSIONS_STORAGE,
@@ -343,6 +347,12 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
             Log.d("OpenCV", "OpenCV library found inside package. Using it!");
             mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
     }
 
     @Override
@@ -478,35 +488,79 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
 
     private class MyTask extends AsyncTask<String, Integer, Integer> {
         int number;
+        private String content = null;
+        private boolean error = false;
+        Context mContext;
+        int NOTIFICATION_ID = 1;
+        Notification mNotification;
+        NotificationManager mNotificationManager;
 
-        public MyTask(int target) {
+        public MyTask(Context context, int target) {
+
+            this.mContext = context;
             number = target;
+            //Get the notification manager
+            mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+
         }
+
+        private void createNotification(String contentTitle, String contentText) {
+
+            //Build the notification using Notification.Builder
+            Notification.Builder builder = new Notification.Builder(mContext)
+                    .setSmallIcon(R.mipmap.app_icon)
+                    .setAutoCancel(true)
+                    .setContentTitle(contentTitle)
+                    .setContentText(contentText);
+
+            Intent intent = new Intent(mContext, CaptureActivity.class);
+            intent.setAction(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+
+            PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0,
+                    intent, 0);
+            builder.setContentIntent(pendingIntent);
+
+            //Get current notification
+            mNotification = builder.getNotification();
+
+            //Show the notification
+            mNotificationManager.notify(NOTIFICATION_ID, mNotification);
+
+        }
+
 
         @Override
         protected Integer doInBackground(String... param) {
-            convertedBitmaps = new ArrayList<Bitmap>(5);
-            if(!convertedBitmaps.contains(compressedBitmap))
-            {
-                convertedBitmaps.add(compressedBitmap);
-            }
 
-            switch (number) {
-                case 1:
-                    GrayWorld grayWorld = new GrayWorld(compressedBitmap);
-                    convertedBitmaps.add(grayWorld.getConvertedBitmap());
-                    break;
-                case 2:
-                    HistogramStretching histogramStretching = new HistogramStretching(compressedBitmap);
-                    convertedBitmaps.add(histogramStretching.getConvertedBitmap());
-                    break;
-                case 3:
-                    ImprovedWP improvedWP = new ImprovedWP(compressedBitmap);
-                    convertedBitmaps.add(improvedWP.getConvertedBitmap());
-                    break;
+            try {
+                convertedBitmaps = new ArrayList<Bitmap>(5);
+                if (!convertedBitmaps.contains(compressedBitmap)) {
+                    convertedBitmaps.add(compressedBitmap);
+                }
+
+                switch (number) {
+                    case 1:
+                        GrayWorld grayWorld = new GrayWorld(compressedBitmap);
+                        convertedBitmaps.add(grayWorld.getConvertedBitmap());
+                        break;
+                    case 2:
+                        HistogramStretching histogramStretching = new HistogramStretching(compressedBitmap);
+                        convertedBitmaps.add(histogramStretching.getConvertedBitmap());
+                        break;
+                    case 3:
+                        ImprovedWP improvedWP = new ImprovedWP(compressedBitmap);
+                        convertedBitmaps.add(improvedWP.getConvertedBitmap());
+                        break;
+                }
+                Log.d("Finish Task", "");
+                taskCounter++;
+            } catch (Exception e) {
+                Log.w("HTTP4:", e);
+                content = e.getMessage();
+                error = true;
+                cancel(true);
             }
-            Log.d("Finish Task", "");
-            taskCounter++;
 //            convertedBitmaps = new Bitmap[] {
 //                    scaledBitmap,
 //                    histogramStretching.getConvertedBitmap(),
@@ -519,27 +573,35 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         @Override
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
+            if (error) {
+                createNotification("Image Processing ended abnormally!", content);
 
-            Log.d("taskcounter :", taskCounter + "");
-            mImgResult.setImageBitmap(compressedBitmap);
-            imageButtons[0].setImageBitmap(compressedBitmap);
-            selectEffect(imageButtons[0], textViews[0]);
-            switch (number) {
-                case 1:
-                    imageButtons[1].setImageBitmap(convertedBitmaps.get(taskCounter - 1));
-                    mView.dismiss();
+            } else
+            {
+                Log.d("taskcounter :", taskCounter + "");
+                mImgResult.setImageBitmap(compressedBitmap);
+                imageButtons[0].setImageBitmap(compressedBitmap);
+                selectEffect(imageButtons[0], textViews[0]);
+                switch (number) {
+                    case 1:
+                        imageButtons[1].setImageBitmap(convertedBitmaps.get(taskCounter - 1));
+                        mView.dismiss();
 //                    convertNumber.add(taskCounter-1);
-                    break;
-                case 2:
-                    imageButtons[2].setImageBitmap(convertedBitmaps.get(taskCounter - 1));
+                        break;
+                    case 2:
+                        imageButtons[2].setImageBitmap(convertedBitmaps.get(taskCounter - 1));
 //                    convertNumber.add(taskCounter-1);
 
-                    break;
-                case 3:
-                    imageButtons[3].setImageBitmap(convertedBitmaps.get(taskCounter - 1));
+                        break;
+                    case 3:
+                        imageButtons[3].setImageBitmap(convertedBitmaps.get(taskCounter - 1));
 //                    convertNumber.add(taskCounter-1);
-                    break;
+                        break;
+                }
+                createNotification("Image processing is complete!", "");
+                Toast.makeText(mContext,"Image processing is complete!",Toast.LENGTH_SHORT).show();
             }
+
 //            demo= new Mat();
 //            Utils.bitmapToMat(convertedBitmaps[1],demo);
 //            Mat gray_demo = new Mat();
@@ -559,10 +621,9 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-
+            createNotification("Image is in progress", "");
         }
     }
-
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void StartAsyncTaskInParallel(MyTask task) {
