@@ -56,6 +56,8 @@ import java.util.List;
 import java.util.Random;
 
 import fyp.hkust.facet.R;
+import fyp.hkust.facet.util.FontAwesomeManager;
+import fyp.hkust.facet.util.FontManager;
 
 import static android.graphics.Bitmap.createScaledBitmap;
 
@@ -124,6 +126,9 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
             Log.d(TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_1_0, this, mLoaderCallback);
         }
+
+        Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
+        FontManager.markAsIconContainer(findViewById(R.id.activity_color_detection), fontType);
 
         color_result_text = (TextView) findViewById(R.id.color_result_text);
         rPieChart = (PieChart) findViewById(R.id.r_chart);
