@@ -1,19 +1,25 @@
 package fyp.hkust.facet.skincolordetection;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,6 +64,8 @@ import java.util.Random;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import fyp.hkust.facet.R;
+import fyp.hkust.facet.activity.LoginActivity;
+import fyp.hkust.facet.activity.MainMenuActivity;
 import fyp.hkust.facet.util.FontAwesomeManager;
 import fyp.hkust.facet.util.FontManager;
 
@@ -128,6 +136,7 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
             Log.d(TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_1_0, this, mLoaderCallback);
         }
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
         FontManager.markAsIconContainer(findViewById(R.id.activity_color_detection), fontType);
@@ -355,6 +364,12 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp(){
+        startActivity(new Intent(ColorDetectionActivity.this,MainMenuActivity.class));
+        return true;
     }
 
     private void seteffect(PieChart colorPie) {
