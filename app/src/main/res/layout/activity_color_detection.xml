@@ -26,7 +26,8 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/report_btn"
         android:layout_below="@+id/gray_image_layout"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@color/dark_transparent">
 
         <RelativeLayout
             android:id="@+id/r_chart_layout"
@@ -47,8 +48,8 @@
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
-                android:layout_marginBottom="30dp"
-                android:layout_marginTop="30dp"
+                android:layout_marginBottom="80dp"
+                android:layout_marginTop="80dp"
                 android:background="#2F000000"></View>
         </RelativeLayout>
 
@@ -64,8 +65,8 @@
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
-                android:layout_marginBottom="30dp"
-                android:layout_marginTop="30dp"
+                android:layout_marginBottom="80dp"
+                android:layout_marginTop="80dp"
                 android:background="#2F000000"></View>
 
             <com.github.mikephil.charting.charts.PieChart

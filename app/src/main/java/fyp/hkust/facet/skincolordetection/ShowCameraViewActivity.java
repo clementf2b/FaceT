@@ -54,44 +54,44 @@ import fyp.hkust.facet.R;
 import fyp.hkust.facet.util.FontManager;
 
 //AppCompatActivity
-public class ShowCameraViewActivity extends Activity implements CvCameraViewListener2, View.OnTouchListener,View.OnClickListener,ToolTipView.OnToolTipViewClickedListener {
+public class ShowCameraViewActivity extends Activity implements CvCameraViewListener2, View.OnTouchListener, View.OnClickListener, ToolTipView.OnToolTipViewClickedListener {
 
-    private static final String    TAG                 = "AutoCam::MainActivity";
-    private static final Scalar    FACE_RECT_COLOR     = new Scalar(0, 255, 0, 255);
-    public static final int        JAVA_DETECTOR       = 0;
+    private static final String TAG = "AutoCam::MainActivity";
+    private static final Scalar FACE_RECT_COLOR = new Scalar(0, 255, 0, 255);
+    public static final int JAVA_DETECTOR = 0;
 
-    private MenuItem               mItemFace50;
-    private MenuItem               mItemFace40;
-    private MenuItem               mItemFace30;
-    private MenuItem               mItemFace20;
-    private MenuItem               mItemCameraId;
-    private MenuItem               mItemExit;
+    private MenuItem mItemFace50;
+    private MenuItem mItemFace40;
+    private MenuItem mItemFace30;
+    private MenuItem mItemFace20;
+    private MenuItem mItemCameraId;
+    private MenuItem mItemExit;
 
-    private Mat                    mRgba;
-    private Mat                    mGray;
+    private Mat mRgba;
+    private Mat mGray;
 
-    private File                   mCascadeFile;
-    private File                   mHaarCascadeEyeFile;
-    private CascadeClassifier      mJavaDetector;
+    private File mCascadeFile;
+    private File mHaarCascadeEyeFile;
+    private CascadeClassifier mJavaDetector;
 
-    private CascadeClassifier      mJavaEyeDetector;
+    private CascadeClassifier mJavaEyeDetector;
 
-    private int                    mDetectorType       = JAVA_DETECTOR;
+    private int mDetectorType = JAVA_DETECTOR;
 
-    private float                  mRelativeFaceSize   = 0.2f;
-    private int                    mAbsoluteFaceSize   = 0;
+    private float mRelativeFaceSize = 0.2f;
+    private int mAbsoluteFaceSize = 0;
 
     //private CameraBridgeViewBase   mOpenCvCameraView;
-    private CameraView          mOpenCvCameraView;
+    private CameraView mOpenCvCameraView;
 
 
-    private boolean              mIsColorSelected = false;
-    private Scalar               mBlobColorRgba;
-    private Scalar               mBlobColorHsv;
-    private ColorBlobDetector    mDetector;
-    private Mat                  mSpectrum;
-    private Size                 SPECTRUM_SIZE;
-    private Scalar               CONTOUR_COLOR;
+    private boolean mIsColorSelected = false;
+    private Scalar mBlobColorRgba;
+    private Scalar mBlobColorHsv;
+    private ColorBlobDetector mDetector;
+    private Mat mSpectrum;
+    private Size SPECTRUM_SIZE;
+    private Scalar CONTOUR_COLOR;
 
     private String last_photo_name;
 
@@ -146,6 +146,12 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
         toolTipRelativeLayout = (ToolTipRelativeLayout) findViewById(R.id.activity_main_tooltipRelativeLayout);
         findViewById(R.id.activity_main_redtv).setOnClickListener(this);
 
+        findViewById(R.id.activity_main_redtv).bringToFront();
+        findViewById(R.id.activity_main_redtv).requestLayout();
+        findViewById(R.id.activity_main_redtv).invalidate();
+        toolTipRelativeLayout.bringToFront();
+        toolTipRelativeLayout.requestLayout();
+        toolTipRelativeLayout.invalidate();
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -160,7 +166,7 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
         mOpenCvCameraView.setVisibility(CameraBridgeViewBase.VISIBLE);
         //mOpenCvCameraView.setResolution(resolution);
         mOpenCvCameraView.setCvCameraViewListener(this);
-        mOpenCvCameraView.setCameraIndex( CameraBridgeViewBase.CAMERA_ID_FRONT);
+        mOpenCvCameraView.setCameraIndex(CameraBridgeViewBase.CAMERA_ID_FRONT);
     }
 
     //adding the hints
@@ -195,6 +201,7 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
         mBlueToolTipView = toolTipRelativeLayout.showToolTipForView(toolTip, findViewById(R.id.activity_main_redtv));
         mBlueToolTipView.setOnToolTipViewClickedListener(this);
     }
+
     //end of the hint
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -208,11 +215,9 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
                     // 未取得權限
                 }
             case REQUEST_WRITE_STORAGE: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //reload my activity with permission granted or use the features what required the permission
-                } else
-                {
+                } else {
                     Toast.makeText(this, "The app was not allowed to write to your storage. Hence, it cannot function properly. Please consider granting it this permission", Toast.LENGTH_LONG).show();
                 }
             }
@@ -255,7 +260,7 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
         mBlobColorRgba = new Scalar(255);
         mBlobColorHsv = new Scalar(255);
         SPECTRUM_SIZE = new Size(200, 64);
-        CONTOUR_COLOR = new Scalar(255,0,0,255);
+        CONTOUR_COLOR = new Scalar(255, 0, 0, 255);
     }
 
     @Override
@@ -288,17 +293,16 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
                         new Size(mAbsoluteFaceSize, mAbsoluteFaceSize), new Size());
 
             }
-        }
-        else {
+        } else {
             Log.e(TAG, "Detection method is not selected!");
         }
 
         Rect[] facesArray = faces.toArray();
         for (int i = 0; i < facesArray.length; i++) {
             Imgproc.rectangle(mRgba, facesArray[i].tl(), facesArray[i].br(), FACE_RECT_COLOR, 3);
-            face_middle_x = (int)facesArray[i].tl().x + facesArray[i].width/2;
-            face_middle_y = (int)facesArray[i].tl().y + facesArray[i].height/2;
-            Log.d("face middle : " ,face_middle_x +"," + face_middle_y);
+            face_middle_x = (int) facesArray[i].tl().x + facesArray[i].width / 2;
+            face_middle_y = (int) facesArray[i].tl().y + facesArray[i].height / 2;
+            Log.d("face middle : ", face_middle_x + "," + face_middle_y);
             Log.d(TAG, "faces array " + String.valueOf(i));
 
         }
@@ -367,9 +371,9 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
             setMinFaceSize(0.3f);
         else if (item == mItemFace20)
             setMinFaceSize(0.2f);
-        else if(item == mItemCameraId) {
+        else if (item == mItemCameraId) {
             changeCamera();
-        } else if(item == mItemExit) {
+        } else if (item == mItemExit) {
             finish();
         }
         return true;
@@ -384,7 +388,7 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
         String currentDateandTime = sdf.format(new Date());
         String saveDir = Environment.getExternalStorageDirectory().getPath() + "/DCIM/OCV/TouchSave";
         File dirCheck = new File(saveDir);
-        if(!dirCheck.exists()) {
+        if (!dirCheck.exists()) {
             dirCheck.mkdirs();
         }
         String fileName = saveDir + "/touch_picture_" + currentDateandTime + ".jpg";
@@ -392,7 +396,7 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
             mOpenCvCameraView.takePicture(fileName);
 
             Toast.makeText(this, fileName + " saved", Toast.LENGTH_SHORT).show();
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
@@ -408,9 +412,9 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
 //        int y = (int)event.getY() - yOffset;
 
 //the middle point of the face detection
-        int x = (int)face_middle_x - xOffset;
-        int y = (int)face_middle_y - yOffset;
-        Imgproc.circle(mRgba,new Point(x,y),10,FACE_RECT_COLOR);
+        int x = (int) face_middle_x - xOffset;
+        int y = (int) face_middle_y - yOffset;
+        Imgproc.circle(mRgba, new Point(x, y), 10, FACE_RECT_COLOR);
         Log.i(TAG, "Touch image coordinates: (" + x + ", " + y + ")");
         Log.i(TAG, "Offset coordinates: (" + xOffset + ", " + yOffset + ")");
 
@@ -418,11 +422,11 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
 
         Rect touchedRect = new Rect();
 
-        touchedRect.x = (x>4) ? x-4 : 0;
-        touchedRect.y = (y>4) ? y-4 : 0;
+        touchedRect.x = (x > 4) ? x - 4 : 0;
+        touchedRect.y = (y > 4) ? y - 4 : 0;
 
-        touchedRect.width = (x+4 < cols) ? x + 4 - touchedRect.x : cols - touchedRect.x;
-        touchedRect.height = (y+4 < rows) ? y + 4 - touchedRect.y : rows - touchedRect.y;
+        touchedRect.width = (x + 4 < cols) ? x + 4 - touchedRect.x : cols - touchedRect.x;
+        touchedRect.height = (y + 4 < rows) ? y + 4 - touchedRect.y : rows - touchedRect.y;
 
         Mat touchedRegionRgba = mRgba.submat(touchedRect);
 
@@ -465,10 +469,11 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
     }
 
     private boolean usingFront = true;
+
     private void changeCamera() {
         try {
             mOpenCvCameraView.disableView();
-            if(usingFront) {
+            if (usingFront) {
                 mOpenCvCameraView.setCameraIndex(CameraBridgeViewBase.CAMERA_ID_BACK);
                 mItemCameraId.setTitle("Back");
             } else {
@@ -489,29 +494,31 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
     }
 
     @SuppressLint("SimpleDateFormat")
-    public void jump(View view)
-    {
+    public void jump(View view) {
+        view.bringToFront();
+        view.requestLayout();
+        view.invalidate();
         Handler handler = new Handler();
-        handler.postDelayed(new Runnable(){
+        handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 //過兩秒後要做的事情
                 Intent intent = new Intent();
-                intent.setClass(ShowCameraViewActivity.this,CaptureActivity.class);
+                intent.setClass(ShowCameraViewActivity.this, CaptureActivity.class);
                 intent.putExtra("path", last_photo_name);
-                intent.putExtra("activity","ShowCameraViewActivity");
+                intent.putExtra("activity", "ShowCameraViewActivity");
                 //intent.putExtra("color" , "" + mBlobColorHsv);
                 startActivity(intent);
-            }}, 1700);
+            }
+        }, 1700);
     }
 
 
-    private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
+    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
             switch (status) {
-                case LoaderCallbackInterface.SUCCESS:
-                {
+                case LoaderCallbackInterface.SUCCESS: {
                     Log.i(TAG, "OpenCV loaded successfully");
 
                     // Load native library after(!) OpenCV initialization
@@ -537,7 +544,7 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
                         // eyes detect
                         mJavaDetector = new CascadeClassifier(mCascadeFile.getAbsolutePath());
                         //must add this line
-                        mJavaDetector.load( mCascadeFile.getAbsolutePath() );
+                        mJavaDetector.load(mCascadeFile.getAbsolutePath());
                         if (mJavaDetector.empty()) {
                             Log.e(TAG, "Failed to load cascade classifier");
                             mJavaDetector = null;
@@ -577,11 +584,12 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
                     mOpenCvCameraView.enableView();
                     mOpenCvCameraView.setOnTouchListener(ShowCameraViewActivity.this);
 
-                } break;
-                default:
-                {
+                }
+                break;
+                default: {
                     super.onManagerConnected(status);
-                } break;
+                }
+                break;
             }
         }
     };

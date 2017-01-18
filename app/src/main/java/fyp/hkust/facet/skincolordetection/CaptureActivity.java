@@ -28,6 +28,9 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.TypefaceSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -127,9 +130,13 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.black)));
 
+        SpannableString s = new SpannableString(getResources().getString(R.string.app_name));
+        s.setSpan(new TypefaceSpan(FontManager.APP_FONT), 0, s.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        getSupportActionBar().setTitle(s);
 
         Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
-        FontManager.markAsIconContainer(findViewById(R.id.activity_color_detection), fontType);
+        FontManager.markAsIconContainer(findViewById(R.id.activity_capture_layout), fontType);
 
         verifyStoragePermissions(this);
         intent = this.getIntent();
@@ -186,9 +193,9 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         float height = size.y * 0.6f;
         mImgResult.setPadding((int) (size.x * 0.15), (int) (size.y * 0.05), (int) (size.x * 0.15), (int) (size.y * 0.05));
         if (comeFromActivity.equals("ShowCameraViewActivity")) {
-            width = size.x * 0.7f;
-            height = size.y * 0.7f;
-            mImgResult.setPadding((int) (size.x * 0.15), (int) (size.y * 0.1), (int) (size.x * 0.15), (int) (size.y * 0.1));
+            width = size.x * 0.8f;
+            height = size.y * 0.8f;
+            mImgResult.setPadding((int) (size.x * 0.10), (int) (size.y * 0.1), (int) (size.x * 0.10), (int) (size.y * 0.1));
         }
         Log.d(TAG, " device_size:" + width + " : " + height);
         compressedBitmap = new Compressor.Builder(CaptureActivity.this)
@@ -389,10 +396,18 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
                 return true;
             case R.id.apply_btn:
                 Snackbar.make(this.findViewById(android.R.id.content), "Click apply button =]", Snackbar.LENGTH_SHORT).show();
-                new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
-                        .setTitleText("Are you sure?")
+                SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE);
+                pDialog.setCancelable(true);
+                pDialog.setTitleText("Are you sure?")
                         .setContentText("effect " + selectPhoto + " is the most suitable?")
                         .setConfirmText("Yes,start it!")
+                        .setCancelText("No")
+                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                Snackbar.make(findViewById(android.R.id.content), "Cancel sweet alert", Snackbar.LENGTH_SHORT).show();
+                            }
+                        })
                         .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                             @Override
                             public void onClick(SweetAlertDialog sDialog) {

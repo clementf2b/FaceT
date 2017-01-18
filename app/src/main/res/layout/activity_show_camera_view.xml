@@ -19,11 +19,12 @@
             android:id="@+id/fd_activity_surface_view"
             android:layout_weight="1"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentEnd="true"
+            />
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="200px"
+            android:layout_height="350px"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true">
 
@@ -33,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:textColor="@color/white"
-                android:textSize="13dp"/>
+                android:textSize="14dp"/>
 
             <com.nhaarman.supertooltips.ToolTipRelativeLayout
                 android:id="@+id/activity_main_tooltipRelativeLayout"
@@ -45,9 +46,10 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="200px"
+            android:layout_height="300px"
             android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true">
+            android:layout_alignParentBottom="true"
+            >
 
             <com.spark.submitbutton.SubmitButton
                 android:text="@string/process_text"

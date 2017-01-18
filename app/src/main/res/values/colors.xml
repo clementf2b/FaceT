@@ -20,5 +20,7 @@
     <color name="facebookBlue">#3d509f</color>
     <color name="googleRed">#E83417</color>
     <color name="sparkGreen">#00ce8e</color>
+    <color name="dark_transparent">#AF000000</color>
+    <color name="ligth_grey">#9c98a5</color>
 
 </resources>

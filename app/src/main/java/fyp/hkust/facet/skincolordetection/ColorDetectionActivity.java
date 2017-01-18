@@ -212,9 +212,10 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
             mColorDetectView.setRadius(1);
 
             originalBitmap = bmp;
-            changeDimensions();
-            scaledBitmap = createScaledBitmap(originalBitmap, scaledWidth, scaledHeight, false);
-            convertedBitmap = scaledBitmap;
+            // not resize the photo
+//            changeDimensions();
+//            scaledBitmap = createScaledBitmap(originalBitmap, scaledWidth, scaledHeight, false);
+            convertedBitmap = originalBitmap;
             gray_image = (ImageView) findViewById(R.id.gray_image);
 //            grayImageBg = (BlurImageView) findViewById(R.id.gray_image_bg);
             // o_image.setImageBitmap(scaledBitmap);
