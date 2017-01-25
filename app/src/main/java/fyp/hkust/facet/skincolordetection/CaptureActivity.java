@@ -396,7 +396,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
                 return true;
             case R.id.apply_btn:
                 Snackbar.make(this.findViewById(android.R.id.content), "Click apply button =]", Snackbar.LENGTH_SHORT).show();
-                SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE);
+                final SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE);
                 pDialog.setCancelable(true);
                 pDialog.setTitleText("Are you sure?")
                         .setContentText("effect " + selectPhoto + " is the most suitable?")
@@ -406,6 +406,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
                                 Snackbar.make(findViewById(android.R.id.content), "Cancel sweet alert", Snackbar.LENGTH_SHORT).show();
+                                pDialog.dismiss();
                             }
                         })
                         .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
