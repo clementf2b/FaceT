@@ -111,6 +111,16 @@
     <string name="apply">Apply</string>
     <string name="move_report_text">View Report</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="own_product">own_product</string>
+    <string name="profile_email">abc@gmail.com</string>
+    <string name="profile_username">Peter Lam</string>
+
+    <!--own_product_list_row-->
+    <string name="own_product_list_row_title_text">title...</string>
+    <string name="own_product_list_row_desc_text">desc...</string>
+    <string name="own_product_list_row_username_text">username</string>
 </resources>
 
 

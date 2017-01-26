@@ -5,7 +5,6 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
-
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -77,12 +76,10 @@
             android:name=".activity.CategoryActivity"
             android:theme="@style/AppTheme.NoActionBar_nav" />
         <activity android:name=".activity.SwapFaceActivity" />
-
         <activity
             android:name=".skincolordetection.ColorDetectionActivity"
-            android:hardwareAccelerated="false">
-        </activity>
-
+            android:hardwareAccelerated="false" />
+        <activity android:name=".activity.ProfileActivity" />
     </application>
 
 </manifest>
