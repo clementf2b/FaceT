@@ -24,4 +24,8 @@
     <color name="ligth_grey">#9c98a5</color>
 
     <color name="textColorPrimary">#FFFFFF</color>
+    <color name="font_color_pirmary">#85D9D2</color>
+
+    <color name="profile_bg">#FAFAFA</color>
+    <color name="profile_email_text_color">#B3B3B3</color>
 </resources>

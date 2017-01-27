@@ -14,10 +14,10 @@ import fyp.hkust.facet.util.FontManager;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FavouriteFragment extends Fragment {
+public class MatchedProductFragment extends Fragment {
 
 
-    public FavouriteFragment() {
+    public MatchedProductFragment() {
         // Required empty public constructor
 
     }
@@ -27,7 +27,7 @@ public class FavouriteFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        View view = inflater.inflate(R.layout.fragment_favourite, container, false);
+        View view = inflater.inflate(R.layout.fragment_matched_product, container, false);
 
         Typeface fontType = FontManager.getTypeface(getContext(), FontManager.APP_FONT);
         FontManager.markAsIconContainer(view.findViewById(R.id.fragment_favourite_layout), fontType);

@@ -114,13 +114,16 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="own_product">own_product</string>
-    <string name="profile_email">abc@gmail.com</string>
-    <string name="profile_username">Peter Lam</string>
+    <string name="profile_email">handsomeguy@gmail.com</string>
+    <string name="profile_username">Handsome Guy</string>
 
     <!--own_product_list_row-->
     <string name="own_product_list_row_title_text">title...</string>
     <string name="own_product_list_row_desc_text">desc...</string>
     <string name="own_product_list_row_username_text">username</string>
+    <string name="edit_btn_text">Edit</string>
+    <string name="own_product_fragment_text">Added Product</string>
+    <string name="match_product_fragment_text">Matched Product</string>
 </resources>
 
 

@@ -123,10 +123,10 @@ public class OwnProductFragment extends Fragment {
             @Override
             protected void populateViewHolder(ProfileActivity.OwnProductViewHolder own_viewHolder, Product model, int position) {
 
-                own_viewHolder.setTitle(model.getTitle());
-                own_viewHolder.setDesc(model.getDesc());
+//                own_viewHolder.setTitle(model.getTitle());
+//                own_viewHolder.setDesc(model.getDesc());
                 own_viewHolder.setImage(getContext(),model.getImage());
-                own_viewHolder.setUsername(model.getUsername());
+//                own_viewHolder.setUsername(model.getUsername());
             }
         };
 

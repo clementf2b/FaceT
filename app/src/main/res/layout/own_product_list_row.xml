@@ -1,63 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/tools"
-    android:layout_width="@dimen/product_card_view_width"
-    android:layout_height="@dimen/product_card_view_height"
+    android:layout_width="130dp"
+    android:layout_height="130dp"
     card_view:cardPreventCornerOverlap="false"
-    android:id="@+id/own_product_list_row_layout">
+    android:id="@+id/own_product_list_row_layout"
+>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="130dp"
         android:orientation="vertical"
-        android:weightSum="1"
-        android:id="@+id/own_product_card">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/own_p_username"
-            android:text="@string/own_product_list_row_username_text"
-            android:padding="10dp"
-            android:textSize="10dp"
-            android:textAllCaps="true"
-            android:visibility="gone"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/own_p_title"
-            android:text="@string/own_product_list_row_title_text"
-            android:padding="10dp"
-            android:textSize="16dp"
-            android:textStyle="bold|italic"
-            android:textAllCaps="true"
-            android:layout_below="@+id/own_product_image"
-            android:layout_alignLeft="@+id/own_product_image"
-            android:layout_alignStart="@+id/own_product_image"
-            android:layout_alignRight="@+id/own_product_image"
-            android:layout_alignEnd="@+id/own_product_image" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/own_p_desc"
-            android:text="@string/own_product_list_row_desc_text"
-            android:padding="10dp"
-            android:layout_below="@+id/own_p_title"
-            android:layout_alignLeft="@+id/own_p_title"
-            android:layout_alignStart="@+id/own_p_title"
-            android:layout_alignRight="@+id/own_p_title"
-            android:layout_alignEnd="@+id/own_p_title" />
+        android:id="@+id/own_product_card"
+        android:padding="3dp"
+        android:background="@color/profile_bg">
 
         <ImageView
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:layout_width="130dp"
+            android:layout_height="130dp"
             android:id="@+id/own_product_image"
             android:background="@mipmap/upload_default"
-            android:layout_below="@+id/own_p_username"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp" />
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true" />
 
     </RelativeLayout>
 

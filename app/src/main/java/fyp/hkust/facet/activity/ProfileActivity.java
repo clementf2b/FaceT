@@ -9,29 +9,24 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
-import fyp.hkust.facet.Product;
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.adapter.ViewPagerAdapter;
-import fyp.hkust.facet.fragment.FavouriteFragment;
+import fyp.hkust.facet.fragment.MatchedProductFragment;
 import fyp.hkust.facet.fragment.OwnProductFragment;
 import fyp.hkust.facet.util.FontManager;
 
@@ -66,6 +61,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+        changeTabsFont();
 
         mAuth = FirebaseAuth.getInstance();
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
@@ -93,37 +89,54 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new OwnProductFragment(), "Product");
-        adapter.addFragment(new FavouriteFragment(), "Favourite");
+        adapter.addFragment(new OwnProductFragment(), getResources().getString(R.string.own_product_fragment_text));
+        adapter.addFragment(new MatchedProductFragment(), getResources().getString(R.string.match_product_fragment_text));
         viewPager.setAdapter(adapter);
+    }
+
+    private void changeTabsFont() {
+        Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
+        ViewGroup vg = (ViewGroup) tabLayout.getChildAt(0);
+        int tabsCount = vg.getChildCount();
+        for (int j = 0; j < tabsCount; j++) {
+            ViewGroup vgTab = (ViewGroup) vg.getChildAt(j);
+            int tabChildsCount = vgTab.getChildCount();
+            for (int i = 0; i < tabChildsCount; i++) {
+                View tabViewChild = vgTab.getChildAt(i);
+                if (tabViewChild instanceof TextView) {
+                    ((TextView) tabViewChild).setTypeface(fontType, Typeface.NORMAL);
+                }
+            }
+        }
     }
 
     public static class OwnProductViewHolder extends RecyclerView.ViewHolder{
 
         View mView;
 
+
         public OwnProductViewHolder(View itemView) {
             super(itemView);
             mView = itemView;
         }
 
-        public void setTitle(String title)
-        {
-            TextView own_product_title = (TextView) mView.findViewById(R.id.own_p_title);
-            own_product_title.setText(title);
-        }
-
-        public void setDesc(String desc)
-        {
-            TextView own_product_desc = (TextView) mView.findViewById(R.id.own_p_desc);
-            own_product_desc.setText(desc);
-        }
-
-        public void setUsername(String username)
-        {
-            TextView own_product_username = (TextView) mView.findViewById(R.id.own_p_username);
-            own_product_username.setText(username);
-        }
+//        public void setTitle(String title)
+//        {
+//            TextView own_product_title = (TextView) mView.findViewById(R.id.own_p_title);
+//            own_product_title.setText(title);
+//        }
+//
+//        public void setDesc(String desc)
+//        {
+//            TextView own_product_desc = (TextView) mView.findViewById(R.id.own_p_desc);
+//            own_product_desc.setText(desc);
+//        }
+//
+//        public void setUsername(String username)
+//        {
+//            TextView own_product_username = (TextView) mView.findViewById(R.id.own_p_username);
+//            own_product_username.setText(username);
+//        }
 
         public void setImage(final Context ctx, final  String image)
         {

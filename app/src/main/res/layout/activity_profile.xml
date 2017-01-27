@@ -1,54 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_profile"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="fyp.hkust.facet.activity.ProfileActivity"
-    android:background="@color/white">
+    android:background="@color/profile_bg"
+    tools:context="fyp.hkust.facet.activity.ProfileActivity">
 
     <RelativeLayout
         android:id="@+id/profile_layout"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="150dp"
         android:orientation="vertical"
         android:weightSum="1">
 
         <ImageButton
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            app:srcCompat="@mipmap/app_icon"
             android:id="@+id/profile_picture"
-            android:background="@drawable/round_button"
-            android:layout_marginTop="25dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_marginBottom="25dp"
             android:layout_marginLeft="20dp"
-            />
+            android:layout_marginTop="25dp"
+            android:background="@drawable/round_button"
+            app:srcCompat="@mipmap/app_icon" />
+
+        <Button
+            android:id="@+id/btn_edit"
+            android:layout_width="60dp"
+            android:layout_height="35dp"
+            android:layout_alignBottom="@+id/profile_email"
+            android:layout_alignParentEnd="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="20dp"
+            android:adjustViewBounds="true"
+            android:background="@drawable/border_button_no_bg"
+            android:clickable="true"
+            android:contextClickable="true"
+            android:scaleType="fitCenter"
+            android:text="@string/edit_btn_text"
+            android:textColor="@color/font_color_pirmary"
+            android:layout_centerVertical="true"/>
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/profile_username"
             android:id="@+id/profile_username"
-            android:textSize="18sp"
-            android:paddingTop="70dp"
-            android:paddingLeft="20dp"
-            android:layout_alignParentEnd="true"
-            android:layout_toLeftOf="@+id/profile_picture"
-            android:layout_toEndOf="@+id/profile_picture" />
-
-        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/profile_email"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="50dp"
+            android:layout_toEndOf="@+id/profile_picture"
+            android:layout_toStartOf="@+id/btn_edit"
+            android:text="@string/profile_username"
+            android:textSize="12sp" />
+
+        <TextView
             android:id="@+id/profile_email"
-            android:textSize="18sp"
-            android:paddingTop="10dp"
-            android:paddingLeft="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/profile_username"
-            android:layout_alignParentEnd="true"
-            android:layout_toEndOf="@+id/profile_picture" />
+            android:layout_toEndOf="@+id/profile_picture"
+            android:layout_toStartOf="@+id/btn_edit"
+            android:paddingLeft="20dp"
+            android:paddingTop="10dp"
+            android:text="@string/profile_email"
+            android:textColor="@color/profile_email_text_color"
+            android:textSize="11sp" />
     </RelativeLayout>
 
     <android.support.design.widget.TabLayout
@@ -58,30 +75,28 @@
         android:layout_below="@+id/profile_layout"
         android:background="@color/colorPrimary"
         app:layout_scrollFlags="scroll|enterAlways"
-        app:tabTextColor="@color/grey_title"
+        app:tabGravity="fill"
         app:tabIndicatorColor="@color/white"
-        app:tabSelectedTextColor="@color/white"
         app:tabMode="fixed"
-        app:tabGravity="fill"/>
+        app:tabSelectedTextColor="@color/white"
+        app:tabTextColor="@color/grey_title" />
 
     <LinearLayout
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_below="@+id/tabs">
+        android:layout_below="@+id/tabs"
+        android:orientation="vertical">
 
         <android.support.v4.view.ViewPager
             android:id="@+id/viewpager"
             android:layout_width="match_parent"
             android:layout_height="260dp"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
-            />
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     </LinearLayout>
-
 
 
 </RelativeLayout>
