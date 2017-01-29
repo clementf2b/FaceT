@@ -71,12 +71,12 @@
     <string name="submit_text">Submit</string>
 
     <!--activity_register-->
-    <string name="sign_up_title">SIGN UP WITH EMAIL</string>
+    <string name="sign_up_btn">Sign up</string>
     <string name="register_email_address_hint">Email Address</string>
     <string name="register_username_hint">Username</string>
     <string name="register_password_hint">Password</string>
     <string name="register_comfirm_password_hint">Confirm Password</string>
-    <string name="join_us">JOIN US</string>
+    <string name="join_us">Join Us</string>
 
     <!--activity_setup-->
     <string name="setup_text">SetUp</string>

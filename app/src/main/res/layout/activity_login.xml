@@ -11,7 +11,6 @@
     android:paddingTop="@dimen/activity_horizontal_margin"
     android:background="@drawable/background_dark"
     tools:context="fyp.hkust.facet.activity.LoginActivity"
-
     >
 
     <Button
@@ -41,6 +40,31 @@
         />
 
     <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/loginemailfield"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/email_hint"
+        android:drawableLeft="@mipmap/ic_email_white_24dp"
+        android:drawablePadding="@dimen/activity_horizontal_margin"
+        app:met_hideUnderline="true"
+        app:met_underlineColor="#fff"
+        app:met_baseColor="#fff"
+        app:met_textColorHint="#fff"
+        app:met_primaryColor="#fff"
+        app:met_autoValidate="true"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:singleLine="true"
+        android:layout_marginTop="34dp"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:layout_below="@+id/facebook_login_btn"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textSize="@dimen/small_text_size" />
+
+
+    <com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/loginpasswordfield"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -58,13 +82,13 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:drawablePadding="@dimen/activity_horizontal_margin"
         android:paddingTop="5dp"
+        android:paddingBottom="5dp"
         android:drawableLeft="@mipmap/ic_vpn_key_white_24dp"
         android:layout_below="@+id/loginemailfield"
         android:layout_marginRight="36dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:textSize="@dimen/small_text_size"
-        />
+        android:textSize="@dimen/small_text_size" />
 
     <ImageButton
         android:layout_width="wrap_content"
@@ -75,7 +99,7 @@
         android:layout_above="@+id/login_btn"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="12dp"
         android:layout_marginRight="10dp"
         />
 
@@ -99,28 +123,6 @@
         android:layout_alignParentStart="true"
         android:layout_above="@+id/loginpasswordfield" />
 
-    <com.rengwuxian.materialedittext.MaterialEditText
-        android:id="@+id/loginemailfield"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/email_hint"
-        android:drawableLeft="@mipmap/ic_email_white_24dp"
-        android:drawablePadding="@dimen/activity_horizontal_margin"
-        app:met_hideUnderline="true"
-        app:met_underlineColor="#fff"
-        app:met_baseColor="#fff"
-        app:met_textColorHint="#fff"
-        app:met_primaryColor="#fff"
-        app:met_autoValidate="true"
-        android:paddingTop="5dp"
-        android:singleLine="true"
-        android:layout_marginTop="34dp"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:layout_below="@+id/facebook_login_btn"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:textSize="@dimen/small_text_size" />
 
     <!-- start or-divider -->
 
@@ -183,6 +185,21 @@
         tools:ignore="RtlSymmetry"
         android:drawableTint="#ffffff"/>
 
+    <!--logo-->
+
+    <!--<ImageView-->
+        <!--android:id="@+id/logo"-->
+        <!--android:layout_width="100dp"-->
+        <!--android:layout_height="100dp"-->
+        <!--android:src="@mipmap/app_icon"-->
+        <!--android:layout_gravity="center_horizontal"-->
+        <!--android:layout_marginTop="90dp"-->
+        <!--android:layout_marginBottom="40dp"-->
+        <!--android:layout_marginLeft="70dp"-->
+        <!--android:layout_marginRight="70dp"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_centerHorizontal="true" />-->
+
     <Button
         android:drawableLeft="@drawable/ic_google_glass_logo"
         android:drawablePadding="20dip"
@@ -201,8 +218,8 @@
         android:textSize="@dimen/small_text_size"
         android:background="@color/googleRed"
         android:gravity="center"
-        android:drawableTint="#ffffff"
-    />
+        android:drawableTint="#ffffff"/>
+
 
 
 </RelativeLayout>
