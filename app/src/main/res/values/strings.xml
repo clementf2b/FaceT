@@ -85,6 +85,7 @@
     <string-array name="steps_titles">
         <item>Product Information</item>
         <item>Product Image</item>
+        <item>Product Summary</item>
     </string-array>
 
     <string name="submit_text">Submit</string>

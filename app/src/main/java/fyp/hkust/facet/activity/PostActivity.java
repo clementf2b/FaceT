@@ -85,7 +85,8 @@ public class PostActivity extends AppCompatActivity implements VerticalStepperFo
     private boolean confirmBack = true;
 
     private String saved_title, saved_desc, saved_brand;
-
+    private TextView confirm_product_title,confirm_product_brand,confirm_product_desc;
+    private ImageView confirm_product_image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -195,18 +196,13 @@ public class PostActivity extends AppCompatActivity implements VerticalStepperFo
 
     private View createSummaryStep() {
         // In this case we generate the view by inflating a XML file
-        LayoutInflater inflater = LayoutInflater.from(getBaseContext());
-        LinearLayout summaryLayoutContent = (LinearLayout) inflater.inflate(R.layout.activity_post_summary, null, false);
+        LayoutInflater inflater3 = LayoutInflater.from(getBaseContext());
+        LinearLayout summaryLayoutContent = (LinearLayout) inflater3.inflate(R.layout.activity_post_summary, null, false);
 
-        TextView confirm_product_title = (TextView) summaryLayoutContent.findViewById(R.id.confirm_product_title);
-        TextView confirm_product_brand = (TextView) summaryLayoutContent.findViewById(R.id.confirm_product_brand);
-        TextView confirm_product_desc = (TextView) summaryLayoutContent.findViewById(R.id.confirm_product_desc);
-        ImageView confirm_product_image = (ImageView) summaryLayoutContent.findViewById(R.id.confirm_product_image);
-
-        confirm_product_image.setImageURI(mImageUri);
-        confirm_product_title.setText(mProductTitle.getText().toString().trim());
-        confirm_product_brand.setText(mProductBrand.getText().toString().trim());
-        confirm_product_desc.setText(mProductDesc.getText().toString().trim());
+        confirm_product_title = (TextView) summaryLayoutContent.findViewById(R.id.confirm_product_title);
+        confirm_product_brand = (TextView) summaryLayoutContent.findViewById(R.id.confirm_product_brand);
+        confirm_product_desc = (TextView) summaryLayoutContent.findViewById(R.id.confirm_product_desc);
+        confirm_product_image = (ImageView) summaryLayoutContent.findViewById(R.id.confirm_product_image);
 
         return summaryLayoutContent;
     }
@@ -223,6 +219,10 @@ public class PostActivity extends AppCompatActivity implements VerticalStepperFo
                 verticalStepperForm.setStepAsCompleted(stepNumber);
                 break;
             case STEP2_NUM:
+                confirm_product_title.setText(mProductTitle.getText().toString().trim());
+                Log.d(TAG + " product_title" , mProductTitle.getText().toString().trim());
+                confirm_product_brand.setText(mProductBrand.getText().toString().trim());
+                confirm_product_desc.setText(mProductDesc.getText().toString().trim());
                 verticalStepperForm.setStepAsCompleted(stepNumber);
 
                 break;
@@ -318,6 +318,7 @@ public class PostActivity extends AppCompatActivity implements VerticalStepperFo
         if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK) {
             mImageUri = data.getData();
             mSelectImage.setImageURI(mImageUri);
+            confirm_product_image.setImageURI(mImageUri);
         }
     }
 
