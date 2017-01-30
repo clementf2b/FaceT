@@ -10,11 +10,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -32,13 +35,18 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText mNameField;
     private EditText mEmailField;
     private EditText mPasswordField;
-
+    private EditText mConfirmPasswordField;
     private Button mRegisterBtn;
 
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
 
     private ProgressDialog mProgress;
+
+    private ImageButton passwordVisibleButton;
+    private ImageButton confirmPasswordVisibleButton;
+    private boolean pw_shown;
+    private boolean cpw_shown;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +55,8 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00000000")) );
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
         Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
         FontManager.markAsIconContainer(findViewById(R.id.activity_register_layout), fontType);
@@ -67,13 +77,52 @@ public class RegisterActivity extends AppCompatActivity {
         mNameField = (EditText) findViewById(R.id.usernamefield);
         mEmailField = (EditText) findViewById(R.id.emailfield);
         mPasswordField = (EditText) findViewById(R.id.passwordfield);
-
+        mConfirmPasswordField = (EditText) findViewById(R.id.confirmpasswordfield);
+        passwordVisibleButton = (ImageButton) findViewById(R.id.passwordfield_visible_button);
+        confirmPasswordVisibleButton = (ImageButton) findViewById(R.id.confirmpasswordfield_visible_button);
         mRegisterBtn = (Button) findViewById(R.id.joinus_btn);
 
         mRegisterBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startRegister();
+            }
+        });
+
+        //show pw
+        pw_shown = false;
+        passwordVisibleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (pw_shown == true) {
+                    //view pw
+                    mPasswordField.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    passwordVisibleButton.setImageResource(R.mipmap.ic_visibility_white_24dp);
+                    pw_shown = false;
+                } else {
+                    //hide pw
+                    mPasswordField.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    passwordVisibleButton.setImageResource(R.mipmap.ic_visibility_off_white_24dp);
+                    pw_shown = true;
+                }
+            }
+        });
+
+        cpw_shown = false;
+        confirmPasswordVisibleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (cpw_shown == true) {
+                    //view pw
+                    mConfirmPasswordField.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    confirmPasswordVisibleButton.setImageResource(R.mipmap.ic_visibility_white_24dp);
+                    cpw_shown = false;
+                } else {
+                    //hide pw
+                    mConfirmPasswordField.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    confirmPasswordVisibleButton.setImageResource(R.mipmap.ic_visibility_off_white_24dp);
+                    cpw_shown = true;
+                }
             }
         });
     }

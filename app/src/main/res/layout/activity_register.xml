@@ -4,75 +4,74 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_register_layout"
-    android:fitsSystemWindows="true"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/activity_horizontal_margin"
-    android:background="@mipmap/bg2"
+    android:background="@drawable/background_dark"
     tools:context="fyp.hkust.facet.activity.RegisterActivity">
 
     <TextView
-        android:text="@string/sign_up_title"
+        android:text="@string/join_us"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:id="@+id/textView"
         android:textSize="32sp"
         android:textAlignment="center"
-        android:textColor="@color/cardview_light_background" />
+        android:textColor="@color/cardview_light_background"
+        android:layout_marginTop="80dp"/>
 
     <com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/emailfield"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/register_email_address_hint"
+        app:met_maxCharacters="100"
+        app:met_errorColor="#ffb6b9"
+
+        android:layout_below="@+id/textView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:inputType="textEmailAddress"
+        android:hint="@string/email_hint"
+        android:drawableLeft="@mipmap/ic_email_white_24dp"
+        android:drawablePadding="@dimen/activity_horizontal_margin"
+
         app:met_underlineColor="#fff"
         app:met_baseColor="#fff"
         app:met_textColorHint="#fff"
         app:met_primaryColor="#fff"
-        app:met_maxCharacters="100"
-        app:met_errorColor="#ddaa00"
+        app:met_autoValidate="true"
+
         android:singleLine="true"
-        app:met_floatingLabel="highlight"
-        android:layout_below="@+id/textView"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:inputType="textEmailAddress" />
+        android:layout_marginTop="34dp"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:textSize="@dimen/small_text_size"/>
 
     <com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/usernamefield"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/register_username_hint"
+        app:met_maxCharacters="100"
         app:met_underlineColor="#fff"
         app:met_baseColor="#fff"
         app:met_textColorHint="#fff"
         app:met_primaryColor="#fff"
-        app:met_floatingLabel="highlight"
-        app:met_maxCharacters="100"
-        app:met_errorColor="#ddaa00"
+
+        app:met_errorColor="#ffb6b9"
         android:singleLine="true"
         android:layout_below="@+id/emailfield"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <com.rengwuxian.materialedittext.MaterialEditText
-        android:id="@+id/passwordfield"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/register_password_hint"
-        app:met_underlineColor="#fff"
-        app:met_baseColor="#fff"
-        app:met_textColorHint="#fff"
-        app:met_primaryColor="#fff"
-        app:met_floatingLabel="highlight"
-        app:met_maxCharacters="100"
-        app:met_errorColor="#ddaa00"
-        android:singleLine="true"
-        android:layout_below="@+id/usernamefield"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:inputType="textPassword" />
+        android:drawableLeft="@mipmap/ic_person_white_24dp"
+        android:drawablePadding="@dimen/activity_horizontal_margin"
+        app:met_autoValidate="true"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:textSize="@dimen/small_text_size"
+        />
 
     <com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/confirmpasswordfield"
@@ -83,14 +82,44 @@
         app:met_underlineColor="#fff"
         app:met_baseColor="#fff"
         app:met_primaryColor="#fff"
-        app:met_floatingLabel="highlight"
-        app:met_maxCharacters="100"
-        app:met_errorColor="#ddaa00"
+        app:met_minCharacters="6"
+        app:met_errorColor="#ffb6b9"
         android:singleLine="true"
         android:layout_below="@+id/passwordfield"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:inputType="textPassword" />
+        android:inputType="textPassword"
+        app:met_autoValidate="true"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:drawablePadding="@dimen/activity_horizontal_margin"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:drawableLeft="@mipmap/ic_vpn_key_white_24dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:textSize="@dimen/small_text_size"
+        android:layout_marginBottom="@dimen/activity_horizontal_margin"/>
+
+    <!--<ImageView-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:background="@color/transparentBlack"-->
+        <!--android:id="@+id/emailbg"-->
+        <!--android:layout_alignTop="@+id/emailfield"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_above="@+id/usernamefield" />-->
+
+    <!--<ImageView-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:background="@color/transparentBlack"-->
+        <!--android:id="@+id/userbg"-->
+        <!--android:layout_alignTop="@+id/usernamefield"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_above="@+id/passwordfield" />-->
 
     <!--<DatePicker-->
     <!--android:id="@+id/dateofbirth"-->
@@ -140,11 +169,61 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/joinus_btn"
-        android:text=""
-        android:layout_below="@+id/confirmpasswordfield"
-        android:layout_centerHorizontal="true"
-        android:background="#3fffffff"
+        android:text="@string/sign_up_btn"
+        android:background="@color/greenishBlue"
         android:textColor="#fff"
-        />
+        android:layout_below="@+id/confirmpasswordfield"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"/>
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/passwordfield"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/register_password_hint"
+        app:met_underlineColor="#fff"
+        app:met_baseColor="#fff"
+        app:met_textColorHint="#fff"
+        app:met_primaryColor="#fff"
+
+        app:met_minCharacters="6"
+        app:met_errorColor="#ffb6b9"
+        android:singleLine="true"
+        android:inputType="textPassword"
+        android:layout_below="@+id/usernamefield"
+        android:layout_alignParentStart="true"
+        app:met_autoValidate="true"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:drawablePadding="@dimen/activity_horizontal_margin"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:drawableLeft="@mipmap/ic_vpn_key_white_24dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:textSize="@dimen/small_text_size"/>
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/confirmpasswordfield_visible_button"
+        android:background="#00000000"
+        android:src="@mipmap/ic_visibility_off_white_24dp"
+        android:layout_marginTop="11dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginEnd="11dp"
+        android:layout_below="@+id/passwordfield"
+        android:layout_alignParentEnd="true" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/passwordfield_visible_button"
+        android:background="#00000000"
+        android:src="@mipmap/ic_visibility_off_white_24dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginRight="10dp"
+        android:layout_below="@+id/usernamefield"
+        android:layout_alignStart="@+id/confirmpasswordfield_visible_button" />
 
 </RelativeLayout>
