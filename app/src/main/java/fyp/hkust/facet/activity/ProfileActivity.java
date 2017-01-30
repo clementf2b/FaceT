@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -48,6 +49,8 @@ public class ProfileActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener mAuthListener;
     private DatabaseReference mDatabase;
 
+    private FloatingActionButton add_product_fab;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,6 +87,15 @@ public class ProfileActivity extends AppCompatActivity {
                 }
             }
         };
+
+        add_product_fab = (FloatingActionButton) findViewById(R.id.add_product_fab);
+        add_product_fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), PostActivity.class);
+                startActivity(intent);
+            }
+        });
 
     }
 

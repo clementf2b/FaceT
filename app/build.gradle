@@ -74,7 +74,10 @@ dependencies {
     compile 'com.github.dexafree:materiallist:3.0.1'
     // Optional -- Hamcrest library
     androidTestCompile 'org.hamcrest:hamcrest-library:1.3'
-
+    //vertical_stepper_form
+    compile 'com.ernestoyaquello.stepperform:vertical-stepper-form:0.9.9'
+    //emoji
+    compile 'hani.momanii.supernova_emoji_library:supernova-emoji-library:0.0.2'
     testCompile 'junit:junit:4.12'
 
     compile project(':openCVLibrary310')
@@ -89,6 +92,7 @@ repositories {
     maven {
         url 'https://dl.bintray.com/tzutalin/maven'
     }
+    maven { url "https://dl.bintray.com/hani-momanii/maven"}
     maven { url "https://jitpack.io" }
     mavenCentral()
     mavenLocal()

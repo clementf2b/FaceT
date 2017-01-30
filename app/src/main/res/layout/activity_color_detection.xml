@@ -163,20 +163,21 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
-        android:padding="1dp">
+>
 
         <Button
             android:id="@+id/report_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="2dp"
             android:adjustViewBounds="true"
-            android:background="@drawable/border_button_no_bg"
             android:clickable="true"
             android:contextClickable="true"
             android:scaleType="fitCenter"
             android:text="@string/move_report_text"
-            android:textColor="@color/font_color_pirmary"
+            android:background="@drawable/buttongrad"
+            android:textColor="@color/white"
             android:textSize="14dp" />
+
+        android:textSize="14dp" />
     </LinearLayout>
 </RelativeLayout>

@@ -66,8 +66,27 @@
     <string name="all_products_text">All Products</string>
 
     <!--activity_post-->
-    <string name="post_title_hint">Post Title...</string>
-    <string name="post_description_hint">Post Description...</string>
+    <string name="product_title_hint">Product Title...</string>
+    <string name="product_description_hint">Product Description...</string>
+    <string name="product_brand_hint">Product Brand</string>
+    <string name="step1_title_text">Product Information</string>
+    <string name="cancel_text">Cancel</string>
+    <string name="vertical_form_stepper_form_continue">Next</string>
+    <string name="vertical_form_stepper_form_confirm_button">Create Product</string>
+
+    <string-array name="product_type_array">
+        <item>雞腿飯</item>
+        <item>魯肉飯</item>
+        <item>排骨飯</item>
+        <item>仙人掌</item>
+        <item>牛肉麵</item>
+    </string-array>
+
+    <string-array name="steps_titles">
+        <item>Product Information</item>
+        <item>Product Image</item>
+    </string-array>
+
     <string name="submit_text">Submit</string>
 
     <!--activity_register-->
@@ -124,8 +143,16 @@
     <string name="edit_btn_text">Edit</string>
     <string name="own_product_fragment_text">Added Product</string>
     <string name="match_product_fragment_text">Matched Product</string>
+
+    <!--activity_color_detection-->
     <string name="detect_color_result_title">Pecentage of Primary colors in your skin</string>
     <string name="select_skintype_question">What is your skin type?</string>
+
+    <!--activity_post_summary-->
+    <string name="product_title_text_title">Product Title</string>
+    <string name="product_desc_text_title">Description</string>
+    <string name="product_brand_text_title">Brand Name</string>
+
 </resources>
 
 
