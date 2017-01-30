@@ -33,6 +33,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="20dp"
+            android:layout_marginBottom="5dp"
             android:adjustViewBounds="true"
             android:background="@drawable/border_button_no_bg"
             android:clickable="true"
@@ -48,7 +49,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_marginLeft="20dp"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="47dp"
             android:layout_toEndOf="@+id/profile_picture"
             android:layout_toStartOf="@+id/btn_edit"
             android:text="@string/profile_username"
@@ -65,7 +66,7 @@
             android:paddingTop="10dp"
             android:text="@string/profile_email"
             android:textColor="@color/profile_email_text_color"
-            android:textSize="11sp" />
+            android:textSize="10sp" />
     </RelativeLayout>
 
     <android.support.design.widget.TabLayout

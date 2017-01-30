@@ -124,6 +124,8 @@
     <string name="edit_btn_text">Edit</string>
     <string name="own_product_fragment_text">Added Product</string>
     <string name="match_product_fragment_text">Matched Product</string>
+    <string name="detect_color_result_title">Pecentage of Primary colors in your skin</string>
+    <string name="select_skintype_question">What is your skin type?</string>
 </resources>
 
 

@@ -22,6 +22,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
+
     <com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/setupnamefield"
         android:layout_width="match_parent"
@@ -44,5 +45,6 @@
         android:background="@drawable/round_button"
         android:layout_above="@+id/setupnamefield"
         android:layout_centerHorizontal="true" />
+
 
 </RelativeLayout>
