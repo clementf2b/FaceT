@@ -32,8 +32,13 @@ dependencies {
     compile 'com.android.support:cardview-v7:24.0.0'
     compile 'com.android.support:design:24.0.0'
     compile 'com.android.support:recyclerview-v7:24.0.0'
+
     compile 'com.google.android.gms:play-services-auth:9.8.0'
     compile 'com.google.android.gms:play-services:9.8.0'
+
+    //facebook login
+    compile 'com.facebook.android:facebook-android-sdk:4.+'
+
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'io.reactivex:rxjava:1.1.6'
     // FirebaseUI Database only
@@ -78,6 +83,12 @@ dependencies {
     compile 'com.ernestoyaquello.stepperform:vertical-stepper-form:0.9.9'
     //emoji
     compile 'hani.momanii.supernova_emoji_library:supernova-emoji-library:0.0.2'
+    //like animation
+    compile 'com.github.jd-alexander:LikeButton:0.2.0'
+    //imageZoomer
+    compile 'com.vatsal.imagezoomer:image-zoomer:1.0.2'
+    //rating
+    compile 'me.zhanghai.android.materialratingbar:library:1.0.2'
     testCompile 'junit:junit:4.12'
 
     compile project(':openCVLibrary310')

@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,6 +32,7 @@ import fyp.hkust.facet.util.FontManager;
 
 public class MainActivity extends AppCompatActivity {
 
+    private final String TAG = "MainActivity";
     private RecyclerView mProductList;
     private GridLayoutManager mgr;
     private DatabaseReference mDatabase;
@@ -56,6 +58,12 @@ public class MainActivity extends AppCompatActivity {
                     Intent loginIntent = new Intent(MainActivity.this,LoginActivity.class);
                     loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(loginIntent);
+                    // User is signed out
+                    Log.d(TAG, "onAuthStateChanged:signed_out. Haven't logged in before");
+                }
+                if (firebaseAuth.getCurrentUser() != null) {
+                    // User is signed in
+                    Log.d(TAG, "onAuthStateChanged:signed_in user_id:" + firebaseAuth.getCurrentUser().getUid());
                 }
             }
         };

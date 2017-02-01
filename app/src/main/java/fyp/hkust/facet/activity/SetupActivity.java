@@ -96,6 +96,8 @@ public class SetupActivity extends AppCompatActivity {
                     String downloadUri = taskSnapshot.getDownloadUrl().toString();
 
                     mDatabaseUsers.child(user_id).child("name").setValue(name);
+                    mDatabaseUsers.child(user_id).child("uid").setValue(mAuth.getCurrentUser().getUid());
+                    mDatabaseUsers.child(user_id).child("email").setValue(mAuth.getCurrentUser().getEmail());
                     mDatabaseUsers.child(user_id).child("image").setValue(downloadUri);
 
                     mProgress.dismiss();

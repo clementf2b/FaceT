@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_product_detail_scroll_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="fyp.hkust.facet.activity.ProductDetailActivity">
+
+    <LinearLayout
+        android:id="@+id/activity_product_detail_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin">
+
+        <RelativeLayout
+            android:id="@+id/detail_product_image_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.vatsal.imagezoomer.ImageZoomButton
+                android:id="@+id/detail_product_image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/ic_launcher" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/detail_rating_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <View
+                android:id="@+id/linebreak1"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/overall_chart_layout"
+                android:background="#2F000000"
+                android:layout_marginTop="20dp"></View>
+
+            <RatingBar
+                android:id="@+id/ratingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="-40dp"
+                android:numStars="5"
+                android:rating="2.5"
+                android:scaleX="0.5"
+                android:scaleY="0.5"
+                android:stepSize="0.5" />
+
+            <com.like.LikeButton
+                android:id="@+id/product_star_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:scaleX="0.5"
+                android:scaleY="0.5"
+                app:icon_size="30dp"
+                app:icon_type="heart" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:layout_centerVertical="true"
+                android:background="@mipmap/map_marker"
+                android:layout_marginRight="100dp" />
+
+            <View
+                android:id="@+id/linebreak2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#2F000000"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentStart="true"></View>
+
+
+        </RelativeLayout>
+
+    </LinearLayout>
+</ScrollView>
