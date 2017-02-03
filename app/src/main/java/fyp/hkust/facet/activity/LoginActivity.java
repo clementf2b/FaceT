@@ -201,10 +201,8 @@ public class LoginActivity extends AppCompatActivity {
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
-
                     @Override
                     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
                     }
                 })
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
@@ -403,11 +401,11 @@ public class LoginActivity extends AppCompatActivity {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.hasChild(user_id)) {
                         Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
-//                        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(mainIntent);
                     } else {
-                        Intent setupIntent = new Intent(LoginActivity.this, SetupActivity.class);
-//                        setupIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        Intent setupIntent = new Intent(LoginActivity.this, ProfileEditActivity.class);
+                        setupIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(setupIntent);
                     }
                 }

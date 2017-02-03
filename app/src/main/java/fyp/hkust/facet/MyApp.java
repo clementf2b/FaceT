@@ -15,10 +15,12 @@ import com.squareup.picasso.Picasso;
 
 public class MyApp extends Application {
 
+    private static MyApp mInstance;
     @Override
     public void onCreate() {
         super.onCreate();
 
+//        _instance = this;
         //enable the offline capability for firebase
         if(!FirebaseApp.getApps(this).isEmpty()) {
             FirebaseDatabase.getInstance().setPersistenceEnabled(true);
@@ -35,6 +37,9 @@ public class MyApp extends Application {
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
 
+    }
+    public static synchronized MyApp getInstance() {
+        return mInstance;
     }
 
 }

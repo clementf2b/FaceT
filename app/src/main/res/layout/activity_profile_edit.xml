@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:emojicon="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_profile_edit_scroll_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="fyp.hkust.facet.activity.ProfileEditActivity">
+
+    <LinearLayout
+        android:id="@+id/activity_profile_edit_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/profile_edit_bg"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/activity_vertical_margin">
+
+        <LinearLayout
+            android:id="@+id/require_data_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:id="@+id/require_data_layout_left"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.9"
+                android:paddingStart="10dp"
+                tools:ignore="RtlSymmetry">
+
+                <!--<TextView-->
+                <!--android:id="@+id/username_text_field"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="@string/username_text" />-->
+
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/username_edittext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/username_text"
+                    android:singleLine="true"
+                    app:met_floatingLabel="highlight"
+                    android:textSize="16dp"/>
+
+
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/password_edittext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/username_edittext"
+                    android:hint="@string/password_text"
+                    android:singleLine="true"
+                    app:met_floatingLabel="highlight"
+                    android:textSize="16dp"/>
+
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/confirm_password_edittext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/password_edittext"
+                    android:hint="@string/confirm_password_text"
+                    android:singleLine="true"
+                    app:met_floatingLabel="highlight"
+                    android:textSize="16dp"/>
+
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/email_edittext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/confirm_password_edittext"
+                    android:hint="@string/email_text"
+                    android:singleLine="true"
+                    app:met_floatingLabel="highlight"
+                    android:textSize="16dp"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/require_data_layout_right"
+                android:layout_width="match_parent"
+                android:layout_height="240dp"
+                android:layout_weight="1.10"
+                android:layout_marginRight="5dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/editprofilepic"
+                    android:gravity="center"
+                    android:text="@string/change_avater_text" />
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/editprofilepic"
+                    android:layout_width="140dp"
+                    android:layout_height="140dp"
+                    android:layout_marginTop="37dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@mipmap/ic_account_circle_white_36dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/optional_data_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:background="@color/white"
+            android:orientation="horizontal"
+            android:paddingBottom="20dp">
+
+            <RelativeLayout
+                android:id="@+id/optional_data_layout_inner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/gendertext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="10dp"
+                    android:text="@string/gender_text"
+                    android:textSize="16dp" />
+
+                <LinearLayout
+                    android:id="@+id/gender_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/gendertext"
+                    android:background="@color/white"
+                    android:orientation="horizontal"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:layout_marginTop="10dp">
+
+                    <Button
+                        android:id="@+id/male_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:adjustViewBounds="true"
+                        android:background="@drawable/border_button_no_bg"
+                        android:clickable="true"
+                        android:contextClickable="true"
+                        android:scaleType="fitCenter"
+                        android:text="@string/male_text"
+                        android:textColor="@color/font_color_pirmary" />
+
+                    <Button
+                        android:id="@+id/female_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/gendertext"
+                        android:layout_weight="1"
+                        android:adjustViewBounds="true"
+                        android:background="@drawable/border_button_with_bg"
+                        android:clickable="true"
+                        android:contextClickable="true"
+                        android:scaleType="fitCenter"
+                        android:text="@string/female_text"
+                        android:textColor="@color/white" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/skintypetext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/gender_layout"
+                    android:paddingBottom="10dp"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="5dp"
+                    android:text="@string/skin_type_text"
+                    android:textSize="16dp" />
+
+                <Spinner
+                    android:id="@+id/skin_type_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_below="@+id/skintypetext" />
+
+                <ImageView
+                    android:id="@+id/emoji_btn"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_below="@+id/skin_type_spinner"
+                    android:layout_marginLeft="10dp"
+                    android:padding="4dp"
+                    android:src="@mipmap/smiley" />
+
+                <hani.momanii.supernova_emoji_library.Helper.EmojiconEditText
+                    android:id="@+id/about_me_edittext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/emoji_btn"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toEndOf="@+id/emoji_btn"
+                    android:hint="@string/about_me_text"
+                    app:met_floatingLabel="highlight"
+                    emojicon:emojiconSize="28sp"
+                    android:maxLines="10"
+                    />
+
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+</ScrollView>

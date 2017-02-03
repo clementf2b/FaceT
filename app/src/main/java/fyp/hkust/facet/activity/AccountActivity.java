@@ -349,7 +349,7 @@ public class AccountActivity extends AppCompatActivity{
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (!dataSnapshot.hasChild(user_id)) {
-                        Intent mainIntent = new Intent(AccountActivity.this, SetupActivity.class);
+                        Intent mainIntent = new Intent(AccountActivity.this, ProfileEditActivity.class);
                         mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(mainIntent);
                     }

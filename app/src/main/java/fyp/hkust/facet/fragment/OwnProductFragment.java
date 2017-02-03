@@ -1,6 +1,7 @@
 package fyp.hkust.facet.fragment;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,6 +35,7 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
+import fyp.hkust.facet.MyApp;
 import fyp.hkust.facet.Product;
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.User;
@@ -40,6 +43,7 @@ import fyp.hkust.facet.activity.AccountActivity;
 import fyp.hkust.facet.activity.LoginActivity;
 import fyp.hkust.facet.activity.MainActivity;
 import fyp.hkust.facet.activity.ProfileActivity;
+import fyp.hkust.facet.activity.ProfileEditActivity;
 import fyp.hkust.facet.activity.SetupActivity;
 import fyp.hkust.facet.util.FontManager;
 
@@ -64,11 +68,11 @@ public class OwnProductFragment extends Fragment {
     private FirebaseAuth.AuthStateListener mAuthListener;
     private DatabaseReference mDatabase;
     private GridLayoutManager mgr;
+    private FragmentActivity context;
 
     public OwnProductFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -80,19 +84,8 @@ public class OwnProductFragment extends Fragment {
         Typeface fontType = FontManager.getTypeface(getContext(), FontManager.APP_FONT);
         FontManager.markAsIconContainer(view.findViewById(R.id.fragment_own_product_layout), fontType);
 
-        mAuth = FirebaseAuth.getInstance();
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if(firebaseAuth.getCurrentUser() == null)
-                {
-                    Intent loginIntent = new Intent(getActivity(),LoginActivity.class);
-                    loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(loginIntent);
-                }
-            }
-        };
 
+        mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Product");
         mDatabase.keepSynced(true);
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
@@ -110,8 +103,21 @@ public class OwnProductFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
         mAuth.addAuthStateListener(mAuthListener);
+        context=getActivity();
+
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if(firebaseAuth.getCurrentUser() == null)
+                {
+                    Intent loginIntent = new Intent();
+                    loginIntent.setClass(context,LoginActivity.class);
+                    loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(loginIntent);
+                }
+            }
+        };
 
         FirebaseRecyclerAdapter<Product,ProfileActivity.OwnProductViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Product, ProfileActivity.OwnProductViewHolder>(
 
@@ -144,7 +150,7 @@ public class OwnProductFragment extends Fragment {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (!dataSnapshot.hasChild(user_id)) {
-                        Intent mainIntent = new Intent(getActivity(), SetupActivity.class);
+                        Intent mainIntent = new Intent(getActivity(), ProfileEditActivity.class);
                         mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(mainIntent);
                     }

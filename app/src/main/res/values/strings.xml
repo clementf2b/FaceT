@@ -155,6 +155,27 @@
     <string name="product_desc_text_title">Description</string>
     <string name="product_brand_text_title">Brand Name</string>
 
+    <!--activity_profile_edit-->
+    <string name="edit_profile_title">Edit Profile</string>
+    <string name="username_text">Username</string>
+    <string name="password_text">Password</string>
+    <string name="confirm_password_text">Confirm Password</string>
+    <string name="email_text">Email</string>
+    <string name="change_avater_text">Change Avatar</string>
+    <string name="gender_text">Gender</string>
+    <string name="male_text">Male</string>
+    <string name="female_text">Female</string>
+    <string name="skin_type_text">Skin Type</string>
+    <string name="about_me_text">About Me</string>
+    <string name="save">Save</string>
+    <string-array name="skin_type_array">
+        <item>雞腿飯</item>
+        <item>魯肉飯</item>
+        <item>排骨飯</item>
+        <item>水餃</item>
+        <item>陽春麵</item>
+    </string-array>
+
 </resources>
 
 

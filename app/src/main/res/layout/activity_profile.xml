@@ -15,15 +15,16 @@
         android:orientation="vertical"
         android:weightSum="1">
 
-        <ImageButton
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_picture"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_marginBottom="25dp"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="25dp"
-            android:background="@drawable/round_button"
-            app:srcCompat="@mipmap/app_icon" />
+            android:background="@mipmap/app_icon"
+            app:civ_border_width="2dp"
+            app:civ_border_color="#FF000000"/>
 
         <Button
             android:id="@+id/btn_edit"
@@ -31,17 +32,17 @@
             android:layout_height="35dp"
             android:layout_alignBottom="@+id/profile_email"
             android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="5dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="20dp"
-            android:layout_marginBottom="5dp"
             android:adjustViewBounds="true"
             android:background="@drawable/border_button_no_bg"
             android:clickable="true"
             android:contextClickable="true"
             android:scaleType="fitCenter"
             android:text="@string/edit_btn_text"
-            android:textColor="@color/font_color_pirmary"
-            android:layout_centerVertical="true"/>
+            android:textColor="@color/font_color_pirmary" />
 
         <TextView
             android:id="@+id/profile_username"
@@ -92,18 +93,24 @@
         <android.support.v4.view.ViewPager
             android:id="@+id/viewpager"
             android:layout_width="match_parent"
-            android:layout_height="260dp"
+            android:layout_height="match_parent"
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
+
     </LinearLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/add_product_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/activity_horizontal_margin"/>
-
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/add_product_fab"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_margin="16dp"-->
+        <!--android:elevation="6dp"-->
+        <!--app:backgroundTint="@color/colorPrimary"-->
+        <!--android:src="@mipmap/ic_plus_white_36dp"-->
+        <!--app:pressedTranslationZ="12dp"-->
+        <!--/>-->
 </RelativeLayout>

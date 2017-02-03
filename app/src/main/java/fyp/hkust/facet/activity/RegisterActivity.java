@@ -129,8 +129,8 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void startRegister() {
         final String name = mNameField.getText().toString().trim();
-        String email = mEmailField.getText().toString().trim();
-        String password = mPasswordField.getText().toString().trim();
+        final String email = mEmailField.getText().toString().trim();
+        final String password = mPasswordField.getText().toString().trim();
 
         if(!TextUtils.isEmpty(name) && !TextUtils.isEmpty(email) && !TextUtils.isEmpty(password))
         {
@@ -144,12 +144,14 @@ public class RegisterActivity extends AppCompatActivity {
                         String user_id = mAuth.getCurrentUser().getUid();
 
                         DatabaseReference current_user_db = mDatabase.child(user_id);
-                        current_user_db.child("Name").setValue(name);
+                        current_user_db.child("name").setValue(name);
+                        current_user_db.child("email").setValue(email);
+                        current_user_db.child("password").setValue(password);
                         current_user_db.child("image").setValue("default");
 
                         mProgress.dismiss();
 
-                        Intent mainIntent = new Intent(RegisterActivity.this,SetupActivity.class);
+                        Intent mainIntent = new Intent(RegisterActivity.this,ProfileEditActivity.class);
                         mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(mainIntent);
                     }

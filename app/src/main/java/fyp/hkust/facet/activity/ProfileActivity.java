@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -25,6 +26,7 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.adapter.ViewPagerAdapter;
 import fyp.hkust.facet.fragment.MatchedProductFragment;
@@ -38,8 +40,9 @@ public class ProfileActivity extends AppCompatActivity {
     private ViewPager viewPager;
 
     private static final String NAV_ITEM_ID = "nav_index";
-    private ImageButton profilePic;
+    private CircleImageView profilePic;
     private TextView mOwnNameField;
+    private Button btnEdit;
     private Uri mImageUri;
     private RecyclerView recentlyMatchProductList;
 
@@ -71,8 +74,9 @@ public class ProfileActivity extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Product");
         mDatabase.keepSynced(true);
 
-        profilePic = (ImageButton)findViewById(R.id.profile_picture);
+        profilePic = (CircleImageView)findViewById(R.id.profile_picture);
         mOwnNameField = (TextView) findViewById(R.id.profile_username);
+        btnEdit = (Button) findViewById(R.id.btn_edit);
 
         mDatabaseUsers.keepSynced(true);
 
@@ -88,15 +92,22 @@ public class ProfileActivity extends AppCompatActivity {
             }
         };
 
-        add_product_fab = (FloatingActionButton) findViewById(R.id.add_product_fab);
-        add_product_fab.setOnClickListener(new View.OnClickListener() {
+//        add_product_fab = (FloatingActionButton) findViewById(R.id.add_product_fab);
+//        add_product_fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(getApplicationContext(), PostActivity.class);
+//                startActivity(intent);
+//            }
+//        });
+
+        btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), PostActivity.class);
+            public void onClick(View v) {
+                Intent intent = new Intent(ProfileActivity.this, ProfileEditActivity.class);
                 startActivity(intent);
             }
         });
-
     }
 
     private void setupViewPager(ViewPager viewPager) {

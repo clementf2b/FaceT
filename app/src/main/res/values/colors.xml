@@ -28,4 +28,7 @@
 
     <color name="profile_bg">#FAFAFA</color>
     <color name="profile_email_text_color">#B3B3B3</color>
+
+    <color name="profile_edit_bg">#E0E0E0</color>
+
 </resources>

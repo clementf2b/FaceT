@@ -10,9 +10,12 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+        ndk {
+            moduleName 'jnidemo'
+        }
         sourceSets {
             main {
-                jni.srcDirs = ['src/main/jni', 'src/main/jniLibs/']
+                jniLibs.srcDir 'src/main/jni_src'
             }
         }
     }
@@ -57,7 +60,7 @@ dependencies {
     compile 'id.zelory:compressor:1.0.4'
     compile 'me.shaohui.advancedluban:library:1.3.2'
     //circle image
-    compile 'de.hdodenhof:circleimageview:2.0.0'
+    compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'me.spark:submitbutton:1.0.1'
     //blur imageview
     compile 'com.github.jgabrielfreitas:BlurImageView:1.0.1'
