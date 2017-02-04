@@ -99,9 +99,10 @@
                     android:layout_height="140dp"
                     android:layout_marginTop="37dp"
                     android:layout_marginBottom="5dp"
-                    android:background="@mipmap/ic_account_circle_white_36dp"
+                    android:src="@drawable/emoji_1f600"
                     android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true" />
+                    android:layout_centerHorizontal="true"
+                     />
 
             </RelativeLayout>
 

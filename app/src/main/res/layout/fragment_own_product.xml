@@ -1,23 +1,37 @@
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_own_product_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="fyp.hkust.facet.fragment.OwnProductFragment"
-    android:id="@+id/fragment_own_product_layout"
     android:background="@color/profile_bg"
-    >
+    tools:context="fyp.hkust.facet.fragment.OwnProductFragment">
 
     <android.support.v7.widget.RecyclerView
+        android:id="@+id/ownproductlist"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:padding="5dp">
+
+    </android.support.v7.widget.RecyclerView>
+
+
+    <com.melnykov.fab.FloatingActionButton
+        android:id="@+id/add_product_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/ownproductlist"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:padding="5dp"
-        >
-    </android.support.v7.widget.RecyclerView>
+        android:layout_margin="16dp"
+        android:elevation="6dp"
+        android:src="@mipmap/ic_plus_white_36dp"
+        fab:fab_colorNormal="@color/colorPrimary"
+        fab:fab_colorPressed="@color/primary_pressed"
+        fab:fab_colorRipple="@color/ripple"
+        fab:fab_shadow="true" />
 
 </RelativeLayout>

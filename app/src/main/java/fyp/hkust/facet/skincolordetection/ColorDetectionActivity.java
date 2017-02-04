@@ -62,7 +62,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.activity.LoginActivity;
 import fyp.hkust.facet.activity.MainMenuActivity;

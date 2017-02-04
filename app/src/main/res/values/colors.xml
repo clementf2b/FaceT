@@ -3,6 +3,8 @@
     <color name="colorPrimary">#1cbee8</color>
     <color name="colorPrimaryDark">#00c1e9</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="ripple">#97e6ed</color>
+    <color name="primary_pressed">#1c88e8</color>
 
     <color name="gradient_start">#1cbee8</color>
     <color name="gradient_end">#b3e1d8</color>
@@ -30,5 +32,6 @@
     <color name="profile_email_text_color">#B3B3B3</color>
 
     <color name="profile_edit_bg">#E0E0E0</color>
+    <color name="product_detail_label_color">#B6B6B6</color>
 
 </resources>

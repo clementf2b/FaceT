@@ -99,10 +99,6 @@
     <string name="register_comfirm_password_hint">Confirm Password</string>
     <string name="join_us">Join Us</string>
 
-    <!--activity_setup-->
-    <string name="setup_text">SetUp</string>
-    <string name="name_hint">Name ...</string>
-
     <!--activity_show_camera_view-->
     <string name="process_text">Start Processing</string>
 
@@ -175,6 +171,17 @@
         <item>水餃</item>
         <item>陽春麵</item>
     </string-array>
+
+    <!--activity_product_detail-->
+    <string name="rating_temp_num">4.0</string>
+    <string name="product_name_label">Name</string>
+    <string name="brand_name_label">Brand</string>
+    <string name="skin_type_name_label">For skin type</string>
+    <string name="product_color_label">Color</string>
+    <string name="category_type_name_label">Category</string>
+    <string name="description_label">Description</string>
+    <string name="temp_description_label">The primary purpose of descriptive writing is to describe a person, place or thing in such a way that a picture is formed in the reader\'s mind. Capturing an event through descriptive writing involves paying close attention to the details by using all of your five senses. Teaching students to write more descriptively will improve their writing by making it more interesting and engaging to read.</string>
+    <string name="temp_population_number">2,617</string>
 
 </resources>
 

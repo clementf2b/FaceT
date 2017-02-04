@@ -98,10 +98,21 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected void populateViewHolder(ProductViewHolder viewHolder, Product model, int position) {
 
+                final String post_id = model.getPostId();
                 viewHolder.setTitle(model.getTitle());
                 viewHolder.setDesc(model.getDesc());
                 viewHolder.setImage(getApplicationContext(),model.getImage());
                 viewHolder.setUsername(model.getUsername());
+
+                viewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent productDetailIntent = new Intent();
+                        productDetailIntent.setClass(MainActivity.this,ProductDetailActivity.class);
+                        productDetailIntent.putExtra("post_id",post_id);
+                        startActivity(productDetailIntent);
+                    }
+                });
             }
         };
 

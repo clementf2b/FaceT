@@ -38,6 +38,7 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import fyp.hkust.facet.Product;
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.User;
@@ -47,7 +48,7 @@ public class AccountActivity extends AppCompatActivity{
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String NAV_ITEM_ID = "nav_index";
-    private ImageButton profilePic;
+    private CircleImageView profilePic;
     private TextView mNameField;
     private Uri mImageUri;
     private RecyclerView recentlyMatchProductList;
@@ -122,7 +123,7 @@ public class AccountActivity extends AppCompatActivity{
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Product");
         mDatabase.keepSynced(true);
 
-        profilePic = (ImageButton)findViewById(R.id.profilepic);
+        profilePic = (CircleImageView)findViewById(R.id.profilepic);
         mNameField = (TextView) findViewById(R.id.accountnamefield);
 
         final String user_id = mAuth.getCurrentUser().getUid();

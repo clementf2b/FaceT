@@ -4,7 +4,7 @@ android {
     buildToolsVersion '24.0.0'
     defaultConfig {
         applicationId "fyp.hkust.facet"
-        minSdkVersion 17
+        minSdkVersion 21
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
@@ -35,13 +35,11 @@ dependencies {
     compile 'com.android.support:cardview-v7:24.0.0'
     compile 'com.android.support:design:24.0.0'
     compile 'com.android.support:recyclerview-v7:24.0.0'
-
     compile 'com.google.android.gms:play-services-auth:9.8.0'
     compile 'com.google.android.gms:play-services:9.8.0'
 
     //facebook login
     compile 'com.facebook.android:facebook-android-sdk:4.+'
-
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'io.reactivex:rxjava:1.1.6'
     // FirebaseUI Database only
@@ -61,6 +59,7 @@ dependencies {
     compile 'me.shaohui.advancedluban:library:1.3.2'
     //circle image
     compile 'de.hdodenhof:circleimageview:2.1.0'
+
     compile 'me.spark:submitbutton:1.0.1'
     //blur imageview
     compile 'com.github.jgabrielfreitas:BlurImageView:1.0.1'
@@ -73,12 +72,11 @@ dependencies {
     compile 'com.nhaarman.supertooltips:library:3.0.+'
     //sweet alert
     compile 'cn.pedant.sweetalert:library:1.3'
-
     //chart
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.1'
-
     //DLib
     compile 'com.tzutalin.dlib-android-app:dlib:1.0.4'
+
     compile 'com.github.dexafree:materiallist:3.0.1'
     // Optional -- Hamcrest library
     androidTestCompile 'org.hamcrest:hamcrest-library:1.3'
@@ -86,12 +84,21 @@ dependencies {
     compile 'com.ernestoyaquello.stepperform:vertical-stepper-form:0.9.9'
     //emoji
     compile 'hani.momanii.supernova_emoji_library:supernova-emoji-library:0.0.2'
+
     //like animation
     compile 'com.github.jd-alexander:LikeButton:0.2.0'
+
     //imageZoomer
     compile 'com.vatsal.imagezoomer:image-zoomer:1.0.2'
-    //rating
-    compile 'me.zhanghai.android.materialratingbar:library:1.0.2'
+
+    //fab library
+    compile 'com.melnykov:floatingactionbutton:1.3.0'
+
+    //color picker
+    compile 'com.azeesoft.lib.colorpicker:colorpicker:1.0.8@aar'
+    //expandableTextView
+    compile 'com.ms-square:expandableTextView:0.1.4'
+
     testCompile 'junit:junit:4.12'
 
     compile project(':openCVLibrary310')
@@ -106,8 +113,11 @@ repositories {
     maven {
         url 'https://dl.bintray.com/tzutalin/maven'
     }
-    maven { url "https://dl.bintray.com/hani-momanii/maven"}
+    maven { url "https://dl.bintray.com/hani-momanii/maven" }
     maven { url "https://jitpack.io" }
+    maven {
+        url 'https://dl.bintray.com/azeesoft/maven'
+    }
     mavenCentral()
     mavenLocal()
 }

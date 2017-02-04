@@ -2,6 +2,9 @@ package fyp.hkust.facet.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
@@ -13,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -58,6 +62,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONObject;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 import fyp.hkust.facet.R;
@@ -100,7 +106,7 @@ public class LoginActivity extends AppCompatActivity {
         supportRequestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         setContentView(R.layout.activity_login);
 
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00000000")) );
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00000000")));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setLogo(R.mipmap.app_icon);
         getSupportActionBar().setDisplayUseLogoEnabled(true);
@@ -217,7 +223,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // Initialize Facebook Login button
         mCallbackManager = CallbackManager.Factory.create();
-        
+
         LoginManager.getInstance().registerCallback(mCallbackManager,
                 new FacebookCallback<LoginResult>() {
                     @Override
@@ -226,10 +232,11 @@ public class LoginActivity extends AppCompatActivity {
                         //accessToken之後或許還會用到 先存起來
                         accessToken = loginResult.getAccessToken();
                         handleFacebookAccessToken(accessToken);
-                        Log.d("FB", "access token got : " + accessToken );
+                        Log.d("FB", "access token got : " + accessToken);
                         //send request and call graph api
                         GraphRequest request = GraphRequest.newMeRequest(
                                 accessToken,
+
                                 new GraphRequest.GraphJSONObjectCallback() {
                                     //當RESPONSE回來的時候
                                     @Override
@@ -241,11 +248,13 @@ public class LoginActivity extends AppCompatActivity {
                                         Log.d("FB", object.optString("name"));
                                         Log.d("FB", object.optString("link"));
                                         Log.d("FB", object.optString("id"));
+                                        Log.d("FB", object.optString("email"));
+                                        Log.d("FB", object.optString("birthday"));
                                     }
                                 });
                         //包入你想要得到的資料 送出request
                         Bundle parameters = new Bundle();
-                        parameters.putString("fields", "id,name,link");
+                        parameters.putString("fields", "id,name,link,email,birthday,gender,picture");
                         request.setParameters(parameters);
                         request.executeAsync();
                     }
@@ -265,15 +274,16 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //Facebook Login
-                LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("public_profile", "user_friends"));
+                LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList(
+                        "public_profile", "email", "user_birthday", "user_friends"));
             }
         });
 
     }
 
     @Override
-    public boolean onSupportNavigateUp(){
-        startActivity(new Intent(LoginActivity.this,MainMenuActivity.class));
+    public boolean onSupportNavigateUp() {
+        startActivity(new Intent(LoginActivity.this, MainMenuActivity.class));
         return true;
     }
 
@@ -316,7 +326,6 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
-
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
@@ -324,9 +333,7 @@ public class LoginActivity extends AppCompatActivity {
                             Log.w(TAG, "signInWithCredential", task.getException());
                             Toast.makeText(LoginActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-                        }
-                        else
-                        {
+                        } else {
                             mProgress.dismiss();
                             checkUserExist();
                         }
@@ -337,13 +344,12 @@ public class LoginActivity extends AppCompatActivity {
     private void handleFacebookAccessToken(AccessToken token) {
         Log.d(TAG, "handleFacebookAccessToken:" + token);
 
-        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        final AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
-
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
@@ -351,14 +357,11 @@ public class LoginActivity extends AppCompatActivity {
                             Log.w(TAG, "signInWithCredential", task.getException());
                             Toast.makeText(LoginActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-                        }
-                        else
-                        {
+                        } else {
                             mProgress.dismiss();
                             checkUserExist();
                         }
 
-                        // ...
                     }
                 });
     }
@@ -368,20 +371,16 @@ public class LoginActivity extends AppCompatActivity {
         String email = mLoginEmailField.getText().toString().trim();
         String password = mLoginPasswordField.getText().toString().trim();
 
-        if(!TextUtils.isEmpty(email)&&!TextUtils.isEmpty(password))
-        {
+        if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
             mProgress.setMessage("Checking Login ...");
             mProgress.show();
-            mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
-                    if(task.isSuccessful())
-                    {
+                    if (task.isSuccessful()) {
                         mProgress.dismiss();
                         checkUserExist();
-                    }
-                    else
-                    {
+                    } else {
                         mProgress.dismiss();
                         Toast.makeText(LoginActivity.this, "Error Login", Toast.LENGTH_LONG).show();
                     }
@@ -392,8 +391,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void checkUserExist() {
 
-        if(mAuth.getCurrentUser() != null)
-        {
+        if (mAuth.getCurrentUser() != null) {
             final String user_id = mAuth.getCurrentUser().getUid();
 
             mDatabaseUsers.addValueEventListener(new ValueEventListener() {

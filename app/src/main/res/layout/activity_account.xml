@@ -96,15 +96,14 @@
                         android:layout_alignParentEnd="true">
                     </android.support.v7.widget.RecyclerView>
 
-                    <ImageButton
+                    <de.hdodenhof.circleimageview.CircleImageView
                         android:layout_width="150dp"
                         android:layout_height="150dp"
-                        app:srcCompat="@mipmap/ic_account_circle_white_36dp"
                         android:id="@+id/profilepic"
-                        android:background="@drawable/round_button"
                         android:layout_marginTop="21dp"
                         android:layout_alignParentTop="true"
-                        android:layout_centerHorizontal="true" />
+                        android:layout_centerHorizontal="true"
+                        android:src="@drawable/background_dark" />
 
                 </RelativeLayout>
 

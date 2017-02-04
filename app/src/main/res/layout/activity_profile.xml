@@ -22,9 +22,8 @@
             android:layout_marginBottom="25dp"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="25dp"
-            android:background="@mipmap/app_icon"
-            app:civ_border_width="2dp"
-            app:civ_border_color="#FF000000"/>
+            android:src="@mipmap/app_icon"
+            android:elevation="6dp" />
 
         <Button
             android:id="@+id/btn_edit"
@@ -101,16 +100,4 @@
 
     </LinearLayout>
 
-    <!--<android.support.design.widget.FloatingActionButton-->
-        <!--android:id="@+id/add_product_fab"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentRight="true"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:layout_margin="16dp"-->
-        <!--android:elevation="6dp"-->
-        <!--app:backgroundTint="@color/colorPrimary"-->
-        <!--android:src="@mipmap/ic_plus_white_36dp"-->
-        <!--app:pressedTranslationZ="12dp"-->
-        <!--/>-->
 </RelativeLayout>

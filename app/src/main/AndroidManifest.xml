@@ -56,7 +56,6 @@
             android:name=".activity.RegisterActivity"
             android:parentActivityName=".activity.LoginActivity" />
         <activity android:name=".activity.LoginActivity" />
-        <activity android:name=".activity.SetupActivity" />
         <activity
             android:name=".activity.AccountActivity"
             android:theme="@style/AppTheme.NoActionBar_nav" />
@@ -85,6 +84,7 @@
         <activity android:name=".activity.SwapFaceActivity" />
         <activity
             android:name=".skincolordetection.ColorDetectionActivity"
+
             android:hardwareAccelerated="false" />
         <activity
             android:name=".activity.ProfileActivity" />
