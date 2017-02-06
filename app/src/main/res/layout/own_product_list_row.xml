@@ -15,14 +15,20 @@
         android:padding="3dp"
         android:background="@color/profile_bg">
 
+        <ProgressBar
+            android:id="@+id/loading_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:indeterminateOnly="true" />
+
         <ImageView
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:id="@+id/own_product_image"
-            android:background="@mipmap/upload_default"
             android:layout_alignParentTop="true"
             android:layout_alignParentStart="true" />
-
 
     </RelativeLayout>
 

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -16,7 +17,7 @@
         tools:context="fyp.hkust.facet.activity.SwapFaceActivity">
 
 
-        <android.support.design.widget.FloatingActionButton
+        <com.melnykov.fab.FloatingActionButton
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -24,22 +25,33 @@
             android:layout_alignParentEnd="true"
             android:layout_marginLeft="@dimen/fab_margin"
             android:layout_marginRight="@dimen/fab_margin"
-            android:src="@drawable/gallery" />
+            android:src="@drawable/gallery"
+            fab:fab_colorNormal="@color/colorPrimary"
+            fab:fab_colorPressed="@color/primary_pressed"
+            fab:fab_colorRipple="@color/ripple"
+            fab:fab_shadow="true"/>
 
-        <android.support.design.widget.FloatingActionButton
+        <com.melnykov.fab.FloatingActionButton
             android:id="@+id/getcolorbtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:src="@drawable/gallery" />
+            android:src="@drawable/gallery"
+            fab:fab_colorNormal="@color/colorPrimary"
+            fab:fab_colorPressed="@color/primary_pressed"
+            fab:fab_colorRipple="@color/ripple"
+            fab:fab_shadow="true"/>
 
-        <android.support.design.widget.FloatingActionButton
+        <com.melnykov.fab.FloatingActionButton
             android:id="@+id/swapfacebtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@mipmap/ic_account_circle_white_36dp"
             app:theme="@style/AppTheme"
-            />
+            fab:fab_colorNormal="@color/colorPrimary"
+            fab:fab_colorPressed="@color/primary_pressed"
+            fab:fab_colorRipple="@color/ripple"
+            fab:fab_shadow="true" />
 
 
         <ImageView

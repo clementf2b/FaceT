@@ -26,7 +26,6 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.UiThread;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -38,6 +37,7 @@ import android.widget.Toast;
 
 import com.dexafree.materialList.card.Card;
 import com.dexafree.materialList.card.provider.BigImageCardProvider;
+import com.melnykov.fab.FloatingActionButton;
 import com.roger.gifloadinglibrary.GifLoadingView;
 import com.tzutalin.dlib.Constants;
 import com.tzutalin.dlib.FaceDet;
@@ -602,13 +602,23 @@ public class SwapFaceActivity extends AppCompatActivity {
             canvas.drawRect(bounds, paint);
             // Get landmark
             if (number == 1) {
+
                 landmarks = ret.getFaceLandmarks();
+
+                Log.d(TAG + " ret.toString()" , ret.toString());
+                Log.d(TAG + " x" , ret.getTop() + " " + ret.getBottom() + " " + ret.getLeft() + " " + ret.getRight() );
+                int count = 0;
                 for (Point point : landmarks) {
                     int pointX = (int) (point.x * resizeRatio);
                     int pointY = (int) (point.y * resizeRatio);
                     canvas.drawCircle(pointX, pointY, 2, paint);
-                    Log.d("LandMark Result: ", pointX + "," + pointY);
+                    if(count<1)
+                    {
+
+                    }
+                    Log.d("LandMark Result", pointX + "," + pointY);
                 }
+
             } else if (number == 2) {
                 landmarks2 = ret.getFaceLandmarks();
                 for (Point point : landmarks2) {

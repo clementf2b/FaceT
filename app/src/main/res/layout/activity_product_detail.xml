@@ -25,11 +25,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <ProgressBar
+                android:id="@+id/loading_indicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:indeterminateOnly="true" />
+
             <com.vatsal.imagezoomer.ImageZoomButton
                 android:id="@+id/detail_product_image"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:src="@mipmap/ic_launcher" />
+                android:layout_height="250dp"
+                />
 
         </RelativeLayout>
 
@@ -381,6 +389,14 @@
                 android:secondaryProgressTint="@color/colorPrimary"
                 android:stepSize="0.5" />
 
+            <ProgressBar
+                android:id="@+id/loading_indicator_profile_pic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="48dp"
+                android:indeterminateOnly="true" />
+
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/user_profile_pic"
                 android:layout_width="120dp"
@@ -388,7 +404,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
-                android:src="@drawable/hillary_clinton"
+                android:src="@mipmap/ic_account_circle_white_36dp"
                 app:civ_border_color="@color/profile_edit_bg"
                 app:civ_border_width="5dp" />
 
@@ -478,22 +494,30 @@
 
                 <ImageView
                     android:id="@+id/emoji_btn"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_below="@+id/skin_type_spinner"
                     android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"
                     android:paddingBottom="4dp"
                     android:paddingTop="4dp"
                     android:src="@mipmap/smiley" />
+
+                <ImageView
+                    android:id="@+id/submit_btn"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentRight="true"
+                    android:padding="4dp"
+                    android:layout_marginTop="5dp"
+                    android:src="@mipmap/ic_send_grey600_18dp" />
 
                 <hani.momanii.supernova_emoji_library.Helper.EmojiconEditText
                     android:id="@+id/comment_edittext"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_alignBottom="@+id/emoji_btn"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="40dp"
-                    android:layout_toRightOf="@id/emoji_btn"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="65dp"
                     android:hint="@string/comment_hint_text"
                     android:inputType="textMultiLine"
                     android:scrollbars="vertical"
@@ -502,17 +526,11 @@
                     app:met_floatingLabel="highlight"
                     emojicon:emojiconSize="28sp"
                     android:lines="4"
-                    android:minLines="2"
-                    android:maxLines="15"/>
-
-                <ImageView
-                    android:id="@+id/submit_btn"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentRight="true"
-                    android:padding="4dp"
-                    android:src="@mipmap/ic_send_grey600_18dp" />
+                    android:minLines="1"
+                    android:maxLines="15"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/emoji_btn"
+                    android:layout_toStartOf="@+id/submit_btn" />
 
             </RelativeLayout>
 
