@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Scroller;
 import android.widget.Spinner;
 
 import com.google.android.gms.maps.model.Circle;
@@ -102,6 +103,8 @@ public class ProfileEditActivity extends AppCompatActivity {
 
         emailEdittext.setEnabled(false);
 
+        aboutMeEdittext.setScroller(new Scroller(getApplicationContext()));
+        aboutMeEdittext.setVerticalScrollBarEnabled(true);
         emojIcon = new EmojIconActions(this, rootView, aboutMeEdittext, emojiButton);
         emojIcon.ShowEmojIcon();
         emojIcon.setKeyboardListener(new EmojIconActions.KeyboardListener() {
@@ -159,14 +162,13 @@ public class ProfileEditActivity extends AppCompatActivity {
             }
         };
 
-
         // username change listener
         mDatabaseUsers.child(user_id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 emailEdittext.setText(user.getEmail());
                 if (dataSnapshot.getValue() != null) {
-                    Log.e("dataSnapshot.getValue()", dataSnapshot.getValue().toString());
+                    Log.i("dataSnapshot.getValue()", dataSnapshot.getValue().toString());
                     final User user_data = dataSnapshot.getValue(User.class);
                     Log.e(user_data.getName(), "User data is null!");
                     usernameEdittext.setText(user_data.getName());
@@ -187,10 +189,11 @@ public class ProfileEditActivity extends AppCompatActivity {
                         public void onError() {
                             Picasso.with(getApplicationContext())
                                     .load(user_data.getImage())
+                                    .centerCrop()
+                                    .fit()
                                     .into(editProfilepic);
                         }
                     });
-
                     // Check for null
                     if (user == null) {
                         Log.e(TAG, "User data is null!");
@@ -242,16 +245,18 @@ public class ProfileEditActivity extends AppCompatActivity {
 
                     //change the password in the firebase
                     String provider = user.getProviders().get(0);
-                    Log.d("provider",provider + " "+ user.getProviders().size());
-                    user.updatePassword(password)
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        Log.d(TAG, "User password updated. new password: " + password);
+                    Log.d("provider", provider + " " + user.getProviders().size());
+                    if (password != null) {
+                        user.updatePassword(password)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            Log.d(TAG, "User password updated. new password: " + password);
+                                        }
                                     }
-                                }
-                            });
+                                });
+                    }
 
                     mProgress.dismiss();
 

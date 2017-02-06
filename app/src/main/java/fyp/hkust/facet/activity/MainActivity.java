@@ -32,7 +32,7 @@ import fyp.hkust.facet.util.FontManager;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final String TAG = "MainActivity";
+    private final static String TAG = "MainActivity";
     private RecyclerView mProductList;
     private GridLayoutManager mgr;
     private DatabaseReference mDatabase;
@@ -98,7 +98,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected void populateViewHolder(ProductViewHolder viewHolder, Product model, int position) {
 
-                final String post_id = model.getPostId();
+                Log.d(TAG,"loading view " + position);
+                final String product_id = getRef(position).getKey();
                 viewHolder.setTitle(model.getTitle());
                 viewHolder.setDesc(model.getDesc());
                 viewHolder.setImage(getApplicationContext(),model.getImage());
@@ -109,15 +110,17 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         Intent productDetailIntent = new Intent();
                         productDetailIntent.setClass(MainActivity.this,ProductDetailActivity.class);
-                        productDetailIntent.putExtra("post_id",post_id);
+                        productDetailIntent.putExtra("product_id",product_id);
+                        Log.d(TAG + " product_id", product_id);
                         startActivity(productDetailIntent);
                     }
                 });
+
+                Log.d(TAG,"finish loading view");
             }
         };
 
         mProductList.setAdapter(firebaseRecyclerAdapter);
-
     }
 
     private void checkUserExist() {
@@ -143,6 +146,40 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.main_menu,menu);
+
+        return super.onCreateOptionsMenu(menu);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if(item.getItemId() == R.id.action_add)
+        {
+            startActivity(new Intent(MainActivity.this,PostActivity.class));
+        }
+
+        if(item.getItemId() == R.id.action_logout)
+        {
+            logout();
+        }
+
+        if(item.getItemId() == R.id.action_account)
+        {
+            startActivity(new Intent(MainActivity.this,AccountActivity.class));
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void logout()
+    {
+        mAuth.signOut();
+    }
 
     public static class ProductViewHolder extends RecyclerView.ViewHolder{
 
@@ -177,12 +214,11 @@ public class MainActivity extends AppCompatActivity {
             Picasso.with(ctx).load(image).networkPolicy(NetworkPolicy.OFFLINE).into(post_image, new Callback() {
                 @Override
                 public void onSuccess() {
-
+                    Log.d(TAG, "image loading success !");
                 }
-
                 @Override
                 public void onError() {
-
+                    Log.d(TAG, "image loading error !");
                     Picasso.with(ctx)
                             .load(image)
                             .resize(100, 100)
@@ -190,41 +226,6 @@ public class MainActivity extends AppCompatActivity {
                             .into(post_image);
                 }
             });
-
         }
-    }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        getMenuInflater().inflate(R.menu.main_menu,menu);
-
-        return super.onCreateOptionsMenu(menu);
-
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        if(item.getItemId() == R.id.action_add)
-        {
-            startActivity(new Intent(MainActivity.this,PostActivity.class));
-        }
-
-        if(item.getItemId() == R.id.action_logout)
-        {
-            logout();
-        }
-
-        if(item.getItemId() == R.id.action_account)
-        {
-            startActivity(new Intent(MainActivity.this,AccountActivity.class));
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void logout()
-    {
-        mAuth.signOut();
     }
 }

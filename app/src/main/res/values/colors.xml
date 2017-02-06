@@ -34,4 +34,10 @@
     <color name="profile_edit_bg">#E0E0E0</color>
     <color name="product_detail_label_color">#B6B6B6</color>
 
+    <color name="bar_chart_color_1">#17BCF7</color>
+    <color name="bar_chart_color_2">#39C5C1</color>
+    <color name="bar_chart_color_3">#B3E1D7</color>
+    <color name="bar_chart_color_4">#FEE2D8</color>
+    <color name="bar_chart_color_5">#FFAEB6</color>
+
 </resources>

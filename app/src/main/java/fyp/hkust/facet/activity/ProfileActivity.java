@@ -196,7 +196,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                     Picasso.with(ctx)
                             .load(image)
-                            .resize(100, 100)
+                            .fit()
                             .centerCrop()
                             .into(own_post_image);
                 }

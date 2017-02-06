@@ -1,11 +1,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
-    android:id="@+id/activity_vertical_stepper_form_layout">
+    android:id="@+id/activity_vertical_stepper_form_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <ernestoyaquello.com.verticalstepperform.VerticalStepperFormLayout
         android:id="@+id/vertical_stepper_form"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"/>
+        android:layout_alignParentTop="true" />
 
 </RelativeLayout>

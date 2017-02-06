@@ -6,12 +6,11 @@ package fyp.hkust.facet;
 
 public class Product {
 
-    private String postId;
     private String title;
+    private String brand;
     private String desc;
     private String image;
     private String username;
-
     private String uid;
 
     public Product()
@@ -19,9 +18,9 @@ public class Product {
 
     }
 
-    public Product(String postId,String title, String desc, String image,String username,String uid) {
-        this.postId = postId;
+    public Product(String title,String brand, String desc, String image,String username,String uid) {
         this.title = title;
+        this.brand = brand;
         this.desc = desc;
         this.image = image;
         this.username = username;
@@ -35,6 +34,14 @@ public class Product {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
     }
 
     public String getDesc() {
@@ -69,11 +76,4 @@ public class Product {
         this.uid = uid;
     }
 
-    public String getPostId() {
-        return postId;
-    }
-
-    public void setPostId(String postId) {
-        this.postId = postId;
-    }
 }

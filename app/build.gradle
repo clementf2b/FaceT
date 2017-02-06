@@ -4,7 +4,7 @@ android {
     buildToolsVersion '24.0.0'
     defaultConfig {
         applicationId "fyp.hkust.facet"
-        minSdkVersion 21
+        minSdkVersion 17
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
@@ -96,7 +96,7 @@ dependencies {
 
     //color picker
     compile 'com.azeesoft.lib.colorpicker:colorpicker:1.0.8@aar'
-    //expandableTextView
+    // Expandable Textview
     compile 'com.ms-square:expandableTextView:0.1.4'
 
     testCompile 'junit:junit:4.12'

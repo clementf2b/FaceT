@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<fyp.hkust.facet.util.VerticalScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:emojicon="http://schemas.android.com/apk/res-auto"
     xmlns:expandableTextView="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_product_detail_scroll_layout"
@@ -26,7 +28,7 @@
             <com.vatsal.imagezoomer.ImageZoomButton
                 android:id="@+id/detail_product_image"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="200dp"
                 android:src="@mipmap/ic_launcher" />
 
         </RelativeLayout>
@@ -35,17 +37,18 @@
             android:id="@+id/detail_rating_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            >
 
             <TextView
                 android:id="@+id/rating_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
+                android:paddingBottom="5dp"
                 android:paddingLeft="5dp"
                 android:text="@string/rating_temp_num"
                 android:textColor="@color/colorPrimary"
-                android:textSize="20dp" />
+                android:textSize="24dp" />
 
             <RatingBar
                 android:id="@+id/top_rating_bar"
@@ -54,14 +57,14 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="-15dp"
+                android:layout_marginStart="-10dp"
                 android:layout_toRightOf="@+id/rating_textview"
                 android:isIndicator="true"
                 android:numStars="5"
                 android:progressTint="@color/colorPrimary"
                 android:rating="4.0"
-                android:scaleX="0.5"
-                android:scaleY="0.5"
+                android:scaleX="0.55"
+                android:scaleY="0.55"
                 android:secondaryProgressTint="@color/colorPrimary"
                 android:stepSize="1" />
 
@@ -81,7 +84,8 @@
                 android:layout_toLeftOf="@+id/location_btn"
                 android:scaleX="1.0"
                 android:scaleY="1.0"
-                app:icon_size="24dp"
+                app:anim_scale_factor="2.5"
+                app:icon_size="25dp"
                 app:icon_type="heart" />
 
             <ImageButton
@@ -379,46 +383,51 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/user_profile_pic"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
-                android:src="@drawable/hillary_clinton" />
+                android:src="@drawable/hillary_clinton"
+                app:civ_border_color="@color/profile_edit_bg"
+                app:civ_border_width="5dp" />
 
         </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/rating_result_layout"
             android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:layout_marginBottom="@dimen/cast_mini_controller_font_size_line1">
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/cast_mini_controller_font_size_line1"
+            android:layout_marginTop="-5dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="horizontal">
 
                 <com.github.mikephil.charting.charts.PieChart
                     android:id="@+id/rating_pie_chart"
                     android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:scaleX=".3"
-                    android:scaleY=".3"
-                    android:layout_weight="1.1" />
+                    android:layout_height="110dp"
+                    android:layout_marginLeft="-5dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1.0"
+                    android:scaleX="1.0"
+                    android:scaleY="1.0" />
 
                 <RelativeLayout
                     android:id="@+id/rating_population_number_layout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1.3"
-                    android:paddingLeft="5dp">
+                    android:layout_marginStart="-25dp"
+                    android:layout_weight="1.2"
+                    android:paddingBottom="30dp">
 
                     <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_weight="1"
                         android:id="@+id/rating_population_icon"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
                         android:layout_alignParentBottom="true"
                         android:background="@mipmap/ic_account_multiple_black_18dp" />
 
@@ -426,21 +435,24 @@
                         android:id="@+id/rating_population_number_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/temp_population_number"
-                        android:gravity="bottom|end"
                         android:layout_alignParentBottom="true"
                         android:layout_toRightOf="@+id/rating_population_icon"
-                        android:paddingLeft="3dp"/>
+                        android:gravity="bottom|end"
+                        android:paddingLeft="3dp"
+                        android:text="@string/temp_population_number"
+                        android:textSize="14dp" />
 
                 </RelativeLayout>
 
                 <com.github.mikephil.charting.charts.HorizontalBarChart
                     android:id="@+id/rating_chart_bar"
                     android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:scaleX="0.5"
-                    android:scaleY="0.5"
-                    android:layout_weight="1"/>
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="-15dp"
+                    android:layout_marginStart="-15dp"
+                    android:layout_weight="0.8"
+                    android:scaleX="1.2"
+                    android:scaleY="0.6" />
 
             </LinearLayout>
 
@@ -453,6 +465,66 @@
                 android:background="#2F000000"></View>
         </RelativeLayout>
 
+        <LinearLayout
+            android:id="@+id/user_comment_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/user_comment_edit_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/emoji_btn"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_below="@+id/skin_type_spinner"
+                    android:layout_marginLeft="10dp"
+                    android:paddingBottom="4dp"
+                    android:paddingTop="4dp"
+                    android:src="@mipmap/smiley" />
+
+                <hani.momanii.supernova_emoji_library.Helper.EmojiconEditText
+                    android:id="@+id/comment_edittext"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignBottom="@+id/emoji_btn"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="40dp"
+                    android:layout_toRightOf="@id/emoji_btn"
+                    android:hint="@string/comment_hint_text"
+                    android:inputType="textMultiLine"
+                    android:scrollbars="vertical"
+                    android:scrollHorizontally="false"
+                    android:scrollIndicators="right"
+                    app:met_floatingLabel="highlight"
+                    emojicon:emojiconSize="28sp"
+                    android:lines="4"
+                    android:minLines="2"
+                    android:maxLines="15"/>
+
+                <ImageView
+                    android:id="@+id/submit_btn"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:padding="4dp"
+                    android:src="@mipmap/ic_send_grey600_18dp" />
+
+            </RelativeLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/product_comment_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingTop="10dp">
+
+            </android.support.v7.widget.RecyclerView>
+
+        </LinearLayout>
     </LinearLayout>
 
-</ScrollView>
+</fyp.hkust.facet.util.VerticalScrollView>
