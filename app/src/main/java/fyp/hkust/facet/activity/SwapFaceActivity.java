@@ -612,10 +612,6 @@ public class SwapFaceActivity extends AppCompatActivity {
                     int pointX = (int) (point.x * resizeRatio);
                     int pointY = (int) (point.y * resizeRatio);
                     canvas.drawCircle(pointX, pointY, 2, paint);
-                    if(count<1)
-                    {
-
-                    }
                     Log.d("LandMark Result", pointX + "," + pointY);
                 }
 

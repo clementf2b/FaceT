@@ -25,7 +25,9 @@ import android.widget.Toast;
 
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.skincolordetection.CaptureActivity;
+import fyp.hkust.facet.skincolordetection.ColorDetectionActivity;
 import fyp.hkust.facet.skincolordetection.ShowCameraViewActivity;
+import fyp.hkust.facet.testActivity;
 import fyp.hkust.facet.util.FontManager;
 import hugo.weaving.DebugLog;
 
@@ -45,6 +47,7 @@ public class MainMenuActivity extends AppCompatActivity {
     private ImageButton storeBtn;
 
     private static final int GALLERY_REQUEST = 1;
+    private ImageButton favBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +68,7 @@ public class MainMenuActivity extends AppCompatActivity {
         shoppingBtn = (ImageButton) findViewById(R.id.shopping_button);
         accountBtn = (ImageButton) findViewById(R.id.account_button);
         storeBtn = (ImageButton) findViewById(R.id.store_button);
+        favBtn = (ImageButton) findViewById(R.id.fav_button);
 
         photoCameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,7 +132,18 @@ public class MainMenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Intent storeIntent = new Intent(MainMenuActivity.this, SwapFaceActivity.class);
+                Intent storeIntent = new Intent(MainMenuActivity.this, testActivity.class);
+//                accountIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(storeIntent);
+
+            }
+        });
+
+        favBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent storeIntent = new Intent(MainMenuActivity.this, ColorizeFaceActivity.class);
 //                accountIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(storeIntent);
 

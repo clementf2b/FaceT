@@ -84,12 +84,12 @@
         <activity android:name=".activity.SwapFaceActivity" />
         <activity
             android:name=".skincolordetection.ColorDetectionActivity"
-
             android:hardwareAccelerated="false" />
-        <activity
-            android:name=".activity.ProfileActivity" />
+        <activity android:name=".activity.ProfileActivity" />
         <activity android:name=".activity.ProductDetailActivity" />
-        <activity android:name=".activity.ProfileEditActivity"></activity>
+        <activity android:name=".activity.ProfileEditActivity" />
+        <activity android:name=".activity.ColorizeFaceActivity" />
+        <activity android:name=".testActivity"></activity>
     </application>
 
 </manifest>

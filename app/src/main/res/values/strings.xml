@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">FaceT</string>
     <string name="facebook_app_id">1569918259976009</string>
+    <string name="facepp_API_Key">fff257fc480408f6d3c4962abeb1c361</string>
+    <string name="facepp_API_Secret">r6jmL97Hso0fO8ffcc0jVW2Q6w6-Ybe2</string>
+
     <string name="save_message1">"You don't have chosen converted picture to save"</string>
     <string name="save_message2">"Saved successfully"</string>
     <string name="save_message3">"Saving in the original quality can take a while"</string>
