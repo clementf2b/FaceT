@@ -28,7 +28,7 @@
         android:layout_above="@+id/button1"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true" />
+        android:layout_below="@+id/drawbtn" />
 
     <Button
         android:id="@+id/button2"
@@ -51,21 +51,23 @@
         android:text="state"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <Button
-        android:text="landmark"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/landmark" />
-
     <com.melnykov.fab.FloatingActionButton
         android:id="@+id/drawbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@mipmap/ic_account_circle_white_36dp"
         android:layout_alignParentRight="true"
+        fab:fab_colorNormal="@color/colorPrimary"
+        fab:fab_colorPressed="@color/primary_pressed"
+        fab:fab_colorRipple="@color/ripple"
+        fab:fab_shadow="true" />
+
+    <com.melnykov.fab.FloatingActionButton
+        android:id="@+id/facebtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/ic_account_circle_white_36dp"
+        android:layout_alignParentLeft="true"
         fab:fab_colorNormal="@color/colorPrimary"
         fab:fab_colorPressed="@color/primary_pressed"
         fab:fab_colorRipple="@color/ripple"

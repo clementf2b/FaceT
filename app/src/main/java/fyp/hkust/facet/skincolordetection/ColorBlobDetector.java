@@ -15,8 +15,13 @@ import java.util.List;
 
 public class ColorBlobDetector {
     // Lower and Upper bounds for range checking in HSV color space
-    private Scalar mLowerBound = new Scalar(0);
-    private Scalar mUpperBound = new Scalar(0);
+//    private Scalar mLowerBound = new Scalar(0);
+//    private Scalar mUpperBound = new Scalar(0);
+    //        http://matmidia.org/sibgrapi2009/media/posters/59928.pdf
+//        The skin in channel H is characterized by values between 0 and 50,
+//        in the channel S from 0.23 to 0.68 for Asian and Caucasian ethnics.
+    private Scalar mLowerBound = new Scalar(0, 0.23 * 255, 0);
+    private Scalar mUpperBound = new Scalar(50, 0.68 * 255, 255);
     // Minimum contour area in percent for contours filtering
     private static double mMinContourArea = 0.1;
     // Color radius for range checking in HSV color space
@@ -51,10 +56,10 @@ public class ColorBlobDetector {
         mLowerBound.val[2] = hsvColor.val[2] - mColorRadius.val[2];
         mUpperBound.val[2] = hsvColor.val[2] + mColorRadius.val[2];
 
-        mLowerBound.val[3] = 30;
-        mUpperBound.val[3] = 220;
-//        mLowerBound.val[3] = 0;
-//        mUpperBound.val[3] = 255;
+//        mLowerBound.val[3] = 30;
+//        mUpperBound.val[3] = 220;
+        mLowerBound.val[3] = 0;
+        mUpperBound.val[3] = 255;
 
         Mat spectrumHsv = new Mat(1, (int)(maxH-minH), CvType.CV_8UC3);
 

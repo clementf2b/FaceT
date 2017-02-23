@@ -41,30 +41,52 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
-        <activity android:name=".activity.MainActivity" />
-        <activity android:name=".activity.PostActivity" />
+        <activity
+            android:name=".activity.MainActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".activity.PostActivity"
+            android:screenOrientation="portrait" />
+
         <activity
             android:name=".activity.MainMenuActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action
+                    android:name="android.intent.action.MAIN"
+                    android:screenOrientation="portrait" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category
+                    android:name="android.intent.category.LAUNCHER"
+                    android:screenOrientation="portrait" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".activity.RegisterActivity"
-            android:parentActivityName=".activity.LoginActivity" />
-        <activity android:name=".activity.LoginActivity" />
+            android:parentActivityName=".activity.LoginActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".activity.LoginActivity"
+            android:screenOrientation="portrait" />
+
         <activity
             android:name=".activity.AccountActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar_nav" />
+
         <activity
             android:name=".skincolordetection.ShowCameraViewActivity"
             android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
             android:supportsRtl="true" />
+
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Base.Theme.AppCompat" /> <!-- optional (needed if default theme has no action bar) -->
 
         <activity
@@ -80,16 +102,40 @@
 
         <activity
             android:name=".activity.CategoryActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar_nav" />
-        <activity android:name=".activity.SwapFaceActivity" />
+
+        <activity
+            android:name=".activity.SwapFaceActivity"
+            android:screenOrientation="portrait" />
+
         <activity
             android:name=".skincolordetection.ColorDetectionActivity"
-            android:hardwareAccelerated="false" />
-        <activity android:name=".activity.ProfileActivity" />
-        <activity android:name=".activity.ProductDetailActivity" />
-        <activity android:name=".activity.ProfileEditActivity" />
-        <activity android:name=".activity.ColorizeFaceActivity" />
-        <activity android:name=".testActivity"></activity>
+            android:hardwareAccelerated="false"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".activity.ProfileActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar_nav" />
+
+        <activity
+            android:name=".activity.ProductDetailActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".activity.ProfileEditActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".activity.ColorizeFaceActivity"
+            android:hardwareAccelerated="false"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".testActivity"
+            android:screenOrientation="portrait" />
+
     </application>
 
 </manifest>

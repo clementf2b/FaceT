@@ -158,7 +158,6 @@ public class ProfileActivity extends AppCompatActivity {
 
         View mView;
 
-
         public OwnProductViewHolder(View itemView) {
             super(itemView);
             mView = itemView;

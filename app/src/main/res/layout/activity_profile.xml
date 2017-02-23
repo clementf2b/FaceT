@@ -1,103 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_profile"
+    android:id="@+id/profile_coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/profile_bg"
-    tools:context="fyp.hkust.facet.activity.ProfileActivity">
+    android:fitsSystemWindows="true"
+    tools:context=".activity.MainActivity">
 
-    <RelativeLayout
-        android:id="@+id/profile_layout"
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:orientation="vertical"
-        android:weightSum="1">
+        android:layout_height="192dp"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:elevation="0dp">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/profile_picture"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginBottom="25dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="25dp"
-            android:src="@mipmap/app_icon"
-            android:elevation="6dp" />
-
-        <Button
-            android:id="@+id/btn_edit"
-            android:layout_width="60dp"
-            android:layout_height="35dp"
-            android:layout_alignBottom="@+id/profile_email"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="20dp"
-            android:adjustViewBounds="true"
-            android:background="@drawable/border_button_no_bg"
-            android:clickable="true"
-            android:contextClickable="true"
-            android:scaleType="fitCenter"
-            android:text="@string/edit_btn_text"
-            android:textColor="@color/font_color_pirmary" />
-
-        <TextView
-            android:id="@+id/profile_username"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="47dp"
-            android:layout_toEndOf="@+id/profile_picture"
-            android:layout_toStartOf="@+id/btn_edit"
-            android:text="@string/profile_username"
-            android:textSize="12sp" />
-
-        <TextView
-            android:id="@+id/profile_email"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/profile_username"
-            android:layout_toEndOf="@+id/profile_picture"
-            android:layout_toStartOf="@+id/btn_edit"
-            android:paddingLeft="20dp"
-            android:paddingTop="10dp"
-            android:text="@string/profile_email"
-            android:textColor="@color/profile_email_text_color"
-            android:textSize="10sp" />
-    </RelativeLayout>
-
-    <android.support.design.widget.TabLayout
-        android:id="@+id/tabs"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/profile_layout"
-        android:background="@color/colorPrimary"
-        app:layout_scrollFlags="scroll|enterAlways"
-        app:tabGravity="fill"
-        app:tabIndicatorColor="@color/white"
-        app:tabMode="fixed"
-        app:tabSelectedTextColor="@color/white"
-        app:tabTextColor="@color/grey_title" />
-
-    <LinearLayout
-        android:id="@+id/tab_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tabs"
-        android:orientation="vertical">
-
-        <android.support.v4.view.ViewPager
-            android:id="@+id/viewpager"
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+            app:expandedTitleGravity="right"
+            app:layout_scrollFlags="scroll|enterAlways">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="?attr/actionBarSize"
+                app:elevation="0dp" />
+
+            <RelativeLayout
+                android:id="@+id/activity_profile"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/profile_bg"
+                tools:context="fyp.hkust.facet.activity.ProfileActivity">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/profile_picture"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_marginBottom="25dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="25dp"
+                        android:elevation="6dp"
+                        android:src="@mipmap/app_icon" />
+
+                    <Button
+                        android:id="@+id/btn_edit"
+                        android:layout_width="60dp"
+                        android:layout_height="35dp"
+                        android:layout_alignBottom="@+id/profile_email"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="20dp"
+                        android:adjustViewBounds="true"
+                        android:background="@drawable/border_button_no_bg"
+                        android:clickable="true"
+                        android:contextClickable="true"
+                        android:scaleType="fitCenter"
+                        android:text="@string/edit_btn_text"
+                        android:textColor="@color/font_color_pirmary" />
+
+                    <TextView
+                        android:id="@+id/profile_username"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="47dp"
+                        android:layout_toEndOf="@+id/profile_picture"
+                        android:layout_toStartOf="@+id/btn_edit"
+                        android:text="@string/profile_username"
+                        android:textColor="@color/profile_email_text_color"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/profile_email"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/profile_username"
+                        android:layout_toEndOf="@+id/profile_picture"
+                        android:layout_toStartOf="@+id/btn_edit"
+                        android:paddingLeft="20dp"
+                        android:paddingTop="10dp"
+                        android:text="@string/profile_email"
+                        android:textColor="@color/profile_email_text_color"
+                        android:textSize="10sp" />
+
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/tabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPrimary"
+                    app:tabGravity="fill"
+                    app:tabIndicatorColor="@color/white"
+                    app:tabMode="fixed"
+                    app:tabSelectedTextColor="@color/white"
+                    app:tabTextColor="@color/grey_title"
+                    app:tabIndicatorHeight="2dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentStart="true" />
+
+            </RelativeLayout>
+
+        </android.support.design.widget.CollapsingToolbarLayout>
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 
-    </LinearLayout>
-
-</RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

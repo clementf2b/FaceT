@@ -43,15 +43,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:mrl_rippleOverlay="true"
                 app:mrl_rippleColor="#66EAEAEA"
-                android:visibility="invisible">
+                app:mrl_rippleOverlay="true">
 
                 <ImageButton
                     android:id="@+id/category_All"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/cat_all" />
+                    android:background="@drawable/cat_all"
+                    android:visibility="invisible" />
 
             </com.balysv.materialripple.MaterialRippleLayout>
 
@@ -60,16 +60,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:mrl_rippleOverlay="true"
                 app:mrl_rippleColor="#66EAEAEA"
-                android:visibility="invisible">
+                app:mrl_rippleOverlay="true">
 
                 <ImageButton
                     android:id="@+id/category_Face"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/category_All"
-                    android:background="@drawable/cat_face" />
+                    android:background="@drawable/cat_face"
+                    android:visibility="invisible" />
             </com.balysv.materialripple.MaterialRippleLayout>
 
             <com.balysv.materialripple.MaterialRippleLayout
@@ -77,16 +77,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:mrl_rippleOverlay="true"
                 app:mrl_rippleColor="#66EAEAEA"
-                android:visibility="invisible">
+                app:mrl_rippleOverlay="true">
 
                 <ImageButton
                     android:id="@+id/category_Eyes"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/category_Face"
-                    android:background="@drawable/cat_eyes" />
+                    android:background="@drawable/cat_eyes"
+                    android:visibility="invisible" />
             </com.balysv.materialripple.MaterialRippleLayout>
 
             <com.balysv.materialripple.MaterialRippleLayout
@@ -94,9 +94,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:mrl_rippleOverlay="true"
                 app:mrl_rippleColor="#66EAEAEA"
-                android:visibility="invisible">
+                app:mrl_rippleOverlay="true">
 
                 <ImageButton
                     android:id="@+id/category_Lips"
@@ -104,7 +103,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/category_Eyes"
                     android:background="@drawable/cat_lips"
-                    />
+                    android:visibility="invisible" />
 
             </com.balysv.materialripple.MaterialRippleLayout>
 

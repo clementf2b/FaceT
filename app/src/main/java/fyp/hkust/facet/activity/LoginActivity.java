@@ -407,7 +407,6 @@ public class LoginActivity extends AppCompatActivity {
                         startActivity(setupIntent);
                     }
                 }
-
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
 

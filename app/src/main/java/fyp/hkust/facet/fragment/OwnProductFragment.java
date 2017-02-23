@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -75,6 +76,7 @@ public class OwnProductFragment extends Fragment {
     public OwnProductFragment() {
         // Required empty public constructor
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -133,9 +135,9 @@ public class OwnProductFragment extends Fragment {
             }
         };
 
+        mgr.setAutoMeasureEnabled(true);
+        mOwnProductList.setHasFixedSize(false);
         mOwnProductList.setAdapter(firebaseRecyclerAdapter);
-        mOwnProductList.setNestedScrollingEnabled(false);
-        mOwnProductList.isScrollbarFadingEnabled();
 
         mOwnProductList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -150,13 +152,17 @@ public class OwnProductFragment extends Fragment {
 //                Log.i(TAG, "-----------onScrolled-----------");
 //                Log.i(TAG, "dx: " + dx);
 //                Log.i(TAG, "dy: " + dy);
-                if(dy > 0)
+                if(dy > 0) {
                     add_product_fab.hide();
-                if(dy < 0)
+                }
+                if(dy < 0) {
                     add_product_fab.show();
+                }
             }
         });
     }
+
+
 
     private void checkUserExist() {
 
