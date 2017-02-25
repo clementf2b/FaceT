@@ -7,26 +7,16 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Html;
-import android.text.style.ForegroundColorSpan;
-import android.text.style.StyleSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
@@ -35,7 +25,6 @@ import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
-import com.jgabrielfreitas.core.BlurImageView;
 import com.roger.gifloadinglibrary.GifLoadingView;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -63,12 +52,8 @@ import java.util.List;
 import java.util.Random;
 
 import fyp.hkust.facet.R;
-import fyp.hkust.facet.activity.LoginActivity;
 import fyp.hkust.facet.activity.MainMenuActivity;
-import fyp.hkust.facet.util.FontAwesomeManager;
 import fyp.hkust.facet.util.FontManager;
-
-import static android.graphics.Bitmap.createScaledBitmap;
 
 public class ColorDetectionActivity extends AppCompatActivity implements OnChartValueSelectedListener {
 

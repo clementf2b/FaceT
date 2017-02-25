@@ -1,10 +1,11 @@
 package fyp.hkust.facet.activity;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BlurMaskFilter;
@@ -14,23 +15,31 @@ import android.graphics.LinearGradient;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Shader;
 import android.graphics.Xfermode;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.AttributeSet;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
-import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
-
-import fyp.hkust.facet.util.PinchImageView;
-
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,11 +47,6 @@ import com.facepp.error.FaceppParseException;
 import com.facepp.http.HttpRequests;
 import com.facepp.http.PostParameters;
 import com.melnykov.fab.FloatingActionButton;
-
-import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -56,7 +60,18 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 import fyp.hkust.facet.R;
+import fyp.hkust.facet.skincolordetection.CaptureActivity;
+import fyp.hkust.facet.util.PinchImageView;
+import id.zelory.compressor.Compressor;
+import me.shaohui.advancedluban.Luban;
 
 /**
  * A simple demo, get a picture form your phone<br />
@@ -68,21 +83,21 @@ import fyp.hkust.facet.R;
 public class ColorizeFaceActivity extends AppCompatActivity {
 
     private static final String TAG = ColorizeFaceActivity.class.getSimpleName();
-    final private int PICTURE_CHOOSE = 1;
 
     private PinchImageView imageView = null;
     private Bitmap originalImg = null;
     private Bitmap temp = null;
-    private Button buttonDetect = null;
     private FloatingActionButton drawbtn;
-    private TextView textView = null;
+    private ImageButton show_hide_layout_button;
+    private CircleImageView face_button, eye_button, rouge_button, lip_button;
+    private boolean checkExpend = true;
+
     private String face_id = null;
     private List<String> landmark_pt_label = new ArrayList<>();
     private List<Float> landmark_pt_x = new ArrayList<>();
     private List<Float> landmark_pt_y = new ArrayList<>();
     private List<Float> extra_landmark_pt_x = new ArrayList<>();
     private List<Float> extra_landmark_pt_y = new ArrayList<>();
-    private float[] temp_pt = new float[2];
     private int j = 0;
     private int counter = 40;
     //    private PorterDuff.Mode mPorterDuffMode = PorterDuff.Mode.SCREEN;
@@ -113,6 +128,12 @@ public class ColorizeFaceActivity extends AppCompatActivity {
     private static double mMinContourArea = 0.30;
     private List<MatOfPoint> mMaxContours = new ArrayList<MatOfPoint>();
     private int[][] color;
+    private Intent intent;
+    private HandlerThread mThread;
+    private Handler mThreadHandler;
+    private String path;
+    private LinearLayout makeup_select_layout;
+
 
     /**
      * Checks if the app has permission to write to device storage
@@ -170,117 +191,97 @@ public class ColorizeFaceActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        remove status bar
+        if (Build.VERSION.SDK_INT < 16) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
+
         setContentView(R.layout.activity_colorize_face);
 
-        Button button = (Button) this.findViewById(R.id.button1);
+        verifyStoragePermissions(this);
+
+        //set up photo first
+        intent = this.getIntent();
+        path = intent.getStringExtra("path");
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        float width = size.x;
+        float height = size.y;
+
+        final File f = new File(path);
+//        originalBitmap = BitmapFactory.decodeFile(f.getAbsolutePath());
+
+        Luban.compress(getApplicationContext(), f)
+                .putGear(Luban.CUSTOM_GEAR)
+                .asObservable()                             // generate Observable
+                .subscribe();      // subscribe the compress result
+
+        originalImg = new Compressor.Builder(ColorizeFaceActivity.this)
+                .setMaxWidth(width)
+                .setMaxHeight(height)
+                .setQuality(80)
+                .setCompressFormat(Bitmap.CompressFormat.WEBP)
+                .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_PICTURES).getAbsolutePath())
+                .build()
+                .compressToBitmap(f);
+
+        makeup_select_layout = (LinearLayout) findViewById(R.id.makeup_select_layout);
+        face_button = (CircleImageView) this.findViewById(R.id.face_button);
+        eye_button = (CircleImageView) this.findViewById(R.id.eye_button);
+        rouge_button = (CircleImageView) this.findViewById(R.id.rouge_button);
+        lip_button = (CircleImageView) this.findViewById(R.id.lip_button);
+
+        show_hide_layout_button = (ImageButton) this.findViewById(R.id.show_hide_layout_button);
         drawbtn = (FloatingActionButton) this.findViewById(R.id.drawbtn);
         facebtn = (FloatingActionButton) this.findViewById(R.id.facebtn);
 
-        button.setOnClickListener(new View.OnClickListener() {
+        show_hide_layout_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-            public void onClick(View arg0) {
-                //get a picture form your phone
-                Toast.makeText(ColorizeFaceActivity.this, "Pick one image", Toast.LENGTH_SHORT).show();
-
-                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-                verifyStoragePermissions(ColorizeFaceActivity.this);
-                photoPickerIntent.setType("image/*");
-                startActivityForResult(photoPickerIntent, PICTURE_CHOOSE);
-            }
-        });
-
-        textView = (TextView) this.findViewById(R.id.textView1);
-
-        buttonDetect = (Button) this.findViewById(R.id.button2);
-        buttonDetect.setVisibility(View.INVISIBLE);
-        buttonDetect.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View arg0) {
-
-                textView.setText("Waiting ...");
-
-                progressDialog = new ProgressDialog(ColorizeFaceActivity.this);
-                progressDialog.setCancelable(false);
-                progressDialog.setTitle("Please Wait..");
-                progressDialog.setMessage("Getting landmark result ...");
-                progressDialog.show();
-
-                // To Dismiss progress dialog
-                //progressDialog.dismiss();
-
-                FaceppDetect faceppDetect = new FaceppDetect();
-                faceppDetect.setDetectCallback(new DetectCallback() {
-
-                    public void detectResult(JSONObject rst) {
-                        Log.v(TAG, rst.toString());
-                        //create a new canvas
-                        Bitmap bitmap = Bitmap.createBitmap(originalImg.getWidth(), originalImg.getHeight(), originalImg.getConfig());
-                        Canvas canvas = new Canvas(bitmap);
-                        canvas.drawBitmap(originalImg, new Matrix(), null);
-
-                        try {
-                            //get 83 point
-                            //get the landmark
-                            JSONObject jsonObject = rst.getJSONArray("result").getJSONObject(0).getJSONObject("landmark");
-                            //Log.v("landmark_result",jsonObject.);
-                            float x, y;
-                            Iterator<String> keys = jsonObject.keys();
-                            while (keys.hasNext()) {
-                                String key = keys.next();
-                                landmark_pt_label.add(key);
-                                Log.v("key", key);
-                            }
-                            // Get size and display.
-                            final int count = landmark_pt_label.size();
-                            Log.v("Count ", count + "");
-
-                            // Loop through elements.
-                            for (int i = 0; i < count; i++) {
-
-                                x = (float) jsonObject.getJSONObject(landmark_pt_label.get(i)).getDouble("x");
-                                y = (float) jsonObject.getJSONObject(landmark_pt_label.get(i)).getDouble("y");
-                                // store the value of landmark result
-
-                                x = x / 100 * originalImg.getWidth();
-                                y = y / 100 * originalImg.getHeight();
-
-                                landmark_pt_x.add(x);
-                                landmark_pt_y.add(y);
-
-                                Log.d(TAG + " i = " + i + " " + landmark_pt_label.get(i), "x : " + x + "  landmark_x: " + landmark_pt_x.get(i));
-
-                                drawpoint(x, y, bitmap, canvas);
-
-                                j++;
-                            }
-
-                            j = 37;
-                            //save new image
-                            originalImg = bitmap;
-
-                            ColorizeFaceActivity.this.runOnUiThread(new Runnable() {
-                                public void run() {
-                                    //show the image
-
-                                    imageView.setImageBitmap(originalImg);
-                                    textView.setText("Finished " + count + " points!");
-
-                                    progressDialog.dismiss();
+                if(checkExpend == true) {
+                    makeup_select_layout.animate()
+                            .translationY(0)
+                            .alpha(0.0f)
+                            .setListener(new AnimatorListenerAdapter() {
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                    super.onAnimationEnd(animation);
+                                    makeup_select_layout.setVisibility(View.GONE);
                                 }
                             });
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            ColorizeFaceActivity.this.runOnUiThread(new Runnable() {
-                                public void run() {
-                                    textView.setText("Error.");
+                    show_hide_layout_button.setImageResource(R.mipmap.ic_expand_more_black_24dp);
+                    checkExpend = false;
+                }
+                else if(checkExpend == false) {
+
+                    makeup_select_layout.animate()
+                            .translationY(1)
+                            .alpha(1.0f)
+                            .setListener(new AnimatorListenerAdapter() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                    super.onAnimationEnd(animation);
+                                    makeup_select_layout.setVisibility(View.VISIBLE);
                                 }
                             });
-                        }
-                    }
-                });
-                faceppDetect.detect(originalImg);
+
+                    show_hide_layout_button.setImageResource(R.mipmap.ic_expand_less_black_24dp);
+                    checkExpend = true;
+                }
+
             }
         });
+
+        mThread = new HandlerThread("name");
+        mThread.start();
+        mThreadHandler = new Handler(mThread.getLooper());
+        mThreadHandler.post(landmarkDetection);
 
         imageView = (PinchImageView) this.findViewById(R.id.imageView1);
         imageView.setImageBitmap(originalImg);
@@ -295,7 +296,7 @@ public class ColorizeFaceActivity extends AppCompatActivity {
                 drawRouge();
                 //mouth_lower_lip_left_contour 1- 3 : 39 - 41
 //                drawLocation(temp, drawCanvas);
-                textView.setText("point " + j);
+                Log.d(TAG + " point", j + " ");
                 j++;
                 imageView.setImageBitmap(temp);
 
@@ -313,6 +314,89 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         });
 
     }
+
+    //工作名稱 r1 的工作內容
+
+    private Runnable landmarkDetection = new Runnable() {
+
+        public void run() {
+            // TODO Auto-generated method stub
+            progressDialog = new ProgressDialog(ColorizeFaceActivity.this);
+            progressDialog.setCancelable(false);
+            progressDialog.setTitle("Please Wait..");
+            progressDialog.setMessage("Getting landmark result ...");
+            progressDialog.show();
+
+            FaceppDetect faceppDetect = new FaceppDetect();
+            faceppDetect.setDetectCallback(new DetectCallback() {
+
+                public void detectResult(JSONObject rst) {
+
+                    Log.v(TAG, rst.toString());
+                    //create a new canvas
+                    Bitmap temp = Bitmap.createBitmap(originalImg.getWidth(), originalImg.getHeight(), originalImg.getConfig());
+                    Canvas canvas = new Canvas(temp);
+                    canvas.drawBitmap(temp, new Matrix(), null);
+
+                    try {
+                        //get 83 point
+                        //get the landmark
+                        JSONObject jsonObject = rst.getJSONArray("result").getJSONObject(0).getJSONObject("landmark");
+                        //Log.v("landmark_result",jsonObject.);
+                        float x, y;
+                        Iterator<String> keys = jsonObject.keys();
+                        while (keys.hasNext()) {
+                            String key = keys.next();
+                            landmark_pt_label.add(key);
+                            Log.v("key", key);
+                        }
+                        // Get size and display.
+                        final int count = landmark_pt_label.size();
+                        Log.v("Count ", count + "");
+
+                        // Loop through elements.
+                        for (int i = 0; i < count; i++) {
+
+                            x = (float) jsonObject.getJSONObject(landmark_pt_label.get(i)).getDouble("x");
+                            y = (float) jsonObject.getJSONObject(landmark_pt_label.get(i)).getDouble("y");
+                            // store the value of landmark result
+
+                            x = x / 100 * originalImg.getWidth();
+                            y = y / 100 * originalImg.getHeight();
+
+                            landmark_pt_x.add(x);
+                            landmark_pt_y.add(y);
+
+                            Log.d(TAG + " i = " + i + " " + landmark_pt_label.get(i), "x : " + x + "  landmark_x: " + landmark_pt_x.get(i));
+//                                drawpoint(x, y, bitmap, canvas);
+                            j++;
+                        }
+                        j = 37;
+                        //save new image
+//                        originalImg = temp;
+
+                        ColorizeFaceActivity.this.runOnUiThread(new Runnable() {
+                            public void run() {
+                                //show the image
+                                imageView.setImageBitmap(originalImg);
+                                Log.d(TAG, "Finished " + count + " points!");
+                                progressDialog.dismiss();
+                            }
+                        });
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        ColorizeFaceActivity.this.runOnUiThread(new Runnable() {
+                            public void run() {
+                                Log.e(TAG, "Error.");
+                            }
+                        });
+                    }
+                }
+            });
+            faceppDetect.detect(originalImg);
+        }
+    };
 
     private void detectRegion2() {
 
@@ -841,7 +925,7 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         Canvas drawCanvas = new Canvas(temp);
         Paint mPaint = new Paint();
 
-        int rougeColor = 0x3CFA0005;
+        int rougeColor = 0x10FA0005;
         mPaint.setColor(rougeColor);
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setStrokeWidth(1f);
@@ -849,13 +933,16 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         mPaint.setMaskFilter(new BlurMaskFilter(7, BlurMaskFilter.Blur.NORMAL));
 
         //nose_contour_left2 - contour_left3
-        float rough_left_x = landmark_pt_x.get(56) - (landmark_pt_x.get(56) - landmark_pt_x.get(3)) / 2f;
-        float rough_left_y = landmark_pt_y.get(56);
-        drawCanvas.drawCircle(rough_left_x,rough_left_y,15f,mPaint);
+        float rouge_left_x = landmark_pt_x.get(56) - (landmark_pt_x.get(56) - landmark_pt_x.get(3)) / 2f;
+        float rouge_left_y = landmark_pt_y.get(56);
+        float slope = ((landmark_pt_y.get(56) - landmark_pt_y.get(60)) / (landmark_pt_x.get(56) - landmark_pt_x.get(60)));
+        rouge_left_y = ((rouge_left_x - landmark_pt_x.get(56)) * slope) + landmark_pt_x.get(56);
+        drawCanvas.drawCircle(rouge_left_x, rouge_left_y, 30f, mPaint);
 //        nose_contour_right2 - contour_right3
-        float rough_right_x = landmark_pt_x.get(60) + (landmark_pt_x.get(12) - landmark_pt_x.get(60)) / 2f;
-        float rough_right_y = landmark_pt_y.get(60);
-        drawCanvas.drawCircle(rough_right_x,rough_right_y,15f,mPaint);
+        float rouge_right_x = landmark_pt_x.get(60) + (landmark_pt_x.get(12) - landmark_pt_x.get(60)) / 2f;
+        float rouge_right_y = landmark_pt_y.get(60);
+        rouge_right_y = ((rouge_right_x - landmark_pt_x.get(60)) * slope) + landmark_pt_y.get(60);
+        drawCanvas.drawCircle(rouge_right_x, rouge_right_y, 30f, mPaint);
 
         //设置混合模式
         mPaint.setXfermode(mXfermode);
@@ -873,7 +960,7 @@ public class ColorizeFaceActivity extends AppCompatActivity {
             e.printStackTrace();
             ColorizeFaceActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
-                    textView.setText("Error.");
+                    Log.d(TAG + " error", " Error.");
                 }
             });
         }
@@ -885,38 +972,15 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        super.onActivityResult(requestCode, resultCode, intent);
+    protected void onDestroy() {
 
-        //the image picker callback
-        if (requestCode == PICTURE_CHOOSE) {
-            if (intent != null) {
-                //The Android api ~~~
-                //Log.d(TAG, "idButSelPic Photopicker: " + intent.getDataString());
-                Cursor cursor = getContentResolver().query(intent.getData(), null, null, null, null);
-                assert cursor != null;
-                cursor.moveToFirst();
-                int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-                String fileSrc = cursor.getString(idx);
-                //Log.d(TAG, "Picture:" + fileSrc);
+        super.onDestroy();
+        if (mThreadHandler != null) {
+            mThreadHandler.removeCallbacks(landmarkDetection);
+        }
 
-                //just read size
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inJustDecodeBounds = true;
-                originalImg = BitmapFactory.decodeFile(fileSrc, options);
-
-                //scale size to read
-                options.inSampleSize = Math.max(1, (int) Math.ceil(Math.max((double) options.outWidth / 1024f, (double) options.outHeight / 1024f)));
-                options.inJustDecodeBounds = false;
-                originalImg = BitmapFactory.decodeFile(fileSrc, options);
-                textView.setText("Clik Detect. ==>");
-
-                imageView.setImageBitmap(originalImg);
-                buttonDetect.setVisibility(View.VISIBLE);
-            } else {
-                Log.d(TAG, "idButSelPic Photopicker canceled");
-            }
+        if (mThread != null) {
+            mThread.quit();
         }
     }
 
@@ -964,11 +1028,10 @@ public class ColorizeFaceActivity extends AppCompatActivity {
                         e.printStackTrace();
                         ColorizeFaceActivity.this.runOnUiThread(new Runnable() {
                             public void run() {
-                                textView.setText("Network error.");
+                                Log.e(TAG, "Network error.");
                             }
                         });
                     }
-
                 }
             }).start();
 

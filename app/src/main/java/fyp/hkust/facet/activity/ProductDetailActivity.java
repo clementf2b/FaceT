@@ -1,34 +1,28 @@
 package fyp.hkust.facet.activity;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Display;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
-import android.widget.ScrollView;
 import android.widget.Scroller;
 import android.widget.TextView;
 
 import com.azeesoft.lib.colorpicker.ColorPickerDialog;
 import com.github.mikephil.charting.animation.Easing;
-import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
@@ -41,19 +35,12 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
-import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.wallet.wobs.LabelValue;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.ms.square.android.expandabletextview.ExpandableTextView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
@@ -63,12 +50,11 @@ import com.vatsal.imagezoomer.ImageZoomButton;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import fyp.hkust.facet.Product;
+import fyp.hkust.facet.model.Product;
 import fyp.hkust.facet.R;
-import fyp.hkust.facet.User;
+import fyp.hkust.facet.model.User;
 import fyp.hkust.facet.util.FontManager;
 import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
@@ -287,8 +273,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         checkUserExist();
     }
 
-    private void uploadRating()
-    {
+    private void uploadRating() {
         float rating = user_rating_bar.getRating();
 
         if (rating != 0.0f) {
@@ -297,7 +282,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
             mProgress.show();
 
             DatabaseReference currentProductComment = mDatabaseComments.child(product_id).push();
-            Log.d("currentProductComment",currentProductComment.toString());
+            Log.d("currentProductComment", currentProductComment.toString());
 
             mProgress.dismiss();
         }
@@ -312,7 +297,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
             mProgress.show();
 
             DatabaseReference currentProductComment = mDatabaseComments.child(product_id).push();
-            Log.d("currentProductComment",currentProductComment.toString());
+            Log.d("currentProductComment", currentProductComment.toString());
             currentProductComment.child("comment_time").setValue(getCurrentTimeInString());
             currentProductComment.child("uid").setValue(mAuth.getCurrentUser().getUid());
             currentProductComment.child("comment").setValue(commentText);

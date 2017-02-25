@@ -8,8 +8,6 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import fyp.hkust.facet.activity.MainMenuActivity;
-
 /**
  * Created by ClementNg on 26/1/2017.
  */

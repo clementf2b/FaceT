@@ -1,63 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_colorize_face"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="fyp.hkust.facet.activity.ColorizeFaceActivity">
 
+    <RelativeLayout
+        android:id="@+id/top_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/white"
+        android:elevation="1dp">
 
-    <Button
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
-        android:text="Get Image" />
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:background="@color/makeup_transparent_background_color"
+            android:src="@mipmap/ic_arrow_back_black_24dp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/undo_button"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingRight="30dp"
+                android:background="@color/white"
+                android:src="@mipmap/ic_undo_black_24dp" />
+
+            <ImageButton
+                android:id="@+id/redo_button"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_toLeftOf="@+id/undo_button"
+                android:background="@color/white"
+                android:src="@mipmap/ic_redo_black_24dp" />
+
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/save_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:paddingRight="10dp"
+            android:layout_toLeftOf="@+id/apply_list_button"
+            android:src="@mipmap/ic_save_black_24dp" />
+
+        <ImageButton
+            android:id="@+id/apply_list_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:background="@color/white"
+            android:src="@mipmap/ic_info_outline_black_24dp" />
+
+    </RelativeLayout>
 
     <fyp.hkust.facet.util.PinchImageView
         android:id="@+id/imageView1"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/button1"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/drawbtn" />
+        android:layout_below="@+id/top_bar_layout" />
 
     <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginRight="10dp"
-        android:layout_toLeftOf="@+id/button1"
-        android:text="Detect" />
-
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignTop="@+id/button2"
-        android:layout_toLeftOf="@+id/button2"
-        android:gravity="center_vertical|center_horizontal"
-        android:text="state"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:id="@+id/compare_button"
+        android:layout_width="70dp"
+        android:layout_height="30dp"
+        android:layout_margin="10dp"
+        android:layout_alignParentRight="true"
+        android:adjustViewBounds="true"
+        android:background="@drawable/border_button_white_bg"
+        android:clickable="true"
+        android:contextClickable="true"
+        android:scaleType="fitCenter"
+        android:text="@string/compare_btn_text"
+        android:layout_below="@+id/top_bar_layout"
+        android:textColor="@color/font_color_pirmary" />
 
     <com.melnykov.fab.FloatingActionButton
         android:id="@+id/drawbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@mipmap/ic_account_circle_white_36dp"
         android:layout_alignParentRight="true"
+        android:src="@mipmap/ic_account_circle_white_36dp"
         fab:fab_colorNormal="@color/colorPrimary"
+        android:layout_margin="100dp"
         fab:fab_colorPressed="@color/primary_pressed"
         fab:fab_colorRipple="@color/ripple"
         fab:fab_shadow="true" />
@@ -66,11 +104,131 @@
         android:id="@+id/facebtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@mipmap/ic_account_circle_white_36dp"
         android:layout_alignParentLeft="true"
+        android:layout_margin="30dp"
+        android:src="@mipmap/ic_account_circle_white_36dp"
         fab:fab_colorNormal="@color/colorPrimary"
         fab:fab_colorPressed="@color/primary_pressed"
         fab:fab_colorRipple="@color/ripple"
         fab:fab_shadow="true" />
+
+    <LinearLayout
+        android:id="@+id/makeup_select_layout"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:layout_above="@+id/show_hide_layout_button"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:background="@color/makeup_transparent_background_color">
+
+        <RelativeLayout
+            android:id="@+id/face_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="140dp"
+            android:layout_weight="1">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/face_button"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:elevation="6dp"
+                android:src="@mipmap/ic_face_black_24dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/face_button"
+                android:layout_alignParentBottom="true"
+                android:layout_alignRight="@id/face_button"
+                android:layout_below="@id/face_button"
+                android:text="@string/blush_text"
+                android:textAlignment="center" />
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/eye_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="140dp"
+            android:layout_weight="1">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/eye_button"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:elevation="6dp"
+                android:src="@mipmap/ic_face_black_24dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/eye_button"
+                android:layout_alignParentBottom="true"
+                android:layout_alignRight="@id/eye_button"
+                android:layout_below="@id/eye_button"
+                android:text="@string/eye_text"
+                android:textAlignment="center" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/rouge_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="140dp"
+            android:layout_weight="1">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/rouge_button"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:elevation="6dp"
+                android:src="@mipmap/ic_face_black_24dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/rouge_button"
+                android:layout_alignParentBottom="true"
+                android:layout_alignRight="@id/rouge_button"
+                android:layout_below="@id/rouge_button"
+                android:text="@string/rouge_text"
+                android:textAlignment="center" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/lip_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="140dp"
+            android:layout_weight="1">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/lip_button"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:elevation="6dp"
+                android:src="@mipmap/ic_face_black_24dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/lip_button"
+                android:layout_alignParentBottom="true"
+                android:layout_alignRight="@id/lip_button"
+                android:layout_below="@id/lip_button"
+                android:text="@string/lip_text"
+                android:textAlignment="center" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/show_hide_layout_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/makeup_transparent_background_color"
+        android:src="@mipmap/ic_expand_less_black_24dp" />
 
 </RelativeLayout>

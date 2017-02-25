@@ -52,7 +52,7 @@
         <activity
             android:name=".activity.MainMenuActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar_nav">
             <intent-filter>
                 <action
                     android:name="android.intent.action.MAIN"
@@ -130,11 +130,8 @@
         <activity
             android:name=".activity.ColorizeFaceActivity"
             android:hardwareAccelerated="false"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".testActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar_nav"/>
 
     </application>
 

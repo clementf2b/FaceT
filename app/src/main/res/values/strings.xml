@@ -188,6 +188,13 @@
     <string name="temp_population_number">2,617</string>
     <string name="comment_hint_text">Comment</string>
 
+    <!--activity_colorize_face-->
+    <string name="blush_text">Blush</string>
+    <string name="eye_text">Eyeshadow</string>
+    <string name="rouge_text">Rouge</string>
+    <string name="lip_text">Lipstick</string>
+    <string name="compare_btn_text">Compare</string>
+
 </resources>
 
 

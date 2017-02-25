@@ -21,7 +21,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,9 +38,9 @@ import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import fyp.hkust.facet.Product;
+import fyp.hkust.facet.model.Product;
 import fyp.hkust.facet.R;
-import fyp.hkust.facet.User;
+import fyp.hkust.facet.model.User;
 import fyp.hkust.facet.util.FontManager;
 
 public class AccountActivity extends AppCompatActivity{

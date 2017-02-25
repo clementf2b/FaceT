@@ -25,11 +25,8 @@ import android.widget.Toast;
 
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.skincolordetection.CaptureActivity;
-import fyp.hkust.facet.skincolordetection.ColorDetectionActivity;
 import fyp.hkust.facet.skincolordetection.ShowCameraViewActivity;
-import fyp.hkust.facet.testActivity;
 import fyp.hkust.facet.util.FontManager;
-import hugo.weaving.DebugLog;
 
 public class MainMenuActivity extends AppCompatActivity {
 
@@ -48,6 +45,7 @@ public class MainMenuActivity extends AppCompatActivity {
 
     private static final int GALLERY_REQUEST = 1;
     private ImageButton favBtn;
+    private int buttonNumber= 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,10 +72,11 @@ public class MainMenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainMenuActivity.this);
+                final AlertDialog.Builder builder = new AlertDialog.Builder(MainMenuActivity.this);
                 builder.setTitle("Choose the way to get your selfie");
                 builder.setIcon(R.mipmap.app_icon);
-                final String[] items = new String[]{"Photo Album", "Take Photo"};
+                builder.setCancelable(true);
+                final String[] items = new String[]{"Photo Album", "Take Photo" , "Cancel"};
                 builder.setItems(items, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -86,6 +85,7 @@ public class MainMenuActivity extends AppCompatActivity {
                         {
                             case 0:
                             {
+                                buttonNumber = 1;
                                 Intent intent = new Intent();
                                 intent.setType("image/*");
                                 intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -99,7 +99,6 @@ public class MainMenuActivity extends AppCompatActivity {
                                 startActivity(cameraViewIntent);
                                 break;
                             }
-
                         }
                     }
                 });
@@ -132,9 +131,38 @@ public class MainMenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Intent storeIntent = new Intent(MainMenuActivity.this, testActivity.class);
-//                accountIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(storeIntent);
+                final AlertDialog.Builder builder = new AlertDialog.Builder(MainMenuActivity.this);
+                builder.setTitle("Choose the way to get your selfie");
+                builder.setIcon(R.mipmap.app_icon);
+                builder.setCancelable(true);
+                final String[] items = new String[]{"Photo Album", "Take Photo" , "Cancel"};
+                builder.setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(MainMenuActivity.this, items[which], Toast.LENGTH_SHORT).show();
+                        switch(which)
+                        {
+                            case 0:
+                            {
+                                buttonNumber = 2;
+                                Intent intent = new Intent();
+                                intent.setType("image/*");
+                                intent.setAction(Intent.ACTION_GET_CONTENT);
+                                startActivityForResult(Intent.createChooser(intent, "Select Picture"), GALLERY_REQUEST);
+                                break;
+                            }
+                            case 1:
+                            {
+                                Intent cameraViewIntent = new Intent(MainMenuActivity.this, ColorizeFaceActivity.class);
+//                cameraViewIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(cameraViewIntent);
+                                break;
+                            }
+                        }
+                    }
+                });
+                builder.setCancelable(false);
+                builder.show();
 
             }
         });
@@ -174,7 +202,10 @@ public class MainMenuActivity extends AppCompatActivity {
             String imagePath= getRealPathFromURI(pickedImage);
             Log.d(TAG + "Path:" , imagePath);
             Intent intent = new Intent();
-            intent.setClass(MainMenuActivity.this,CaptureActivity.class);
+            if(buttonNumber == 1)
+                intent.setClass(MainMenuActivity.this,CaptureActivity.class);
+            else if (buttonNumber == 2 )
+                intent.setClass(MainMenuActivity.this,ColorizeFaceActivity.class);
             intent.putExtra("path",imagePath);
             //intent.putExtra("color" , "" + mBlobColorHsv);
             startActivity(intent);
@@ -211,7 +242,6 @@ public class MainMenuActivity extends AppCompatActivity {
      *
      * @param activity
      */
-    @DebugLog
     private static boolean verifyPermissions(Activity activity) {
         // Check if we have write permission
         int write_permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -234,7 +264,6 @@ public class MainMenuActivity extends AppCompatActivity {
     }
 
     /* Checks if external storage is available for read and write */
-    @DebugLog
     private boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED.equals(state)) {
@@ -244,7 +273,6 @@ public class MainMenuActivity extends AppCompatActivity {
     }
 
     /* Checks if external storage is available to at least read */
-    @DebugLog
     private boolean isExternalStorageReadable() {
         String state = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED.equals(state) ||

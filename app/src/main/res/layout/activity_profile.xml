@@ -8,32 +8,44 @@
     android:fitsSystemWindows="true"
     tools:context=".activity.MainActivity">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="192dp"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        app:elevation="0dp">
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:expandedTitleGravity="right"
-            app:layout_scrollFlags="scroll|enterAlways">
-
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="?attr/actionBarSize"
-                app:elevation="0dp" />
+            android:layout_height="wrap_content"
+            app:expandedTitleGravity="right">
 
             <RelativeLayout
-                android:id="@+id/activity_profile"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/profile_bg"
-                tools:context="fyp.hkust.facet.activity.ProfileActivity">
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <android.support.design.widget.AppBarLayout
+                    android:id="@+id/profile_appbarlayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/AppTheme.AppBarOverlay"
+                    app:elevation="0dp">
+
+                    <android.support.v7.widget.Toolbar
+                        android:id="@+id/toolbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="?attr/actionBarSize"
+                        app:elevation="0dp" />
+
+                </android.support.design.widget.AppBarLayout>
+
+                <RelativeLayout
+                    android:id="@+id/activity_profile"
+                    android:layout_below="@+id/profile_appbarlayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/profile_bg"
+                    app:layout_scrollFlags="scroll|enterAlways"
+                    tools:context="fyp.hkust.facet.activity.ProfileActivity">
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/profile_picture"
@@ -89,30 +101,34 @@
                         android:textColor="@color/profile_email_text_color"
                         android:textSize="10sp" />
 
+                </RelativeLayout>
+
                 <android.support.design.widget.TabLayout
                     android:id="@+id/tabs"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_below="@id/activity_profile"
                     android:background="@color/colorPrimary"
                     app:tabGravity="fill"
                     app:tabIndicatorColor="@color/white"
+                    app:tabIndicatorHeight="2dp"
                     app:tabMode="fixed"
                     app:tabSelectedTextColor="@color/white"
-                    app:tabTextColor="@color/grey_title"
-                    app:tabIndicatorHeight="2dp"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentStart="true" />
+                    app:tabTextColor="@color/profile_email_text_color" />
 
             </RelativeLayout>
 
         </android.support.design.widget.CollapsingToolbarLayout>
-    </android.support.design.widget.AppBarLayout>
+
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"
+        android:layout_below="@+id/collapsing_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        />
 
+    </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>

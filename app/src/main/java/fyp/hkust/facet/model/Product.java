@@ -1,4 +1,4 @@
-package fyp.hkust.facet;
+package fyp.hkust.facet.model;
 
 /**
  * Created by ClementNg on 1/10/2016.

@@ -1,25 +1,20 @@
 package fyp.hkust.facet.fragment;
 
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -30,11 +25,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
-import com.melnykov.fab.FloatingActionButton;
 
-import fyp.hkust.facet.Product;
+import fyp.hkust.facet.model.Product;
 import fyp.hkust.facet.R;
-import fyp.hkust.facet.activity.LoginActivity;
 import fyp.hkust.facet.activity.PostActivity;
 import fyp.hkust.facet.activity.ProfileActivity;
 import fyp.hkust.facet.activity.ProfileEditActivity;
@@ -137,6 +130,7 @@ public class OwnProductFragment extends Fragment {
 
         mgr.setAutoMeasureEnabled(true);
         mOwnProductList.setHasFixedSize(false);
+        mOwnProductList.setNestedScrollingEnabled(true);
         mOwnProductList.setAdapter(firebaseRecyclerAdapter);
 
         mOwnProductList.addOnScrollListener(new RecyclerView.OnScrollListener() {

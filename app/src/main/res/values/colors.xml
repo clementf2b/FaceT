@@ -39,5 +39,7 @@
     <color name="bar_chart_color_3">#B3E1D7</color>
     <color name="bar_chart_color_4">#FEE2D8</color>
     <color name="bar_chart_color_5">#FFAEB6</color>
+    <color name="makeup_transparent_background_color">#FFFFFFFF</color>
+    <color name="makeup_background_color">#DDDDDD</color>
 
 </resources>
