@@ -13,6 +13,7 @@ import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
@@ -55,6 +56,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import fyp.hkust.facet.model.Product;
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.model.User;
+import fyp.hkust.facet.skincolordetection.ShowCameraViewActivity;
 import fyp.hkust.facet.util.FontManager;
 import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
@@ -94,6 +96,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
     private ProgressDialog mProgress;
     private DatabaseReference mDatabaseCommentsCurrentProduct;
     private RatingBar user_rating_bar;
+    private ImageButton location_btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,6 +138,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         });
 
         detail_product_image = (ImageZoomButton) findViewById(R.id.detail_product_image);
+        location_btn = (ImageButton) findViewById(R.id.location_btn);
         product_name_text = (TextView) findViewById(R.id.product_name_text);
         brand_name_text = (TextView) findViewById(R.id.brand_name_text);
         descTextview = (ExpandableTextView) findViewById(R.id.expand_text_view);
@@ -158,6 +162,16 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         commentEmojiconEditText.setScroller(new Scroller(getApplicationContext()));
         commentEmojiconEditText.setVerticalScrollBarEnabled(true);
         commentEmojiconEditText.setMovementMethod(new ScrollingMovementMethod());
+
+        location_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent locationIntent = new Intent(ProductDetailActivity.this, ShopLocationActivity.class);
+                locationIntent.putExtra("shop_id", "12345");
+                startActivity(locationIntent);
+
+            }
+        });
 
         emojIcon = new EmojIconActions(this, commentView, commentEmojiconEditText, emojiButton);
         emojIcon.ShowEmojIcon();

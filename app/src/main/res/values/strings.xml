@@ -195,6 +195,13 @@
     <string name="lip_text">Lipstick</string>
     <string name="compare_btn_text">Compare</string>
 
+    <!--activity_shop_location-->
+    <string name="title_activity_shop_location">Map</string>
+    <string name="shop_title">Shop : </string>
+    <string name="shop_phone_text">Phone :</string>
+    <string name="Hour_title">Hours :</string>
+    <string name="rationale_location_contacts">This app needs access to your location and contacts to know where and who you are.</string>
+
 </resources>
 
 
