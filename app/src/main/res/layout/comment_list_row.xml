@@ -36,7 +36,8 @@
             android:layout_toEndOf="@+id/comment_profilepic"
             android:paddingTop="15dp"
             android:text="@string/product_username_text"
-            android:textColor="@color/colorPrimaryDark" />
+            android:textColor="@color/colorPrimaryDark"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/comment_date"
@@ -44,6 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:text="@string/temp_population_number"
+            android:textColor="@color/product_detail_label_color"
             android:paddingTop="15dp"
             android:paddingRight="10dp"/>
 
