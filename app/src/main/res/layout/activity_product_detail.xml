@@ -51,10 +51,10 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:paddingBottom="5dp"
-                android:paddingLeft="5dp"
+
                 android:text="@string/rating_temp_num"
                 android:textColor="@color/colorPrimary"
-                android:textSize="24dp" />
+                android:textSize="30dp" />
 
             <RatingBar
                 android:id="@+id/top_rating_bar"
@@ -69,8 +69,8 @@
                 android:numStars="5"
                 android:progressTint="@color/colorPrimary"
                 android:rating="4.0"
-                android:scaleX="0.55"
-                android:scaleY="0.55"
+                android:scaleX="0.45"
+                android:scaleY="0.45"
                 android:secondaryProgressTint="@color/colorPrimary"
                 android:stepSize="1" />
 
@@ -86,13 +86,13 @@
                 android:id="@+id/product_star_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/location_btn"
                 android:scaleX="1.0"
                 android:scaleY="1.0"
                 app:anim_scale_factor="2.5"
                 app:icon_size="25dp"
-                app:icon_type="heart" />
+                app:icon_type="heart"
+                android:layout_alignParentTop="true"
+                android:layout_toStartOf="@+id/location_btn" />
 
             <ImageButton
                 android:id="@+id/location_btn"
@@ -117,8 +117,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:paddingBottom="5dp"
-                android:paddingTop="5dp"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
                 android:text="@string/product_name_label"
                 android:textColor="@color/product_detail_label_color" />
 
@@ -128,8 +128,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:paddingBottom="5dp"
-                android:paddingTop="5dp"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
                 android:text="@string/product_name_label" />
 
             <View
@@ -154,8 +154,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:paddingBottom="5dp"
-                android:paddingTop="5dp"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
                 android:text="@string/brand_name_label"
                 android:textColor="@color/product_detail_label_color" />
 
@@ -165,8 +165,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:paddingBottom="5dp"
-                android:paddingTop="5dp"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
                 android:text="@string/brand_name_label" />
 
             <View
@@ -191,8 +191,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:paddingBottom="5dp"
-                android:paddingTop="5dp"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
                 android:text="@string/skin_type_name_label"
                 android:textColor="@color/product_detail_label_color" />
 
@@ -202,8 +202,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:paddingBottom="5dp"
-                android:paddingTop="5dp"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
                 android:text="@string/skin_type_name_label" />
 
             <View
@@ -228,8 +228,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:paddingBottom="5dp"
-                android:paddingTop="5dp"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
                 android:text="@string/category_type_name_label"
                 android:textColor="@color/product_detail_label_color" />
 
@@ -239,8 +239,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:paddingBottom="5dp"
-                android:paddingTop="5dp"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
                 android:text="@string/category_type_name_label" />
 
             <View
@@ -265,8 +265,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:paddingBottom="5dp"
-                android:paddingTop="5dp"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
                 android:text="@string/product_color_label"
                 android:textColor="@color/product_detail_label_color" />
 
@@ -280,7 +280,7 @@
                 android:paddingTop="5dp"
                 android:src="@color/colorPrimary"
                 app:civ_border_color="@color/profile_edit_bg"
-                app:civ_border_width="2dp" />
+                app:civ_border_width="1dp" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/product_color_2"
@@ -292,7 +292,7 @@
                 android:paddingTop="5dp"
                 android:src="@color/colorAccent"
                 app:civ_border_color="@color/profile_edit_bg"
-                app:civ_border_width="2dp" />
+                app:civ_border_width="1dp" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/product_color_3"
@@ -304,7 +304,7 @@
                 android:paddingTop="5dp"
                 android:src="@color/gradient_end"
                 app:civ_border_color="@color/profile_edit_bg"
-                app:civ_border_width="2dp" />
+                app:civ_border_width="1dp"/>
 
             <View
                 android:id="@+id/linebreak6"
@@ -385,7 +385,8 @@
                 android:scaleX="0.8"
                 android:scaleY="0.8"
                 android:secondaryProgressTint="@color/colorPrimary"
-                android:stepSize="1.0" />
+                android:stepSize="1.0"
+                android:paddingTop="5dp"/>
 
             <ProgressBar
                 android:id="@+id/loading_indicator_profile_pic"
@@ -401,7 +402,7 @@
                 android:layout_height="120dp"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="16dp"
                 android:src="@mipmap/ic_account_circle_white_36dp"
                 app:civ_border_color="@color/profile_edit_bg"
                 app:civ_border_width="5dp" />
@@ -530,8 +531,7 @@
                     android:id="@+id/insert_image_btn"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginTop="5dp"
+                    android:layout_marginTop="6dp"
                     android:layout_toRightOf="@+id/emoji_btn"
                     android:paddingBottom="4dp"
                     android:paddingTop="4dp"
@@ -542,8 +542,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_below="@+id/skin_type_spinner"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginTop="5dp"
+                    android:layout_marginTop="6dp"
                     android:paddingBottom="4dp"
                     android:paddingTop="4dp"
                     android:src="@mipmap/smiley" />
@@ -553,7 +552,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_alignParentRight="true"
-                    android:layout_marginTop="5dp"
+                    android:layout_marginTop="6dp"
                     android:padding="4dp"
                     android:src="@mipmap/ic_send_grey600_18dp" />
 
@@ -562,11 +561,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="105dp"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="85dp"
+                    android:layout_marginRight="5dp"
                     android:layout_toRightOf="@+id/insert_image_btn"
                     android:layout_toStartOf="@+id/submit_btn"
                     android:hint="@string/comment_hint_text"
+                    android:textSize="16dp"
                     android:inputType="textMultiLine"
                     android:lines="4"
                     android:maxLines="15"
@@ -575,16 +575,17 @@
                     android:scrollIndicators="right"
                     android:scrollbars="vertical"
                     app:met_floatingLabel="highlight"
-                    emojicon:emojiconSize="28sp" />
+                    emojicon:emojiconSize="20sp" />
 
             </RelativeLayout>
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/product_comment_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:paddingTop="10dp">
 
-                </android.support.v7.widget.RecyclerView>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/product_comment_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingTop="10dp">
+
+            </android.support.v7.widget.RecyclerView>
 
         </LinearLayout>
     </LinearLayout>
