@@ -25,7 +25,9 @@
             android:layout_height="50dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_margin="15dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginBottom="15dp"
             android:src="@mipmap/ic_account_multiple_black_18dp" />
 
         <TextView
@@ -37,7 +39,7 @@
             android:paddingTop="15dp"
             android:text="@string/product_username_text"
             android:textColor="@color/colorPrimaryDark"
-            android:textStyle="bold" />
+            android:textSize="15dp" />
 
         <TextView
             android:id="@+id/comment_date"
@@ -46,6 +48,7 @@
             android:layout_alignParentRight="true"
             android:text="@string/temp_population_number"
             android:textColor="@color/product_detail_label_color"
+            android:textSize="12dp"
             android:paddingTop="15dp"
             android:paddingRight="10dp"/>
 
@@ -57,7 +60,8 @@
             android:layout_marginTop="5dp"
             android:layout_toEndOf="@+id/comment_profilepic"
             android:text="@string/temp_description_label"
-            emojicon:emojiconSize="28sp" />  
+            android:textSize="13dp"
+            emojicon:emojiconSize="18sp" />  
 
         <ImageView
             android:id="@+id/comment_image"
@@ -65,7 +69,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/emojicon_text_view"
             android:paddingTop="5dp"
-            android:paddingLeft="80dp"
+            android:paddingLeft="65dp"
             android:visibility="gone"/>
 
     </RelativeLayout>
