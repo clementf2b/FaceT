@@ -30,6 +30,11 @@
             android:layout_height="wrap_content"
             android:src="@mipmap/ic_location_on_black_24dp" />
 
+        <ImageButton
+            android:id="@+id/my_location_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_my_location_black_24dp" />
     </LinearLayout>
 
     <LinearLayout

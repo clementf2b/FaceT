@@ -114,7 +114,7 @@
                     app:tabIndicatorHeight="2dp"
                     app:tabMode="fixed"
                     app:tabSelectedTextColor="@color/white"
-                    app:tabTextColor="@color/profile_email_text_color" />
+                    app:tabTextColor="#88FFFFFF" />
 
             </RelativeLayout>
 

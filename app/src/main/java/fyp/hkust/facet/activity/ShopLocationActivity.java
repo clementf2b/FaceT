@@ -71,6 +71,7 @@ public class ShopLocationActivity extends FragmentActivity implements OnMapReady
         normal_map_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //normal map
                 mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
             }
         });
@@ -78,6 +79,7 @@ public class ShopLocationActivity extends FragmentActivity implements OnMapReady
         shop_location_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 LatLng shopLocation = new LatLng(22.337586, 114.265288);
                 Marker shopLocationMarker = mMap.addMarker(new MarkerOptions().position(shopLocation).title("Shop is here").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(shopLocation));
@@ -120,9 +122,10 @@ public class ShopLocationActivity extends FragmentActivity implements OnMapReady
 
         // Add a marker in place and move the camera
         LatLng shopLocation = new LatLng(22.337586, 114.265288);
-        mMap.addMarker(new MarkerOptions().position(shopLocation).title("Shop is here"));
+        Marker shopLocationMarker = mMap.addMarker(new MarkerOptions().position(shopLocation).title("Shop is here").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(shopLocation));
         mMap.animateCamera(CameraUpdateFactory.newLatLng(shopLocation));
+        shopLocationMarker.showInfoWindow();
 
         CircleOptions circleOptions = new CircleOptions();
         circleOptions.center(shopLocation);

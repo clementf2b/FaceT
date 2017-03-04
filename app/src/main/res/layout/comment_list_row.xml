@@ -5,16 +5,18 @@
     xmlns:emojicon="http://schemas.android.com/apk/res-auto"
     android:id="@+id/product_row_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     app:cardElevation="0dp"
-    card_view:cardPreventCornerOverlap="false">
+    card_view:cardPreventCornerOverlap="false"
+    android:background="#FAFAFA">
 
     <RelativeLayout
         android:id="@+id/product_card"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:weightSum="1">
+        android:weightSum="1"
+        android:background="#FAFAFA">
 
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -24,34 +26,17 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_margin="15dp"
-            android:src="@drawable/emoji_1f600" />
+            android:src="@mipmap/ic_account_multiple_black_18dp" />
 
         <TextView
             android:id="@+id/comment_username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/comment_rating_bar"
             android:layout_alignParentTop="true"
             android:layout_toEndOf="@+id/comment_profilepic"
             android:paddingTop="15dp"
             android:text="@string/product_username_text"
             android:textColor="@color/colorPrimaryDark" />
-
-        <RatingBar
-            android:id="@+id/comment_rating_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="-82dp"
-            android:layout_marginTop="-5dp"
-            android:layout_toRightOf="@+id/comment_username"
-            android:isIndicator="true"
-            android:numStars="5"
-            android:progressTint="@color/colorPrimary"
-            android:rating="4.0"
-            android:scaleX="0.25"
-            android:scaleY="0.25"
-            android:secondaryProgressTint="@color/colorPrimary"
-            android:stepSize="1" />
 
         <TextView
             android:id="@+id/comment_date"
@@ -67,10 +52,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/comment_username"
-            android:layout_marginTop="-15dp"
+            android:layout_marginTop="5dp"
             android:layout_toEndOf="@+id/comment_profilepic"
             android:text="@string/temp_description_label"
             emojicon:emojiconSize="28sp" />  
+
+        <ImageView
+            android:id="@+id/comment_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/emojicon_text_view"
+            android:paddingTop="5dp"
+            android:paddingLeft="80dp"
+            android:visibility="gone"/>
 
     </RelativeLayout>
 

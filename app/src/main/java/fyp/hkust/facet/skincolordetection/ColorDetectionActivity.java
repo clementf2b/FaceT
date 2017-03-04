@@ -68,7 +68,7 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
     private File                   mHaarCascadeEyeFile;
     private CascadeClassifier mJavaDetector;
 
-    private CascadeClassifier      mJavaEyeDetector;
+    private CascadeClassifier mJavaEyeDetector;
 
 //    private TextView color_result_text;
     private ImageView gray_image;
@@ -235,7 +235,6 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
                 face_middle_y = (int)facesArray[i].tl().y + facesArray[i].height/2;
                 Log.d("face middle : " ,face_middle_x +"," + face_middle_y);
                 Log.d(TAG, "faces array " + String.valueOf(i));
-
             }
 
             // detect the skin color area and turn it into white

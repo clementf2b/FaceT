@@ -42,7 +42,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-auth:10.2.0'
     compile 'com.google.android.gms:play-services:10.2.0'
     //facebook login
-    compile 'com.facebook.android:facebook-android-sdk:4.+'
+    compile 'com.facebook.android:facebook-android-sdk:4.16.1'
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'io.reactivex:rxjava:1.1.6'
 
@@ -111,6 +111,9 @@ dependencies {
 
     //easy permission
     compile 'pub.devrel:easypermissions:0.3.0'
+
+    //swipe events
+    compile 'com.github.pwittchen:swipe:0.0.1'
 
     testCompile 'junit:junit:4.12'
 }

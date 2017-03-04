@@ -23,6 +23,10 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import java.io.File;
+import java.text.DateFormat;
+import java.util.Date;
+
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.skincolordetection.CaptureActivity;
 import fyp.hkust.facet.skincolordetection.ShowCameraViewActivity;
@@ -31,6 +35,7 @@ import fyp.hkust.facet.util.FontManager;
 public class MainMenuActivity extends AppCompatActivity {
 
     private static final String TAG = MainMenuActivity.class.getSimpleName();
+    private static final int CAM_REQUEST = 3;
     // Storage Permissions
     private static String[] PERMISSIONS_REQ = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -45,7 +50,8 @@ public class MainMenuActivity extends AppCompatActivity {
 
     private static final int GALLERY_REQUEST = 1;
     private ImageButton favBtn;
-    private int buttonNumber= 0;
+    private int buttonNumber = 0;
+    private String captureImageFullPath = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,15 +82,13 @@ public class MainMenuActivity extends AppCompatActivity {
                 builder.setTitle("Choose the way to get your selfie");
                 builder.setIcon(R.mipmap.app_icon);
                 builder.setCancelable(true);
-                final String[] items = new String[]{"Photo Album", "Take Photo" , "Cancel"};
+                final String[] items = new String[]{"Photo Album", "Take Photo", "Cancel"};
                 builder.setItems(items, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Toast.makeText(MainMenuActivity.this, items[which], Toast.LENGTH_SHORT).show();
-                        switch(which)
-                        {
-                            case 0:
-                            {
+                        switch (which) {
+                            case 0: {
                                 buttonNumber = 1;
                                 Intent intent = new Intent();
                                 intent.setType("image/*");
@@ -92,8 +96,7 @@ public class MainMenuActivity extends AppCompatActivity {
                                 startActivityForResult(Intent.createChooser(intent, "Select Picture"), GALLERY_REQUEST);
                                 break;
                             }
-                            case 1:
-                            {
+                            case 1: {
                                 Intent cameraViewIntent = new Intent(MainMenuActivity.this, ShowCameraViewActivity.class);
 //                cameraViewIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 startActivity(cameraViewIntent);
@@ -135,15 +138,13 @@ public class MainMenuActivity extends AppCompatActivity {
                 builder.setTitle("Choose the way to get your selfie");
                 builder.setIcon(R.mipmap.app_icon);
                 builder.setCancelable(true);
-                final String[] items = new String[]{"Photo Album", "Take Photo" , "Cancel"};
+                final String[] items = new String[]{"Photo Album", "Take Photo", "Cancel"};
                 builder.setItems(items, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Toast.makeText(MainMenuActivity.this, items[which], Toast.LENGTH_SHORT).show();
-                        switch(which)
-                        {
-                            case 0:
-                            {
+                        switch (which) {
+                            case 0: {
                                 buttonNumber = 2;
                                 Intent intent = new Intent();
                                 intent.setType("image/*");
@@ -151,11 +152,11 @@ public class MainMenuActivity extends AppCompatActivity {
                                 startActivityForResult(Intent.createChooser(intent, "Select Picture"), GALLERY_REQUEST);
                                 break;
                             }
-                            case 1:
-                            {
-                                Intent cameraViewIntent = new Intent(MainMenuActivity.this, ColorizeFaceActivity.class);
-//                cameraViewIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                startActivity(cameraViewIntent);
+                            case 1: {
+                                Intent cameraViewIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                File file = getFile();
+                                cameraViewIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+                                startActivityForResult(cameraViewIntent, CAM_REQUEST);
                                 break;
                             }
                         }
@@ -191,6 +192,20 @@ public class MainMenuActivity extends AppCompatActivity {
         }
     }
 
+    private File getFile() {
+
+        File folder = new File("sdcard/FaceT");
+
+        if (!folder.exists()) {
+            folder.mkdir();
+        }
+
+        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+        captureImageFullPath = folder + "/makeup_" + currentDateTimeString;
+        File imageFile = new File(captureImageFullPath);
+        return imageFile;
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -199,18 +214,25 @@ public class MainMenuActivity extends AppCompatActivity {
             Uri pickedImage = data.getData();
             Log.d(TAG, "selected!!!" + " : " + pickedImage.getPath());
             // Let's read picked image path using content resolver
-            String imagePath= getRealPathFromURI(pickedImage);
-            Log.d(TAG + "Path:" , imagePath);
+            String imagePath = getRealPathFromURI(pickedImage);
+            Log.d(TAG + "Path:", imagePath);
             Intent intent = new Intent();
-            if(buttonNumber == 1)
-                intent.setClass(MainMenuActivity.this,CaptureActivity.class);
-            else if (buttonNumber == 2 )
-                intent.setClass(MainMenuActivity.this,ColorizeFaceActivity.class);
-            intent.putExtra("path",imagePath);
+            if (buttonNumber == 1)
+                intent.setClass(MainMenuActivity.this, CaptureActivity.class);
+            else if (buttonNumber == 2)
+                intent.setClass(MainMenuActivity.this, ColorizeFaceActivity.class);
+            intent.putExtra("path", imagePath);
             //intent.putExtra("color" , "" + mBlobColorHsv);
             startActivity(intent);
+        } else if (requestCode == CAM_REQUEST) {
+            Intent intent = new Intent();
+            intent.setClass(MainMenuActivity.this, ColorizeFaceActivity.class);
+            intent.putExtra("path", captureImageFullPath);
+            startActivity(intent);
         }
+
     }
+
     public String getRealPathFromURI(Uri contentUri) {
         String filePath = "";
         String wholeID = DocumentsContract.getDocumentId(contentUri);
@@ -218,13 +240,13 @@ public class MainMenuActivity extends AppCompatActivity {
         // Split at colon, use second item in the array
         String id = wholeID.split(":")[1];
 
-        String[] column = { MediaStore.Images.Media.DATA };
+        String[] column = {MediaStore.Images.Media.DATA};
 
         // where id is equal to
         String sel = MediaStore.Images.Media._ID + "=?";
 
         Cursor cursor = this.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                column, sel, new String[]{ id }, null);
+                column, sel, new String[]{id}, null);
 
         assert cursor != null;
         int columnIndex = cursor.getColumnIndex(column[0]);

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<fyp.hkust.facet.util.VerticalScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:emojicon="http://schemas.android.com/apk/res-auto"
     xmlns:expandableTextView="http://schemas.android.com/apk/res-auto"
@@ -8,6 +7,7 @@
     android:id="@+id/activity_product_detail_scroll_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:descendantFocusability="blocksDescendants"
     tools:context="fyp.hkust.facet.activity.ProductDetailActivity">
 
     <LinearLayout
@@ -36,16 +36,14 @@
             <com.vatsal.imagezoomer.ImageZoomButton
                 android:id="@+id/detail_product_image"
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
-                />
+                android:layout_height="250dp" />
 
         </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/detail_rating_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
+            android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/rating_textview"
@@ -387,7 +385,7 @@
                 android:scaleX="0.8"
                 android:scaleY="0.8"
                 android:secondaryProgressTint="@color/colorPrimary"
-                android:stepSize="0.5" />
+                android:stepSize="1.0" />
 
             <ProgressBar
                 android:id="@+id/loading_indicator_profile_pic"
@@ -407,6 +405,17 @@
                 android:src="@mipmap/ic_account_circle_white_36dp"
                 app:civ_border_color="@color/profile_edit_bg"
                 app:civ_border_width="5dp" />
+
+            <Button
+                android:id="@+id/submit_rating_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/user_rating_bar"
+                android:layout_centerHorizontal="true"
+                android:background="?android:attr/selectableItemBackground"
+                android:text="@string/submit_text"
+                android:textColor="@color/ligth_grey" />
 
         </RelativeLayout>
 
@@ -488,16 +497,52 @@
             android:orientation="vertical">
 
             <RelativeLayout
+                android:id="@+id/user_comment_image_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/preview_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:padding="5dp"
+                    android:text="@string/preview_text"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/image_preview"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:layout_below="@+id/preview_textview"
+                    android:layout_centerHorizontal="true"
+                    android:src="@mipmap/app_icon"
+                    android:visibility="gone" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:id="@+id/user_comment_edit_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/insert_image_btn"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_toRightOf="@+id/emoji_btn"
+                    android:paddingBottom="4dp"
+                    android:paddingTop="4dp"
+                    android:src="@mipmap/ic_insert_photo_black_24dp" />
 
                 <ImageView
                     android:id="@+id/emoji_btn"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_below="@+id/skin_type_spinner"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginLeft="5dp"
                     android:layout_marginTop="5dp"
                     android:paddingBottom="4dp"
                     android:paddingTop="4dp"
@@ -508,41 +553,40 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_alignParentRight="true"
-                    android:padding="4dp"
                     android:layout_marginTop="5dp"
+                    android:padding="4dp"
                     android:src="@mipmap/ic_send_grey600_18dp" />
 
                 <hani.momanii.supernova_emoji_library.Helper.EmojiconEditText
                     android:id="@+id/comment_edittext"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="105dp"
                     android:layout_marginRight="10dp"
-                    android:layout_marginLeft="65dp"
+                    android:layout_toRightOf="@+id/insert_image_btn"
+                    android:layout_toStartOf="@+id/submit_btn"
                     android:hint="@string/comment_hint_text"
                     android:inputType="textMultiLine"
-                    android:scrollbars="vertical"
+                    android:lines="4"
+                    android:maxLines="15"
+                    android:minLines="1"
                     android:scrollHorizontally="false"
                     android:scrollIndicators="right"
+                    android:scrollbars="vertical"
                     app:met_floatingLabel="highlight"
-                    emojicon:emojiconSize="28sp"
-                    android:lines="4"
-                    android:minLines="1"
-                    android:maxLines="15"
-                    android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/emoji_btn"
-                    android:layout_toStartOf="@+id/submit_btn" />
+                    emojicon:emojiconSize="28sp" />
 
             </RelativeLayout>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/product_comment_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingTop="10dp">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/product_comment_list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingTop="10dp">
-
-            </android.support.v7.widget.RecyclerView>
+                </android.support.v7.widget.RecyclerView>
 
         </LinearLayout>
     </LinearLayout>
 
-</fyp.hkust.facet.util.VerticalScrollView>
+</android.support.v4.widget.NestedScrollView>

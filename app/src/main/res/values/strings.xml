@@ -187,6 +187,7 @@
     <string name="temp_description_label">The primary purpose of descriptive writing is to describe a person, place or thing in such a way that a picture is formed in the reader\'s mind. Capturing an event through descriptive writing involves paying close attention to the details by using all of your five senses. Teaching students to write more descriptively will improve their writing by making it more interesting and engaging to read.</string>
     <string name="temp_population_number">2,617</string>
     <string name="comment_hint_text">Comment</string>
+    <string name="preview_text">Preview:</string>
 
     <!--activity_colorize_face-->
     <string name="blush_text">Blush</string>
