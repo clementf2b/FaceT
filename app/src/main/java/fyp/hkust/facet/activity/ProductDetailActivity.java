@@ -80,6 +80,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -92,6 +93,7 @@ import fyp.hkust.facet.util.FontManager;
 import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconTextView;
+import uk.co.senab.photoview.PhotoViewAttacher;
 
 public class ProductDetailActivity extends AppCompatActivity implements OnChartValueSelectedListener {
 
@@ -469,30 +471,29 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
     public static class CommentViewHolder extends RecyclerView.ViewHolder {
 
         View mView;
+        private Typeface customTypeface = Typeface.createFromAsset(itemView.getContext().getAssets(), FontManager.APP_FONT);
 
         public CommentViewHolder(View itemView) {
             super(itemView);
             mView = itemView;
         }
 
-        //        private String comment;
-//        private String user_image;
-//        private String uid;
-//        private String comment_image;
-//        private String comment_time;
         public void setComment(String comment) {
             EmojiconTextView emojicon_text_view = (EmojiconTextView) mView.findViewById(R.id.emojicon_text_view);
             emojicon_text_view.setText(comment);
+            emojicon_text_view.setTypeface(customTypeface);
         }
 
         public void setCommentTime(String date) {
             TextView comment_time = (TextView) mView.findViewById(R.id.comment_date);
             comment_time.setText(date);
+            comment_time.setTypeface(customTypeface);
         }
 
         public void setUsername(String username) {
             TextView comment_username = (TextView) mView.findViewById(R.id.comment_username);
             comment_username.setText(username);
+            comment_username.setTypeface(customTypeface);
         }
 
         public void setUserImage(final Context ctx, final String userImage) {
@@ -518,7 +519,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         }
 
         public void setCommentImage(final Context ctx, final String commentImage) {
-            final ImageView comment_image = (ImageView) mView.findViewById(R.id.comment_image);
+            final ImageZoomButton comment_image = (ImageZoomButton) mView.findViewById(R.id.comment_image);
             if (commentImage != null && commentImage.length() > 0) {
                 Picasso.with(ctx).load(commentImage).networkPolicy(NetworkPolicy.OFFLINE).into(comment_image, new Callback() {
                     @Override
@@ -531,8 +532,6 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                         Log.d(TAG, "image loading error !");
                         Picasso.with(ctx)
                                 .load(commentImage)
-                                .resize(100, 100)
-                                .centerCrop()
                                 .into(comment_image);
                     }
                 });
@@ -743,7 +742,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
 
     private String getCurrentTimeInString() {
         Date curDate = new Date();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.ENGLISH);
         Log.d(TAG + " current time", format.format(curDate));
         return format.format(curDate);
     }

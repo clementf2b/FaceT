@@ -16,7 +16,8 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:weightSum="1"
-        android:background="#FAFAFA">
+        android:background="#FAFAFA"
+        android:paddingBottom="20dp">
 
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -63,13 +64,13 @@
             android:textSize="13dp"
             emojicon:emojiconSize="18sp" />  
 
-        <ImageView
+        <com.vatsal.imagezoomer.ImageZoomButton
             android:id="@+id/comment_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_below="@+id/emojicon_text_view"
-            android:paddingTop="5dp"
-            android:paddingLeft="65dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="65dp"
             android:visibility="gone"/>
 
     </RelativeLayout>

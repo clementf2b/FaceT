@@ -96,6 +96,7 @@ dependencies {
 
     //imageZoomer
     compile 'com.vatsal.imagezoomer:image-zoomer:1.0.2'
+    compile 'com.github.chrisbanes:PhotoView:1.3.1'
 
     //fab library
     compile 'com.melnykov:floatingactionbutton:1.3.0'
