@@ -26,12 +26,13 @@
             android:layout_height="wrap_content">
 
             <ProgressBar
-                android:id="@+id/loading_indicator"
+                android:id="@+id/product_detail_loading_indicator"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:indeterminateOnly="true" />
+                android:indeterminateOnly="true"
+                android:visibility="gone" />
 
             <com.vatsal.imagezoomer.ImageZoomButton
                 android:id="@+id/detail_product_image"
@@ -51,7 +52,6 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:paddingBottom="5dp"
-
                 android:text="@string/rating_temp_num"
                 android:textColor="@color/colorPrimary"
                 android:textSize="30dp" />
@@ -86,13 +86,13 @@
                 android:id="@+id/product_star_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_toStartOf="@+id/location_btn"
                 android:scaleX="1.0"
                 android:scaleY="1.0"
                 app:anim_scale_factor="2.5"
                 app:icon_size="25dp"
-                app:icon_type="heart"
-                android:layout_alignParentTop="true"
-                android:layout_toStartOf="@+id/location_btn" />
+                app:icon_type="heart" />
 
             <ImageButton
                 android:id="@+id/location_btn"
@@ -304,7 +304,7 @@
                 android:paddingTop="5dp"
                 android:src="@color/gradient_end"
                 app:civ_border_color="@color/profile_edit_bg"
-                app:civ_border_width="1dp"/>
+                app:civ_border_width="1dp" />
 
             <View
                 android:id="@+id/linebreak6"
@@ -380,13 +380,13 @@
                 android:layout_below="@+id/user_profile_pic"
                 android:layout_centerHorizontal="true"
                 android:numStars="5"
+                android:paddingTop="5dp"
                 android:progressTint="@color/colorPrimary"
                 android:rating="0.0"
                 android:scaleX="0.8"
                 android:scaleY="0.8"
                 android:secondaryProgressTint="@color/colorPrimary"
-                android:stepSize="1.0"
-                android:paddingTop="5dp"/>
+                android:stepSize="1.0" />
 
             <ProgressBar
                 android:id="@+id/loading_indicator_profile_pic"
@@ -566,7 +566,6 @@
                     android:layout_toRightOf="@+id/insert_image_btn"
                     android:layout_toStartOf="@+id/submit_btn"
                     android:hint="@string/comment_hint_text"
-                    android:textSize="16dp"
                     android:inputType="textMultiLine"
                     android:lines="4"
                     android:maxLines="15"
@@ -574,6 +573,7 @@
                     android:scrollHorizontally="false"
                     android:scrollIndicators="right"
                     android:scrollbars="vertical"
+                    android:textSize="16dp"
                     app:met_floatingLabel="highlight"
                     emojicon:emojiconSize="20sp" />
 

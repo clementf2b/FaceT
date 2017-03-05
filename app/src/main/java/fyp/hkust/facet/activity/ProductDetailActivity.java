@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.media.Rating;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,8 +23,11 @@ import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Display;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -63,6 +67,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.koushikdutta.ion.Ion;
 import com.ms.square.android.expandabletextview.ExpandableTextView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
@@ -89,6 +94,7 @@ import fyp.hkust.facet.model.Product;
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.model.User;
 import fyp.hkust.facet.skincolordetection.ShowCameraViewActivity;
+import fyp.hkust.facet.util.CheckConnectivity;
 import fyp.hkust.facet.util.FontManager;
 import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
@@ -151,6 +157,9 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
     private TextView rating_textview;
     private RecyclerView mCommentList;
     private String current_username = "";
+    // Animation
+    private Animation animFadein;
+    private ProgressBar product_detail_loading_indicator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,8 +168,24 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
 
         activity_product_detail_layout = (LinearLayout) findViewById(R.id.activity_product_detail_layout);
 
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        CheckConnectivity check = new CheckConnectivity();
+        Boolean conn = check.checkNow(this.getApplicationContext());
+        if (conn == true) {
+            //run your normal code path here
+            Log.d(TAG, "Network connected");
+        } else {
+            //Send a warning message to the user
+            Snackbar snackbar = Snackbar.make(activity_product_detail_layout, "No Internet Access", Snackbar.LENGTH_LONG);
+            snackbar.show();
+        }
+
         fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
         FontManager.markAsIconContainer(findViewById(R.id.activity_product_detail_layout), fontType);
+        // load the animation
+        animFadein = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in);
 
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -215,6 +240,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         });
 
         detail_product_image = (ImageZoomButton) findViewById(R.id.detail_product_image);
+        product_detail_loading_indicator = (ProgressBar) findViewById(R.id.product_detail_loading_indicator);
         rating_textview = (TextView) findViewById(R.id.rating_textview);
         top_rating_bar = (RatingBar) findViewById(R.id.top_rating_bar);
         location_btn = (ImageButton) findViewById(R.id.location_btn);
@@ -342,6 +368,9 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
 
         checkUserExist();
 
+        ProgressDialog dialog = ProgressDialog.show(ProductDetailActivity.this,
+                "Loading Product Data", "Please wait ...", true);
+
         mDatabase.child(product_id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -355,25 +384,15 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                         brand_name_text.setText(product_data.getBrand());
                     if (product_data.getDesc() != null)
                         descTextview.setText(product_data.getDesc());
-                    Picasso.with(getApplicationContext()).load(product_data.getImage()).networkPolicy(NetworkPolicy.OFFLINE).into(detail_product_image, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                        }
 
-                        @Override
-                        public void onError() {
-                            Display display = getWindowManager().getDefaultDisplay();
-                            Point size = new Point();
-                            display.getSize(size);
-                            int width = size.x;
-                            int height = size.y;
-                            Picasso.with(getApplicationContext())
-                                    .load(product_data.getImage())
-                                    .into(detail_product_image);
-
-                            detail_product_image.invalidate();
-                        }
-                    });
+                    if (product_data.getImage() != null && product_data.getImage().length() > 0) {
+                        product_detail_loading_indicator.setVisibility(View.VISIBLE);
+                        Ion.with(detail_product_image)
+                                .placeholder(R.mipmap.app_icon)
+                                .error(R.mipmap.app_icon)
+                                .animateIn(animFadein)
+                                .load(product_data.getImage());
+                    }
                 }
             }
 
@@ -384,6 +403,8 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
             }
         });
 
+        dialog.dismiss();
+
         // username change listener
         mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
             @Override
@@ -393,21 +414,12 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                     final User user_data = dataSnapshot.getValue(User.class);
                     Log.e(user_data.getName(), "User data is null!");
                     current_username = user_data.getName();
-                    Log.d(TAG + " current user" , current_username);
-                    Picasso.with(getApplicationContext()).load(user_data.getImage()).networkPolicy(NetworkPolicy.OFFLINE).into(user_profile_pic, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                        }
-
-                        @Override
-                        public void onError() {
-                            Picasso.with(getApplicationContext())
-                                    .load(user_data.getImage())
-                                    .fit()
-                                    .centerCrop()
-                                    .into(user_profile_pic);
-                        }
-                    });
+                    Log.d(TAG + " current user", current_username);
+                    Ion.with(user_profile_pic)
+                            .placeholder(R.mipmap.app_icon)
+                            .error(R.mipmap.app_icon)
+                            .animateIn(animFadein)
+                            .load(user_data.getImage());
                     user_image_url = user_data.getImage();
                 }
             }
@@ -499,42 +511,26 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         public void setUserImage(final Context ctx, final String userImage) {
             final ImageView user_image = (ImageView) mView.findViewById(R.id.comment_profilepic);
             if (userImage != null && userImage.length() > 0) {
-                Picasso.with(ctx).load(userImage).networkPolicy(NetworkPolicy.OFFLINE).into(user_image, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        Log.d(TAG, "image loading success !");
-                    }
-
-                    @Override
-                    public void onError() {
-                        Log.d(TAG, "image loading error !");
-                        Picasso.with(ctx)
-                                .load(userImage)
-                                .resize(50, 50)
-                                .centerCrop()
-                                .into(user_image);
-                    }
-                });
+                Animation animFadein = AnimationUtils.loadAnimation(ctx, R.anim.fade_in);
+                Ion.with(user_image)
+                        .animateIn(animFadein)
+                        .error(R.mipmap.app_icon)
+                        .load(userImage);
             }
         }
 
         public void setCommentImage(final Context ctx, final String commentImage) {
             final ImageZoomButton comment_image = (ImageZoomButton) mView.findViewById(R.id.comment_image);
+            final ProgressBar loading_indicator = (ProgressBar) mView.findViewById(R.id.loading_indicator);
+            loading_indicator.setVisibility(View.GONE);
+            comment_image.setVisibility(View.GONE);
             if (commentImage != null && commentImage.length() > 0) {
-                Picasso.with(ctx).load(commentImage).networkPolicy(NetworkPolicy.OFFLINE).into(comment_image, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        Log.d(TAG, "image loading success !");
-                    }
-
-                    @Override
-                    public void onError() {
-                        Log.d(TAG, "image loading error !");
-                        Picasso.with(ctx)
-                                .load(commentImage)
-                                .into(comment_image);
-                    }
-                });
+                loading_indicator.setVisibility(View.VISIBLE);
+                Animation animFadein = AnimationUtils.loadAnimation(ctx, R.anim.fade_in);
+                Ion.with(comment_image)
+                        .animateIn(animFadein)
+                        .error(R.mipmap.app_icon)
+                        .load(commentImage);
                 comment_image.setVisibility(View.VISIBLE);
             }
         }
@@ -546,13 +542,12 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue() != null) {
                     Log.d(TAG + " dataSnapshot check", dataSnapshot.getValue().getClass().getName());
-                    if(dataSnapshot.getValue().getClass().getName().equals("java.lang.Long")) {
+                    if (dataSnapshot.getValue().getClass().getName().equals("java.lang.Long")) {
                         Long temp = (Long) dataSnapshot.getValue();
                         user_rating_bar.setRating((float) temp);
                         user_rating_bar.setIsIndicator(true);
                         submitRatingButton.setVisibility(View.GONE);
-                    }
-                    else if(dataSnapshot.getValue().getClass().getName().equals("java.lang.double")){
+                    } else if (dataSnapshot.getValue().getClass().getName().equals("java.lang.double")) {
                         double temp = (double) dataSnapshot.getValue();
                         user_rating_bar.setRating((float) temp);
                         user_rating_bar.setIsIndicator(true);
@@ -605,9 +600,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                     Log.d("rating_population_number_text.setText(ratingCount)", ratingCount + "");
                     ratingChartBar.invalidate();
                     ratingPieChart.invalidate();
-
                 }
-
             }
 
             @Override
@@ -709,7 +702,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                         currentProductComment.child("uid").setValue(mAuth.getCurrentUser().getUid());
                         currentProductComment.child("uid_image").setValue(user_image_url);
                         currentProductComment.child("username").setValue(current_username);
-                        Log.d(TAG + " current_username" , current_username);
+                        Log.d(TAG + " current_username", current_username);
                         Log.d(TAG + " uid_image", user_image_url);
                         currentProductComment.child("comment_image").setValue(commentUri);
                         Log.d(TAG + " comment_image", commentUri);
@@ -745,6 +738,19 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.ENGLISH);
         Log.d(TAG + " current time", format.format(curDate));
         return format.format(curDate);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            //back press
+            case android.R.id.home:
+                // app icon in action bar clicked; goto parent activity.
+                this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void checkUserExist() {

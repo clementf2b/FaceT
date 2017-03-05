@@ -51,8 +51,11 @@ dependencies {
     compile 'com.google.firebase:firebase-storage:10.2.0'
     // FirebaseUI Database only
     compile 'com.firebaseui:firebase-ui-database:0.6.0'
-    //UI library
+
+    //imageloader
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.koushikdutta.ion:ion:2.+'
+    //UI library
     compile 'info.hoang8f:fbutton:1.0.5'
     compile 'com.github.markushi:circlebutton:1.1'
     compile 'com.rengwuxian.materialedittext:library:2.1.4'
@@ -115,6 +118,7 @@ dependencies {
 
     //swipe events
     compile 'com.github.pwittchen:swipe:0.0.1'
+
 
     testCompile 'junit:junit:4.12'
 }

@@ -188,6 +188,7 @@
     <string name="temp_population_number">2,617</string>
     <string name="comment_hint_text">Comment</string>
     <string name="preview_text">Preview:</string>
+    <string name="loading_image_error">image loading error !</string>
 
     <!--activity_colorize_face-->
     <string name="blush_text">Blush</string>
