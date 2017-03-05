@@ -40,7 +40,7 @@
             android:paddingTop="15dp"
             android:text="@string/product_username_text"
             android:textColor="@color/colorPrimaryDark"
-            android:textSize="15dp" />
+            android:textSize="16dp" />
 
         <TextView
             android:id="@+id/comment_date"
@@ -61,8 +61,8 @@
             android:layout_marginTop="5dp"
             android:layout_toEndOf="@+id/comment_profilepic"
             android:text="@string/temp_description_label"
-            android:textSize="13dp"
-            emojicon:emojiconSize="18sp" />  
+            android:textSize="16dp"
+            emojicon:emojiconSize="20sp" />  
 
         <com.vatsal.imagezoomer.ImageZoomButton
             android:id="@+id/comment_image"
