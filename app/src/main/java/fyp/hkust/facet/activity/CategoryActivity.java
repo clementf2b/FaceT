@@ -44,7 +44,6 @@ public class CategoryActivity extends AppCompatActivity {
         FontManager.markAsIconContainer(findViewById(R.id.activity_category_layout), fontType);
 
         //start
-
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setBackground(new ColorDrawable(Color.parseColor("#00000000")) );
         setSupportActionBar(toolbar);
@@ -86,7 +85,6 @@ public class CategoryActivity extends AppCompatActivity {
         }
 
         navigateTo(view.getMenu().findItem(navItemId));
-
         //end
     }
 

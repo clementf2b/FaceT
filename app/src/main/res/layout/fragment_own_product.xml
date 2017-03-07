@@ -16,7 +16,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        >
 
     </android.support.v7.widget.RecyclerView>
 

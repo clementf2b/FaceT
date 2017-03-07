@@ -204,6 +204,16 @@
     <string name="Hour_title">Hours :</string>
     <string name="rationale_location_contacts">This app needs access to your location and contacts to know where and who you are.</string>
 
+    <!--product_refine_layout-->
+    <string name="refine_text">REFINE</string>
+    <string name="filter_text">Filter</string>
+    <string name="acensding_text">Acensding</string>
+    <string name="decensding_text">Decensding</string>
+    <string name="sort_text">Sort</string>
+    <string name="order_text">Order</string>
+    <string name="apply_text">Apply</string>
+    <string name="clear_text">Clear</string>
+
 </resources>
 
 

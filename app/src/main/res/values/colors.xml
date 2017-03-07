@@ -42,4 +42,6 @@
     <color name="makeup_transparent_background_color">#FFFFFFFF</color>
     <color name="makeup_background_color">#DDDDDD</color>
 
+    <color name="sort_drawer_background">#17bcf7</color>
+
 </resources>

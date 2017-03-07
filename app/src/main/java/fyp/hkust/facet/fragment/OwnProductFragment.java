@@ -129,31 +129,29 @@ public class OwnProductFragment extends Fragment {
         };
 
         mgr.setAutoMeasureEnabled(true);
-        mOwnProductList.setHasFixedSize(false);
-        mOwnProductList.setNestedScrollingEnabled(true);
         mOwnProductList.setAdapter(firebaseRecyclerAdapter);
 
-        mOwnProductList.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-//                Log.i(TAG, "-----------onScrollStateChanged-----------");
-//                Log.i(TAG, "newState: " + newState);
-            }
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-//                Log.i(TAG, "-----------onScrolled-----------");
-//                Log.i(TAG, "dx: " + dx);
-//                Log.i(TAG, "dy: " + dy);
-                if(dy > 0) {
-                    add_product_fab.hide();
-                }
-                if(dy < 0) {
-                    add_product_fab.show();
-                }
-            }
-        });
+//        mOwnProductList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+//                super.onScrollStateChanged(recyclerView, newState);
+////                Log.i(TAG, "-----------onScrollStateChanged-----------");
+////                Log.i(TAG, "newState: " + newState);
+//            }
+//            @Override
+//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//                super.onScrolled(recyclerView, dx, dy);
+////                Log.i(TAG, "-----------onScrolled-----------");
+////                Log.i(TAG, "dx: " + dx);
+////                Log.i(TAG, "dy: " + dy);
+//                if(dy > 100) {
+//                    add_product_fab.hide();
+//                }
+//                if(dy < 0) {
+//                    add_product_fab.show();
+//                }
+//            }
+//        });
     }
 
 

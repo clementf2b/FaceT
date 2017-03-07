@@ -71,6 +71,7 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -1048,7 +1049,7 @@ public class ColorizeFaceActivity extends AppCompatActivity {
 //        drawCanvas.drawColor(Color.WHITE);
         int color1 = 0xDD6b4491;
         int color2 = 0xDD34ac32;
-        int sc = drawCanvas.saveLayer(0, 0, temp.getWidth(), temp.getHeight(), null, Canvas.ALL_SAVE_FLAG);
+//        int sc = drawCanvas.saveLayer(0, 0, temp.getWidth(), temp.getHeight(), null, Canvas.ALL_SAVE_FLAG);
 
         mPaint.setShader(new LinearGradient(landmark_pt_x.get(21) - 10f, landmark_pt_y.get(21), landmark_pt_x.get(25), landmark_pt_y.get(25), color1, color2, Shader.TileMode.CLAMP));
 //       mPaint.setShader(new RadialGradient(
@@ -1124,7 +1125,7 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         //清除混合模式
         mPaint.setXfermode(null);
         //还原画布
-        drawCanvas.restoreToCount(sc);
+//        drawCanvas.restoreToCount(sc);
     }
 
     private void drawRouge() {

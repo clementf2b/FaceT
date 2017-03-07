@@ -415,12 +415,21 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                     Log.e(user_data.getName(), "User data is null!");
                     current_username = user_data.getName();
                     Log.d(TAG + " current user", current_username);
-                    Ion.with(user_profile_pic)
-                            .placeholder(R.mipmap.app_icon)
-                            .error(R.mipmap.app_icon)
-                            .animateIn(animFadein)
-                            .load(user_data.getImage());
-                    user_image_url = user_data.getImage();
+                    Picasso.with(getApplicationContext()).load(user_data.getImage()).networkPolicy(NetworkPolicy.OFFLINE).into(user_profile_pic, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                        }
+
+                        @Override
+                        public void onError() {
+                            Picasso.with(getApplicationContext())
+                                    .load(user_data.getImage())
+                                    .fit()
+                                    .centerCrop()
+                                    .into(user_profile_pic);
+                        }
+                    });
+
                 }
             }
 
@@ -509,13 +518,25 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         }
 
         public void setUserImage(final Context ctx, final String userImage) {
-            final ImageView user_image = (ImageView) mView.findViewById(R.id.comment_profilepic);
+            final CircleImageView user_image = (CircleImageView) mView.findViewById(R.id.comment_profilepic);
             if (userImage != null && userImage.length() > 0) {
-                Animation animFadein = AnimationUtils.loadAnimation(ctx, R.anim.fade_in);
-                Ion.with(user_image)
-                        .animateIn(animFadein)
-                        .error(R.mipmap.app_icon)
-                        .load(userImage);
+                Picasso.with(ctx).load(userImage).networkPolicy(NetworkPolicy.OFFLINE).into(user_image, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        Log.d(TAG, "image loading success !");
+                    }
+
+                    @Override
+                    public void onError() {
+                        Log.d(TAG, "image loading error !");
+                        Picasso.with(ctx)
+                                .load(userImage)
+                                .resize(50, 50)
+                                .centerCrop()
+                                .into(user_image);
+                    }
+                });
+
             }
         }
 
@@ -923,6 +944,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
 
         BarDataSet dataset = new BarDataSet(entries, "");
         dataset.setColors(CUSTOM_COLOR);
+        dataset.setDrawValues(false);
 
         ArrayList<IBarDataSet> dataSets = new ArrayList<IBarDataSet>();
         dataSets.add(dataset);

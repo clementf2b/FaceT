@@ -10,6 +10,8 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+        renderscriptTargetApi 19
+        renderscriptSupportModeEnabled true
         ndk {
             moduleName 'jnidemo'
         }
@@ -119,7 +121,8 @@ dependencies {
     //swipe events
     compile 'com.github.pwittchen:swipe:0.0.1'
 
-
+    //blur image
+    compile 'jp.wasabeef:blurry:2.1.0'
     testCompile 'junit:junit:4.12'
 }
 

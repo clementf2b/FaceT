@@ -2,19 +2,31 @@ package fyp.hkust.facet.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -32,7 +44,10 @@ import fyp.hkust.facet.R;
 import fyp.hkust.facet.adapter.ViewPagerAdapter;
 import fyp.hkust.facet.fragment.MatchedProductFragment;
 import fyp.hkust.facet.fragment.OwnProductFragment;
+import fyp.hkust.facet.model.Product;
+import fyp.hkust.facet.model.User;
 import fyp.hkust.facet.util.FontManager;
+import jp.wasabeef.blurry.Blurry;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -40,18 +55,20 @@ public class ProfileActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager viewPager;
 
-    private static final String NAV_ITEM_ID = "nav_index";
     private CircleImageView profilePic;
     private TextView mOwnNameField;
     private Button btnEdit;
-    private Uri mImageUri;
-    private RecyclerView recentlyMatchProductList;
+    private static final String NAV_ITEM_ID = "nav_index";
+    DrawerLayout drawerLayout;
+    private int navItemId;
+    private Toolbar toolbar;
 
     private DatabaseReference mDatabaseUsers;
     private StorageReference mStorageProfileImage;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private DatabaseReference mDatabase;
+    private TextView profile_email;
 
     @Override
     protected void onStart() {
@@ -74,23 +91,65 @@ public class ProfileActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
         changeTabsFont();
 
+        //start
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setBackground(new ColorDrawable(Color.parseColor("#00000000")));
+        setSupportActionBar(toolbar);
+
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        NavigationView view = (NavigationView) findViewById(R.id.navigation_view);
+        view.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
+                Toast.makeText(ProfileActivity.this, menuItem.getTitle() + " pressed", Toast.LENGTH_LONG).show();
+                navigateTo(menuItem);
+
+                drawerLayout.closeDrawer(GravityCompat.START);
+
+                return true;
+            }
+        });
+
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.openDrawer, R.string.closeDrawer) {
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+            }
+        };
+
+        drawerLayout.setDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.syncState();
+
+        if (null != savedInstanceState) {
+            navItemId = savedInstanceState.getInt(NAV_ITEM_ID, R.id.nav_camera);
+        } else {
+            navItemId = R.id.nav_camera;
+        }
+
+        navigateTo(view.getMenu().findItem(navItemId));
+        //end
+
         mAuth = FirebaseAuth.getInstance();
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
+        mDatabaseUsers.keepSynced(true);
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Product");
         mDatabase.keepSynced(true);
 
-        profilePic = (CircleImageView)findViewById(R.id.profile_picture);
+        profilePic = (CircleImageView) findViewById(R.id.profile_picture);
         mOwnNameField = (TextView) findViewById(R.id.profile_username);
+        profile_email = (TextView) findViewById(R.id.profile_email);
         btnEdit = (Button) findViewById(R.id.btn_edit);
-
-        mDatabaseUsers.keepSynced(true);
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if(firebaseAuth.getCurrentUser() == null)
-                {
-                    Intent loginIntent = new Intent(ProfileActivity.this,LoginActivity.class);
+                if (firebaseAuth.getCurrentUser() == null) {
+                    Intent loginIntent = new Intent(ProfileActivity.this, LoginActivity.class);
                     loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(loginIntent);
                 }
@@ -106,6 +165,7 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         checkUserExist();
+        setupUserData();
     }
 
     private void checkUserExist() {
@@ -121,6 +181,28 @@ public class ProfileActivity extends AppCompatActivity {
                         mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(mainIntent);
                     }
+
+                    if (dataSnapshot.getValue() != null) {
+                        Log.i("dataSnapshot.getValue()", dataSnapshot.getValue().toString());
+                        final User user_data = dataSnapshot.getValue(User.class);
+                        Log.e(user_data.getName(), "User data is null!");
+                        mOwnNameField.setText(user_data.getName());
+                        profile_email.setText(user_data.getEmail());
+                        Picasso.with(getApplicationContext()).load(user_data.getImage()).networkPolicy(NetworkPolicy.OFFLINE).into(profilePic, new Callback() {
+                            @Override
+                            public void onSuccess() {
+                            }
+
+                            @Override
+                            public void onError() {
+                                Picasso.with(getApplicationContext())
+                                        .load(user_data.getImage())
+                                        .centerCrop()
+                                        .fit()
+                                        .into(profilePic);
+                            }
+                        });
+                    }
                 }
 
                 @Override
@@ -130,6 +212,44 @@ public class ProfileActivity extends AppCompatActivity {
             });
         }
     }
+
+    private void setupUserData() {
+
+        mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.getValue() != null) {
+                    Log.i("dataSnapshot.getValue()", dataSnapshot.getValue().toString());
+                    final User user_data = dataSnapshot.getValue(User.class);
+                    Log.e(user_data.getName(), "User data is null!");
+                    mOwnNameField.setText(user_data.getName());
+                    profile_email.setText(user_data.getEmail());
+                    Picasso.with(getApplicationContext()).load(user_data.getImage()).networkPolicy(NetworkPolicy.OFFLINE).into(profilePic, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                        }
+
+                        @Override
+                        public void onError() {
+                            Picasso.with(getApplicationContext())
+                                    .load(user_data.getImage())
+                                    .centerCrop()
+                                    .fit()
+                                    .into(profilePic);
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new OwnProductFragment(), getResources().getString(R.string.own_product_fragment_text));
@@ -153,7 +273,20 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    public static class OwnProductViewHolder extends RecyclerView.ViewHolder{
+    private void navigateTo(MenuItem menuItem) {
+        // contentView.setText(menuItem.getTitle());
+
+        navItemId = menuItem.getItemId();
+        menuItem.setChecked(true);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(NAV_ITEM_ID, navItemId);
+    }
+
+    public static class OwnProductViewHolder extends RecyclerView.ViewHolder {
 
         View mView;
 
@@ -180,8 +313,7 @@ public class ProfileActivity extends AppCompatActivity {
 //            own_product_username.setText(username);
 //        }
 
-        public void setImage(final Context ctx, final  String image)
-        {
+        public void setImage(final Context ctx, final String image) {
             final ImageView own_post_image = (ImageView) mView.findViewById(R.id.own_product_image);
             Picasso.with(ctx).load(image).networkPolicy(NetworkPolicy.OFFLINE).into(own_post_image, new Callback() {
                 @Override
