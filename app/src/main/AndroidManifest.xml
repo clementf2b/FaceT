@@ -152,6 +152,9 @@
             android:label="@string/title_activity_shop_location"
             android:screenOrientation="portrait" />
         <activity android:name=".activity.NearbyLocationActivity"></activity>
+
+        <!-- defining the service class here -->
+        <service android:name=".notificationservice.MyService" />
     </application>
 
 </manifest>

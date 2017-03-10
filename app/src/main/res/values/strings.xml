@@ -214,6 +214,10 @@
     <string name="apply_text">Apply</string>
     <string name="clear_text">Clear</string>
 
+    <!--notificaiton_row-->
+    <string name="notification_text">Notification</string>
+    <string name="time_temp_text">Time</string>
+
 </resources>
 
 

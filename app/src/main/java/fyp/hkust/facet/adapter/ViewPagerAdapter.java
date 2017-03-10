@@ -29,7 +29,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        Log.d(TAG + " getCount()", mFragmentList.size()+"");
+//        Log.d(TAG + " getCount()", mFragmentList.size()+"");
         return mFragmentList.size();
     }
 
@@ -41,7 +41,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        Log.d(TAG + " getPageTitle(int position)", position + "");
+//        Log.d(TAG + " getPageTitle(int position)", position + "");
         return mFragmentTitleList.get(position);
     }
 

@@ -2,30 +2,36 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/notification_header_profile_layout"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="80dp"
     android:background="@color/sort_drawer_background"
     android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/notification_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:src="@mipmap/ic_notifications_black_24dp"
-            android:layout_centerVertical="true"
-            android:layout_toStartOf="@+id/notification_title" />
+    <ImageView
+        android:id="@+id/notification_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@+id/notification_title"
+        android:paddingBottom="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="36dp"
+        android:src="@mipmap/ic_notifications_black_24dp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="15dp"
-            android:text="@string/notification_text"
-            android:textColor="#FFF"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:layout_alignTop="@+id/notification_image"
-            android:layout_centerHorizontal="true"
-            android:id="@+id/notification_title" />
+    <TextView
+        android:id="@+id/notification_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/notification_image"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:paddingBottom="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="36dp"
+        android:text="@string/notification_text"
+        android:textColor="#FFF"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
 </RelativeLayout>

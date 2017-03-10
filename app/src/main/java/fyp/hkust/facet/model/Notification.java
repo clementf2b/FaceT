@@ -20,6 +20,16 @@ public class Notification {
 
     }
 
+    public Notification(String action, String sender_user_id, String product_id, String sender_username, String time, String product_image, String product_name) {
+        this.action = action;
+        this.sender_user_id = sender_user_id;
+        this.product_id = product_id;
+        this.sender_username = sender_username;
+        this.time = time;
+        this.product_image = product_image;
+        this.product_name = product_name;
+    }
+
     public Notification(String action, String sender_id, String product_id, String sender_image, String sender_username, String time, String product_image, String product_name) {
         this.action = action;
         this.sender_user_id = sender_id;

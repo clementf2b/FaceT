@@ -20,19 +20,4 @@
 
     </android.support.v7.widget.RecyclerView>
 
-
-    <com.melnykov.fab.FloatingActionButton
-        android:id="@+id/add_product_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_margin="16dp"
-        android:elevation="6dp"
-        android:src="@mipmap/ic_plus_white_36dp"
-        fab:fab_colorNormal="@color/colorPrimary"
-        fab:fab_colorPressed="@color/primary_pressed"
-        fab:fab_colorRipple="@color/ripple"
-        fab:fab_shadow="true" />
-
 </RelativeLayout>

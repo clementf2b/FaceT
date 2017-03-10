@@ -60,40 +60,39 @@ public class MyService extends Service {
                 if (firebaseAuth.getCurrentUser() != null) {
                     // User is signed in
                     Log.d("Service", "onAuthStateChanged:signed_in user_id:" + firebaseAuth.getCurrentUser().getUid());
+
+                    mDatabaseNotifications = FirebaseDatabase.getInstance().getReference().child("Notifications");
+                    Log.d("Service" + "mDatabaseNotification", mDatabaseNotifications.toString());
+
+                    mDatabaseNotifications.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+
+                            if (dataSnapshot.getValue() != null) {
+                                Log.i("dataSnapshot.getValue()", dataSnapshot.getValue().toString());
+                                Map<String, Notification> td = (HashMap<String, Notification>) dataSnapshot.getValue();
+                                List<Notification> values = new ArrayList<>(td.values());
+                                Log.d(TAG + "  arraylist", values.toString());
+                                if (firstTime == true) {
+                                    count = values.size();
+                                }
+                                if (values.size() > count) {
+                                    createNotification(getApplicationContext(), " new notification");
+                                    count = values.size();
+                                }
+                            }
+                            firstTime = false;
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
                 }
             }
         };
         mAuth.addAuthStateListener(mAuthListener);
-
-        mDatabaseNotifications = FirebaseDatabase.getInstance().getReference().child("Notifications");
-        Log.d("Service" + "mDatabaseNotification", mDatabaseNotifications.toString());
-
-        mDatabaseNotifications.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                if (dataSnapshot.getValue() != null) {
-                    Log.i("dataSnapshot.getValue()", dataSnapshot.getValue().toString());
-                    final Notification notification_data = dataSnapshot.getValue(Notification.class);
-                    Map<String, Notification> td = (HashMap<String, Notification>) dataSnapshot.getValue();
-                    List<Notification> values = new ArrayList<>(td.values());
-                    Log.d(TAG + "  arraylist", values.toString());
-                    if (firstTime == true) {
-                        count = values.size();
-                    }
-                    if (values.size() > count) {
-                        createNotification(getApplicationContext(), " new notification");
-                        count = values.size();
-                    }
-                }
-                firstTime = false;
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
 
         return START_STICKY;
 

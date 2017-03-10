@@ -68,6 +68,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.koushikdutta.ion.Ion;
+import com.like.LikeButton;
+import com.like.OnLikeListener;
 import com.ms.square.android.expandabletextview.ExpandableTextView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
@@ -160,6 +162,10 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
     // Animation
     private Animation animFadein;
     private ProgressBar product_detail_loading_indicator;
+    private DatabaseReference mDatabaseFavourite;
+    private DatabaseReference mDatabaseNotifications;
+    private LikeButton likeButton;
+    private String product_owner_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -204,9 +210,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         Log.d(TAG + " product_id", product_id);
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Product");
         Log.d(TAG + "mDatabase", mDatabase.toString());
-        mDatabase.keepSynced(true);
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
-        mDatabaseUsers.keepSynced(true);
         mStorageProfileImage = FirebaseStorage.getInstance().getReference().child("Comment_images");
 
         Log.d(TAG + "mDatabaseUsers", mDatabaseUsers.toString());
@@ -216,6 +220,13 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         mDatabaseRatings = FirebaseDatabase.getInstance().getReference().child("Ratings");
         mDatabaseRatings.keepSynced(true);
         Log.d(TAG + "mDatabaseRatings", mDatabaseRatings.toString());
+        mDatabaseFavourite = FirebaseDatabase.getInstance().getReference().child("Favourite");
+        mDatabaseFavourite.keepSynced(true);
+        Log.d(TAG + "mDatabaseFavourite", mDatabaseFavourite.toString());
+        mDatabaseNotifications = FirebaseDatabase.getInstance().getReference().child("Notifications");
+        mDatabaseNotifications.keepSynced(true);
+        Log.d(TAG + "mDatabaseRatings", mDatabaseRatings.toString());
+
         mDatabaseCommentsCurrentProduct = FirebaseDatabase.getInstance().getReference().child("Comments").child(product_id);
         mDatabaseCommentsCurrentProduct.keepSynced(true);
         Log.d(TAG + "mDatabaseCommentsCurrentProduct", mDatabaseCommentsCurrentProduct.toString());
@@ -239,6 +250,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
             }
         });
 
+        likeButton = (LikeButton) findViewById(R.id.product_star_button);
         detail_product_image = (ImageZoomButton) findViewById(R.id.detail_product_image);
         product_detail_loading_indicator = (ProgressBar) findViewById(R.id.product_detail_loading_indicator);
         rating_textview = (TextView) findViewById(R.id.rating_textview);
@@ -301,6 +313,20 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 uploadRating();
+                addNotification("Rating");
+            }
+        });
+
+        likeButton.setOnLikeListener(new OnLikeListener() {
+            @Override
+            public void liked(LikeButton likeButton) {
+                addFavourite();
+                addNotification("new Notification");
+            }
+
+            @Override
+            public void unLiked(LikeButton likeButton) {
+                removeFavourite();
             }
         });
 
@@ -384,6 +410,8 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                         brand_name_text.setText(product_data.getBrand());
                     if (product_data.getDesc() != null)
                         descTextview.setText(product_data.getDesc());
+                    if( product_data.getUid() != null)
+                        product_owner_id = product_data.getUid();
 
                     if (product_data.getImage() != null && product_data.getImage().length() > 0) {
                         product_detail_loading_indicator.setVisibility(View.VISIBLE);
@@ -442,6 +470,55 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
 
         checkUserExist();
     }
+
+    private void addNotification(String action) {
+
+        mProgress = new ProgressDialog(this);
+        mProgress.setMessage("Adding notification ...");
+        mProgress.show();
+
+        final DatabaseReference currentNotification = mDatabaseNotifications.child(product_owner_id).push();
+        currentNotification.child("action").setValue(action);
+        currentNotification.child("product_id").setValue(product_id);
+        currentNotification.child("product_image").setValue(backUp_product_data.getImage());
+        currentNotification.child("product_name").setValue(backUp_product_data.getTitle());
+        currentNotification.child("sender_user_id").setValue(mAuth.getCurrentUser().getUid());
+        currentNotification.child("sender_username").setValue(mAuth.getCurrentUser().getUid());
+        currentNotification.child("sender_image").setValue(user_image_url);
+        currentNotification.child("time").setValue(getCurrentTimeInString());
+
+        mProgress.dismiss();
+
+    }
+
+    private void addFavourite() {
+
+        mProgress = new ProgressDialog(this);
+        mProgress.setMessage("Adding to favourite ...");
+        mProgress.show();
+
+        mDatabaseFavourite.child(product_id).child(mAuth.getCurrentUser().getUid()).setValue(getCurrentTimeInString());
+
+        Snackbar snackbar = Snackbar.make(activity_product_detail_layout, "Added to favourite", Snackbar.LENGTH_LONG);
+        snackbar.show();
+
+        mProgress.dismiss();
+    }
+
+    private void removeFavourite() {
+
+        mProgress = new ProgressDialog(this);
+        mProgress.setMessage("Removing to favourite ...");
+        mProgress.show();
+
+        mDatabaseFavourite.child(product_id).child(mAuth.getCurrentUser().getUid()).removeValue();
+
+        Snackbar snackbar = Snackbar.make(activity_product_detail_layout, "Removed to favourite", Snackbar.LENGTH_LONG);
+        snackbar.show();
+
+        mProgress.dismiss();
+    }
+
 
     @Override
     protected void onStart() {

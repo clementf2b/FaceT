@@ -63,9 +63,6 @@ public class OwnProductFragment extends Fragment {
     private GridLayoutManager mgr;
     private FragmentActivity context;
 
-
-    private com.melnykov.fab.FloatingActionButton add_product_fab;
-
     public OwnProductFragment() {
         // Required empty public constructor
     }
@@ -90,15 +87,6 @@ public class OwnProductFragment extends Fragment {
         mOwnProductList = (RecyclerView) view.findViewById(R.id.ownproductlist);
         mgr = new GridLayoutManager(getContext(), 3);
         mOwnProductList.setLayoutManager(mgr);
-
-        add_product_fab = (com.melnykov.fab.FloatingActionButton) view.findViewById(R.id.add_product_fab);
-        add_product_fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), PostActivity.class);
-                startActivity(intent);
-            }
-        });
 
         checkUserExist();
         return view;
@@ -131,30 +119,7 @@ public class OwnProductFragment extends Fragment {
         mgr.setAutoMeasureEnabled(true);
         mOwnProductList.setAdapter(firebaseRecyclerAdapter);
 
-//        mOwnProductList.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//                super.onScrollStateChanged(recyclerView, newState);
-////                Log.i(TAG, "-----------onScrollStateChanged-----------");
-////                Log.i(TAG, "newState: " + newState);
-//            }
-//            @Override
-//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                super.onScrolled(recyclerView, dx, dy);
-////                Log.i(TAG, "-----------onScrolled-----------");
-////                Log.i(TAG, "dx: " + dx);
-////                Log.i(TAG, "dy: " + dy);
-//                if(dy > 100) {
-//                    add_product_fab.hide();
-//                }
-//                if(dy < 0) {
-//                    add_product_fab.show();
-//                }
-//            }
-//        });
     }
-
-
 
     private void checkUserExist() {
 

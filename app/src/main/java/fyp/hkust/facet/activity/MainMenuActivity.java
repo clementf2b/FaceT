@@ -2,6 +2,8 @@ package fyp.hkust.facet.activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -28,6 +30,7 @@ import java.text.DateFormat;
 import java.util.Date;
 
 import fyp.hkust.facet.R;
+import fyp.hkust.facet.notificationservice.MyService;
 import fyp.hkust.facet.skincolordetection.CaptureActivity;
 import fyp.hkust.facet.skincolordetection.ShowCameraViewActivity;
 import fyp.hkust.facet.util.FontManager;
@@ -190,6 +193,18 @@ public class MainMenuActivity extends AppCompatActivity {
         if (currentapiVersion >= Build.VERSION_CODES.M) {
             verifyPermissions(this);
         }
+        if (!isMyServiceRunning(MyService.class))
+            startService(new Intent(this, MyService.class));
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private File getFile() {

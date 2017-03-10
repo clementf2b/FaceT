@@ -1,6 +1,8 @@
 package fyp.hkust.facet;
 
 import android.app.Application;
+import android.content.Context;
+import android.support.multidex.MultiDexApplication;
 
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
@@ -12,7 +14,7 @@ import com.squareup.picasso.Picasso;
  * Created by ClementNg on 1/10/2016.
  */
 
-public class MyApp extends Application {
+public class MyApp extends MultiDexApplication {
 
     @Override
     public void onCreate() {
