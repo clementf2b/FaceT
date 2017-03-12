@@ -556,7 +556,7 @@
                     android:padding="4dp"
                     android:src="@mipmap/ic_send_grey600_18dp" />
 
-                <hani.momanii.supernova_emoji_library.Helper.EmojiconEditText
+                <com.vanniktech.emoji.EmojiEditText
                     android:id="@+id/comment_edittext"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -567,6 +567,7 @@
                     android:layout_toStartOf="@+id/submit_btn"
                     android:hint="@string/comment_hint_text"
                     android:inputType="textMultiLine"
+                    android:imeOptions="actionSend"
                     android:lines="4"
                     android:maxLines="15"
                     android:minLines="1"
@@ -574,8 +575,7 @@
                     android:scrollIndicators="right"
                     android:scrollbars="vertical"
                     android:textSize="16dp"
-                    app:met_floatingLabel="highlight"
-                    emojicon:emojiconSize="20sp" />
+                    app:emojiSize="20sp"/>
 
             </RelativeLayout>
 

@@ -5,19 +5,15 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -49,10 +45,8 @@ import fyp.hkust.facet.adapter.ViewPagerAdapter;
 import fyp.hkust.facet.fragment.MatchedProductFragment;
 import fyp.hkust.facet.fragment.OwnProductFragment;
 import fyp.hkust.facet.model.Notification;
-import fyp.hkust.facet.model.Product;
 import fyp.hkust.facet.model.User;
 import fyp.hkust.facet.util.FontManager;
-import jp.wasabeef.blurry.Blurry;
 
 public class ProfileActivity extends AppCompatActivity {
 

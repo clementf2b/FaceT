@@ -2,24 +2,15 @@ package fyp.hkust.facet.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Build;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.Arrays;
 import java.util.List;
-
-import fyp.hkust.facet.R;
-import fyp.hkust.facet.util.FontManager;
 
 /**
  * Created by ClementNg on 12/3/2017.

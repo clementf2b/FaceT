@@ -38,8 +38,8 @@ import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import fyp.hkust.facet.model.Product;
 import fyp.hkust.facet.R;
+import fyp.hkust.facet.model.Product;
 import fyp.hkust.facet.model.User;
 import fyp.hkust.facet.util.FontManager;
 

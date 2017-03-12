@@ -52,7 +52,7 @@
             android:textColor="@color/product_detail_label_color"
             android:textSize="12dp" />
 
-        <hani.momanii.supernova_emoji_library.Helper.EmojiconTextView
+        <com.vanniktech.emoji.EmojiTextView
             android:id="@+id/emojicon_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -61,7 +61,7 @@
             android:layout_toEndOf="@+id/comment_profilepic"
             android:text="@string/temp_description_label"
             android:textSize="16dp"
-            emojicon:emojiconSize="20sp" />  
+            app:emojiSize="24sp" />  
 
         <RelativeLayout
             android:layout_width="wrap_content"

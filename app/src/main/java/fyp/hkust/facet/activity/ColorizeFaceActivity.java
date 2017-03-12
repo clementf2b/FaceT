@@ -20,35 +20,25 @@ import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
 import android.graphics.Shader;
 import android.graphics.Xfermode;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.pwittchen.swipe.library.Swipe;
-import com.github.pwittchen.swipe.library.SwipeEvent;
 import com.github.pwittchen.swipe.library.SwipeListener;
 import com.melnykov.fab.FloatingActionButton;
 import com.tzutalin.dlib.Constants;
@@ -62,7 +52,6 @@ import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfRect;
@@ -71,8 +60,6 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -83,9 +70,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import fyp.hkust.facet.R;
-
 import fyp.hkust.facet.util.PinchImageView;
-
 import id.zelory.compressor.Compressor;
 import me.shaohui.advancedluban.Luban;
 

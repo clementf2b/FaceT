@@ -34,9 +34,8 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
-import fyp.hkust.facet.model.Product;
 import fyp.hkust.facet.R;
-import fyp.hkust.facet.notificationservice.MyService;
+import fyp.hkust.facet.model.Product;
 import fyp.hkust.facet.util.FontManager;
 
 public class MainActivity extends AppCompatActivity {

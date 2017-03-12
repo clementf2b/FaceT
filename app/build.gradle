@@ -83,8 +83,6 @@ dependencies {
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.1'
     //vertical_stepper_form
     compile 'com.ernestoyaquello.stepperform:vertical-stepper-form:0.9.9'
-    //emoji
-    compile 'hani.momanii.supernova_emoji_library:supernova-emoji-library:0.0.2'
     //like animation
     compile 'com.github.jd-alexander:LikeButton:0.2.0'
     //imageZoomer
@@ -106,6 +104,9 @@ dependencies {
     compile 'jp.wasabeef:blurry:2.1.0'
     //Dlib
     compile 'com.tzutalin.dlib-android-app:dlib:1.0.4'
+    //emoji
+    compile 'com.vanniktech:emoji-ios:0.4.0'
+    compile 'com.vanniktech:emoji-one:0.4.0'
 
     testCompile 'junit:junit:4.12'
 

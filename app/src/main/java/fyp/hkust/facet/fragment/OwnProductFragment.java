@@ -26,11 +26,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 
-import fyp.hkust.facet.model.Product;
 import fyp.hkust.facet.R;
-import fyp.hkust.facet.activity.PostActivity;
 import fyp.hkust.facet.activity.ProfileActivity;
 import fyp.hkust.facet.activity.ProfileEditActivity;
+import fyp.hkust.facet.model.Product;
 import fyp.hkust.facet.util.FontManager;
 
 /**

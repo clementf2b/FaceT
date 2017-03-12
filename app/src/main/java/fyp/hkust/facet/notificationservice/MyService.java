@@ -6,7 +6,6 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -25,13 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 import fyp.hkust.facet.R;
-import fyp.hkust.facet.activity.LoginActivity;
-import fyp.hkust.facet.activity.MainActivity;
 import fyp.hkust.facet.activity.ProfileActivity;
-import fyp.hkust.facet.activity.ProfileEditActivity;
 import fyp.hkust.facet.model.Notification;
-import fyp.hkust.facet.model.User;
-import fyp.hkust.facet.skincolordetection.CaptureActivity;
 
 import static android.support.v4.app.NotificationCompat.PRIORITY_HIGH;
 

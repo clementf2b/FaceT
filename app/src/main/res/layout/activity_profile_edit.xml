@@ -99,7 +99,7 @@
                     android:layout_height="140dp"
                     android:layout_marginTop="37dp"
                     android:layout_marginBottom="5dp"
-                    android:src="@drawable/emoji_1f600"
+                    android:src="@drawable/emoji_one_category_people"
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
                      />
@@ -199,7 +199,7 @@
                     android:padding="4dp"
                     android:src="@mipmap/smiley" />
 
-                <hani.momanii.supernova_emoji_library.Helper.EmojiconEditText
+                <com.vanniktech.emoji.EmojiEditText
                     android:id="@+id/about_me_edittext"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -208,8 +208,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_toEndOf="@+id/emoji_btn"
                     android:hint="@string/about_me_text"
-                    app:met_floatingLabel="highlight"
-                    emojicon:emojiconSize="28sp"
+                    app:emojiSize="24sp"
                     android:maxLines="10"
                     />
 

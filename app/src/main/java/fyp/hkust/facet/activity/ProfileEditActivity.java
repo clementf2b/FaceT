@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -37,13 +38,20 @@ import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
+import com.vanniktech.emoji.EmojiEditText;
+import com.vanniktech.emoji.EmojiPopup;
+import com.vanniktech.emoji.emoji.Emoji;
+import com.vanniktech.emoji.listeners.OnEmojiBackspaceClickListener;
+import com.vanniktech.emoji.listeners.OnEmojiClickedListener;
+import com.vanniktech.emoji.listeners.OnEmojiPopupDismissListener;
+import com.vanniktech.emoji.listeners.OnEmojiPopupShownListener;
+import com.vanniktech.emoji.listeners.OnSoftKeyboardCloseListener;
+import com.vanniktech.emoji.listeners.OnSoftKeyboardOpenListener;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.model.User;
 import fyp.hkust.facet.util.FontManager;
-import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
-import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
 
 public class ProfileEditActivity extends AppCompatActivity {
 
@@ -54,10 +62,10 @@ public class ProfileEditActivity extends AppCompatActivity {
     private MaterialEditText emailEdittext;
 
     private CircleImageView editProfilepic;
-    private EmojiconEditText aboutMeEdittext;
+    private EmojiPopup emojiPopup;
+    private EmojiEditText aboutMeEdittext;
     private Spinner skinTypeSpinner;
     private View rootView;
-    private EmojIconActions emojIcon;
     private ImageView emojiButton;
     private FirebaseUser user;
     private Uri mImageUri = null;
@@ -96,7 +104,7 @@ public class ProfileEditActivity extends AppCompatActivity {
         maleButton = (Button) findViewById(R.id.male_btn);
         femaleButton = (Button) findViewById(R.id.female_btn);
         editProfilepic = (CircleImageView) findViewById(R.id.editprofilepic);
-        aboutMeEdittext = (EmojiconEditText) findViewById(R.id.about_me_edittext);
+        aboutMeEdittext = (EmojiEditText) findViewById(R.id.about_me_edittext);
         skinTypeSpinner = (Spinner) findViewById(R.id.skin_type_spinner);
         emojiButton = (ImageView) findViewById(R.id.emoji_btn);
 
@@ -104,17 +112,10 @@ public class ProfileEditActivity extends AppCompatActivity {
 
         aboutMeEdittext.setScroller(new Scroller(getApplicationContext()));
         aboutMeEdittext.setVerticalScrollBarEnabled(true);
-        emojIcon = new EmojIconActions(this, rootView, aboutMeEdittext, emojiButton);
-        emojIcon.ShowEmojIcon();
-        emojIcon.setKeyboardListener(new EmojIconActions.KeyboardListener() {
+        emojiButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onKeyboardOpen() {
-                Log.e("Keyboard", "open");
-            }
-
-            @Override
-            public void onKeyboardClose() {
-                Log.e("Keyboard", "close");
+            public void onClick(final View v) {
+                emojiPopup.toggle();
             }
         });
 
@@ -207,8 +208,71 @@ public class ProfileEditActivity extends AppCompatActivity {
                 Log.e(TAG, "Failed to read username value.", error.toException());
             }
         });
+
+        setUpEmojiPopup();
     }
 
+    @Override
+    public void onBackPressed() {
+        if (emojiPopup != null && emojiPopup.isShowing()) {
+            this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+            emojiPopup.dismiss();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        if (emojiPopup != null) {
+            emojiPopup.dismiss();
+        }
+        super.onStop();
+    }
+
+    private void setUpEmojiPopup() {
+        emojiPopup = EmojiPopup.Builder.fromRootView(rootView)
+                .setOnEmojiBackspaceClickListener(new OnEmojiBackspaceClickListener() {
+                    @Override
+                    public void onEmojiBackspaceClicked(final View v) {
+                        emojiPopup.dismiss();
+                        Log.d(TAG, "Clicked on Backspace");
+                    }
+                })
+                .setOnEmojiClickedListener(new OnEmojiClickedListener() {
+                    @Override
+                    public void onEmojiClicked(final Emoji emoji) {
+                        Log.d(TAG, "Clicked on emoji");
+                    }
+                })
+                .setOnEmojiPopupShownListener(new OnEmojiPopupShownListener() {
+                    @Override
+                    public void onEmojiPopupShown() {
+                        emojiButton.setImageResource(R.drawable.ic_keyboard);
+                    }
+                })
+                .setOnSoftKeyboardOpenListener(new OnSoftKeyboardOpenListener() {
+                    @Override
+                    public void onKeyboardOpen(final int keyBoardHeight) {
+                        Log.d(TAG, "Opened soft keyboard");
+                    }
+                })
+                .setOnEmojiPopupDismissListener(new OnEmojiPopupDismissListener() {
+                    @Override
+                    public void onEmojiPopupDismiss() {
+                        emojiPopup.dismiss();
+                        emojiButton.setImageResource(R.drawable.emoji_one_category_people);
+                    }
+                })
+                .setOnSoftKeyboardCloseListener(new OnSoftKeyboardCloseListener() {
+                    @Override
+                    public void onKeyboardClose() {
+                        emojiPopup.dismiss();
+                        Log.d(TAG, "Closed soft keyboard");
+                    }
+                })
+                .build(aboutMeEdittext);
+    }
 
     private void saveData() {
         final String email = emailEdittext.getText().toString().trim();

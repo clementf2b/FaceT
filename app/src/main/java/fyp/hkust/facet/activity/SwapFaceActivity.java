@@ -1,59 +1,6 @@
 package fyp.hkust.facet.activity;
 
-import android.Manifest;
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Point;
-import android.graphics.Rect;
-import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.annotation.UiThread;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.SeekBar;
-import android.widget.Toast;
-
-import com.melnykov.fab.FloatingActionButton;
-import com.roger.gifloadinglibrary.GifLoadingView;
-
-import org.opencv.android.BaseLoaderCallback;
-import org.opencv.android.LoaderCallbackInterface;
-import org.opencv.android.OpenCVLoader;
-import org.opencv.android.Utils;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfInt;
-import org.opencv.core.MatOfPoint;
-import org.opencv.imgproc.Imgproc;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.List;
-import java.util.Random;
-import java.util.Vector;
-
-import fyp.hkust.facet.R;
-import fyp.hkust.facet.util.FileUtils;
-import fyp.hkust.facet.util.FontManager;
 
 public class SwapFaceActivity extends AppCompatActivity {
 //
