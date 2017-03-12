@@ -47,13 +47,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facepp.error.FaceppParseException;
-import com.facepp.http.HttpRequests;
-import com.facepp.http.PostParameters;
 import com.github.pwittchen.swipe.library.Swipe;
 import com.github.pwittchen.swipe.library.SwipeEvent;
 import com.github.pwittchen.swipe.library.SwipeListener;
 import com.melnykov.fab.FloatingActionButton;
+import com.tzutalin.dlib.Constants;
+import com.tzutalin.dlib.FaceDet;
+import com.tzutalin.dlib.VisionDetRet;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -83,8 +83,9 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import fyp.hkust.facet.R;
-import fyp.hkust.facet.skincolordetection.CaptureActivity;
+
 import fyp.hkust.facet.util.PinchImageView;
+
 import id.zelory.compressor.Compressor;
 import me.shaohui.advancedluban.Luban;
 
@@ -106,6 +107,7 @@ public class ColorizeFaceActivity extends AppCompatActivity {
     private int mAbsoluteFaceSize = 0;
 
     private PinchImageView imageView = null;
+    private Bitmap basicImg = null;
     private Bitmap originalImg = null;
     private Bitmap temp = null;
     private FloatingActionButton drawbtn;
@@ -149,15 +151,18 @@ public class ColorizeFaceActivity extends AppCompatActivity {
     private static double mMinContourArea = 0.30;
     private List<MatOfPoint> mMaxContours = new ArrayList<MatOfPoint>();
     private Intent intent;
-    private HandlerThread mThread;
-    private Handler mThreadHandler;
     private String path;
     private LinearLayout makeup_select_layout;
     private Swipe swipe;
     private Bitmap bitmap;
-
+    private HandlerThread mThread;
+    private Handler mThreadHandler;
     private int[] tempArray;
     private int[] bitmapArray;
+
+    private int newWidth;
+    private int newHeight;
+    FaceDet mFaceDet;
 
     /**
      * Checks if the app has permission to write to device storage
@@ -236,6 +241,8 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         float height = 1380;
         Log.d(TAG + "screen ", width + " : " + height);
 
+        imageView = (PinchImageView) this.findViewById(R.id.imageView1);
+
         final File f = new File(path);
 //        originalBitmap = BitmapFactory.decodeFile(f.getAbsolutePath());
 
@@ -244,7 +251,7 @@ public class ColorizeFaceActivity extends AppCompatActivity {
                 .asObservable()                             // generate Observable
                 .subscribe();      // subscribe the compress result
 
-        originalImg = new Compressor.Builder(ColorizeFaceActivity.this)
+        basicImg = new Compressor.Builder(ColorizeFaceActivity.this)
                 .setMaxWidth(width)
                 .setMaxHeight(height)
                 .setQuality(80)
@@ -254,7 +261,20 @@ public class ColorizeFaceActivity extends AppCompatActivity {
                 .build()
                 .compressToBitmap(f);
 
-        temp = originalImg;
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 1;
+        originalImg = BitmapFactory.decodeFile(path, options);
+        android.graphics.Bitmap.Config bitmapConfig = originalImg.getConfig();
+        // set default bitmap config if none
+        if (bitmapConfig == null) {
+            bitmapConfig = android.graphics.Bitmap.Config.ARGB_8888;
+        }
+        // resource bitmaps are imutable,
+        // so we need to convert it to mutable one
+        originalImg = originalImg.copy(bitmapConfig, true);
+
+        temp = originalImg.copy(bitmapConfig, true);
+        bitmap = originalImg.copy(bitmapConfig, true);
 
         makeup_select_layout = (LinearLayout) findViewById(R.id.makeup_select_layout);
         face_button = (CircleImageView) this.findViewById(R.id.face_button);
@@ -370,16 +390,10 @@ public class ColorizeFaceActivity extends AppCompatActivity {
             }
         });
 
-        mThread = new HandlerThread("name");
-        mThread.start();
-        mThreadHandler = new Handler(mThread.getLooper());
-        mThreadHandler.post(landmarkDetection);
 
-        imageView = (PinchImageView) this.findViewById(R.id.imageView1);
-
-        imageView.setOnTouchListener(new View.OnTouchListener(){
+        imageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event){
+            public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction() & MotionEvent.ACTION_MASK) {
 
                     case MotionEvent.ACTION_DOWN:
@@ -399,7 +413,16 @@ public class ColorizeFaceActivity extends AppCompatActivity {
             }
         });
 
-        imageView.setImageBitmap(temp);
+        progressDialog = new ProgressDialog(ColorizeFaceActivity.this);
+        progressDialog.setCancelable(false);
+        progressDialog.setTitle("Please Wait..");
+        progressDialog.setMessage("Getting landmark result ...");
+        progressDialog.show();
+
+        mThread = new HandlerThread("name");
+        mThread.start();
+        mThreadHandler = new Handler(mThread.getLooper());
+        mThreadHandler.post(landmarkDetection);
 
         drawbtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -421,6 +444,7 @@ public class ColorizeFaceActivity extends AppCompatActivity {
             public void onClick(View v) {
 //                detectRegion();
                 detectRegion2();
+                imageView.setImageBitmap(null);
                 imageView.setImageBitmap(temp);
             }
         });
@@ -442,87 +466,84 @@ public class ColorizeFaceActivity extends AppCompatActivity {
     private Runnable landmarkDetection = new Runnable() {
 
         public void run() {
-            // TODO Auto-generated method stub
-            progressDialog = new ProgressDialog(ColorizeFaceActivity.this);
-            progressDialog.setCancelable(false);
-            progressDialog.setTitle("Please Wait..");
-            progressDialog.setMessage("Getting landmark result ...");
-            progressDialog.show();
+            // TODO Auto-generated method stu
+            try {
+//                Canvas canvas = new Canvas(temp);
+//                canvas.drawBitmap(originalImg, new Matrix(), null);
 
-            FaceppDetect faceppDetect = new FaceppDetect();
-            faceppDetect.setDetectCallback(new DetectCallback() {
+                Canvas canvas = new Canvas(temp);
+                canvas.drawBitmap(temp, new Matrix(), null);
 
-                public void detectResult(JSONObject rst) {
-
-                    Log.v(TAG, rst.toString());
-                    //create a new canvas
-                    Canvas canvas = new Canvas(originalImg);
-                    canvas.drawBitmap(originalImg, new Matrix(), null);
-
-                    try {
-
-                        //get 83 landmark point
-                        JSONObject jsonObject = rst.getJSONArray("result").getJSONObject(0).getJSONObject("landmark");
-                        //Log.v("landmark_result",jsonObject.);
-                        float x, y;
-                        Iterator<String> keys = jsonObject.keys();
-                        while (keys.hasNext()) {
-                            String key = keys.next();
-                            landmark_pt_label.add(key);
-                            Log.v("key", key);
-                        }
-                        // Get size and display.
-                        final int count = landmark_pt_label.size();
-                        Log.v("Count ", count + "");
-
-                        // Loop through elements.
-                        for (int i = 0; i < count; i++) {
-
-                            x = (float) jsonObject.getJSONObject(landmark_pt_label.get(i)).getDouble("x");
-                            y = (float) jsonObject.getJSONObject(landmark_pt_label.get(i)).getDouble("y");
-                            // store the value of landmark result
-
-                            x = x / 100 * originalImg.getWidth();
-                            y = y / 100 * originalImg.getHeight();
-
-                            landmark_pt_x.add(x);
-                            landmark_pt_y.add(y);
-
-                            Log.d(TAG + " i = " + i + " " + landmark_pt_label.get(i), "x : " + x + "  landmark_x: " + landmark_pt_x.get(i));
-//                            drawpoint(x, y, originalImg, canvas);
-                            j++;
-                        }
-
-                        j = 37;
-                        //save new image
-                        temp = originalImg;
-
-                        ColorizeFaceActivity.this.runOnUiThread(new Runnable() {
-                            public void run() {
-                                //show the image
-                                imageView.setImageBitmap(originalImg);
-                                Log.d(TAG, "Finished " + count + " points!");
-                                progressDialog.dismiss();
-                            }
-                        });
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        ColorizeFaceActivity.this.runOnUiThread(new Runnable() {
-                            public void run() {
-                                Log.e(TAG, "Error.");
-                            }
-                        });
-                    }
+                if (mFaceDet == null) {
+                    mFaceDet = new FaceDet(Constants.getFaceShapeModelPath());
                 }
-            });
-            faceppDetect.detect(originalImg);
+                List<VisionDetRet> faceList = mFaceDet.detect(path);
+                if (faceList.size() > 0) {
+                    for (VisionDetRet ret : faceList) {
+                        float width = 1080;
+                        // By ratio scale
+                        float aspectRatio = originalImg.getWidth() / (float) originalImg.getHeight();
+                        float resizeRatio = 1;
+                        final int MAX_SIZE = 1;
+                        newWidth = 1080;
+                        newHeight = 1380;
+                        newHeight = Math.round(newWidth / aspectRatio);
+
+                        if (originalImg.getWidth() > MAX_SIZE && originalImg.getHeight() > MAX_SIZE) {
+                            originalImg = getResizedBitmap(originalImg, newWidth, newHeight);
+                            resizeRatio = (float) originalImg.getWidth() / (float) width;
+                            Log.d("resizeRatio ", resizeRatio + "");
+                        }
+
+                        ArrayList<Point> landmarks = ret.getFaceLandmarks();
+                        int count = 0;
+                        for (Point point : landmarks) {
+                            float pointX = (point.x * resizeRatio);
+                            float pointY = (point.y * resizeRatio);
+                            if (count == 2 || count == 3 || count == 4 || count == 5 || count == 6) {
+                                landmark_pt_x.add(pointX + 6f);
+                                landmark_pt_y.add(pointY - 6f);
+                                Log.d(TAG, count + " " + pointX + " : " + pointY);
+                            } else {
+                                landmark_pt_x.add(pointX);
+                                landmark_pt_y.add(pointY);
+                            }
+                            count++;
+
+                            drawpoint(pointX, pointY, temp, canvas);
+                        }
+                        Log.d(TAG + " added landmark", count + "");
+
+                    }
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "No face", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        imageView.setImageBitmap(originalImg);
+                        progressDialog.dismiss();
+                    }
+                });
+            } catch (Exception e) {
+                Log.e(TAG, e.toString());
+            }
         }
     };
 
+    protected Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(bm, newWidth, newHeight, true);
+        return resizedBitmap;
+    }
+
     private void detectRegion2() {
 
-        Bitmap bmpTemp = originalImg.copy(Bitmap.Config.ARGB_8888, true);
+        Bitmap bmpTemp = basicImg.copy(Bitmap.Config.ARGB_8888, true);
         Utils.bitmapToMat(bmpTemp, mRgbMat);
         Imgproc.cvtColor(mRgbMat, mHsvMat, Imgproc.COLOR_RGB2HSV_FULL, channelCount);
 
@@ -604,33 +625,31 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         } else if (extra - 30.0f > 1.0f)
             extra = extra - 30.0f;
         // left_eyebrow_upper
-        extra_landmark_pt_x.add(landmark_pt_x.get(34));
-        extra_landmark_pt_y.add(extra);
-        extra_landmark_pt_x.add(landmark_pt_x.get(35));
-        extra_landmark_pt_y.add(extra);
-        extra_landmark_pt_x.add(landmark_pt_x.get(36));
-        extra_landmark_pt_y.add(extra);
+        extra_landmark_pt_x.add(landmark_pt_x.get(17) + 3f);
+        extra_landmark_pt_y.add(extra + 3f);
+        extra_landmark_pt_x.add(landmark_pt_x.get(19) + 3f);
+        extra_landmark_pt_y.add(extra + 3f);
+        extra_landmark_pt_x.add(landmark_pt_x.get(21) + 3f);
+        extra_landmark_pt_y.add(extra + 3f);
 
         extra_landmark_pt_x.add(landmark_pt_x.get(0));
         extra_landmark_pt_y.add(extra);
 
         //right_eyebrow_upper
-        extra_landmark_pt_x.add(landmark_pt_x.get(80));
-        extra_landmark_pt_y.add(extra);
-        extra_landmark_pt_x.add(landmark_pt_x.get(81));
-        extra_landmark_pt_y.add(extra);
-        extra_landmark_pt_x.add(landmark_pt_x.get(82));
-        extra_landmark_pt_y.add(extra);
+        extra_landmark_pt_x.add(landmark_pt_x.get(22) - 3f);
+        extra_landmark_pt_y.add(extra + 3f);
+        extra_landmark_pt_x.add(landmark_pt_x.get(24) - 3f);
+        extra_landmark_pt_y.add(extra + 3f);
+        extra_landmark_pt_x.add(landmark_pt_x.get(26) - 3f);
+        extra_landmark_pt_y.add(extra + 3f);
         Log.d(TAG + "facesArray[0].height ", facesArray[0].tl().x + " " + extra);
 
-        bitmap = Bitmap.createBitmap(originalImg.getWidth(), originalImg.getHeight(), originalImg.getConfig());
-
-        //bilateralFilter
-        Utils.bitmapToMat(bitmap, mRgbMat);
-        Imgproc.cvtColor(mRgbMat, mRgbMat, Imgproc.COLOR_BGR2RGB);
-        Mat dstMat = new Mat(mRgbMat.size(), mRgbMat.type());
-        Imgproc.bilateralFilter(mRgbMat, dstMat, 10, 50, 0);
-        Imgproc.cvtColor(dstMat, mRgbMat, Imgproc.COLOR_RGBA2BGR);
+//        //bilateralFilter
+//        Utils.bitmapToMat(bitmap, mRgbMat);
+//        Imgproc.cvtColor(mRgbMat, mRgbMat, Imgproc.COLOR_BGR2RGB);
+//        Mat dstMat = new Mat(mRgbMat.size(), mRgbMat.type());
+//        Imgproc.bilateralFilter(mRgbMat, dstMat, 10, 50, 0);
+//        Imgproc.cvtColor(dstMat, mRgbMat, Imgproc.COLOR_RGBA2BGR);
 
         Canvas canvas = new Canvas(bitmap);
         canvas.drawBitmap(bitmap, new Matrix(), null);
@@ -653,165 +672,143 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         int sc = canvas.saveLayer(0, 0, temp.getWidth(), temp.getHeight(), null, Canvas.ALL_SAVE_FLAG);
 
         Path path = new Path();
-
-        // Left lower lips
+// face area
         path.reset();
-        path.moveTo(landmark_pt_x.get(1), landmark_pt_y.get(1));
-        for (int i = 2; i < 10; i++)
-            path.lineTo(landmark_pt_x.get(i), landmark_pt_y.get(i));
-        path.lineTo(landmark_pt_x.get(0), landmark_pt_y.get(0));
+        path.moveTo(landmark_pt_x.get(0), landmark_pt_y.get(0));
 
-        for (int i = 18; i > 9; i--)
+        for (int i = 1; i < 16; i++) {
             path.lineTo(landmark_pt_x.get(i), landmark_pt_y.get(i));
+        }
+
         for (int i = 6; i > 0; i--)
             path.lineTo(extra_landmark_pt_x.get(i), extra_landmark_pt_y.get(i));
         Log.d(TAG, extra_landmark_pt_x.get(0) + " : " + extra_landmark_pt_y.get(0));
-        path.lineTo(landmark_pt_x.get(1), landmark_pt_y.get(1));
-//        for(int i = 0;i<extra_landmark_pt_x.size();i++)
-//            canvas.drawCircle(extra_landmark_pt_x.get(i), extra_landmark_pt_y.get(i), 2, paint);
+
+        path.lineTo(landmark_pt_x.get(0), landmark_pt_y.get(0));
+
         path.close();
         canvas.drawPath(path, paint);
 
         //change lip part to green
         paint.setColor(Color.GREEN);
         path.reset();
-        path.moveTo(landmark_pt_x.get(37), landmark_pt_y.get(37));
+        path.moveTo(landmark_pt_x.get(48), landmark_pt_y.get(48));
 
-        path.cubicTo(landmark_pt_x.get(40), landmark_pt_y.get(40),
-                landmark_pt_x.get(41), landmark_pt_y.get(41),
-                landmark_pt_x.get(38), landmark_pt_y.get(38));
-        path.cubicTo(
-                landmark_pt_x.get(43), landmark_pt_y.get(43),
-                landmark_pt_x.get(44), landmark_pt_y.get(44),
-                landmark_pt_x.get(46), landmark_pt_y.get(46)
-        );
-        path.quadTo(
-                landmark_pt_x.get(42), landmark_pt_y.get(42),
-                landmark_pt_x.get(45), landmark_pt_y.get(45));
-        path.quadTo(
-                landmark_pt_x.get(39), landmark_pt_y.get(39),
-                landmark_pt_x.get(37), landmark_pt_y.get(37));
+        for (int i = 49; i < 55; i++)
+            path.lineTo(landmark_pt_x.get(i), landmark_pt_y.get(i));
+
+        path.lineTo(landmark_pt_x.get(64), landmark_pt_y.get(64));
+        path.lineTo(landmark_pt_x.get(63), landmark_pt_y.get(63));
+        path.lineTo(landmark_pt_x.get(62), landmark_pt_y.get(62));
+        path.lineTo(landmark_pt_x.get(60), landmark_pt_y.get(60));
+        path.lineTo(landmark_pt_x.get(48), landmark_pt_y.get(48));
+
         path.close();
         canvas.drawPath(path, paint);
 
         path.reset();
-        path.moveTo(landmark_pt_x.get(37), landmark_pt_y.get(37));
+        path.moveTo(landmark_pt_x.get(48), landmark_pt_y.get(48));
+        path.lineTo(landmark_pt_x.get(59), landmark_pt_y.get(59));
+        path.lineTo(landmark_pt_x.get(58), landmark_pt_y.get(58));
+        path.lineTo(landmark_pt_x.get(57), landmark_pt_y.get(57));
+        path.lineTo(landmark_pt_x.get(56), landmark_pt_y.get(56));
+        path.lineTo(landmark_pt_x.get(55), landmark_pt_y.get(55));
+        path.lineTo(landmark_pt_x.get(54), landmark_pt_y.get(54));
 
-        path.cubicTo(landmark_pt_x.get(49), landmark_pt_y.get(49),
-                landmark_pt_x.get(48), landmark_pt_y.get(48),
-                landmark_pt_x.get(54), landmark_pt_y.get(54));
-        path.cubicTo(landmark_pt_x.get(51), landmark_pt_y.get(51),
-                landmark_pt_x.get(52), landmark_pt_y.get(52),
-                landmark_pt_x.get(46), landmark_pt_y.get(46));
-        path.quadTo(
-                landmark_pt_x.get(53), landmark_pt_y.get(53),
-                landmark_pt_x.get(47), landmark_pt_y.get(47));
-        path.quadTo(
-                landmark_pt_x.get(50), landmark_pt_y.get(50),
-                landmark_pt_x.get(37), landmark_pt_y.get(37));
+        for (int i = 64; i < 68; i++)
+            path.lineTo(landmark_pt_x.get(i), landmark_pt_y.get(i));
+
+        path.lineTo(landmark_pt_x.get(60), landmark_pt_y.get(60));
+        path.lineTo(landmark_pt_x.get(48), landmark_pt_y.get(48));
+
         path.close();
         canvas.drawPath(path, paint);
 
         paint.setColor(Color.TRANSPARENT);
+        paint.setStrokeWidth(50f);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
         //left_eyebrow
-        path.reset();
-        path.moveTo(landmark_pt_x.get(33), landmark_pt_y.get(33));
-        path.quadTo(
-                landmark_pt_x.get(32), landmark_pt_y.get(32),
-                landmark_pt_x.get(31), landmark_pt_y.get(31));
-        path.quadTo(
-                landmark_pt_x.get(30), landmark_pt_y.get(30),
-                landmark_pt_x.get(29), landmark_pt_y.get(29));
-        path.quadTo(
-                landmark_pt_x.get(34), landmark_pt_y.get(34),
-                landmark_pt_x.get(35), landmark_pt_y.get(35));
-        path.quadTo(
-                landmark_pt_x.get(36), landmark_pt_y.get(36),
-                landmark_pt_x.get(33), landmark_pt_y.get(33));
-        path.close();
-        canvas.drawPath(path, paint);
-
-        //right_eyebrow
-        path.reset();
-        path.moveTo(landmark_pt_x.get(75), landmark_pt_y.get(75));
-        path.quadTo(
-                landmark_pt_x.get(76), landmark_pt_y.get(76),
-                landmark_pt_x.get(77), landmark_pt_y.get(77));
-        path.quadTo(
-                landmark_pt_x.get(78), landmark_pt_y.get(78),
-                landmark_pt_x.get(79), landmark_pt_y.get(79));
-        path.quadTo(
-                landmark_pt_x.get(82), landmark_pt_y.get(82),
-                landmark_pt_x.get(81), landmark_pt_y.get(81));
-        path.quadTo(
-                landmark_pt_x.get(80), landmark_pt_y.get(80),
-                landmark_pt_x.get(75), landmark_pt_y.get(75));
-        path.close();
-        canvas.drawPath(path, paint);
+//        path.reset();
+//        path.moveTo(landmark_pt_x.get(33), landmark_pt_y.get(33));
+//        path.quadTo(
+//                landmark_pt_x.get(32), landmark_pt_y.get(32),
+//                landmark_pt_x.get(31), landmark_pt_y.get(31));
+//        path.quadTo(
+//                landmark_pt_x.get(30), landmark_pt_y.get(30),
+//                landmark_pt_x.get(29), landmark_pt_y.get(29));
+//        path.quadTo(
+//                landmark_pt_x.get(34), landmark_pt_y.get(34),
+//                landmark_pt_x.get(35), landmark_pt_y.get(35));
+//        path.quadTo(
+//                landmark_pt_x.get(36), landmark_pt_y.get(36),
+//                landmark_pt_x.get(33), landmark_pt_y.get(33));
+//        path.close();
+//        canvas.drawPath(path, paint);
+//
+//        //right_eyebrow
+//        path.reset();
+//        path.moveTo(landmark_pt_x.get(75), landmark_pt_y.get(75));
+//        path.quadTo(
+//                landmark_pt_x.get(76), landmark_pt_y.get(76),
+//                landmark_pt_x.get(77), landmark_pt_y.get(77));
+//        path.quadTo(
+//                landmark_pt_x.get(78), landmark_pt_y.get(78),
+//                landmark_pt_x.get(79), landmark_pt_y.get(79));
+//        path.quadTo(
+//                landmark_pt_x.get(82), landmark_pt_y.get(82),
+//                landmark_pt_x.get(81), landmark_pt_y.get(81));
+//        path.quadTo(
+//                landmark_pt_x.get(80), landmark_pt_y.get(80),
+//                landmark_pt_x.get(75), landmark_pt_y.get(75));
+//        path.close();
+//        canvas.drawPath(path, paint);
 
         // left eye
         path.reset();
         //left_eye_left_corner
-        path.moveTo(landmark_pt_x.get(21), landmark_pt_y.get(21));
-        path.quadTo(
+        path.moveTo(landmark_pt_x.get(36), landmark_pt_y.get(36));
+        path.cubicTo(
                 //left_eye_lower_left_quarter
-                landmark_pt_x.get(22), landmark_pt_y.get(22),
+                landmark_pt_x.get(37), landmark_pt_y.get(37),
                 //left_eye_bottom
-                landmark_pt_x.get(19), landmark_pt_y.get(19));
-        path.quadTo(
+                landmark_pt_x.get(38), landmark_pt_y.get(38),
+                landmark_pt_x.get(39), landmark_pt_y.get(39));
+        path.cubicTo(
                 //left_eye_lower_right_quarter
-                landmark_pt_x.get(23), landmark_pt_y.get(23),
+                landmark_pt_x.get(40), landmark_pt_y.get(40),
                 //left_eye_right_corner
-                landmark_pt_x.get(25), landmark_pt_y.get(25));
-        path.quadTo(
-                //left_eye_upper_right_quarter
-                landmark_pt_x.get(28), landmark_pt_y.get(28),
-                //left_eye_top
-                landmark_pt_x.get(26), landmark_pt_y.get(26));
-        path.quadTo(
-                //left_eye_upper_left_quarter
-                landmark_pt_x.get(27), landmark_pt_y.get(27),
-                //left_eye_left_corner
-                landmark_pt_x.get(21), landmark_pt_y.get(21));
+                landmark_pt_x.get(41), landmark_pt_y.get(41),
+                landmark_pt_x.get(36), landmark_pt_y.get(36));
         path.close();
         canvas.drawPath(path, paint);
 
         // right eye
         path.reset();
         //right_eye_left_corner
-        path.moveTo(landmark_pt_x.get(67), landmark_pt_y.get(67));
-        path.quadTo(
-                //right_eye_lower_left_quarter
-                landmark_pt_x.get(68), landmark_pt_y.get(67),
-                //right_eye_bottom
-                landmark_pt_x.get(65), landmark_pt_y.get(65));
-        path.quadTo(
-                //right_eye_lower_right_quarter
-                landmark_pt_x.get(69), landmark_pt_y.get(69),
-                //right_eye_right_corner
-                landmark_pt_x.get(71), landmark_pt_y.get(71));
-        path.quadTo(
-                //right_eye_upper_right_quarter
-                landmark_pt_x.get(74), landmark_pt_y.get(74),
-                //right_eye_top
-                landmark_pt_x.get(72), landmark_pt_y.get(72));
-        path.quadTo(
-                //right_eye_upper_left_quarter
-                landmark_pt_x.get(73), landmark_pt_y.get(73),
-                //right_eye_left_corner
-                landmark_pt_x.get(67), landmark_pt_y.get(67));
+        path.moveTo(landmark_pt_x.get(42), landmark_pt_y.get(42));
+        path.cubicTo(
+                //left_eye_lower_left_quarter
+                landmark_pt_x.get(43), landmark_pt_y.get(43),
+                //left_eye_bottom
+                landmark_pt_x.get(44), landmark_pt_y.get(44),
+                landmark_pt_x.get(45), landmark_pt_y.get(45));
+        path.cubicTo(
+                //left_eye_lower_right_quarter
+                landmark_pt_x.get(46), landmark_pt_y.get(46),
+                //left_eye_right_corner
+                landmark_pt_x.get(47), landmark_pt_y.get(47),
+                landmark_pt_x.get(42), landmark_pt_y.get(42));
         path.close();
         canvas.drawPath(path, paint);
 
         //src
         // 再绘制src源图
 //        drawCanvas.drawBitmap(originalImg, 0, 0, mPaint);
-
         //清除混合模式
         paint.setXfermode(null);
         //还原画布
         canvas.restoreToCount(sc);
+
 
         bitmapArray = new int[bitmap.getWidth() * bitmap.getHeight()];
         tempArray = new int[temp.getWidth() * temp.getHeight()];
@@ -1051,7 +1048,12 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         int color2 = 0xDD34ac32;
 //        int sc = drawCanvas.saveLayer(0, 0, temp.getWidth(), temp.getHeight(), null, Canvas.ALL_SAVE_FLAG);
 
-        mPaint.setShader(new LinearGradient(landmark_pt_x.get(21) - 10f, landmark_pt_y.get(21), landmark_pt_x.get(25), landmark_pt_y.get(25), color1, color2, Shader.TileMode.CLAMP));
+        mPaint.setShader(
+                new LinearGradient(landmark_pt_x.get(36) - 25f, landmark_pt_y.get(36) - 20f,
+                        landmark_pt_x.get(39) + 20f, landmark_pt_y.get(39) - 8f,
+                        color1, color2,
+                        Shader.TileMode.CLAMP));
+
 //       mPaint.setShader(new RadialGradient(
 //               landmark_pt_x.get(21) + (landmark_pt_x.get(25) - landmark_pt_x.get(21) / 2), landmark_pt_y.get(21), (landmark_pt_x.get(25) - landmark_pt_x.get(21) / 2),
 //                color1, color2,
@@ -1062,55 +1064,57 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         path.reset();
 //        Float left_middle_eye_eyebrow_y = (landmark_pt_y.get(21) - landmark_pt_y.get(31) )/2;
         //left_eye_left_corner
-        path.moveTo(landmark_pt_x.get(21) - 10f, landmark_pt_y.get(21));
+        path.moveTo(landmark_pt_x.get(36) - 25f, landmark_pt_y.get(36) - 4f);
 
-        path.quadTo(
-                //left_eye_top + a distance
-                landmark_pt_x.get(26), landmark_pt_y.get(26) - 30f,
-
+        path.cubicTo(
+                //left_eye_top_left + a distance
+                landmark_pt_x.get(37), landmark_pt_y.get(37) - 20f,
+                //left_eye_top_right + a distance
+                landmark_pt_x.get(38), landmark_pt_y.get(38) - 20f,
                 //left_eye_right_corner
-                landmark_pt_x.get(25) + 5f, landmark_pt_y.get(25) - 5f);
+                landmark_pt_x.get(39) + 10f, landmark_pt_y.get(39) + 5f);
 
-        path.quadTo(
-                //left_eye_upper_right_quarter
-                landmark_pt_x.get(28), landmark_pt_y.get(28) - 5f,
-                //left_eye_top
-                landmark_pt_x.get(26), landmark_pt_y.get(26) - 2f);
-
-        path.quadTo(
-                //left_eye_upper_left_quarter
-                landmark_pt_x.get(27), landmark_pt_y.get(27) - 5f,
+        path.cubicTo(
+                //left_eye_top_left
+                landmark_pt_x.get(38), landmark_pt_y.get(38) - 11f,
+                //left_eye_top_right
+                landmark_pt_x.get(37), landmark_pt_y.get(37) - 9f,
                 //left_eye_left_corner
-                landmark_pt_x.get(21) - 2f, landmark_pt_y.get(21) - 5f);
+                landmark_pt_x.get(36) - 5f, landmark_pt_y.get(36) - 8f);
+
+        path.lineTo(landmark_pt_x.get(36) - 25f, landmark_pt_y.get(36) - 4f);
 
         path.close();
         drawCanvas.drawPath(path, mPaint);
 
         // right eye
-        mPaint.setShader(new LinearGradient(landmark_pt_x.get(71) + 10f, landmark_pt_y.get(71), landmark_pt_x.get(67), landmark_pt_y.get(67), color1, color2, Shader.TileMode.CLAMP));
+        mPaint.setShader(
+                new LinearGradient(landmark_pt_x.get(45) + 25f, landmark_pt_y.get(45) - 20f,
+                        landmark_pt_x.get(42) - 20f, landmark_pt_y.get(42) - 4f,
+                        color1, color2,
+                        Shader.TileMode.CLAMP));
 
         path.reset();
         //right_eye_right_corner
-        path.moveTo(landmark_pt_x.get(71) + 10f, landmark_pt_y.get(71));
+        path.moveTo(landmark_pt_x.get(45) + 25f, landmark_pt_y.get(45) - 4f);
 
-        path.quadTo(
-                //right_eye_top + a distance
-                landmark_pt_x.get(72), landmark_pt_y.get(72) - 30f,
-
+        path.cubicTo(
+                //right_eye_top_right + a distance
+                landmark_pt_x.get(44), landmark_pt_y.get(44) - 20f,
+                //right_eye_top_left + a distance
+                landmark_pt_x.get(43), landmark_pt_y.get(43) - 20f,
                 //right_eye_left_corner
-                landmark_pt_x.get(67) - 5f, landmark_pt_y.get(67) - 5f);
+                landmark_pt_x.get(42) - 10f, landmark_pt_y.get(42) - 5f);
 
-        path.quadTo(
-                //right_eye_upper_left_quarter
-                landmark_pt_x.get(73), landmark_pt_y.get(73) - 5f,
-                //right_eye_top
-                landmark_pt_x.get(72), landmark_pt_y.get(72) - 2f);
-
-        path.quadTo(
-                //right_eye_upper_right_quarter
-                landmark_pt_x.get(74), landmark_pt_y.get(74) - 5f,
+        path.cubicTo(
+                //right_eye_top_left
+                landmark_pt_x.get(43), landmark_pt_y.get(43) - 11f,
+                //right_eye_top_right
+                landmark_pt_x.get(44), landmark_pt_y.get(44) - 9f,
                 //right_eye_right_corner
-                landmark_pt_x.get(71), landmark_pt_y.get(71) - 5f);
+                landmark_pt_x.get(45) + 5f, landmark_pt_y.get(45) - 8f);
+
+        path.lineTo(landmark_pt_x.get(45) + 25f, landmark_pt_y.get(45) - 4f);
 
         path.close();
         drawCanvas.drawPath(path, mPaint);
@@ -1126,6 +1130,14 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         mPaint.setXfermode(null);
         //还原画布
 //        drawCanvas.restoreToCount(sc);
+    }
+
+    private int blendColors(int color1, int color2, float ratio) {
+        final float inverseRation = 1f - ratio;
+        float r = (Color.red(color1) * ratio) + (Color.red(color2) * inverseRation);
+        float g = (Color.green(color1) * ratio) + (Color.green(color2) * inverseRation);
+        float b = (Color.blue(color1) * ratio) + (Color.blue(color2) * inverseRation);
+        return Color.rgb((int) r, (int) g, (int) b);
     }
 
     private void drawRouge() {
@@ -1144,27 +1156,27 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         mPaint.setMaskFilter(new BlurMaskFilter(10, BlurMaskFilter.Blur.NORMAL));
 
         //nose_contour_left2 - contour_left3
-        float rouge_left_x = landmark_pt_x.get(56) - (landmark_pt_x.get(56) - landmark_pt_x.get(3)) / 2f;
-        float rouge_left_y = landmark_pt_y.get(56);
-        float slope = ((landmark_pt_y.get(56) - landmark_pt_y.get(60)) / (landmark_pt_x.get(56) - landmark_pt_x.get(60)));
-        rouge_left_y = ((rouge_left_x - landmark_pt_x.get(56)) * slope) + landmark_pt_y.get(56);
+        float rouge_left_x = landmark_pt_x.get(30) - (landmark_pt_x.get(30) - landmark_pt_x.get(2)) / 2f;
+        float rouge_left_y = landmark_pt_y.get(31);
+        float slope = ((landmark_pt_y.get(31) - landmark_pt_y.get(35)) / (landmark_pt_x.get(31) - landmark_pt_x.get(35)));
+        rouge_left_y = ((rouge_left_x - landmark_pt_x.get(31)) * slope) + landmark_pt_y.get(31);
 //        drawCanvas.drawCircle(rouge_left_x, rouge_left_y, 30f, mPaint);
 //        nose_contour_right2 - contour_right3
-        float rouge_right_x = landmark_pt_x.get(60) + (landmark_pt_x.get(12) - landmark_pt_x.get(60)) / 2f;
-        float rouge_right_y = landmark_pt_y.get(60);
-        rouge_right_y = ((rouge_right_x - landmark_pt_x.get(60)) * slope) + landmark_pt_y.get(60);
+        float rouge_right_x = landmark_pt_x.get(30) + (landmark_pt_x.get(14) - landmark_pt_x.get(30)) / 2f;
+        float rouge_right_y = landmark_pt_y.get(35);
+        rouge_right_y = ((rouge_right_x - landmark_pt_x.get(35)) * slope) + landmark_pt_y.get(35);
 
         Path path = new Path();
         path.reset();
         //draw left rouge
 //        contour_left3
-        path.moveTo(landmark_pt_x.get(3) + 3f, landmark_pt_y.get(3));
-        path.cubicTo(landmark_pt_x.get(4) + 3f, landmark_pt_y.get(4),
-                landmark_pt_x.get(5) + 3f, landmark_pt_y.get(5),
-                landmark_pt_x.get(6) + 3f, landmark_pt_y.get(6) - 4f
+        path.moveTo(landmark_pt_x.get(2) + 3f, landmark_pt_y.get(2));
+        path.cubicTo(landmark_pt_x.get(3) + 3f, landmark_pt_y.get(3),
+                landmark_pt_x.get(4) + 3f, landmark_pt_y.get(4),
+                landmark_pt_x.get(5) + 3f, landmark_pt_y.get(5) - 4f
         );
         path.lineTo(rouge_left_x, rouge_left_y);
-        path.lineTo(landmark_pt_x.get(3) + 3f, landmark_pt_y.get(3));
+        path.lineTo(landmark_pt_x.get(2) + 3f, landmark_pt_y.get(2));
 
         path.close();
         drawCanvas.drawPath(path, mPaint);
@@ -1172,14 +1184,14 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         path.reset();
         //draw right rouge
 //        contour_right3
-        path.moveTo(landmark_pt_x.get(12) - 3f, landmark_pt_y.get(12));
+        path.moveTo(landmark_pt_x.get(14) - 3f, landmark_pt_y.get(14));
         path.cubicTo(landmark_pt_x.get(13) - 3f, landmark_pt_y.get(13),
-                landmark_pt_x.get(14) - 3f, landmark_pt_y.get(14),
-                landmark_pt_x.get(15) - 3f, landmark_pt_y.get(15) - 4f
+                landmark_pt_x.get(12) - 3f, landmark_pt_y.get(12),
+                landmark_pt_x.get(11) - 3f, landmark_pt_y.get(11) - 4f
         );
 
         path.lineTo(rouge_right_x, rouge_right_y);
-        path.lineTo(landmark_pt_x.get(12) - 3f, landmark_pt_y.get(12));
+        path.lineTo(landmark_pt_x.get(14) - 3f, landmark_pt_y.get(14));
 
         drawCanvas.drawPath(path, mPaint);
 
@@ -1217,77 +1229,6 @@ public class ColorizeFaceActivity extends AppCompatActivity {
     }
 
     protected void onDestroy() {
-
         super.onDestroy();
-        if (mThreadHandler != null) {
-            mThreadHandler.removeCallbacks(landmarkDetection);
-        }
-
-        if (mThread != null) {
-            mThread.quit();
-        }
-    }
-
-    private class FaceppDetect {
-        DetectCallback callback = null;
-
-        public void setDetectCallback(DetectCallback detectCallback) {
-            callback = detectCallback;
-        }
-
-        public void detect(final Bitmap image) {
-
-            new Thread(new Runnable() {
-
-                public void run() {
-                    HttpRequests httpRequests = new HttpRequests(
-                            getResources().getString(R.string.facepp_API_Key),
-                            getResources().getString(R.string.facepp_API_Secret),
-                            true,
-                            false);
-                    //Log.v(TAG, "image size : " + img.getWidth() + " " + img.getHeight());
-
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    float scale = Math.min(1, Math.min(600f / originalImg.getWidth(), 600f / originalImg.getHeight()));
-                    Matrix matrix = new Matrix();
-                    matrix.postScale(scale, scale);
-
-                    Bitmap imgSmall = Bitmap.createBitmap(originalImg, 0, 0, originalImg.getWidth(), originalImg.getHeight(), matrix, false);
-                    //Log.v(TAG, "imgSmall size : " + imgSmall.getWidth() + " " + imgSmall.getHeight());
-
-                    imgSmall.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                    byte[] array = stream.toByteArray();
-
-                    try {
-                        //detect
-                        JSONObject result = httpRequests.detectionDetect(new PostParameters().setImg(array));
-                        getFaceid(result);
-                        result = httpRequests.detectionLandmark(new PostParameters().setFaceId(face_id));
-//                        Log.d("json_result", result.toString());
-                        final int chunkSize = 2048;
-                        for (int i = 0; i < result.toString().length(); i += chunkSize) {
-                            Log.d(TAG, result.toString().substring(i, Math.min(result.toString().length(), i + chunkSize)));
-                        }
-                        //finished , then call the callback function
-                        if (callback != null) {
-                            callback.detectResult(result);
-                        }
-                    } catch (FaceppParseException e) {
-                        e.printStackTrace();
-                        ColorizeFaceActivity.this.runOnUiThread(new Runnable() {
-                            public void run() {
-                                Log.e(TAG, "Network error.");
-                            }
-                        });
-                    }
-                }
-            }).start();
-
-        }
-    }
-
-
-    interface DetectCallback {
-        void detectResult(JSONObject rst);
     }
 }

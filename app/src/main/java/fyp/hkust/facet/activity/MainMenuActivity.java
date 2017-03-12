@@ -19,10 +19,14 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.ImageButton;
+import android.widget.ListAdapter;
 import android.widget.Toast;
 
 import java.io.File;
@@ -30,6 +34,7 @@ import java.text.DateFormat;
 import java.util.Date;
 
 import fyp.hkust.facet.R;
+import fyp.hkust.facet.adapter.ArrayAdapterWithIcon;
 import fyp.hkust.facet.notificationservice.MyService;
 import fyp.hkust.facet.skincolordetection.CaptureActivity;
 import fyp.hkust.facet.skincolordetection.ShowCameraViewActivity;
@@ -81,35 +86,7 @@ public class MainMenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                final AlertDialog.Builder builder = new AlertDialog.Builder(MainMenuActivity.this);
-                builder.setTitle("Choose the way to get your selfie");
-                builder.setIcon(R.mipmap.app_icon);
-                builder.setCancelable(true);
-                final String[] items = new String[]{"Photo Album", "Take Photo", "Cancel"};
-                builder.setItems(items, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(MainMenuActivity.this, items[which], Toast.LENGTH_SHORT).show();
-                        switch (which) {
-                            case 0: {
-                                buttonNumber = 1;
-                                Intent intent = new Intent();
-                                intent.setType("image/*");
-                                intent.setAction(Intent.ACTION_GET_CONTENT);
-                                startActivityForResult(Intent.createChooser(intent, "Select Picture"), GALLERY_REQUEST);
-                                break;
-                            }
-                            case 1: {
-                                Intent cameraViewIntent = new Intent(MainMenuActivity.this, ShowCameraViewActivity.class);
-//                cameraViewIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                startActivity(cameraViewIntent);
-                                break;
-                            }
-                        }
-                    }
-                });
-                builder.setCancelable(false);
-                builder.show();
+                showAlertDialog();
             }
         });
 
@@ -136,38 +113,7 @@ public class MainMenuActivity extends AppCompatActivity {
         storeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                final AlertDialog.Builder builder = new AlertDialog.Builder(MainMenuActivity.this);
-                builder.setTitle("Choose the way to get your selfie");
-                builder.setIcon(R.mipmap.app_icon);
-                builder.setCancelable(true);
-                final String[] items = new String[]{"Photo Album", "Take Photo", "Cancel"};
-                builder.setItems(items, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(MainMenuActivity.this, items[which], Toast.LENGTH_SHORT).show();
-                        switch (which) {
-                            case 0: {
-                                buttonNumber = 2;
-                                Intent intent = new Intent();
-                                intent.setType("image/*");
-                                intent.setAction(Intent.ACTION_GET_CONTENT);
-                                startActivityForResult(Intent.createChooser(intent, "Select Picture"), GALLERY_REQUEST);
-                                break;
-                            }
-                            case 1: {
-                                Intent cameraViewIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                File file = getFile();
-                                cameraViewIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
-                                startActivityForResult(cameraViewIntent, CAM_REQUEST);
-                                break;
-                            }
-                        }
-                    }
-                });
-                builder.setCancelable(false);
-                builder.show();
-
+                showMakeUpDialog();
             }
         });
 
@@ -195,6 +141,77 @@ public class MainMenuActivity extends AppCompatActivity {
         }
         if (!isMyServiceRunning(MyService.class))
             startService(new Intent(this, MyService.class));
+    }
+
+    private void showAlertDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose the way to get your selfie");
+
+        builder.setIcon(R.mipmap.app_icon);
+        builder.setCancelable(true);
+
+        final String[] items = new String[]{"From Gallery", "Take Photo"};
+        final Integer[] icons = new Integer[]{R.mipmap.app_icon,R.mipmap.app_icon};
+        ListAdapter adapter = new ArrayAdapterWithIcon(getApplication(), items, icons);
+
+        builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                switch (item) {
+                    case 0: {
+                        buttonNumber = 1;
+                        Intent intent = new Intent();
+                        intent.setType("image/*");
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        startActivityForResult(Intent.createChooser(intent, "Select Picture"), GALLERY_REQUEST);
+                        break;
+                    }
+                    case 1: {
+                        Intent cameraViewIntent = new Intent(MainMenuActivity.this, ShowCameraViewActivity.class);
+//                cameraViewIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(cameraViewIntent);
+                        break;
+                    }
+                }
+
+            }
+        }).show();
+    }
+
+    private void showMakeUpDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose the way to get your selfie");
+
+        builder.setIcon(R.mipmap.app_icon);
+        builder.setCancelable(true);
+
+        final String[] items = new String[]{"From Gallery", "Take Photo"};
+        final Integer[] icons = new Integer[]{R.mipmap.app_icon,R.mipmap.app_icon};
+        ListAdapter adapter = new ArrayAdapterWithIcon(getApplication(), items, icons);
+
+        builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                switch (item) {
+                    case 0: {
+                        buttonNumber = 2;
+                        Intent intent = new Intent();
+                        intent.setType("image/*");
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        startActivityForResult(Intent.createChooser(intent, "Select Picture"), GALLERY_REQUEST);
+                        break;
+                    }
+                    case 1: {
+                        Intent cameraViewIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        File file = getFile();
+                        cameraViewIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+                        startActivityForResult(cameraViewIntent, CAM_REQUEST);
+                        break;
+                    }
+                }
+
+            }
+        }).show();
     }
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
@@ -318,5 +335,6 @@ public class MainMenuActivity extends AppCompatActivity {
         }
         return false;
     }
+
 }
 

@@ -1,1 +1,1 @@
-include ':app', ':openCVLibrary310', ':faceppsdk', ':faceppofflinesdk'
+include ':app', ':openCVLibrary310'
