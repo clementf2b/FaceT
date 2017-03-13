@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">FaceT</string>
     <string name="facebook_app_id">1569918259976009</string>
+    <string name="facepp_API_Key">OytSFWSQ5LjdawAnmtcDy4pLNS2G2BiV</string>
+    <string name="facepp_API_Secret">g8iOcxpavpCYVdjIhCKw-IFarruXIc3Z</string>
 
     <string name="save_message1">"You don't have chosen converted picture to save"</string>
     <string name="save_message2">"Saved successfully"</string>
