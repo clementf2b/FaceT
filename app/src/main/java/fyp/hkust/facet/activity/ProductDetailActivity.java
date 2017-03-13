@@ -68,6 +68,7 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.vanniktech.emoji.EmojiEditText;
+import com.vanniktech.emoji.EmojiManager;
 import com.vanniktech.emoji.EmojiPopup;
 import com.vanniktech.emoji.EmojiTextView;
 import com.vanniktech.emoji.emoji.Emoji;
@@ -207,7 +208,6 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Product");
         Log.d(TAG + "mDatabase", mDatabase.toString());
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
-        mDatabaseUsers.keepSynced(true);
         mStorageProfileImage = FirebaseStorage.getInstance().getReference().child("Comment_images");
 
         Log.d(TAG + "mDatabaseUsers", mDatabaseUsers.toString());
@@ -432,6 +432,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                     final User user_data = dataSnapshot.getValue(User.class);
                     Log.e(user_data.getName(), "User data is null!");
                     current_username = user_data.getName();
+                    user_image_url = user_data.getImage();
                     Log.d(TAG + " current user", current_username);
                     Picasso.with(getApplicationContext()).load(user_data.getImage()).networkPolicy(NetworkPolicy.OFFLINE).into(user_profile_pic, new Callback() {
                         @Override

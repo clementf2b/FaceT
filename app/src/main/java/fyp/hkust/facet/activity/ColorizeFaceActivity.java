@@ -495,7 +495,7 @@ public class ColorizeFaceActivity extends AppCompatActivity {
                             }
                             count++;
 
-                            drawpoint(pointX, pointY, temp, canvas);
+//                            drawpoint(pointX, pointY, temp, canvas);
                         }
                         Log.d(TAG + " added landmark", count + "");
 
