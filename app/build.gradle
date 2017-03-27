@@ -4,7 +4,7 @@ android {
     buildToolsVersion '25.0.2'
     defaultConfig {
         applicationId "fyp.hkust.facet"
-        minSdkVersion 17
+        minSdkVersion 19
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
@@ -14,7 +14,6 @@ android {
         renderscriptSupportModeEnabled true
         ndk {
             moduleName 'jnidemo'
-            abiFilters "arm64-v8a","armeabi-v7a"
         }
         sourceSets {
             main {
@@ -26,6 +25,9 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            testCoverageEnabled = false
         }
     }
 }
@@ -99,6 +101,8 @@ dependencies {
     compile 'com.vanniktech:emoji-one:0.4.0'
     //easy permission
     compile 'pub.devrel:easypermissions:0.3.0'
+//ColorSeekBar
+    compile 'com.github.rtugeek:ColorSeekBar:1.2.2'
     testCompile 'junit:junit:4.12'
 }
 

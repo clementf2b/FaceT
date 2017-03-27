@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#1cbee8</color>
-    <color name="colorPrimaryDark">#00c1e9</color>
+    <color name="colorPrimary">#39c5c1</color>
+    <color name="colorPrimaryDark">#33b2ae</color>
     <color name="colorAccent">#FF4081</color>
     <color name="ripple">#97e6ed</color>
-    <color name="primary_pressed">#1c88e8</color>
+    <color name="primary_pressed">#39c5c1</color>
 
-    <color name="gradient_start">#1cbee8</color>
-    <color name="gradient_end">#b3e1d8</color>
+    <color name="gradient_start">#b3e1d8</color>
+    <color name="gradient_end">#1cbee8</color>
 
-    <color name="button_gradient_start">#42bcec</color>
-    <color name="button_gradient_end">#19e7d7</color>
+    <color name="button_gradient_start">#19e7d7</color>
+    <color name="button_gradient_end">#42bcec</color>
 
     <color name="colorPrimaryText">#212121</color>
     <color name="colorSecondaryText">#727272</color>
@@ -42,6 +42,6 @@
     <color name="makeup_transparent_background_color">#FFFFFFFF</color>
     <color name="makeup_background_color">#DDDDDD</color>
 
-    <color name="sort_drawer_background">#17bcf7</color>
+    <color name="sort_drawer_background">#39c5c1</color>
 
 </resources>

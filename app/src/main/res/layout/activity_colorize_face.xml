@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_colorize_face"
@@ -20,8 +21,8 @@
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
             android:background="@color/makeup_transparent_background_color"
-            android:src="@mipmap/ic_arrow_back_black_24dp"
-            android:paddingLeft="10dp"/>
+            android:paddingLeft="10dp"
+            android:src="@mipmap/ic_arrow_back_black_24dp" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -33,8 +34,8 @@
                 android:id="@+id/undo_button"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:paddingRight="30dp"
                 android:background="@color/white"
+                android:paddingRight="30dp"
                 android:src="@mipmap/ic_undo_black_24dp" />
 
             <ImageButton
@@ -51,9 +52,9 @@
             android:id="@+id/save_button"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_toLeftOf="@+id/apply_list_button"
             android:background="@color/white"
             android:paddingRight="10dp"
-            android:layout_toLeftOf="@+id/apply_list_button"
             android:src="@mipmap/ic_save_black_24dp" />
 
         <ImageButton
@@ -62,9 +63,8 @@
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:background="@color/white"
-            android:src="@mipmap/ic_info_outline_black_24dp"
             android:paddingRight="10dp"
-            />
+            android:src="@mipmap/ic_info_outline_black_24dp" />
 
     </RelativeLayout>
 
@@ -72,24 +72,24 @@
         android:id="@+id/imageView1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="fitStart"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/top_bar_layout" />
+        android:layout_below="@+id/top_bar_layout"
+        android:scaleType="fitStart" />
 
     <Button
         android:id="@+id/compare_button"
         android:layout_width="70dp"
         android:layout_height="30dp"
-        android:layout_margin="10dp"
         android:layout_alignParentRight="true"
+        android:layout_below="@+id/top_bar_layout"
+        android:layout_margin="10dp"
         android:adjustViewBounds="true"
         android:background="@drawable/border_button_white_bg"
         android:clickable="true"
         android:contextClickable="true"
         android:scaleType="fitCenter"
         android:text="@string/compare_btn_text"
-        android:layout_below="@+id/top_bar_layout"
         android:textColor="@color/font_color_pirmary" />
 
     <com.melnykov.fab.FloatingActionButton
@@ -97,9 +97,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
+        android:layout_margin="70dp"
         android:src="@mipmap/ic_account_circle_white_36dp"
         fab:fab_colorNormal="@color/colorPrimary"
-        android:layout_margin="100dp"
         fab:fab_colorPressed="@color/primary_pressed"
         fab:fab_colorRipple="@color/ripple"
         fab:fab_shadow="true" />
@@ -114,7 +114,62 @@
         fab:fab_colorNormal="@color/colorPrimary"
         fab:fab_colorPressed="@color/primary_pressed"
         fab:fab_colorRipple="@color/ripple"
-        fab:fab_shadow="true" />
+        fab:fab_shadow="true"
+        />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_alignParentBottom="true">
+
+        <LinearLayout
+            android:id="@+id/control_layout"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:background="@color/makeup_transparent_background_color"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="6dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="barHeight"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <SeekBar
+                    android:id="@+id/seekBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/checkBox"
+                    android:layout_centerHorizontal="true"
+                    android:max="50" />
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="thumbHeight"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <SeekBar
+                    android:id="@+id/seekBar2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/checkBox"
+                    android:layout_centerHorizontal="true" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
 
     <LinearLayout
         android:id="@+id/makeup_select_layout"
@@ -123,7 +178,8 @@
         android:layout_above="@+id/show_hide_layout_button"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:background="@color/makeup_transparent_background_color">
+        android:background="@color/makeup_transparent_background_color"
+        android:visibility="gone">
 
         <RelativeLayout
             android:id="@+id/face_layout"
