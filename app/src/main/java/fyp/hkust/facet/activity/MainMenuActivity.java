@@ -117,7 +117,7 @@ public class MainMenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Intent storeIntent = new Intent(MainMenuActivity.this, ColorizeFaceActivity.class);
+                Intent storeIntent = new Intent(MainMenuActivity.this, ShopListActivity.class);
 //                accountIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(storeIntent);
 
