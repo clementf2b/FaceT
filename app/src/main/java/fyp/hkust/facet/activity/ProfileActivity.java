@@ -187,8 +187,10 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         checkUserExist();
-        setupUserData();
-        getUserData();
+        if(mAuth.getCurrentUser()!=null) {
+            setupUserData();
+            getUserData();
+        }
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -430,42 +432,44 @@ public class ProfileActivity extends AppCompatActivity {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
 
-        final DatabaseReference currentUserNotification = mDatabaseNotifications.child(mAuth.getCurrentUser().getUid());
-        FirebaseRecyclerAdapter<Notification, NotificationViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Notification, NotificationViewHolder>(
+        if(mAuth.getCurrentUser()!=null) {
+            final DatabaseReference currentUserNotification = mDatabaseNotifications.child(mAuth.getCurrentUser().getUid());
+            FirebaseRecyclerAdapter<Notification, NotificationViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Notification, NotificationViewHolder>(
 
-                Notification.class,
-                R.layout.notification_row,
-                NotificationViewHolder.class,
-                currentUserNotification
+                    Notification.class,
+                    R.layout.notification_row,
+                    NotificationViewHolder.class,
+                    currentUserNotification
 
-        ) {
-            @Override
-            protected void populateViewHolder(NotificationViewHolder viewHolder, Notification model, int position) {
+            ) {
+                @Override
+                protected void populateViewHolder(NotificationViewHolder viewHolder, Notification model, int position) {
 
-                Log.d(TAG, "loading view " + position);
-                Log.d(TAG, model.getSender_username());
-                final String product_id = getRef(position).getKey();
-                viewHolder.setAction(model.getProduct_name(), model.getAction(), model.getSender_username());
-                viewHolder.setTime(model.getTime());
-                viewHolder.setImage(getApplicationContext(), model.getProduct_image());
+                    Log.d(TAG, "loading view " + position);
+                    Log.d(TAG, model.getSender_username());
+                    final String product_id = getRef(position).getKey();
+                    viewHolder.setAction(model.getProduct_name(), model.getAction(), model.getSender_username());
+                    viewHolder.setTime(model.getTime());
+                    viewHolder.setImage(getApplicationContext(), model.getProduct_image());
 
-                viewHolder.mView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent productDetailIntent = new Intent();
-                        productDetailIntent.setClass(ProfileActivity.this, ProductDetailActivity.class);
-                        productDetailIntent.putExtra("product_id", product_id);
-                        Log.d(TAG + " product_id", product_id);
-                        startActivity(productDetailIntent);
-                    }
-                });
+                    viewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent productDetailIntent = new Intent();
+                            productDetailIntent.setClass(ProfileActivity.this, ProductDetailActivity.class);
+                            productDetailIntent.putExtra("product_id", product_id);
+                            Log.d(TAG + " product_id", product_id);
+                            startActivity(productDetailIntent);
+                        }
+                    });
 
-                Log.d(TAG, "finish loading view");
-            }
-        };
+                    Log.d(TAG, "finish loading view");
+                }
+            };
 
-        Log.d(TAG, " Notification : " + mDatabaseNotifications.child(mAuth.getCurrentUser().getUid()));
-        mNotificaitonList.setAdapter(firebaseRecyclerAdapter);
+            Log.d(TAG, " Notification : " + mDatabaseNotifications.child(mAuth.getCurrentUser().getUid()));
+            mNotificaitonList.setAdapter(firebaseRecyclerAdapter);
+        }
     }
 
     public static class NotificationViewHolder extends RecyclerView.ViewHolder {

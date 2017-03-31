@@ -43,7 +43,7 @@ import fyp.hkust.facet.model.Product;
 import fyp.hkust.facet.model.User;
 import fyp.hkust.facet.util.FontManager;
 
-public class AccountActivity extends AppCompatActivity{
+public class AccountActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String NAV_ITEM_ID = "nav_index";
@@ -74,7 +74,7 @@ public class AccountActivity extends AppCompatActivity{
         FontManager.markAsIconContainer(findViewById(R.id.account_main_layout), fontType);
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setBackground(new ColorDrawable(Color.parseColor("#00000000")) );
+        toolbar.setBackground(new ColorDrawable(Color.parseColor("#00000000")));
         setSupportActionBar(toolbar);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -91,7 +91,7 @@ public class AccountActivity extends AppCompatActivity{
             }
         });
 
-        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.openDrawer, R.string.closeDrawer){
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.openDrawer, R.string.closeDrawer) {
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
@@ -106,10 +106,9 @@ public class AccountActivity extends AppCompatActivity{
         drawerLayout.setDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
 
-        if(null != savedInstanceState){
+        if (null != savedInstanceState) {
             navItemId = savedInstanceState.getInt(NAV_ITEM_ID, R.id.nav_camera);
-        }
-        else{
+        } else {
             navItemId = R.id.nav_camera;
         }
 
@@ -122,7 +121,7 @@ public class AccountActivity extends AppCompatActivity{
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Product");
         mDatabase.keepSynced(true);
 
-        profilePic = (CircleImageView)findViewById(R.id.profilepic);
+        profilePic = (CircleImageView) findViewById(R.id.profilepic);
         mNameField = (TextView) findViewById(R.id.accountnamefield);
 
         final String user_id = mAuth.getCurrentUser().getUid();
@@ -131,9 +130,8 @@ public class AccountActivity extends AppCompatActivity{
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if(firebaseAuth.getCurrentUser() == null)
-                {
-                    Intent loginIntent = new Intent(AccountActivity.this,LoginActivity.class);
+                if (firebaseAuth.getCurrentUser() == null) {
+                    Intent loginIntent = new Intent(AccountActivity.this, LoginActivity.class);
                     loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(loginIntent);
                 }
@@ -222,8 +220,8 @@ public class AccountActivity extends AppCompatActivity{
         return super.onOptionsItemSelected(item);
     }
 
-    private void navigateTo(MenuItem menuItem){
-       // contentView.setText(menuItem.getTitle());
+    private void navigateTo(MenuItem menuItem) {
+        // contentView.setText(menuItem.getTitle());
 
         navItemId = menuItem.getItemId();
         //Check to see which item was being clicked and perform appropriate action
@@ -252,7 +250,7 @@ public class AccountActivity extends AppCompatActivity{
             default:
                 navItemId = 0;
         }
-        Snackbar.make(drawerLayout, navItemId + " Clicked" ,Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(drawerLayout, navItemId + " Clicked", Snackbar.LENGTH_SHORT).show();
         menuItem.setChecked(true);
     }
 
@@ -268,7 +266,7 @@ public class AccountActivity extends AppCompatActivity{
 
         mAuth.addAuthStateListener(mAuthListener);
 
-        FirebaseRecyclerAdapter<Product,AccountActivity.RecenlyMatchProductViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Product, AccountActivity.RecenlyMatchProductViewHolder>(
+        FirebaseRecyclerAdapter<Product, AccountActivity.RecenlyMatchProductViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Product, AccountActivity.RecenlyMatchProductViewHolder>(
 
                 Product.class,
                 R.layout.recently_match_product_row,
@@ -278,10 +276,10 @@ public class AccountActivity extends AppCompatActivity{
             @Override
             protected void populateViewHolder(AccountActivity.RecenlyMatchProductViewHolder rm_viewHolder, Product model, int position) {
 
-                rm_viewHolder.setTitle(model.getTitle());
-                rm_viewHolder.setDesc(model.getDesc());
-                rm_viewHolder.setImage(getApplicationContext(),model.getImage());
-                rm_viewHolder.setUsername(model.getUsername());
+                rm_viewHolder.setProductName(model.getProductName());
+                rm_viewHolder.setDescription(model.getDescription());
+                rm_viewHolder.setImage(getApplicationContext(), model.getProductImage());
+                rm_viewHolder.setUid(model.getUid());
             }
         };
 
@@ -290,7 +288,7 @@ public class AccountActivity extends AppCompatActivity{
         recentlyMatchProductList.isScrollbarFadingEnabled();
     }
 
-    public static class RecenlyMatchProductViewHolder extends RecyclerView.ViewHolder{
+    public static class RecenlyMatchProductViewHolder extends RecyclerView.ViewHolder {
 
         View mView;
 
@@ -299,26 +297,22 @@ public class AccountActivity extends AppCompatActivity{
             mView = itemView;
         }
 
-        public void setTitle(String title)
-        {
+        public void setProductName(String productName) {
             TextView rm_product_title = (TextView) mView.findViewById(R.id.rm_p_title);
-            rm_product_title.setText(title);
+            rm_product_title.setText(productName);
         }
 
-        public void setDesc(String desc)
-        {
+        public void setDescription(String description) {
             TextView rm_product_desc = (TextView) mView.findViewById(R.id.rm_p_desc);
-            rm_product_desc.setText(desc);
+            rm_product_desc.setText(description);
         }
 
-        public void setUsername(String username)
-        {
+        public void setUid(String uid) {
             TextView rm_product_username = (TextView) mView.findViewById(R.id.rm_p_username);
-            rm_product_username.setText(username);
+            rm_product_username.setText(uid);
         }
 
-        public void setImage(final Context ctx, final  String image)
-        {
+        public void setImage(final Context ctx, final String image) {
             final ImageView rm_post_image = (ImageView) mView.findViewById(R.id.rm_product_image);
             Picasso.with(ctx).load(image).networkPolicy(NetworkPolicy.OFFLINE).into(rm_post_image, new Callback() {
                 @Override
@@ -342,7 +336,7 @@ public class AccountActivity extends AppCompatActivity{
 
     private void checkUserExist() {
 
-        if(mAuth.getCurrentUser() != null) {
+        if (mAuth.getCurrentUser() != null) {
             final String user_id = mAuth.getCurrentUser().getUid();
 
             mDatabaseUsers.addValueEventListener(new ValueEventListener() {
@@ -363,8 +357,7 @@ public class AccountActivity extends AppCompatActivity{
         }
     }
 
-    private void logout()
-    {
+    private void logout() {
         mAuth.signOut();
     }
 

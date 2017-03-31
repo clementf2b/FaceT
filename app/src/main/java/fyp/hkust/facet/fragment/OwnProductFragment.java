@@ -110,7 +110,7 @@ public class OwnProductFragment extends Fragment {
 
 //                own_viewHolder.setTitle(model.getTitle());
 //                own_viewHolder.setDesc(model.getDesc());
-                own_viewHolder.setImage(getContext(), model.getImage());
+                own_viewHolder.setImage(getContext(), model.getProductImage());
 //                own_viewHolder.setUsername(model.getUsername());
             }
         };

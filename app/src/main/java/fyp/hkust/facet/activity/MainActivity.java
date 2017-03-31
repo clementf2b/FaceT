@@ -2,6 +2,7 @@ package fyp.hkust.facet.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
@@ -19,7 +20,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +34,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
@@ -52,6 +58,10 @@ public class MainActivity extends AppCompatActivity {
     DrawerLayout drawerLayout;
     private int navItemId;
     private Toolbar toolbar;
+
+    private int order = 0;
+    private String categoryResult = "";
+    private Query mFilterDatabse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,12 +95,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 Toast.makeText(MainActivity.this, menuItem.getTitle() + " pressed", Toast.LENGTH_LONG).show();
-
                 drawerLayout.closeDrawer(GravityCompat.END); /*Important Line*/
-
                 return true;
             }
         });
+
+        setupRightDrawer();
 
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.openDrawer, R.string.closeDrawer) {
             @Override
@@ -146,6 +156,55 @@ public class MainActivity extends AppCompatActivity {
         checkUserExist();
     }
 
+    private void setupRightDrawer() {
+        View sort_main_layout = (View) findViewById(R.id.sort_main_layout);
+        Button apply_btn = (Button) sort_main_layout.findViewById(R.id.apply_btn);
+        Button acensding_btn = (Button) sort_main_layout.findViewById(R.id.acensding_btn);
+        Button decensding_btn = (Button) sort_main_layout.findViewById(R.id.decensding_btn);
+        apply_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG," apply");
+                setupProductList();
+            }
+        });
+        acensding_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG," order = 0");
+                order = 0;
+            }
+        });
+        decensding_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG," order = 1");
+                order = 1;
+            }
+        });
+        Spinner spinner = (Spinner) findViewById(R.id.shop_filter_spinner);
+        Resources res = getResources();
+        final String[] category = res.getStringArray(R.array.category_type_array);
+        final ArrayAdapter<CharSequence> lunchList = ArrayAdapter.createFromResource(MainActivity.this,
+                R.array.category_type_array,
+                android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(lunchList);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(MainActivity.this, "You choose " + category[position], Toast.LENGTH_SHORT).show();
+                categoryResult = category[position];
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+    }
+
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -163,6 +222,13 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
 
         mAuth.addAuthStateListener(mAuthListener);
+        setupProductList();
+    }
+
+    public void setupProductList()
+    {
+
+//        mFilterDatabse = mDatabase.orderByChild("category").equalTo(categoryResult);
 
         FirebaseRecyclerAdapter<Product, ProductViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Product, ProductViewHolder>(
 
@@ -173,14 +239,14 @@ public class MainActivity extends AppCompatActivity {
 
         ) {
             @Override
-            protected void populateViewHolder(ProductViewHolder viewHolder, Product model, int position) {
+            protected void populateViewHolder(ProductViewHolder viewHolder, final Product model, int position) {
 
                 Log.d(TAG, "loading view " + position);
                 final String product_id = getRef(position).getKey();
-                viewHolder.setTitle(model.getTitle());
-                viewHolder.setDesc(model.getDesc());
-                viewHolder.setImage(getApplicationContext(), model.getImage());
-                viewHolder.setUsername(model.getUsername());
+                viewHolder.setProductName(model.getProductName());
+                viewHolder.setDescription(model.getDescription());
+                viewHolder.setImage(getApplicationContext(), model.getProductImage());
+                viewHolder.setUid(model.getUid());
 
                 viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -189,6 +255,8 @@ public class MainActivity extends AppCompatActivity {
                         productDetailIntent.setClass(MainActivity.this, ProductDetailActivity.class);
                         productDetailIntent.putExtra("product_id", product_id);
                         Log.d(TAG + " product_id", product_id);
+                        productDetailIntent.putExtra("colorNo", model.getColorNo());
+                        Log.d(TAG + " colorNo", model.getColorNo() + "");
                         startActivity(productDetailIntent);
                     }
                 });
@@ -198,6 +266,7 @@ public class MainActivity extends AppCompatActivity {
         };
 
         mProductList.setAdapter(firebaseRecyclerAdapter);
+        firebaseRecyclerAdapter.notifyDataSetChanged();
     }
 
     private void checkUserExist() {
@@ -282,21 +351,21 @@ public class MainActivity extends AppCompatActivity {
             mView = itemView;
         }
 
-        public void setTitle(String title) {
+        public void setProductName(String productName) {
             TextView product_title = (TextView) mView.findViewById(R.id.p_title);
-            product_title.setText(title);
+            product_title.setText(productName);
             product_title.setTypeface(customTypeface);
         }
 
-        public void setDesc(String desc) {
+        public void setDescription(String description) {
             TextView product_desc = (TextView) mView.findViewById(R.id.p_desc);
-            product_desc.setText(desc);
+            product_desc.setText(description);
             product_desc.setTypeface(customTypeface);
         }
 
-        public void setUsername(String username) {
+        public void setUid(String uid) {
             TextView product_username = (TextView) mView.findViewById(R.id.p_username);
-            product_username.setText(username);
+            product_username.setText(uid);
             product_username.setTypeface(customTypeface);
         }
 

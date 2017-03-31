@@ -13,8 +13,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.provider.Settings;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -24,6 +25,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
+import android.widget.RelativeLayout;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -47,12 +49,14 @@ public class MainMenuActivity extends AppCompatActivity {
             Manifest.permission.CAMERA
     };
     private static final int REQUEST_CODE_PERMISSION = 2;
+    private View activity_main_menu_layout;
     private ImageButton shoppingBtn;
     private ImageButton photoCameraBtn;
     private ImageButton accountBtn;
     private ImageButton storeBtn;
 
     private static final int GALLERY_REQUEST = 1;
+    private static int OVERLAY_PERMISSION_REQ_CODE = 3;
     private ImageButton favBtn;
     private int buttonNumber = 0;
     private String captureImageFullPath = null;
@@ -62,6 +66,7 @@ public class MainMenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
 
+        activity_main_menu_layout = (RelativeLayout) findViewById(R.id.activity_main_menu_layout);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Window window = getWindow();
             // Translucent status bar
@@ -135,9 +140,19 @@ public class MainMenuActivity extends AppCompatActivity {
         if (currentapiVersion >= Build.VERSION_CODES.M) {
             verifyPermissions(this);
         }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(this.getApplicationContext())) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, OVERLAY_PERMISSION_REQ_CODE);
+            }
+        }
+
         if (!isMyServiceRunning(MyService.class))
             startService(new Intent(this, MyService.class));
+
     }
+
 
     private void showAlertDialog() {
 
@@ -148,7 +163,7 @@ public class MainMenuActivity extends AppCompatActivity {
         builder.setCancelable(true);
 
         final String[] items = new String[]{"From Gallery", "Take Photo"};
-        final Integer[] icons = new Integer[]{R.mipmap.app_icon,R.mipmap.app_icon};
+        final Integer[] icons = new Integer[]{R.mipmap.app_icon, R.mipmap.app_icon};
         ListAdapter adapter = new ArrayAdapterWithIcon(getApplication(), items, icons);
 
         builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
@@ -156,10 +171,10 @@ public class MainMenuActivity extends AppCompatActivity {
                 switch (item) {
                     case 0: {
                         buttonNumber = 1;
-                        Intent intent = new Intent();
-                        intent.setType("image/*");
-                        intent.setAction(Intent.ACTION_GET_CONTENT);
-                        startActivityForResult(Intent.createChooser(intent, "Select Picture"), GALLERY_REQUEST);
+                        Intent intent = new Intent(
+                                Intent.ACTION_PICK,
+                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        startActivityForResult(intent, GALLERY_REQUEST);
                         break;
                     }
                     case 1: {
@@ -183,7 +198,7 @@ public class MainMenuActivity extends AppCompatActivity {
         builder.setCancelable(true);
 
         final String[] items = new String[]{"From Gallery", "Take Photo"};
-        final Integer[] icons = new Integer[]{R.mipmap.app_icon,R.mipmap.app_icon};
+        final Integer[] icons = new Integer[]{R.mipmap.app_icon, R.mipmap.app_icon};
         ListAdapter adapter = new ArrayAdapterWithIcon(getApplication(), items, icons);
 
         builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
@@ -191,10 +206,10 @@ public class MainMenuActivity extends AppCompatActivity {
                 switch (item) {
                     case 0: {
                         buttonNumber = 2;
-                        Intent intent = new Intent();
-                        intent.setType("image/*");
-                        intent.setAction(Intent.ACTION_GET_CONTENT);
-                        startActivityForResult(Intent.createChooser(intent, "Select Picture"), GALLERY_REQUEST);
+                        Intent intent = new Intent(
+                                Intent.ACTION_PICK,
+                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        startActivityForResult(intent, GALLERY_REQUEST);
                         break;
                     }
                     case 1: {
@@ -238,18 +253,41 @@ public class MainMenuActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        if (requestCode == OVERLAY_PERMISSION_REQ_CODE) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (!Settings.canDrawOverlays(this.getApplicationContext())) {
+                    Snackbar snackbar = Snackbar
+                            .make(activity_main_menu_layout, "CameraActivity\", \"SYSTEM_ALERT_WINDOW, permission not granted...", Snackbar.LENGTH_SHORT);
+                    snackbar.show();
+                } else {
+                    Intent intent = getIntent();
+                    finish();
+                    startActivity(intent);
+                }
+            }
+        }
+
         if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri pickedImage = data.getData();
             Log.d(TAG, "selected!!!" + " : " + pickedImage.getPath());
             // Let's read picked image path using content resolver
-            String imagePath = getRealPathFromURI(pickedImage);
-            Log.d(TAG + "Path:", imagePath);
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+            Cursor cursor = getContentResolver().query(pickedImage,
+                    filePathColumn, null, null, null);
+            cursor.moveToFirst();
+
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String picturePath = cursor.getString(columnIndex);
+            cursor.close();
+
+            Log.d(TAG + "Path:", picturePath);
             Intent intent = new Intent();
             if (buttonNumber == 1)
                 intent.setClass(MainMenuActivity.this, CaptureActivity.class);
             else if (buttonNumber == 2)
                 intent.setClass(MainMenuActivity.this, ColorizeFaceActivity.class);
-            intent.putExtra("path", imagePath);
+            intent.putExtra("path", picturePath);
             //intent.putExtra("color" , "" + mBlobColorHsv);
             startActivity(intent);
         } else if (requestCode == CAM_REQUEST) {
@@ -259,31 +297,6 @@ public class MainMenuActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
-    }
-
-    public String getRealPathFromURI(Uri contentUri) {
-        String filePath = "";
-        String wholeID = DocumentsContract.getDocumentId(contentUri);
-
-        // Split at colon, use second item in the array
-        String id = wholeID.split(":")[1];
-
-        String[] column = {MediaStore.Images.Media.DATA};
-
-        // where id is equal to
-        String sel = MediaStore.Images.Media._ID + "=?";
-
-        Cursor cursor = this.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                column, sel, new String[]{id}, null);
-
-        assert cursor != null;
-        int columnIndex = cursor.getColumnIndex(column[0]);
-
-        if (cursor.moveToFirst()) {
-            filePath = cursor.getString(columnIndex);
-        }
-        cursor.close();
-        return filePath;
     }
 
     /**

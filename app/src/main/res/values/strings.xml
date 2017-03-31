@@ -69,6 +69,13 @@
     <string name="facet_match_text">FaceT Match</string>
     <string name="all_products_text">All Products</string>
 
+    <!--activity_main-->
+    <string-array name="category_type_array">
+        <item>Face</item>
+        <item>Eyes</item>
+        <item>排骨飯</item>
+    </string-array>
+
     <!--activity_post-->
     <string name="create_product_title">Create Product</string>
     <string name="product_title_hint">Product Title...</string>
@@ -182,6 +189,7 @@
     <string name="brand_name_label">Brand</string>
     <string name="skin_type_name_label">For skin type</string>
     <string name="product_color_label">Color</string>
+    <string name="more_product_color_label">More</string>
     <string name="category_type_name_label">Category</string>
     <string name="description_label">Description</string>
     <string name="temp_description_label">The primary purpose of descriptive writing is to describe a person, place or thing in such a way that a picture is formed in the reader\'s mind. Capturing an event through descriptive writing involves paying close attention to the details by using all of your five senses. Teaching students to write more descriptively will improve their writing by making it more interesting and engaging to read.</string>

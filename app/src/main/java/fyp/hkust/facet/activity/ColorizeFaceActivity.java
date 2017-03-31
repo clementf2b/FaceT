@@ -248,8 +248,8 @@ public class ColorizeFaceActivity extends AppCompatActivity {
 //        Display display = getWindowManager().getDefaultDisplay();
 //        Point size = new Point();
 //        display.getSize(size);
-        float width = 1080;
-        float height = 1380;
+        float width = 760;
+        float height = 1080;
         Log.d(TAG + "screen ", width + " : " + height);
 
         imageView = (PinchImageView) this.findViewById(R.id.imageView1);
@@ -513,7 +513,7 @@ public class ColorizeFaceActivity extends AppCompatActivity {
                             Log.d("resizeRatio ", resizeRatio + "");
                         }
 
-                        ArrayList<Point> landmarks = ret.getFaceLandmarks();
+                        final ArrayList<Point> landmarks = ret.getFaceLandmarks();
                         int count = 0;
                         for (Point point : landmarks) {
                             float pointX = (point.x * resizeRatio);
@@ -564,7 +564,7 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         Canvas drawCanvas = new Canvas(temp);
         Paint mPaint = new Paint();
 
-        int rougeLayer = 0x70FFFFFF;
+        int rougeLayer = 0x50FFFFFF;
         mPaint.setColor(rougeLayer);
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setStrokeJoin(Paint.Join.ROUND);    // set the join to round you want

@@ -1,16 +1,19 @@
 package fyp.hkust.facet.model;
 
+import java.util.ArrayList;
+
 /**
  * Created by ClementNg on 1/10/2016.
  */
 
 public class Product {
 
-    private String title;
-    private String brand;
-    private String desc;
-    private String image;
-    private String username;
+    private String productName;
+    private String brandID;
+    private String description;
+    private String productImage;
+    private Long colorNo;
+    private String category;
     private String uid;
 
     public Product()
@@ -18,54 +21,62 @@ public class Product {
 
     }
 
-    public Product(String title,String brand, String desc, String image,String username,String uid) {
-        this.title = title;
-        this.brand = brand;
-        this.desc = desc;
-        this.image = image;
-        this.username = username;
+    public Product(String productName, String brandID, String description, String productImage, Long colorNo, String category, String uid) {
+        this.productName = productName;
+        this.brandID = brandID;
+        this.description = description;
+        this.productImage = productImage;
+        this.colorNo = colorNo;
+        this.category = category;
         this.uid = uid;
     }
 
-    public String getTitle() {
-
-        return title;
+    public String getProductName() {
+        return productName;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
-    public String getBrand() {
-        return brand;
+    public String getBrandID() {
+        return brandID;
     }
 
-    public void setBrand(String brand) {
-        this.brand = brand;
+    public void setBrandID(String brandID) {
+        this.brandID = brandID;
     }
 
-    public String getDesc() {
-        return desc;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getImage() {
-        return image;
+    public String getProductImage() {
+        return productImage;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setProductImage(String productImage) {
+        this.productImage = productImage;
     }
 
-    public String getUsername() {
-        return username;
+    public Long getColorNo() {
+        return colorNo;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setColorNo(Long colorNo) {
+        this.colorNo = colorNo;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public String getUid() {
@@ -75,5 +86,4 @@ public class Product {
     public void setUid(String uid) {
         this.uid = uid;
     }
-
 }
