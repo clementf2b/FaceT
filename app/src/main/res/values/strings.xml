@@ -230,6 +230,13 @@
     <!--notificaiton_row-->
     <string name="notification_text">Notification</string>
     <string name="time_temp_text">Time</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+    <string name="logout_text">Logout</string>
+    <string name="logout_description">Click this button to logout</string>
+    <string name="aboutUs_text">About Us</string>
+    <string name="aboutUs_faceT">FaceT =]</string>
 
 </resources>
 

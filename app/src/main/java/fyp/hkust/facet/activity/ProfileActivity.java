@@ -88,6 +88,7 @@ public class ProfileActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
         changeTabsFont();
 
+
         //start
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setBackground(new ColorDrawable(Color.parseColor("#00000000")));

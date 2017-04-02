@@ -1,5 +1,6 @@
 package fyp.hkust.facet.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -15,14 +16,18 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -86,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
     private static int firstTime = 0;
     private Map<String, Product> mSortedProducts = new HashMap<String, Product>();
     private ProductAdapter mProductAdapter;
+    private ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,8 +102,8 @@ public class MainActivity extends AppCompatActivity {
         Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
         FontManager.markAsIconContainer(findViewById(R.id.activity_main_layout), fontType);
 
-        categoryResult = getIntent().getExtras().getInt("categoryResult");
-
+        categoryResult = getIntent().getExtras().getInt("categoryResult", 0);
+        Log.d(TAG + " categoryResult", categoryResult + "");
         //start
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setBackground(new ColorDrawable(Color.parseColor("#00000000")));
@@ -192,12 +198,12 @@ public class MainActivity extends AppCompatActivity {
         apply_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setupProductList();
                 Log.d(TAG, " apply");
                 drawerLayout.closeDrawer(GravityCompat.END);
-                setupProductList();
             }
         });
-        apply_btn.setOnClickListener(new View.OnClickListener() {
+        clear_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, " clear");
@@ -231,16 +237,19 @@ public class MainActivity extends AppCompatActivity {
         Resources res = getResources();
 
         final String[] category = res.getStringArray(R.array.category_type_array);
-        final ArrayAdapter<CharSequence> lunchList = ArrayAdapter.createFromResource(MainActivity.this,
+        final ArrayAdapter<CharSequence> categoryList = ArrayAdapter.createFromResource(MainActivity.this,
                 R.array.category_type_array,
                 android.R.layout.simple_spinner_dropdown_item);
-        filterSpinner.setAdapter(lunchList);
+        filterSpinner.setSelection(categoryResult);
+        filterSpinner.setAdapter(categoryList);
 
         filterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                TextView tmpView = (TextView) filterSpinner.getSelectedView().findViewById(android.R.id.text1);
+                tmpView.setTextColor(Color.WHITE);
                 Toast.makeText(MainActivity.this, "You choose " + category[position], Toast.LENGTH_SHORT).show();
-                if(firstTime > 0) {
+                if (firstTime > 0) {
                     categoryResult = position;
                 }
                 firstTime++;
@@ -258,11 +267,14 @@ public class MainActivity extends AppCompatActivity {
         final ArrayAdapter<CharSequence> sortList = ArrayAdapter.createFromResource(MainActivity.this,
                 R.array.sort_type_array,
                 android.R.layout.simple_spinner_dropdown_item);
+        orderSpinner.setSelection(order);
         orderSpinner.setAdapter(sortList);
 
         orderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                TextView tmpView = (TextView) orderSpinner.getSelectedView().findViewById(android.R.id.text1);
+                tmpView.setTextColor(Color.WHITE);
                 Toast.makeText(MainActivity.this, "You choose " + sortString[position], Toast.LENGTH_SHORT).show();
                 sort = position;
             }
@@ -300,25 +312,27 @@ public class MainActivity extends AppCompatActivity {
                     Product result = ds.getValue(Product.class);
                     mProducts.put(ds.getKey(), result);
                     Log.d(" product " + ds.getKey(), result.toString());
+
+                    Log.d(TAG, "going to filter");
+                    mSortedProducts = filterProduct(mProducts, categoryResult);
+                    mProductAdapter = new ProductAdapter(mSortedProducts,getApplicationContext());
+                    mProductList.setAdapter(mProductAdapter);
+                    mProductAdapter.notifyDataSetChanged();
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
 
-        mProductAdapter = new ProductAdapter(mProducts);
-        mProductList.setAdapter(mProductAdapter);
-        mProductAdapter.notifyDataSetChanged();
     }
 
     public void setupProductList() {
         // sort by name a - z
         mSortedProducts = filterProduct(mProducts, categoryResult);
         mSortedProducts = sortByComparator(mSortedProducts, sort, order);
-        mProductAdapter = new ProductAdapter(mSortedProducts);
+        mProductAdapter = new ProductAdapter(mSortedProducts,getApplicationContext());
         mProductList.setAdapter(mProductAdapter);
         mProductAdapter.notifyDataSetChanged();
     }
@@ -453,6 +467,28 @@ public class MainActivity extends AppCompatActivity {
 
         getMenuInflater().inflate(R.menu.main_menu, menu);
 
+//        final SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String searchText) {
+//                if (mSortedProducts != null) {
+//                    for (int i = 0; i < mSortedProducts.size(); i++) {
+//                        if (mSortedProducts.get(i).getProductName().contains(searchText)) {
+//                        } else
+//                            mSortedProducts.remove(i);
+//                    }
+//                    mProductAdapter = new ProductAdapter(mSortedProducts);
+//                    mProductList.setAdapter(mProductAdapter);
+//                    mProductAdapter.notifyDataSetChanged();
+//                }
+//                return true;
+//            }
+//        });
         return super.onCreateOptionsMenu(menu);
 
     }
@@ -460,16 +496,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        if (item.getItemId() == R.id.action_add) {
-            startActivity(new Intent(MainActivity.this, PostActivity.class));
-        }
-
         if (item.getItemId() == R.id.action_logout) {
             logout();
-        }
-
-        if (item.getItemId() == R.id.action_account) {
-            startActivity(new Intent(MainActivity.this, AccountActivity.class));
         }
 
         if (item.getItemId() == R.id.action_setting) {
@@ -500,9 +528,14 @@ public class MainActivity extends AppCompatActivity {
     public class ProductAdapter extends RecyclerView.Adapter<ProductViewHolder> {
 
         private Map<String, Product> mResultProducts = new HashMap<>();
+        // Allows to remember the last item shown on screen
+        private int lastPosition = -1;
+        private Context context;
 
-        public ProductAdapter(Map<String, Product> mProducts) {
+        public ProductAdapter(Map<String, Product> mProducts, Context c) {
+            this.context = c;
             this.mResultProducts = mProducts;
+            notifyDataSetChanged();
         }
 
         @Override
@@ -545,9 +578,22 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(productDetailIntent);
                 }
             });
-
+            setAnimation(viewHolder.itemView, position);
             Log.d(TAG, "finish loading view");
 
+        }
+
+        /**
+         * Here is the key method to apply the animation
+         */
+        private void setAnimation(View viewToAnimate, int position) {
+            // If the bound view wasn't previously displayed on screen, it's animated
+            if (position > lastPosition) {
+                Animation animation = AnimationUtils.loadAnimation(context, android.R.anim.fade_in);
+                animation.setDuration(500);
+                viewToAnimate.startAnimation(animation);
+                lastPosition = position;
+            }
         }
 
         @Override

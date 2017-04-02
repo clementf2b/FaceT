@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="fyp.hkust.facet">
 
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -66,6 +66,7 @@
         <activity
             android:name=".activity.MainMenuActivity"
             android:screenOrientation="portrait"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar_nav">
             <intent-filter>
                 <action
@@ -152,10 +153,20 @@
             android:name=".activity.ShopLocationActivity"
             android:label="@string/title_activity_shop_location"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.NearbyLocationActivity"></activity>
+        <activity android:name=".activity.NearbyLocationActivity" />
 
         <!-- defining the service class here -->
         <service android:name=".notificationservice.MyService" />
+
+        <activity
+            android:name=".activity.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".activity.MainMenuActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="fyp.hkust.facet.activity.MainMenuActivity" />
+        </activity>
     </application>
 
 </manifest>

@@ -32,7 +32,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:minHeight="?attr/actionBarSize"
-                    app:elevation="0dp" />
+                    app:elevation="0dp" >
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="@string/app_name"
+                        android:layout_gravity="center_vertical|center_horizontal"
+                        android:id="@+id/toolbar_title"
+                        android:textSize="18dp"/>
+
+                    </android.support.v7.widget.Toolbar>
 
             </android.support.design.widget.AppBarLayout>
 

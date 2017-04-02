@@ -1,6 +1,6 @@
 package fyp.hkust.facet.activity;
 
-import android.content.DialogInterface;
+import android.app.ActionBar;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -12,16 +12,17 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.style.TypefaceSpan;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -77,6 +78,9 @@ public class CategoryActivity extends AppCompatActivity {
 
         //start
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        TextView toolbarTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
+        toolbarTitle.setTypeface(fontType);
+
         toolbar.setBackground(new ColorDrawable(Color.parseColor("#00000000")));
         setSupportActionBar(toolbar);
 
@@ -124,27 +128,11 @@ public class CategoryActivity extends AppCompatActivity {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (firebaseAuth.getCurrentUser() == null) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(CategoryActivity.this);
-                    builder.setMessage("You need to login before using this.");
-                    builder.setTitle("Warning");
-                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent loginIntent = new Intent(CategoryActivity.this, LoginActivity.class);
-                            loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(loginIntent);
-                            // User is signed out
-                            Log.d(TAG, "onAuthStateChanged:signed_out. Haven't logged in before");
-                        }
-                    });
-                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            finish();
-                            dialog.dismiss();
-                        }
-                    });
-                    builder.create().show();
+                    Intent loginIntent = new Intent(CategoryActivity.this, LoginActivity.class);
+                    loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(loginIntent);
+                    // User is signed out
+                    Log.d(TAG, "onAuthStateChanged:signed_out. Haven't logged in before");
                 }
                 if (firebaseAuth.getCurrentUser() != null) {
                     // User is signed in
@@ -156,11 +144,12 @@ public class CategoryActivity extends AppCompatActivity {
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         mDatabaseUsers.keepSynced(true);
 
+        checkUserExist();
         //get user data
         setupNavHeader();
         setup();
-        checkUserExist();
     }
+
 
     private void applyCustomFontToWholeMenu() {
         Menu m = view.getMenu();
@@ -189,48 +178,50 @@ public class CategoryActivity extends AppCompatActivity {
 
     private void setupNavHeader() {
 
-        mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                final User user_data = dataSnapshot.getValue(User.class);
-                if (user_data != null) {
-                    View header = view.getHeaderView(0);
+        if (mAuth.getCurrentUser() != null) {
+            mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    final User user_data = dataSnapshot.getValue(User.class);
+                    if (user_data != null) {
+                        View header = view.getHeaderView(0);
 
-                    TextView usernameHeader = (TextView) header.findViewById(R.id.username_header);
-                    TextView emailHeader = (TextView) header.findViewById(R.id.email_header);
-                    final CircleImageView headerphoto = (CircleImageView) header.findViewById(R.id.profile_image);
-                    Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
-                    usernameHeader.setTypeface(fontType);
-                    emailHeader.setTypeface(fontType);
+                        TextView usernameHeader = (TextView) header.findViewById(R.id.username_header);
+                        TextView emailHeader = (TextView) header.findViewById(R.id.email_header);
+                        final CircleImageView headerphoto = (CircleImageView) header.findViewById(R.id.profile_image);
+                        Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
+                        usernameHeader.setTypeface(fontType);
+                        emailHeader.setTypeface(fontType);
 
-                    usernameHeader.setText(user_data.getName());
-                    if (user_data.getEmail() != null && user_data.getEmail().length() > 0)
-                        emailHeader.setText(user_data.getEmail());
-                    else if (user_data.getEmail() == null || user_data.getEmail().length() == 0)
-                        emailHeader.setText(mAuth.getCurrentUser().getEmail());
+                        usernameHeader.setText(user_data.getName());
+                        if (user_data.getEmail() != null && user_data.getEmail().length() > 0)
+                            emailHeader.setText(user_data.getEmail());
+                        else if (user_data.getEmail() == null || user_data.getEmail().length() == 0)
+                            emailHeader.setText(mAuth.getCurrentUser().getEmail());
 
-                    Picasso.with(getApplicationContext()).load(user_data.getImage()).networkPolicy(NetworkPolicy.OFFLINE).into(headerphoto, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                        }
+                        Picasso.with(getApplicationContext()).load(user_data.getImage()).networkPolicy(NetworkPolicy.OFFLINE).into(headerphoto, new Callback() {
+                            @Override
+                            public void onSuccess() {
+                            }
 
-                        @Override
-                        public void onError() {
-                            Picasso.with(getApplicationContext())
-                                    .load(user_data.getImage())
-                                    .centerCrop()
-                                    .fit()
-                                    .into(headerphoto);
-                        }
-                    });
+                            @Override
+                            public void onError() {
+                                Picasso.with(getApplicationContext())
+                                        .load(user_data.getImage())
+                                        .centerCrop()
+                                        .fit()
+                                        .into(headerphoto);
+                            }
+                        });
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
+        }
     }
 
     private void checkUserExist() {
@@ -328,32 +319,35 @@ public class CategoryActivity extends AppCompatActivity {
     private void navigateTo(MenuItem menuItem) {
         // contentView.setText(menuItem.getTitle());
 
-        navItemId = menuItem.getItemId();
+        if (navItemId < 0)
+            navItemId = menuItem.getItemId();
         //Check to see which item was being clicked and perform appropriate action
         switch (navItemId) {
             //Replacing the main content with ContentFragment Which is our Inbox View;
             case R.id.nav_virtual_makeup:
                 navItemId = 0;
+                menuItem.setChecked(true);
                 break;
             case R.id.nav_product:
                 navItemId = 1;
+                menuItem.setChecked(true);
                 break;
             case R.id.nav_store_location:
                 navItemId = 2;
+                menuItem.setChecked(true);
                 break;
             case R.id.nav_profile:
                 navItemId = 3;
+                menuItem.setChecked(true);
                 break;
             case R.id.nav_setting:
-//                startActivity(new Intent(AccountActivity.this, CategoryActivity.class));
+                navItemId = 4;
+                menuItem.setChecked(true);
+                startActivity(new Intent(CategoryActivity.this, SettingsActivity.class));
                 break;
-            case R.id.navigation_view:
-                break;
-            default:
-                navItemId = 0;
         }
         Snackbar.make(drawerLayout, navItemId + " Clicked", Snackbar.LENGTH_SHORT).show();
-        menuItem.setChecked(true);
+
     }
 
     @Override

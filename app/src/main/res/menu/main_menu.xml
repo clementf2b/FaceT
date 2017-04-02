@@ -3,10 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_add"
-        android:icon="@mipmap/ic_add_black_24dp"
-        android:title="Add Post"
-        app:showAsAction="always"/>
+        android:id="@+id/action_search"
+        android:icon="@mipmap/ic_search_white_24dp"
+        android:title="Search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="collapseActionView|ifRoom" />
 
     <item
         android:id="@+id/action_setting"
@@ -18,8 +19,4 @@
         android:title="Log Out"
         app:showAsAction="never"/>
 
-    <item
-        android:id="@+id/action_account"
-        android:title="Account"
-        app:showAsAction="never"/>
 </menu>
