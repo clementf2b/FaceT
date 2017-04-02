@@ -134,9 +134,9 @@ public class ProfileActivity extends AppCompatActivity {
         actionBarDrawerToggle.syncState();
 
         if (null != savedInstanceState) {
-            navItemId = savedInstanceState.getInt(NAV_ITEM_ID, R.id.nav_camera);
+            navItemId = savedInstanceState.getInt(NAV_ITEM_ID, R.id.nav_profile);
         } else {
-            navItemId = R.id.nav_camera;
+            navItemId = R.id.nav_profile;
         }
 
         navigateTo(view.getMenu().findItem(navItemId));
@@ -378,55 +378,6 @@ public class ProfileActivity extends AppCompatActivity {
         outState.putInt(NAV_ITEM_ID, navItemId);
     }
 
-    public static class OwnProductViewHolder extends RecyclerView.ViewHolder {
-
-        View mView;
-
-        public OwnProductViewHolder(View itemView) {
-            super(itemView);
-            mView = itemView;
-        }
-
-//        public void setTitle(String title)
-//        {
-//            TextView own_product_title = (TextView) mView.findViewById(R.id.own_p_title);
-//            own_product_title.setText(title);
-//        }
-//
-//        public void setDesc(String desc)
-//        {
-//            TextView own_product_desc = (TextView) mView.findViewById(R.id.own_p_desc);
-//            own_product_desc.setText(desc);
-//        }
-//
-//        public void setUsername(String username)
-//        {
-//            TextView own_product_username = (TextView) mView.findViewById(R.id.own_p_username);
-//            own_product_username.setText(username);
-//        }
-
-        public void setImage(final Context ctx, final String image) {
-            final ImageView own_post_image = (ImageView) mView.findViewById(R.id.own_product_image);
-            Picasso.with(ctx).load(image).networkPolicy(NetworkPolicy.OFFLINE).into(own_post_image, new Callback() {
-                @Override
-                public void onSuccess() {
-
-                }
-
-                @Override
-                public void onError() {
-                    Picasso.with(ctx)
-                            .load(image)
-                            .fit()
-                            .centerCrop()
-                            .into(own_post_image);
-                }
-            });
-
-        }
-    }
-
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -443,7 +394,7 @@ public class ProfileActivity extends AppCompatActivity {
 
             ) {
                 @Override
-                protected void populateViewHolder(NotificationViewHolder viewHolder, Notification model, int position) {
+                protected void populateViewHolder(NotificationViewHolder viewHolder, final Notification model, int position) {
 
                     Log.d(TAG, "loading view " + position);
                     Log.d(TAG, model.getSender_username());
@@ -459,6 +410,8 @@ public class ProfileActivity extends AppCompatActivity {
                             productDetailIntent.setClass(ProfileActivity.this, ProductDetailActivity.class);
                             productDetailIntent.putExtra("product_id", product_id);
                             Log.d(TAG + " product_id", product_id);
+                            productDetailIntent.putExtra("colorNo", model.getColorNo());
+                            Log.d(TAG + " colorNo", model.getColorNo()+"");
                             startActivity(productDetailIntent);
                         }
                     });

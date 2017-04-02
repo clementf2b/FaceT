@@ -6,8 +6,8 @@
     <color name="ripple">#97e6ed</color>
     <color name="primary_pressed">#39c5c1</color>
 
-    <color name="gradient_start">#b3e1d8</color>
-    <color name="gradient_end">#1cbee8</color>
+    <color name="gradient_start">#39c5c1</color>
+    <color name="gradient_end">#b3e1d8</color>
 
     <color name="button_gradient_start">#19e7d7</color>
     <color name="button_gradient_end">#42bcec</color>

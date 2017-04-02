@@ -15,12 +15,11 @@
     <string name="closeDrawer">close_drawer</string>
 
     <!-- Navigation Drawer menu labels -->
-    <string name="nav_home">Home</string>
-    <string name="nav_photos">Photos</string>
-    <string name="nav_movies">Movies</string>
-    <string name="nav_notifications">Notifications</string>
-    <string name="nav_settings">Settings</string>
-    <string name="nav_about_us">About Us</string>
+    <string name="nav_vmakeup_label">Virtual Makeup</string>
+    <string name="nav_product_label">Product</string>
+    <string name="nav_store_location_label">Store Location</string>
+    <string name="nav_profile_label">Profile</string>
+    <string name="nav_settings_label">Settings</string>
 
     <!-- Toolbar titles when navigation menu item is selected -->
     <string-array name="nav_item_activity_titles">
@@ -71,9 +70,15 @@
 
     <!--activity_main-->
     <string-array name="category_type_array">
+        <item>All</item>
         <item>Face</item>
         <item>Eyes</item>
         <item>排骨飯</item>
+    </string-array>
+    <string-array name="sort_type_array">
+        <item>Time</item>
+        <item>Name</item>
+        <item>Category</item>
     </string-array>
 
     <!--activity_post-->

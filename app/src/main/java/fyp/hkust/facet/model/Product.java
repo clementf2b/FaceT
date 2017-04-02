@@ -15,13 +15,9 @@ public class Product {
     private Long colorNo;
     private String category;
     private String uid;
+    private Long releaseDate;
 
-    public Product()
-    {
-
-    }
-
-    public Product(String productName, String brandID, String description, String productImage, Long colorNo, String category, String uid) {
+    public Product(String productName, String brandID, String description, String productImage, Long colorNo, String category, String uid, Long releaseDate) {
         this.productName = productName;
         this.brandID = brandID;
         this.description = description;
@@ -29,7 +25,14 @@ public class Product {
         this.colorNo = colorNo;
         this.category = category;
         this.uid = uid;
+        this.releaseDate = releaseDate;
     }
+
+    public Product()
+    {
+
+    }
+
 
     public String getProductName() {
         return productName;
@@ -85,5 +88,13 @@ public class Product {
 
     public void setUid(String uid) {
         this.uid = uid;
+    }
+
+    public Long getReleaseDate() {
+        return releaseDate;
+    }
+
+    public void setReleaseDate(Long releaseDate) {
+        this.releaseDate = releaseDate;
     }
 }

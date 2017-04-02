@@ -17,13 +17,14 @@ public class ProductTypeOne {
     private String category;
     private String uid;
     private ArrayList<String> color;
+    private Long releaseDate;
 
     public ProductTypeOne()
     {
 
     }
 
-    public ProductTypeOne(String productName, String brandID, String description, String productImage, Long colorNo, String category, String uid, ArrayList<String> color) {
+    public ProductTypeOne(String productName, String brandID, String description, String productImage, Long colorNo, String category, String uid, ArrayList<String> color, Long releaseDate) {
         this.productName = productName;
         this.brandID = brandID;
         this.description = description;
@@ -32,6 +33,7 @@ public class ProductTypeOne {
         this.category = category;
         this.uid = uid;
         this.color = color;
+        this.releaseDate = releaseDate;
     }
 
     public String getProductName() {
@@ -96,5 +98,13 @@ public class ProductTypeOne {
 
     public void setColor(ArrayList<String> color) {
         this.color = color;
+    }
+
+    public Long getReleaseDate() {
+        return releaseDate;
+    }
+
+    public void setReleaseDate(Long releaseDate) {
+        this.releaseDate = releaseDate;
     }
 }

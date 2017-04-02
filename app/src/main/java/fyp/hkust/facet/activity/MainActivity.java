@@ -8,7 +8,9 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -20,6 +22,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -36,9 +39,23 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.internal.LinkedHashTreeMap;
+import com.google.gson.internal.LinkedTreeMap;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.model.Product;
@@ -47,6 +64,7 @@ import fyp.hkust.facet.util.FontManager;
 public class MainActivity extends AppCompatActivity {
 
     private final static String TAG = "MainActivity";
+    private static View activity_main_layout;
     private RecyclerView mProductList;
     private GridLayoutManager mgr;
     private DatabaseReference mDatabase;
@@ -59,17 +77,26 @@ public class MainActivity extends AppCompatActivity {
     private int navItemId;
     private Toolbar toolbar;
 
-    private int order = 0;
-    private String categoryResult = "";
-    private Query mFilterDatabse;
+    private Map<String, Product> mProducts = new HashMap<String, Product>();
+    private int order = 1;
+    private int categoryResult = 0;
+    private int sort = 0;
+    private Spinner filterSpinner;
+    private Spinner orderSpinner;
+    private static int firstTime = 0;
+    private Map<String, Product> mSortedProducts = new HashMap<String, Product>();
+    private ProductAdapter mProductAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        activity_main_layout = (CoordinatorLayout) findViewById(R.id.activity_main_layout);
         Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
         FontManager.markAsIconContainer(findViewById(R.id.activity_main_layout), fontType);
+
+        categoryResult = getIntent().getExtras().getInt("categoryResult");
 
         //start
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -118,9 +145,9 @@ public class MainActivity extends AppCompatActivity {
         actionBarDrawerToggle.syncState();
 
         if (null != savedInstanceState) {
-            navItemId = savedInstanceState.getInt(NAV_ITEM_ID, R.id.nav_camera);
+            navItemId = savedInstanceState.getInt(NAV_ITEM_ID, R.id.nav_product);
         } else {
-            navItemId = R.id.nav_camera;
+            navItemId = R.id.nav_product;
         }
 
         navigateTo(view.getMenu().findItem(navItemId));
@@ -159,42 +186,85 @@ public class MainActivity extends AppCompatActivity {
     private void setupRightDrawer() {
         View sort_main_layout = (View) findViewById(R.id.sort_main_layout);
         Button apply_btn = (Button) sort_main_layout.findViewById(R.id.apply_btn);
-        Button acensding_btn = (Button) sort_main_layout.findViewById(R.id.acensding_btn);
-        Button decensding_btn = (Button) sort_main_layout.findViewById(R.id.decensding_btn);
+        Button clear_btn = (Button) sort_main_layout.findViewById(R.id.clear_btn);
+        final Button acensding_btn = (Button) sort_main_layout.findViewById(R.id.acensding_btn);
+        final Button decensding_btn = (Button) sort_main_layout.findViewById(R.id.decensding_btn);
         apply_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG," apply");
+                Log.d(TAG, " apply");
+                drawerLayout.closeDrawer(GravityCompat.END);
                 setupProductList();
+            }
+        });
+        apply_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, " clear");
+                drawerLayout.closeDrawer(GravityCompat.END);
             }
         });
         acensding_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG," order = 0");
+                Log.d(TAG, " order = 0");
+                acensding_btn.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_button_with_bg));
+                decensding_btn.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_button_no_bg));
+                acensding_btn.setTextColor(getResources().getColor(R.color.white));
+                decensding_btn.setTextColor(getResources().getColor(R.color.font_color_pirmary));
                 order = 0;
             }
         });
         decensding_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG," order = 1");
+                Log.d(TAG, " order = 1");
+                decensding_btn.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_button_with_bg));
+                acensding_btn.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_button_no_bg));
+                decensding_btn.setTextColor(getResources().getColor(R.color.white));
+                acensding_btn.setTextColor(getResources().getColor(R.color.font_color_pirmary));
                 order = 1;
             }
         });
-        Spinner spinner = (Spinner) findViewById(R.id.shop_filter_spinner);
+
+        filterSpinner = (Spinner) findViewById(R.id.shop_filter_spinner);
         Resources res = getResources();
+
         final String[] category = res.getStringArray(R.array.category_type_array);
         final ArrayAdapter<CharSequence> lunchList = ArrayAdapter.createFromResource(MainActivity.this,
                 R.array.category_type_array,
                 android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(lunchList);
+        filterSpinner.setAdapter(lunchList);
 
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        filterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(MainActivity.this, "You choose " + category[position], Toast.LENGTH_SHORT).show();
-                categoryResult = category[position];
+                if(firstTime > 0) {
+                    categoryResult = position;
+                }
+                firstTime++;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        orderSpinner = (Spinner) findViewById(R.id.sort_spinner);
+
+        final String[] sortString = res.getStringArray(R.array.sort_type_array);
+        final ArrayAdapter<CharSequence> sortList = ArrayAdapter.createFromResource(MainActivity.this,
+                R.array.sort_type_array,
+                android.R.layout.simple_spinner_dropdown_item);
+        orderSpinner.setAdapter(sortList);
+
+        orderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(MainActivity.this, "You choose " + sortString[position], Toast.LENGTH_SHORT).show();
+                sort = position;
             }
 
             @Override
@@ -222,51 +292,137 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
 
         mAuth.addAuthStateListener(mAuthListener);
-        setupProductList();
+
+        mDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    Product result = ds.getValue(Product.class);
+                    mProducts.put(ds.getKey(), result);
+                    Log.d(" product " + ds.getKey(), result.toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        mProductAdapter = new ProductAdapter(mProducts);
+        mProductList.setAdapter(mProductAdapter);
+        mProductAdapter.notifyDataSetChanged();
     }
 
-    public void setupProductList()
-    {
+    public void setupProductList() {
+        // sort by name a - z
+        mSortedProducts = filterProduct(mProducts, categoryResult);
+        mSortedProducts = sortByComparator(mSortedProducts, sort, order);
+        mProductAdapter = new ProductAdapter(mSortedProducts);
+        mProductList.setAdapter(mProductAdapter);
+        mProductAdapter.notifyDataSetChanged();
+    }
 
-//        mFilterDatabse = mDatabase.orderByChild("category").equalTo(categoryResult);
+    private Map<String, Product> filterProduct(Map<String, Product> unsortMap, int categoryResult) {
+        List<Map.Entry<String, Product>> temp = new LinkedList<Map.Entry<String, Product>>(unsortMap.entrySet());
+        Resources res = getResources();
+        final String[] categoryArray = res.getStringArray(R.array.category_type_array);
 
-        FirebaseRecyclerAdapter<Product, ProductViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Product, ProductViewHolder>(
+        if (categoryResult > 0) {
+            for (int i = 0; i < temp.size(); i++) {
+                if (!categoryArray[categoryResult].equals(temp.get(i).getValue().getCategory())) {
+                    temp.remove(i);
+                }
+            }
+        }
 
-                Product.class,
-                R.layout.product_row,
-                ProductViewHolder.class,
-                mDatabase
+        // Maintaining insertion order with the help of LinkedList
+        Map<String, Product> filteredMap = new LinkedHashMap<String, Product>();
+        for (Map.Entry<String, Product> entry : temp) {
+            filteredMap.put(entry.getKey(), entry.getValue());
+            Log.d("Sorted ", "Map");
+            Log.d(entry.getKey(), entry.getValue().toString());
+        }
 
-        ) {
-            @Override
-            protected void populateViewHolder(ProductViewHolder viewHolder, final Product model, int position) {
+        return filteredMap;
+    }
 
-                Log.d(TAG, "loading view " + position);
-                final String product_id = getRef(position).getKey();
-                viewHolder.setProductName(model.getProductName());
-                viewHolder.setDescription(model.getDescription());
-                viewHolder.setImage(getApplicationContext(), model.getProductImage());
-                viewHolder.setUid(model.getUid());
+    private static Map<String, Product> sortByComparator(Map<String, Product> unsortMap, int sort, final int order) {
 
-                viewHolder.mView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent productDetailIntent = new Intent();
-                        productDetailIntent.setClass(MainActivity.this, ProductDetailActivity.class);
-                        productDetailIntent.putExtra("product_id", product_id);
-                        Log.d(TAG + " product_id", product_id);
-                        productDetailIntent.putExtra("colorNo", model.getColorNo());
-                        Log.d(TAG + " colorNo", model.getColorNo() + "");
-                        startActivity(productDetailIntent);
+        final StringBuilder sortOperation = new StringBuilder("");
+
+        List<Map.Entry<String, Product>> list = new LinkedList<Map.Entry<String, Product>>(unsortMap.entrySet());
+
+        // Sorting the list based on values
+
+        switch (sort) {
+            case 0:
+                sortOperation.append("Sort by release date");
+                Collections.sort(list, new Comparator<Map.Entry<String, Product>>() {
+                    public int compare(Map.Entry<String, Product> o1,
+                                       Map.Entry<String, Product> o2) {
+                        if (order == 0) {
+                            // sort by name a - z
+                            return o1.getValue().getReleaseDate().compareTo(o2.getValue().getReleaseDate());
+                        } else {
+                            // sort by name z - a
+                            return o2.getValue().getReleaseDate().compareTo(o1.getValue().getReleaseDate());
+                        }
                     }
                 });
+                break;
+            case 1:
+                sortOperation.append("Sort by product name");
+                Collections.sort(list, new Comparator<Map.Entry<String, Product>>() {
+                    public int compare(Map.Entry<String, Product> o1,
+                                       Map.Entry<String, Product> o2) {
+                        if (order == 0) {
+                            // sort by name a - z
+                            return o1.getValue().getProductName().compareTo(o2.getValue().getProductName());
+                        } else {
+                            // sort by name z - a
+                            return o2.getValue().getProductName().compareTo(o1.getValue().getProductName());
+                        }
+                    }
+                });
+                break;
+            case 2:
+                sortOperation.append("Sort by category");
+                Collections.sort(list, new Comparator<Map.Entry<String, Product>>() {
+                    public int compare(Map.Entry<String, Product> o1,
+                                       Map.Entry<String, Product> o2) {
+                        if (order == 0) {
+                            // sort by name a - z
+                            return o1.getValue().getCategory().compareTo(o2.getValue().getCategory());
+                        } else {
+                            // sort by name z - a
+                            return o2.getValue().getCategory().compareTo(o1.getValue().getCategory());
+                        }
+                    }
+                });
+                break;
+        }
 
-                Log.d(TAG, "finish loading view");
-            }
-        };
+        if (order == 0) {
+            // sort by name a - z
+            sortOperation.append(" in ascending order");
+        } else {
+            // sort by name z - a
+            sortOperation.append(" in descending order");
+        }
 
-        mProductList.setAdapter(firebaseRecyclerAdapter);
-        firebaseRecyclerAdapter.notifyDataSetChanged();
+        // Maintaining insertion order with the help of LinkedList
+        Map<String, Product> sortedMap = new LinkedHashMap<String, Product>();
+        for (Map.Entry<String, Product> entry : list) {
+            sortedMap.put(entry.getKey(), entry.getValue());
+            Log.d("Sorted ", "Map");
+            Log.d(entry.getKey(), entry.getValue().toString());
+        }
+
+        Snackbar snackbar = Snackbar.make(activity_main_layout, sortOperation, Snackbar.LENGTH_SHORT);
+        snackbar.show();
+
+        return sortedMap;
     }
 
     private void checkUserExist() {
@@ -339,6 +495,65 @@ public class MainActivity extends AppCompatActivity {
 
     private void logout() {
         mAuth.signOut();
+    }
+
+    public class ProductAdapter extends RecyclerView.Adapter<ProductViewHolder> {
+
+        private Map<String, Product> mResultProducts = new HashMap<>();
+
+        public ProductAdapter(Map<String, Product> mProducts) {
+            this.mResultProducts = mProducts;
+        }
+
+        @Override
+        public ProductViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            Context context = parent.getContext();
+            View view = getLayoutInflater().inflate(R.layout.product_row, parent, false);
+            ProductViewHolder viewHolder = new ProductViewHolder(view);
+            return viewHolder;
+        }
+
+        @Override
+        public void onBindViewHolder(ProductViewHolder viewHolder, int position) {
+            List<Product> values = new ArrayList<>(mResultProducts.values());
+            final Product model = values.get(position);
+            List<String> keys = new ArrayList<>(mResultProducts.keySet());
+            final String product_id = keys.get(position);
+
+            Log.d(TAG + " product_id", product_id);
+            Log.d(TAG + " product time", model.getReleaseDate() + "");
+            Log.d(TAG + " product name", model.getProductName());
+            Log.d(TAG + " product category", model.getCategory());
+
+            Log.d(TAG, "loading view " + position);
+//            Log.d(TAG + " product id ", product_id);
+            viewHolder.setProductName(model.getProductName());
+            viewHolder.setDescription(model.getDescription());
+            viewHolder.setImage(getApplicationContext(), model.getProductImage());
+            viewHolder.setUid(model.getUid());
+
+
+            viewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent productDetailIntent = new Intent();
+                    productDetailIntent.setClass(MainActivity.this, ProductDetailActivity.class);
+                    productDetailIntent.putExtra("product_id", product_id);
+                    Log.d(TAG + " product_id", product_id);
+                    productDetailIntent.putExtra("colorNo", model.getColorNo());
+                    Log.d(TAG + " colorNo", model.getColorNo() + "");
+                    startActivity(productDetailIntent);
+                }
+            });
+
+            Log.d(TAG, "finish loading view");
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return mResultProducts == null ? 0 : mResultProducts.size();
+        }
     }
 
     public static class ProductViewHolder extends RecyclerView.ViewHolder {

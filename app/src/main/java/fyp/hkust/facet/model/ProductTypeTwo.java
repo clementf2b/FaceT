@@ -16,8 +16,14 @@ public class ProductTypeTwo {
     private String category;
     private String uid;
     private ArrayList<ArrayList<String>> color;
+    private Long releaseDate;
 
-    public ProductTypeTwo(String productName, String brandID, String description, String productImage, Long colorNo, String category, String uid, ArrayList<ArrayList<String>> color) {
+    public ProductTypeTwo()
+    {
+
+    }
+
+    public ProductTypeTwo(String productName, String brandID, String description, String productImage, Long colorNo, String category, String uid, ArrayList<ArrayList<String>> color, Long releaseDate) {
         this.productName = productName;
         this.brandID = brandID;
         this.description = description;
@@ -26,12 +32,7 @@ public class ProductTypeTwo {
         this.category = category;
         this.uid = uid;
         this.color = color;
-    }
-
-
-    public ProductTypeTwo()
-    {
-
+        this.releaseDate = releaseDate;
     }
 
     public String getProductName() {
@@ -97,5 +98,12 @@ public class ProductTypeTwo {
     public void setColor(ArrayList<ArrayList<String>> color) {
         this.color = color;
     }
+    
+    public Long getReleaseDate() {
+        return releaseDate;
+    }
 
+    public void setReleaseDate(Long releaseDate) {
+        this.releaseDate = releaseDate;
+    }
 }

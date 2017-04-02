@@ -103,6 +103,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.fragment.MultipleColorFragment;
 import fyp.hkust.facet.model.Comment;
+import fyp.hkust.facet.model.Favourite;
 import fyp.hkust.facet.model.Product;
 import fyp.hkust.facet.model.ProductTypeOne;
 import fyp.hkust.facet.model.ProductTypeTwo;
@@ -485,11 +486,11 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
 //                                    data.putStringArrayList(i + "", product_data_two.getColor().get(i));
 //                                    Log.d(TAG + " send fragment data",data.toString());
 //                                }
-                                data.putSerializable("color",product_data_two.getColor());
+                                data.putSerializable("color", product_data_two.getColor());
                                 data.putInt("size", product_data_two.getColor().size());
                                 multipleColorFragment.setArguments(data);//Finally set argument bundle to fragment
-                                final FragmentManager fm=getFragmentManager();
-                                multipleColorFragment.show(getFragmentManager(),"Color Set");
+                                final FragmentManager fm = getFragmentManager();
+                                multipleColorFragment.show(getFragmentManager(), "Color Set");
                             }
                         });
                     }
@@ -665,6 +666,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
             currentNotification.child("product_image").setValue(product_data_two.getProductImage());
             currentNotification.child("product_name").setValue(product_data_two.getProductName());
         }
+        currentNotification.child("colorNo").setValue(colorNo);
         currentNotification.child("sender_user_id").setValue(mAuth.getCurrentUser().getUid());
         currentNotification.child("sender_username").setValue(mAuth.getCurrentUser().getUid());
         currentNotification.child("sender_image").setValue(user_image_url);
@@ -680,7 +682,8 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         mProgress.setMessage("Adding to favourite ...");
         mProgress.show();
 
-        mDatabaseFavourite.child(product_id).child(mAuth.getCurrentUser().getUid()).setValue(getCurrentTimeInString());
+        mDatabaseFavourite.child(product_id).child(mAuth.getCurrentUser().getUid()).child("time").setValue(getCurrentTimeInString());
+        mDatabaseFavourite.child(product_id).child(mAuth.getCurrentUser().getUid()).child("colorNo").setValue(colorNo);
 
         Snackbar snackbar = Snackbar.make(activity_product_detail_layout, "Added to favourite", Snackbar.LENGTH_LONG);
         snackbar.show();
@@ -694,7 +697,22 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         mProgress.setMessage("Removing to favourite ...");
         mProgress.show();
 
-        mDatabaseFavourite.child(product_id).child(mAuth.getCurrentUser().getUid()).removeValue();
+        mDatabaseFavourite.child(product_id).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    if(ds.getKey() == mAuth.getCurrentUser().getUid()) {
+                        mDatabaseFavourite.child(product_id).child(ds.getKey()).removeValue();
+                        Log.d(" remove favourite " + ds.getKey(), mAuth.getCurrentUser().getUid());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         Snackbar snackbar = Snackbar.make(activity_product_detail_layout, "Removed to favourite", Snackbar.LENGTH_LONG);
         snackbar.show();

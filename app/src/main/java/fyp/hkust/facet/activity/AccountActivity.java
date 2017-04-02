@@ -107,9 +107,9 @@ public class AccountActivity extends AppCompatActivity {
         actionBarDrawerToggle.syncState();
 
         if (null != savedInstanceState) {
-            navItemId = savedInstanceState.getInt(NAV_ITEM_ID, R.id.nav_camera);
+            navItemId = savedInstanceState.getInt(NAV_ITEM_ID, R.id.nav_profile);
         } else {
-            navItemId = R.id.nav_camera;
+            navItemId = R.id.nav_profile;
         }
 
         navigateTo(view.getMenu().findItem(navItemId));
@@ -227,22 +227,19 @@ public class AccountActivity extends AppCompatActivity {
         //Check to see which item was being clicked and perform appropriate action
         switch (navItemId) {
             //Replacing the main content with ContentFragment Which is our Inbox View;
-            case R.id.nav_camera:
+            case R.id.nav_virtual_makeup:
                 navItemId = 0;
                 break;
-            case R.id.nav_gallery:
+            case R.id.nav_product:
                 navItemId = 1;
                 break;
-            case R.id.nav_manage:
+            case R.id.nav_store_location:
                 navItemId = 2;
                 break;
-            case R.id.nav_send:
+            case R.id.nav_profile:
                 navItemId = 3;
                 break;
-            case R.id.nav_share:
-                navItemId = 4;
-                break;
-            case R.id.nav_slideshow:
+            case R.id.nav_setting:
                 startActivity(new Intent(AccountActivity.this, CategoryActivity.class));
                 break;
             case R.id.navigation_view:

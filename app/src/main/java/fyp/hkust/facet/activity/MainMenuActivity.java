@@ -94,7 +94,7 @@ public class MainMenuActivity extends AppCompatActivity {
         shoppingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent Intent = new Intent(MainMenuActivity.this, ProfileActivity.class);
+                Intent Intent = new Intent(MainMenuActivity.this, CategoryActivity.class);
 //                accountIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(Intent);
             }
@@ -104,7 +104,7 @@ public class MainMenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Intent accountIntent = new Intent(MainMenuActivity.this, MainActivity.class);
+                Intent accountIntent = new Intent(MainMenuActivity.this, ProfileActivity.class);
 //                accountIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(accountIntent);
 
