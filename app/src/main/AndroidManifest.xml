@@ -156,7 +156,8 @@
 
         <activity
             android:name=".activity.ShopListActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar_nav">
         </activity>
 
         <!-- defining the service class here -->
