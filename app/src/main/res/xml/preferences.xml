@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- example: http://alvinalexander.com/android/android-tutorial-preferencescreen-preferenceactivity-preferencefragment-->
+
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:key="username"
+        android:summary="Please provide your username"
+        android:title="Your Name" />
+    <!--<CheckBoxPreference-->
+    <!--android:defaultValue="false"-->
+    <!--android:key="applicationUpdates"-->
+    <!--android:summary="This option if selected will allow the application to check for latest versions."-->
+    <!--android:title="Application Updates" />-->
+    <Preference
+        android:key="aboutUs"
+        android:summary="@string/aboutUs_faceT"
+        android:title="@string/aboutUs_text" />
+    <Preference
+        android:key="logoutButton"
+        android:summary="@string/logout_description"
+        android:title="@string/logout_text" />
+</PreferenceScreen>

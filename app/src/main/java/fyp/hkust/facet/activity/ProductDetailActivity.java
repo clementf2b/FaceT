@@ -1,5 +1,7 @@
 package fyp.hkust.facet.activity;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,13 +15,18 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -29,6 +36,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.Scroller;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -68,7 +76,6 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.vanniktech.emoji.EmojiEditText;
-import com.vanniktech.emoji.EmojiManager;
 import com.vanniktech.emoji.EmojiPopup;
 import com.vanniktech.emoji.EmojiTextView;
 import com.vanniktech.emoji.emoji.Emoji;
@@ -94,11 +101,19 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import fyp.hkust.facet.R;
+import fyp.hkust.facet.fragment.MultipleColorFragment;
 import fyp.hkust.facet.model.Comment;
+import fyp.hkust.facet.model.Favourite;
 import fyp.hkust.facet.model.Product;
+import fyp.hkust.facet.model.ProductTypeOne;
+import fyp.hkust.facet.model.ProductTypeTwo;
 import fyp.hkust.facet.model.User;
 import fyp.hkust.facet.util.CheckConnectivity;
 import fyp.hkust.facet.util.FontManager;
+import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip;
+
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 
 public class ProductDetailActivity extends AppCompatActivity implements OnChartValueSelectedListener {
 
@@ -114,8 +129,6 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
     private DatabaseReference mDatabaseUsers;
     private DatabaseReference mDatabaseComments;
     private DatabaseReference mDatabaseRatings;
-
-    private CircleImageView product_color_imageview_1;
     private ColorPickerDialog colorPickerDialog;
     private ExpandableTextView descTextview;
 
@@ -133,10 +146,9 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
     private String user_image_url;
     private TextView product_name_text;
     private TextView brand_name_text;
-    private Product backUp_product_data;
+    private TextView category_type_name_text;
     private ImageZoomButton detail_product_image;
     private CircleImageView user_profile_pic;
-    private ProgressBar loading_indicator;
     private ProgressDialog mProgress;
     private DatabaseReference mDatabaseCommentsCurrentProduct;
     private RatingBar user_rating_bar;
@@ -163,6 +175,12 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
     private DatabaseReference mDatabaseNotifications;
     private LikeButton likeButton;
     private String product_owner_id;
+    private Long colorNo;
+    private ProductTypeOne product_data_one = null;
+    private ProductTypeTwo product_data_two = null;
+    private RecyclerView color_recycler_view;
+    private TextView more_product_color_label;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -204,6 +222,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
 
         //initialize
         product_id = getIntent().getExtras().getString("product_id");
+        colorNo = getIntent().getExtras().getLong("colorNo");
         Log.d(TAG + " product_id", product_id);
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Product");
         Log.d(TAG + "mDatabase", mDatabase.toString());
@@ -228,24 +247,24 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         mDatabaseCommentsCurrentProduct.keepSynced(true);
         Log.d(TAG + "mDatabaseCommentsCurrentProduct", mDatabaseCommentsCurrentProduct.toString());
 
-        product_color_imageview_1 = (CircleImageView) findViewById(R.id.product_color_1);
-        product_color_imageview_1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                colorPickerDialog = ColorPickerDialog.createColorPickerDialog(ProductDetailActivity.this);
-                colorPickerDialog.setOnColorPickedListener(new ColorPickerDialog.OnColorPickedListener() {
-                    @Override
-                    public void onColorPicked(int color, String hexVal) {
-                        System.out.println("Got color: " + color);
-                        System.out.println("Got color in hex form: " + hexVal);
-                        product_color_imageview_1.setColorFilter(Color.parseColor(hexVal));
-
-                        // Make use of the picked color here
-                    }
-                });
-                colorPickerDialog.show();
-            }
-        });
+//        product_color_imageview_1 = (CircleImageView) findViewById(R.id.product_color_1);
+//        product_color_imageview_1.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                colorPickerDialog = ColorPickerDialog.createColorPickerDialog(ProductDetailActivity.this);
+//                colorPickerDialog.setOnColorPickedListener(new ColorPickerDialog.OnColorPickedListener() {
+//                    @Override
+//                    public void onColorPicked(int color, String hexVal) {
+//                        System.out.println("Got color: " + color);
+//                        System.out.println("Got color in hex form: " + hexVal);
+//                        product_color_imageview_1.setColorFilter(Color.parseColor(hexVal));
+//
+//                        // Make use of the picked color here
+//                    }
+//                });
+//                colorPickerDialog.show();
+//            }
+//        });
 
         likeButton = (LikeButton) findViewById(R.id.product_star_button);
         detail_product_image = (ImageZoomButton) findViewById(R.id.detail_product_image);
@@ -255,6 +274,9 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         location_btn = (ImageButton) findViewById(R.id.location_btn);
         product_name_text = (TextView) findViewById(R.id.product_name_text);
         brand_name_text = (TextView) findViewById(R.id.brand_name_text);
+        category_type_name_text = (TextView) findViewById(R.id.category_type_name_text);
+        more_product_color_label = (TextView) findViewById(R.id.more_product_color_label);
+
         descTextview = (ExpandableTextView) findViewById(R.id.expand_text_view);
         descTextview.setText(getString(R.string.temp_description_label));
 
@@ -296,7 +318,8 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         commentEmojiconEditText.setMovementMethod(new ScrollingMovementMethod());
 
         emojiButton.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(final View v) {
+            @Override
+            public void onClick(final View v) {
                 emojiPopup.toggle();
             }
         });
@@ -390,26 +413,95 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         mDatabase.child(product_id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue() != null) {
-                    Log.i("product dataSnapshot.getValue()", dataSnapshot.getValue().toString());
-                    final Product product_data = dataSnapshot.getValue(Product.class);
-                    backUp_product_data = product_data;
-                    if (product_data.getTitle() != null)
-                        product_name_text.setText(product_data.getTitle());
-                    if (product_data.getBrand() != null)
-                        brand_name_text.setText(product_data.getBrand());
-                    if (product_data.getDesc() != null)
-                        descTextview.setText(product_data.getDesc());
-                    if( product_data.getUid() != null)
-                        product_owner_id = product_data.getUid();
+                if (dataSnapshot.getValue() != null && colorNo == 0) {
+                    Log.i("product type one dataSnapshot.getValue()", dataSnapshot.getValue().toString());
+                    Log.i("product type one", colorNo + "");
+                    product_data_one = dataSnapshot.getValue(ProductTypeOne.class);
+                    if (product_data_one.getProductName() != null)
+                        product_name_text.setText(product_data_one.getProductName());
+                    if (product_data_one.getBrandID() != null)
+                        brand_name_text.setText(product_data_one.getBrandID());
+                    if (product_data_one.getDescription() != null)
+                        descTextview.setText(product_data_one.getDescription());
+                    if (product_data_one.getUid() != null)
+                        product_owner_id = product_data_one.getUid();
+                    if (product_data_one.getCategory() != null)
+                        category_type_name_text.setText(product_data_one.getCategory());
 
-                    if (product_data.getImage() != null && product_data.getImage().length() > 0) {
+                    if (product_data_one.getColor() != null) {
+                        Log.d(TAG + " color", product_data_one.getColor().toString() + " : " + product_data_one.getColor().get(0));
+                        color_recycler_view = (RecyclerView) findViewById(R.id.color_recycler_view);
+                        color_recycler_view.setLayoutManager(new GridLayoutManager(getApplicationContext(), 6));//这里用线性宫格显示 类似于grid view
+                        color_recycler_view.setAdapter(new RecyclerAdapter());
+                        color_recycler_view.setOnTouchListener(new View.OnTouchListener() {
+                            @Override
+                            public boolean onTouch(View v, MotionEvent event) {
+                                return true;
+                            }
+                        });
+
+                    }
+                    if (product_data_one.getProductImage() != null && product_data_one.getProductImage().length() > 0) {
                         product_detail_loading_indicator.setVisibility(View.VISIBLE);
                         Ion.with(detail_product_image)
                                 .placeholder(R.mipmap.app_icon)
                                 .error(R.mipmap.app_icon)
                                 .animateIn(animFadein)
-                                .load(product_data.getImage());
+                                .load(product_data_one.getProductImage());
+                    }
+                } else if (dataSnapshot.getValue() != null && colorNo == 1) {
+                    Log.i("product type two dataSnapshot.getValue()", dataSnapshot.getValue().toString());
+                    Log.i("product type two", colorNo + "");
+                    product_data_two = dataSnapshot.getValue(ProductTypeTwo.class);
+                    if (product_data_two.getProductName() != null)
+                        product_name_text.setText(product_data_two.getProductName());
+                    if (product_data_two.getBrandID() != null)
+                        brand_name_text.setText(product_data_two.getBrandID());
+                    if (product_data_two.getDescription() != null)
+                        descTextview.setText(product_data_two.getDescription());
+                    if (product_data_two.getUid() != null)
+                        product_owner_id = product_data_two.getUid();
+                    if (product_data_two.getCategory() != null)
+                        category_type_name_text.setText(product_data_two.getCategory());
+
+                    if (product_data_two.getColor() != null) {
+                        Log.d(TAG + " color", product_data_two.getColor().get(0).toString() + " : " + product_data_two.getColor().get(0).get(0));
+                        color_recycler_view = (RecyclerView) findViewById(R.id.color_recycler_view);
+                        color_recycler_view.setLayoutManager(new GridLayoutManager(getApplicationContext(), 6));//这里用线性宫格显示 类似于grid view
+                        color_recycler_view.setAdapter(new RecyclerAdapter());
+                        color_recycler_view.setOnTouchListener(new View.OnTouchListener() {
+                            @Override
+                            public boolean onTouch(View v, MotionEvent event) {
+                                return true;
+                            }
+                        });
+                        more_product_color_label.setVisibility(View.VISIBLE);
+                        more_product_color_label.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                MultipleColorFragment multipleColorFragment = new MultipleColorFragment();//Get Fragment Instance
+
+                                Bundle data = new Bundle();//Use bundle to pass data
+//                                for(int i = 0;i<product_data_two.getColor().size();i++) {
+//                                    data.putStringArrayList(i + "", product_data_two.getColor().get(i));
+//                                    Log.d(TAG + " send fragment data",data.toString());
+//                                }
+                                data.putSerializable("color", product_data_two.getColor());
+                                data.putInt("size", product_data_two.getColor().size());
+                                multipleColorFragment.setArguments(data);//Finally set argument bundle to fragment
+                                final FragmentManager fm = getFragmentManager();
+                                multipleColorFragment.show(getFragmentManager(), "Color Set");
+                            }
+                        });
+                    }
+
+                    if (product_data_two.getProductImage() != null && product_data_two.getProductImage().length() > 0) {
+                        product_detail_loading_indicator.setVisibility(View.VISIBLE);
+                        Ion.with(detail_product_image)
+                                .placeholder(R.mipmap.app_icon)
+                                .error(R.mipmap.app_icon)
+                                .animateIn(animFadein)
+                                .load(product_data_two.getProductImage());
                     }
                 }
             }
@@ -463,36 +555,94 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         checkUserExist();
     }
 
+    public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
+
+        class ViewHolder extends RecyclerView.ViewHolder {
+
+            public int currentItem;
+            public de.hdodenhof.circleimageview.CircleImageView colorImage;
+
+            public ViewHolder(View itemView) {
+                super(itemView);
+                colorImage = (CircleImageView) itemView.findViewById(R.id.product_color_card);
+
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int position = getAdapterPosition();
+
+                        Snackbar.make(v, "Click detected on item " + position,
+                                Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                    }
+                });
+            }
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+            View v = LayoutInflater.from(viewGroup.getContext())
+                    .inflate(R.layout.show_color_layout, viewGroup, false);
+            ViewHolder viewHolder = new ViewHolder(v);
+            return viewHolder;
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder viewHolder, int i) {
+            if (colorNo == 0)
+                viewHolder.colorImage.setColorFilter(Color.parseColor(product_data_one.getColor().get(i)));
+            else
+                viewHolder.colorImage.setColorFilter(Color.parseColor(product_data_two.getColor().get(0).get(i)));
+        }
+
+        @Override
+        public int getItemCount() {
+            if (colorNo == 0) {
+                Log.d(TAG + " product_data_one size", product_data_one.getColor().size() + " ");
+                return product_data_one.getColor().size();
+            } else {
+                Log.d(TAG + " product_data_two size", product_data_two.getColor().get(0).size() + " ");
+                return product_data_two.getColor().get(0).size();
+            }
+        }
+    }
+
     private void setUpEmojiPopup() {
         emojiPopup = EmojiPopup.Builder.fromRootView(activity_product_detail_layout)
                 .setOnEmojiBackspaceClickListener(new OnEmojiBackspaceClickListener() {
-                    @Override public void onEmojiBackspaceClicked(final View v) {
+                    @Override
+                    public void onEmojiBackspaceClicked(final View v) {
                         emojiPopup.dismiss();
                         Log.d(TAG, "Clicked on Backspace");
                     }
                 })
                 .setOnEmojiClickedListener(new OnEmojiClickedListener() {
-                    @Override public void onEmojiClicked(final Emoji emoji) {
+                    @Override
+                    public void onEmojiClicked(final Emoji emoji) {
                         Log.d(TAG, "Clicked on emoji");
                     }
                 })
                 .setOnEmojiPopupShownListener(new OnEmojiPopupShownListener() {
-                    @Override public void onEmojiPopupShown() {
+                    @Override
+                    public void onEmojiPopupShown() {
                         emojiButton.setImageResource(R.drawable.ic_keyboard);
                     }
                 })
                 .setOnSoftKeyboardOpenListener(new OnSoftKeyboardOpenListener() {
-                    @Override public void onKeyboardOpen(final int keyBoardHeight) {
+                    @Override
+                    public void onKeyboardOpen(final int keyBoardHeight) {
                         Log.d(TAG, "Opened soft keyboard");
                     }
                 })
                 .setOnEmojiPopupDismissListener(new OnEmojiPopupDismissListener() {
-                    @Override public void onEmojiPopupDismiss() {
+                    @Override
+                    public void onEmojiPopupDismiss() {
                         emojiButton.setImageResource(R.drawable.emoji_one_category_people);
                     }
                 })
                 .setOnSoftKeyboardCloseListener(new OnSoftKeyboardCloseListener() {
-                    @Override public void onKeyboardClose() {
+                    @Override
+                    public void onKeyboardClose() {
                         emojiPopup.dismiss();
                         Log.d(TAG, "Closed soft keyboard");
                     }
@@ -509,8 +659,14 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         final DatabaseReference currentNotification = mDatabaseNotifications.child(product_owner_id).push();
         currentNotification.child("action").setValue(action);
         currentNotification.child("product_id").setValue(product_id);
-        currentNotification.child("product_image").setValue(backUp_product_data.getImage());
-        currentNotification.child("product_name").setValue(backUp_product_data.getTitle());
+        if (colorNo == 0) {
+            currentNotification.child("product_image").setValue(product_data_one.getProductImage());
+            currentNotification.child("product_name").setValue(product_data_one.getProductName());
+        } else if (colorNo == 1) {
+            currentNotification.child("product_image").setValue(product_data_two.getProductImage());
+            currentNotification.child("product_name").setValue(product_data_two.getProductName());
+        }
+        currentNotification.child("colorNo").setValue(colorNo);
         currentNotification.child("sender_user_id").setValue(mAuth.getCurrentUser().getUid());
         currentNotification.child("sender_username").setValue(mAuth.getCurrentUser().getUid());
         currentNotification.child("sender_image").setValue(user_image_url);
@@ -526,7 +682,8 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         mProgress.setMessage("Adding to favourite ...");
         mProgress.show();
 
-        mDatabaseFavourite.child(product_id).child(mAuth.getCurrentUser().getUid()).setValue(getCurrentTimeInString());
+        mDatabaseFavourite.child(product_id).child(mAuth.getCurrentUser().getUid()).child("time").setValue(getCurrentTimeInString());
+        mDatabaseFavourite.child(product_id).child(mAuth.getCurrentUser().getUid()).child("colorNo").setValue(colorNo);
 
         Snackbar snackbar = Snackbar.make(activity_product_detail_layout, "Added to favourite", Snackbar.LENGTH_LONG);
         snackbar.show();
@@ -540,7 +697,22 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         mProgress.setMessage("Removing to favourite ...");
         mProgress.show();
 
-        mDatabaseFavourite.child(product_id).child(mAuth.getCurrentUser().getUid()).removeValue();
+        mDatabaseFavourite.child(product_id).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    if(ds.getKey() == mAuth.getCurrentUser().getUid()) {
+                        mDatabaseFavourite.child(product_id).child(ds.getKey()).removeValue();
+                        Log.d(" remove favourite " + ds.getKey(), mAuth.getCurrentUser().getUid());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         Snackbar snackbar = Snackbar.make(activity_product_detail_layout, "Removed to favourite", Snackbar.LENGTH_LONG);
         snackbar.show();
@@ -626,7 +798,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         public void setUserImage(final Context ctx, final String userImage) {
             final CircleImageView user_image = (CircleImageView) mView.findViewById(R.id.comment_profilepic);
             if (userImage != null && userImage.length() > 0) {
-                Log.d(TAG + "userImage",userImage);
+                Log.d(TAG + "userImage", userImage);
                 Picasso.with(ctx).load(userImage).networkPolicy(NetworkPolicy.OFFLINE).into(user_image, new Callback() {
                     @Override
                     public void onSuccess() {
@@ -878,7 +1050,8 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         }
     }
 
-    @Override protected void onStop() {
+    @Override
+    protected void onStop() {
         if (emojiPopup != null) {
             emojiPopup.dismiss();
         }

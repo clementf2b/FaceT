@@ -13,6 +13,7 @@ import android.widget.TextView;
 public class FontManager {
 
     public static final String ROOT = "fonts/",
+            CUSTOM_FONT = "HiraginoSansGBW3.ttf",
             APP_FONT = ROOT + "HiraginoSansGBW3.ttf";
 
     public static Typeface getTypeface(Context context, String font) {

@@ -9,7 +9,6 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -46,7 +45,7 @@ public class MyService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         // START YOUR TASKS
         super.onStartCommand(intent, flags, startId);
-        Toast.makeText(getApplicationContext(), startId + " task is running", Toast.LENGTH_SHORT).show();
+        Log.d(TAG , startId + " task is running");
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -111,7 +110,6 @@ public class MyService extends Service {
     @Override
     public void onDestroy() {
         // STOP YOUR TASKS
-        Toast.makeText(getApplicationContext(), " task is stopped", Toast.LENGTH_SHORT).show();
         Log.d("My Service", " is stopped");
         super.onDestroy();
     }

@@ -14,10 +14,23 @@ public class Notification {
     String time;
     String product_image;
     String product_name;
+    Long colorNo;
 
     public Notification()
     {
 
+    }
+
+    public Notification(String action, String sender_user_id, String product_id, String sender_image, String sender_username, String time, String product_image, String product_name, Long colorNo) {
+        this.action = action;
+        this.sender_user_id = sender_user_id;
+        this.product_id = product_id;
+        this.sender_image = sender_image;
+        this.sender_username = sender_username;
+        this.time = time;
+        this.product_image = product_image;
+        this.product_name = product_name;
+        this.colorNo = colorNo;
     }
 
     public Notification(String action, String sender_user_id, String product_id, String sender_username, String time, String product_image, String product_name) {
@@ -28,26 +41,6 @@ public class Notification {
         this.time = time;
         this.product_image = product_image;
         this.product_name = product_name;
-    }
-
-    public Notification(String action, String sender_id, String product_id, String sender_image, String sender_username, String time, String product_image, String product_name) {
-        this.action = action;
-        this.sender_user_id = sender_id;
-        this.product_id = product_id;
-        this.sender_image = sender_image;
-        this.sender_username = sender_username;
-        this.time = time;
-        this.product_image = product_image;
-        this.product_name = product_name;
-    }
-
-    public Notification(String action, String sender_id, String product_id, String sender_image, String sender_username, String time) {
-        this.action = action;
-        this.sender_user_id = sender_id;
-        this.product_id = product_id;
-        this.sender_image = sender_image;
-        this.sender_username = sender_username;
-        this.time = time;
     }
 
     public String getProduct_image() {
@@ -112,5 +105,21 @@ public class Notification {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public String getSender_user_id() {
+        return sender_user_id;
+    }
+
+    public void setSender_user_id(String sender_user_id) {
+        this.sender_user_id = sender_user_id;
+    }
+
+    public Long getColorNo() {
+        return colorNo;
+    }
+
+    public void setColorNo(Long colorNo) {
+        this.colorNo = colorNo;
     }
 }

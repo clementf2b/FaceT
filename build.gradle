@@ -8,6 +8,8 @@ buildscript {
         //classpath 'com.android.tools.build:gradle:2.2.0'
         classpath 'com.android.tools.build:gradle:2.3.0'
         classpath 'com.google.gms:google-services:3.0.0'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7'
+        classpath "com.github.dcendents:android-maven-gradle-plugin:1.4.1"
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -22,4 +24,16 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+ext {
+    groupName = 'com.github.tzutalin'
+    artifactName = 'dlib-android-app'
+    artifactDescription = 'An Android library to wrap dlib library to use face and landmark detection'
+    artifactLabels = ['dlib', 'android']
+    releaseVersionCode = 1
+    releaseVersionName = '1.0.4'
+
+    androidBuildToolsVersion = '24.0.0'
+    androidSupportSdkVersion = '24.0.0'
 }
