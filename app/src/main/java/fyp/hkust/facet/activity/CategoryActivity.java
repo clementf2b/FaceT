@@ -3,6 +3,7 @@ package fyp.hkust.facet.activity;
 import android.app.ActionBar;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -74,12 +76,13 @@ public class CategoryActivity extends AppCompatActivity {
 //        delayAction(1500, Techniques.SlideInLeft, 500, R.id.category_Lips);
         //end layout animation
         Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
+        Typeface titleFontType = FontManager.getTypeface(getApplicationContext(), FontManager.ROOT + FontManager.TITLE_FONT);
         FontManager.markAsIconContainer(findViewById(R.id.activity_category_layout), fontType);
 
         //start
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         TextView toolbarTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        toolbarTitle.setTypeface(fontType);
+        toolbarTitle.setTypeface(titleFontType);
 
         toolbar.setBackground(new ColorDrawable(Color.parseColor("#00000000")));
         setSupportActionBar(toolbar);
@@ -98,6 +101,50 @@ public class CategoryActivity extends AppCompatActivity {
                 return true;
             }
         });
+        //Setting Navigation View Item Selected Listener to handle the item click of the navigation menu
+        view.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+
+            // This method will trigger on item Click of navigation menu
+            @Override
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
+
+                //Check to see which item was being clicked and perform appropriate action
+                switch (menuItem.getItemId()) {
+                    //Replacing the main content with ContentFragment Which is our Inbox View;
+                    case R.id.nav_virtual_makeup:
+                        navItemId = 0;
+                        menuItem.setChecked(true);
+                        break;
+                    case R.id.nav_product:
+                        navItemId = 1;
+                        menuItem.setChecked(true);
+                        break;
+                    case R.id.nav_store_location:
+                        navItemId = 2;
+                        menuItem.setChecked(true);
+                        break;
+                    case R.id.nav_profile:
+                        navItemId = 3;
+                        menuItem.setChecked(true);
+                        break;
+                    case R.id.nav_setting:
+                        navItemId = 4;
+                        menuItem.setChecked(true);
+                        startActivity(new Intent(CategoryActivity.this, SettingsActivity.class));
+                        break;
+                }
+
+                //Checking if the item is in checked state or not, if not make it in checked state
+                if (menuItem.isChecked()) {
+                    menuItem.setChecked(false);
+                } else {
+                    menuItem.setChecked(true);
+                }
+                menuItem.setChecked(true);
+
+                return true;
+            }
+        });
 
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.openDrawer, R.string.closeDrawer) {
             @Override
@@ -110,6 +157,7 @@ public class CategoryActivity extends AppCompatActivity {
                 super.onDrawerOpened(drawerView);
             }
         };
+
 
         drawerLayout.setDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
@@ -149,7 +197,6 @@ public class CategoryActivity extends AppCompatActivity {
         setupNavHeader();
         setup();
     }
-
 
     private void applyCustomFontToWholeMenu() {
         Menu m = view.getMenu();
@@ -319,8 +366,9 @@ public class CategoryActivity extends AppCompatActivity {
     private void navigateTo(MenuItem menuItem) {
         // contentView.setText(menuItem.getTitle());
 
-        if (navItemId < 0)
+        if (navItemId < 0) {
             navItemId = menuItem.getItemId();
+        }
         //Check to see which item was being clicked and perform appropriate action
         switch (navItemId) {
             //Replacing the main content with ContentFragment Which is our Inbox View;

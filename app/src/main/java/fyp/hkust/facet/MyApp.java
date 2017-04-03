@@ -1,5 +1,7 @@
 package fyp.hkust.facet;
 
+import android.content.Context;
+import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 
 import com.facebook.FacebookSdk;
@@ -39,5 +41,11 @@ public class MyApp extends MultiDexApplication {
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
 
+    }
+
+    @Override
+    protected void attachBaseContext(Context context) {
+        super.attachBaseContext(context);
+        MultiDex.install(this);
     }
 }

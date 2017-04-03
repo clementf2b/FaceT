@@ -40,7 +40,7 @@
                         android:text="@string/app_name"
                         android:layout_gravity="center_vertical|center_horizontal"
                         android:id="@+id/toolbar_title"
-                        android:textSize="18dp"/>
+                        android:textSize="22dp"/>
 
                     </android.support.v7.widget.Toolbar>
 
@@ -53,8 +53,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:rv_centered="true"
-                app:rv_color="#66EAEAEA">
+                rv_centered="true"
+                app:rv_zoomDuration="500">
 
                 <ImageButton
                     android:id="@+id/category_All"
@@ -70,7 +70,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 app:rv_centered="true"
-                app:rv_color="#66EAEAEA">
+                app:rv_zoomDuration="500">
 
                 <ImageButton
                     android:id="@+id/category_Face"
@@ -86,7 +86,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 app:rv_centered="true"
-                app:rv_color="#66EAEAEA">
+                app:rv_zoomDuration="500">
 
                 <ImageButton
                     android:id="@+id/category_Eyes"
@@ -102,7 +102,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 app:rv_centered="true"
-                app:rv_color="#66EAEAEA">
+                app:rv_zoomDuration="500">
 
                 <ImageButton
                     android:id="@+id/category_Lips"

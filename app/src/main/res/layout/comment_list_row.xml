@@ -38,6 +38,7 @@
             android:paddingTop="15dp"
             android:text="@string/product_username_text"
             android:textColor="@color/colorPrimaryDark"
+            android:textIsSelectable="true"
             android:textSize="16dp" />
 
         <TextView
@@ -49,6 +50,7 @@
             android:paddingTop="15dp"
             android:text="@string/temp_population_number"
             android:textColor="@color/product_detail_label_color"
+            android:textIsSelectable="true"
             android:textSize="12dp" />
 
         <com.vanniktech.emoji.EmojiTextView
@@ -59,6 +61,7 @@
             android:layout_marginTop="5dp"
             android:layout_toEndOf="@+id/comment_profilepic"
             android:text="@string/temp_description_label"
+            android:textIsSelectable="true"
             android:textSize="16dp"
             app:emojiSize="24sp" />  
 
@@ -74,7 +77,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"/>
+                android:layout_centerVertical="true" />
 
             <com.vatsal.imagezoomer.ImageZoomButton
                 android:id="@+id/comment_image"
