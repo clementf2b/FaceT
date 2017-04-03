@@ -12,8 +12,8 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/product_color_card"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:src="@color/gradient_end"
             app:civ_border_color="@color/profile_edit_bg"
             app:civ_border_width="1dp"

@@ -13,8 +13,9 @@ import android.widget.TextView;
 public class FontManager {
 
     public static final String ROOT = "fonts/",
-            CUSTOM_FONT = "HiraginoSansGBW3.ttf",
-            APP_FONT = ROOT + "HiraginoSansGBW3.ttf";
+            CUSTOM_FONT = "robotoLight.ttf",
+            APP_FONT = ROOT + "robotoLight.ttf",
+            TITLE_FONT = "Lobster.otf";
 
     public static Typeface getTypeface(Context context, String font) {
         return Typeface.createFromAsset(context.getAssets(), font);

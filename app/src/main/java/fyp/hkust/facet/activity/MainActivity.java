@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
     DrawerLayout drawerLayout;
     private int navItemId;
     private Toolbar toolbar;
-
+    private NavigationView view;
     private Map<String, Product> mProducts = new HashMap<String, Product>();
     private int order = 1;
     private int categoryResult = 0;
@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        NavigationView view = (NavigationView) findViewById(R.id.navigation_view);
+        view = (NavigationView) findViewById(R.id.navigation_view);
         view.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
@@ -207,6 +207,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, " clear");
+                categoryResult = 0;
+                order = 1;
+                sort = 0;
+                setupProductList();
                 drawerLayout.closeDrawer(GravityCompat.END);
             }
         });
@@ -214,10 +218,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, " order = 0");
-                acensding_btn.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_button_with_bg));
-                decensding_btn.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_button_no_bg));
-                acensding_btn.setTextColor(getResources().getColor(R.color.white));
-                decensding_btn.setTextColor(getResources().getColor(R.color.font_color_pirmary));
+                decensding_btn.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_button_with_bg));
+                acensding_btn.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_button_no_bg));
+                decensding_btn.setTextColor(getResources().getColor(R.color.white));
+                acensding_btn.setTextColor(getResources().getColor(R.color.font_color_pirmary));
                 order = 0;
             }
         });
@@ -225,10 +229,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, " order = 1");
-                decensding_btn.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_button_with_bg));
-                acensding_btn.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_button_no_bg));
-                decensding_btn.setTextColor(getResources().getColor(R.color.white));
-                acensding_btn.setTextColor(getResources().getColor(R.color.font_color_pirmary));
+                acensding_btn.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_button_with_bg));
+                decensding_btn.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_button_no_bg));
+                acensding_btn.setTextColor(getResources().getColor(R.color.white));
+                decensding_btn.setTextColor(getResources().getColor(R.color.font_color_pirmary));
                 order = 1;
             }
         });
@@ -315,7 +319,7 @@ public class MainActivity extends AppCompatActivity {
 
                     Log.d(TAG, "going to filter");
                     mSortedProducts = filterProduct(mProducts, categoryResult);
-                    mProductAdapter = new ProductAdapter(mSortedProducts,getApplicationContext());
+                    mProductAdapter = new ProductAdapter(mSortedProducts, getApplicationContext());
                     mProductList.setAdapter(mProductAdapter);
                     mProductAdapter.notifyDataSetChanged();
                 }
@@ -332,7 +336,7 @@ public class MainActivity extends AppCompatActivity {
         // sort by name a - z
         mSortedProducts = filterProduct(mProducts, categoryResult);
         mSortedProducts = sortByComparator(mSortedProducts, sort, order);
-        mProductAdapter = new ProductAdapter(mSortedProducts,getApplicationContext());
+        mProductAdapter = new ProductAdapter(mSortedProducts, getApplicationContext());
         mProductList.setAdapter(mProductAdapter);
         mProductAdapter.notifyDataSetChanged();
     }
