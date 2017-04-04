@@ -49,9 +49,12 @@
         <item name="android:textAllCaps">false</item>
     </style>
 
+    <style name="TabLayoutStyle" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">12dp</item>
+    </style>
+
     <style name="WhiteCheck">
         <item name="colorAccent">#fff</item>
     </style>
-
-
+    
 </resources>

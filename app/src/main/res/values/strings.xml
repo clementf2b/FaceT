@@ -239,6 +239,12 @@
     <string name="aboutUs_text">About Us</string>
     <string name="aboutUs_faceT">FaceT =]</string>
 
+    <!--activity_shop_list-->
+    <string name="nearby_button">SHOP NEARBY</string>
+    <string name="tab_hkisland">Hong Kong Island</string>
+    <string name="tab_kowloon">Kowloon</string>
+    <string name="tab_nTerritories">New Territories</string>
+
 </resources>
 
 

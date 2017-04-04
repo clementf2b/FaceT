@@ -1,13 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_nearby_location"
+    android:id="@+id/activity_shop_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="fyp.hkust.facet.activity.ShopListActivity">
+    android:fitsSystemWindows="true">
 
-</RelativeLayout>
+    <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+        <!-- your content layout -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <android.support.design.widget.AppBarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:theme="@style/AppTheme.AppBarOverlay"
+                app:elevation="0dp">
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="?attr/actionBarSize"
+                    app:elevation="0dp">
+
+                    <TextView
+                        android:id="@+id/toolbar_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical|center_horizontal"
+                        android:text="@string/app_name"
+                        android:textSize="22dp" />
+
+                </android.support.v7.widget.Toolbar>
+
+            </android.support.design.widget.AppBarLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="@color/colorPrimary">
+
+                <Button
+                    android:id="@+id/button_nearby"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="25dp"
+                    android:text="@string/nearby_button"
+                    android:drawableLeft="@mipmap/ic_location_on_white_24dp"
+                    android:drawablePadding="12dp"
+                    android:drawableTint="@color/colorPrimary"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorPrimary"
+                    android:background="@drawable/nearby_button_shadow"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="false"
+                    android:onClick="findNearbyStore"/>
+
+            </RelativeLayout>
+
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:tabMode="fixed"
+                app:tabGravity="fill"
+                android:background="@color/colorPrimary"
+                app:tabIndicatorColor="@color/white"
+                app:tabIndicatorHeight="2dp"
+                app:tabSelectedTextColor="@color/white"
+                app:tabTextColor="#88FFFFFF"
+                app:tabTextAppearance="@style/TabLayoutStyle"/>
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+        </LinearLayout>
+
+        <android.support.design.widget.NavigationView
+            android:id="@+id/navigation_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:layout_weight="1"
+            app:headerLayout="@layout/nav_header_main"
+            app:menu="@menu/drawer" />
+
+    </android.support.v4.widget.DrawerLayout>
+
+</android.support.design.widget.CoordinatorLayout>
