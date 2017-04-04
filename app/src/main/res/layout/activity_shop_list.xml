@@ -47,9 +47,7 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="8dp"
-                android:paddingBottom="10dp"
+                android:layout_height="60dp"
                 android:background="@color/colorPrimary">
 
                 <Button
@@ -68,7 +66,8 @@
                     android:textColor="@color/colorPrimary"
                     android:background="@drawable/nearby_button_shadow"
                     android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true" />
+                    android:layout_centerVertical="false"
+                    android:onClick="findNearbyStore"/>
 
             </RelativeLayout>
 
