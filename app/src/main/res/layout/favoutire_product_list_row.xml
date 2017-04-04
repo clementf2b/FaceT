@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/tools"
+    android:id="@+id/favourite_product_list_row_layout"
+    android:layout_width="120dp"
+    android:layout_height="120dp"
+    card_view:cardPreventCornerOverlap="false">
+
+    <RelativeLayout
+        android:id="@+id/favourite_product_card"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:background="@color/profile_bg"
+        android:orientation="vertical"
+        android:padding="3dp">
+
+        <ProgressBar
+            android:id="@+id/loading_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:indeterminateOnly="true" />
+
+        <ImageView
+            android:id="@+id/favourite_product_image"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true" />
+
+    </RelativeLayout>
+
+
+</android.support.v7.widget.CardView>

@@ -42,7 +42,7 @@ import com.squareup.picasso.Picasso;
 import de.hdodenhof.circleimageview.CircleImageView;
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.adapter.ViewPagerAdapter;
-import fyp.hkust.facet.fragment.MatchedProductFragment;
+import fyp.hkust.facet.fragment.FavouriteProductFragment;
 import fyp.hkust.facet.fragment.OwnProductFragment;
 import fyp.hkust.facet.model.Notification;
 import fyp.hkust.facet.model.User;
@@ -314,7 +314,7 @@ public class ProfileActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new OwnProductFragment(), getResources().getString(R.string.own_product_fragment_text));
-        adapter.addFragment(new MatchedProductFragment(), getResources().getString(R.string.match_product_fragment_text));
+        adapter.addFragment(new FavouriteProductFragment(), getResources().getString(R.string.favourite_product_fragment_text));
         viewPager.setAdapter(adapter);
     }
 

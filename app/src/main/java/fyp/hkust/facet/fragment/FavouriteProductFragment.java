@@ -4,23 +4,17 @@ package fyp.hkust.facet.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,124 +32,142 @@ import java.util.List;
 import java.util.Map;
 
 import fyp.hkust.facet.R;
-import fyp.hkust.facet.activity.MainActivity;
 import fyp.hkust.facet.activity.ProductDetailActivity;
-import fyp.hkust.facet.activity.ProfileActivity;
 import fyp.hkust.facet.activity.ProfileEditActivity;
+import fyp.hkust.facet.model.Favourite;
 import fyp.hkust.facet.model.Product;
 import fyp.hkust.facet.util.FontManager;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class OwnProductFragment extends Fragment {
+public class FavouriteProductFragment extends Fragment {
 
-    private static final String TAG = "OwnProductFragment";
-    //No Scroll
-    public static final int SCROLL_STATE_IDLE = 0;
-    //User is scrolling
-    public static final int SCROLL_STATE_DRAGGING = 1;
-    //Auto scrolling
-    public static final int SCROLL_STATE_SETTLING = 2;
-
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
-
-    private static final String NAV_ITEM_ID = "nav_index";
-    private ImageButton profilePic;
-    private TextView mOwnNameField;
-    private Uri mImageUri;
-    private RecyclerView mOwnProductList;
+    private static final String TAG = "FavouriteProductFragment";
+    private RecyclerView mFavouriteProductList;
 
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabaseUsers;
+    private DatabaseReference mDatabaseFavourite;
+    private DatabaseReference mDatabase;
     private StorageReference mStorageProfileImage;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    private DatabaseReference mDatabase;
+
     private GridLayoutManager mgr;
     private FragmentActivity context;
-    private ownProductAdapter mOwnProductAdapter;
-    private Map<String, Product> mOwnProducts = new HashMap<>();
+    private FavouriteProductAdapter mFavouriteProductAdapter;
+    private Map<String, Product> mFavouriteProducts = new HashMap<>();
+    private List<String> mFavouriteList = new ArrayList<>();
 
-    public OwnProductFragment() {
+    public FavouriteProductFragment() {
         // Required empty public constructor
-    }
 
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        View view = inflater.inflate(R.layout.fragment_own_product, container, false);
+        View view = inflater.inflate(R.layout.fragment_favourite_product, container, false);
 
         Typeface fontType = FontManager.getTypeface(getContext(), FontManager.APP_FONT);
-        FontManager.markAsIconContainer(view.findViewById(R.id.fragment_own_product_layout), fontType);
+        FontManager.markAsIconContainer(view.findViewById(R.id.fragment_favourite_layout), fontType);
 
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Product");
         mDatabase.keepSynced(true);
+        mDatabaseFavourite = FirebaseDatabase.getInstance().getReference().child("Favourite");
+        mDatabaseFavourite.keepSynced(true);
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         mDatabaseUsers.keepSynced(true);
 
-        mOwnProductList = (RecyclerView) view.findViewById(R.id.ownproductlist);
+        mFavouriteProductList = (RecyclerView) view.findViewById(R.id.favouriteproductlist);
         mgr = new GridLayoutManager(getContext(), 3);
-        mOwnProductList.setLayoutManager(mgr);
+        mFavouriteProductList.setLayoutManager(mgr);
 
         checkUserExist();
         return view;
     }
+
 
     @Override
     public void onStart() {
         super.onStart();
         context = getActivity();
 
-        mDatabase.addValueEventListener(new ValueEventListener() {
+        mDatabaseFavourite.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                //go into product_id(key)
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    Product result = ds.getValue(Product.class);
-                    if(result.getUid() == mAuth.getCurrentUser().getUid()) {
-                        mOwnProducts.put(ds.getKey(), result);
-                        Log.d(" product " + ds.getKey(), result.toString());
+                    Log.d(TAG, ds.toString());
+                    //go into user_id(key)
+                    for (DataSnapshot ds2 : ds.getChildren()) {
+                        if (ds2.getKey().equals(mAuth.getCurrentUser().getUid())) {
+                            //grab the product id
+                            mFavouriteList.add(ds.getKey());
+                        }
                     }
                 }
-            }
 
+                mDatabase.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            Product result = ds.getValue(Product.class);
+                            if (mFavouriteList.contains(ds.getKey())) {
+                                mFavouriteProducts.put(ds.getKey(), result);
+                                Log.d(TAG + " product " + ds.getKey(), result.getProductName() + " , " + result.getUid() + " : " + mAuth.getCurrentUser().getUid());
+                            }
+                        }
+                        mFavouriteProductAdapter = new FavouriteProductAdapter(mFavouriteProducts);
+                        mgr.setAutoMeasureEnabled(true);
+                        mFavouriteProductList.setAdapter(mFavouriteProductAdapter);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
             }
         });
 
-        mOwnProductAdapter = new ownProductAdapter(mOwnProducts);
-        mgr.setAutoMeasureEnabled(true);
-        mOwnProductList.setAdapter(mOwnProductAdapter);
     }
 
-    public class ownProductAdapter extends RecyclerView.Adapter<OwnProductViewHolder> {
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        View view = getView();
+    }
 
-        private Map<String, Product> mOwnProducts = new HashMap<>();
+    public class FavouriteProductAdapter extends RecyclerView.Adapter<FavouriteProductViewHolder> {
 
-        public ownProductAdapter(Map<String, Product> mProducts) {
-            this.mOwnProducts = mProducts;
+        private Map<String, Product> mFavouriteProducts = new HashMap<>();
+
+        public FavouriteProductAdapter(Map<String, Product> mProducts) {
+            this.mFavouriteProducts = mProducts;
         }
 
         @Override
-        public OwnProductViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public FavouriteProductViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             Context context = parent.getContext();
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View view = inflater.inflate(R.layout.own_product_list_row, parent, false);
-            OwnProductViewHolder viewHolder = new OwnProductViewHolder(view);
+            View view = inflater.inflate(R.layout.favoutire_product_list_row, parent, false);
+            FavouriteProductViewHolder viewHolder = new FavouriteProductViewHolder(view);
             return viewHolder;
         }
 
         @Override
-        public void onBindViewHolder(OwnProductViewHolder viewHolder, int position) {
-            List<Product> values = new ArrayList<>(mOwnProducts.values());
+        public void onBindViewHolder(FavouriteProductViewHolder viewHolder, int position) {
+            List<Product> values = new ArrayList<>(mFavouriteProducts.values());
             final Product model = values.get(position);
-            List<String> keys = new ArrayList<>(mOwnProducts.keySet());
+            List<String> keys = new ArrayList<>(mFavouriteProducts.keySet());
             final String product_id = keys.get(position);
 
             Log.d(TAG + " product_id", product_id);
@@ -167,7 +179,7 @@ public class OwnProductFragment extends Fragment {
 
             viewHolder.setImage(getContext(), model.getProductImage());
 
-            viewHolder.mOwnProductView.setOnClickListener(new View.OnClickListener() {
+            viewHolder.mFavouriteProductView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent productDetailIntent = new Intent();
@@ -186,40 +198,22 @@ public class OwnProductFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            return mOwnProducts.size();
+            return mFavouriteProducts.size();
         }
     }
 
-    public static class OwnProductViewHolder extends RecyclerView.ViewHolder {
+    public static class FavouriteProductViewHolder extends RecyclerView.ViewHolder {
 
-        View mOwnProductView;
+        View mFavouriteProductView;
 
-        public OwnProductViewHolder(View itemView) {
+        public FavouriteProductViewHolder(View itemView) {
             super(itemView);
-            mOwnProductView = itemView;
+            this.mFavouriteProductView = itemView;
         }
 
-//        public void setTitle(String title)
-//        {
-//            TextView own_product_title = (TextView) mView.findViewById(R.id.own_p_title);
-//            own_product_title.setText(title);
-//        }
-//
-//        public void setDesc(String desc)
-//        {
-//            TextView own_product_desc = (TextView) mView.findViewById(R.id.own_p_desc);
-//            own_product_desc.setText(desc);
-//        }
-//
-//        public void setUsername(String username)
-//        {
-//            TextView own_product_username = (TextView) mView.findViewById(R.id.own_p_username);
-//            own_product_username.setText(username);
-//        }
-
         public void setImage(final Context ctx, final String image) {
-            final ImageView own_post_image = (ImageView) mOwnProductView.findViewById(R.id.own_product_image);
-            Picasso.with(ctx).load(image).networkPolicy(NetworkPolicy.OFFLINE).into(own_post_image, new Callback() {
+            final ImageView favourite_post_image = (ImageView) mFavouriteProductView.findViewById(R.id.favourite_product_image);
+            Picasso.with(ctx).load(image).networkPolicy(NetworkPolicy.OFFLINE).into(favourite_post_image, new Callback() {
                 @Override
                 public void onSuccess() {
 
@@ -231,13 +225,12 @@ public class OwnProductFragment extends Fragment {
                             .load(image)
                             .fit()
                             .centerCrop()
-                            .into(own_post_image);
+                            .into(favourite_post_image);
                 }
             });
 
         }
     }
-
 
     private void checkUserExist() {
 
@@ -261,5 +254,4 @@ public class OwnProductFragment extends Fragment {
             });
         }
     }
-
 }

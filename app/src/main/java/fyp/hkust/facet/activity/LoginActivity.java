@@ -1,7 +1,9 @@
 package fyp.hkust.facet.activity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
@@ -9,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
@@ -18,8 +21,12 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.daimajia.androidanimations.library.Techniques;
@@ -61,9 +68,13 @@ import org.json.JSONObject;
 import java.util.Arrays;
 
 import fyp.hkust.facet.R;
+import fyp.hkust.facet.util.CheckConnectivity;
 import fyp.hkust.facet.util.FontManager;
 
 public class LoginActivity extends AppCompatActivity {
+
+    private final String TAG = this.getClass().getSimpleName();
+    private RelativeLayout activity_login_layout;
 
     private EditText mLoginEmailField;
     private EditText mLoginPasswordField;
@@ -71,6 +82,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button mGoRegister;
     private Button mFacebookBtn;
     private ImageButton passwordVisibleButton;
+    private CheckBox mRemeberPasswordCheckBox;
     private boolean pw_shown;
 
     private FirebaseAuth mAuth;
@@ -85,8 +97,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private GoogleApiClient mGoogleApiClient;
 
-    private static final String TAG = "LoginActivity";
-
     private FirebaseAuth.AuthStateListener mAuthListener;
 
     //facebook login use
@@ -99,10 +109,25 @@ public class LoginActivity extends AppCompatActivity {
         supportRequestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         setContentView(R.layout.activity_login);
 
+        activity_login_layout = (RelativeLayout) findViewById(R.id.activity_login_layout);
+
+        CheckConnectivity check = new CheckConnectivity();
+        Boolean conn = check.checkNow(this.getApplicationContext());
+        if (conn == true) {
+            //run your normal code path here
+            Log.d(TAG, "Network connected");
+        } else {
+            //Send a warning message to the user
+            Snackbar snackbar = Snackbar.make(activity_login_layout, "No Internet Access", Snackbar.LENGTH_LONG);
+            snackbar.show();
+        }
+
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00000000")));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setLogo(R.mipmap.app_icon);
         getSupportActionBar().setDisplayUseLogoEnabled(true);
+
+        loadLoginData();
 
         Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
         FontManager.markAsIconContainer(findViewById(R.id.activity_login_layout), fontType);
@@ -144,6 +169,19 @@ public class LoginActivity extends AppCompatActivity {
         mGoRegister = (Button) findViewById(R.id.goregister_btn);
         mGoogleBtn = (Button) findViewById(R.id.signingooglebtn);
         mFacebookBtn = (Button) findViewById(R.id.facebook_login_btn);
+        mRemeberPasswordCheckBox = (CheckBox) findViewById(R.id.remember_pw_checkbox);
+
+        mRemeberPasswordCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView,boolean isChecked)
+            {
+                if(isChecked)
+                {
+                    saveLoginData();
+                }
+            }
+        });
 
         mLoginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,12 +191,12 @@ public class LoginActivity extends AppCompatActivity {
         });
         //if clicked the simple login will fade in and social login will disappear
 
-        YoYo.with(Techniques.FlipInX).duration(700).playOn(findViewById(R.id.signingooglebtn));
-        YoYo.with(Techniques.FlipInX).duration(700).playOn(findViewById(R.id.passwordfield_visible_button));
-        YoYo.with(Techniques.FlipInX).duration(700).playOn(findViewById(R.id.loginemailfield));
-        YoYo.with(Techniques.FlipInX).duration(700).playOn(findViewById(R.id.loginpasswordfield));
-        YoYo.with(Techniques.FlipInX).duration(700).playOn(findViewById(R.id.login_btn));
-        YoYo.with(Techniques.FlipInX).duration(700).playOn(findViewById(R.id.facebook_login_btn));
+        YoYo.with(Techniques.FlipInX).duration(1000).playOn(findViewById(R.id.signingooglebtn));
+        YoYo.with(Techniques.FlipInX).duration(1000).playOn(findViewById(R.id.passwordfield_visible_button));
+        YoYo.with(Techniques.FlipInX).duration(1000).playOn(findViewById(R.id.loginemailfield));
+        YoYo.with(Techniques.FlipInX).duration(1000).playOn(findViewById(R.id.loginpasswordfield));
+        YoYo.with(Techniques.FlipInX).duration(1000).playOn(findViewById(R.id.login_btn));
+        YoYo.with(Techniques.FlipInX).duration(1000).playOn(findViewById(R.id.facebook_login_btn));
 
         //show pw
         pw_shown = false;
@@ -272,6 +310,32 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void saveLoginData()
+    {
+        SharedPreferences sharedPreferences = getSharedPreferences("LoginData", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("email",mLoginEmailField.getText().toString());
+        editor.putString("password",mLoginPasswordField.getText().toString());
+        editor.commit();
+        Snackbar snackbar = Snackbar.make(activity_login_layout, "Login data is remember", Snackbar.LENGTH_LONG);
+        snackbar.show();
+    }
+
+    private void loadLoginData()
+    {
+        SharedPreferences sharedPreferences = getSharedPreferences("LoginData", Context.MODE_PRIVATE);
+        if(sharedPreferences.getString("email","").equals("")||sharedPreferences.getString("password","").equals(""))
+        {
+            Snackbar snackbar = Snackbar.make(activity_login_layout, "No data is found", Snackbar.LENGTH_LONG);
+            snackbar.show();
+        }
+        else
+        {
+            mLoginEmailField.setText(sharedPreferences.getString("email",""));
+            mLoginPasswordField.setText(sharedPreferences.getString("password",""));
+        }
     }
 
     @Override
@@ -400,6 +464,7 @@ public class LoginActivity extends AppCompatActivity {
                         startActivity(setupIntent);
                     }
                 }
+
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
 
