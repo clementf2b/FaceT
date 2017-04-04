@@ -127,8 +127,6 @@ public class LoginActivity extends AppCompatActivity {
         getSupportActionBar().setLogo(R.mipmap.app_icon);
         getSupportActionBar().setDisplayUseLogoEnabled(true);
 
-        loadLoginData();
-
         Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
         FontManager.markAsIconContainer(findViewById(R.id.activity_login_layout), fontType);
 
@@ -171,14 +169,15 @@ public class LoginActivity extends AppCompatActivity {
         mFacebookBtn = (Button) findViewById(R.id.facebook_login_btn);
         mRemeberPasswordCheckBox = (CheckBox) findViewById(R.id.remember_pw_checkbox);
 
-        mRemeberPasswordCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener()
-        {
+        SharedPreferences sharedPreferences = getSharedPreferences("LoginData", Context.MODE_PRIVATE);
+        mLoginEmailField.setText(sharedPreferences.getString("email", ""));
+        mLoginPasswordField.setText(sharedPreferences.getString("password", ""));
+
+        mRemeberPasswordCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView,boolean isChecked)
-            {
-                if(isChecked)
-                {
-                    saveLoginData();
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    Log.d(TAG, "check box is Checked");
                 }
             }
         });
@@ -186,11 +185,13 @@ public class LoginActivity extends AppCompatActivity {
         mLoginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (mRemeberPasswordCheckBox.isChecked())
+                    saveLoginData();
                 checklogin();
             }
         });
-        //if clicked the simple login will fade in and social login will disappear
 
+        //if clicked the simple login will fade in and social login will disappear
         YoYo.with(Techniques.FlipInX).duration(1000).playOn(findViewById(R.id.signingooglebtn));
         YoYo.with(Techniques.FlipInX).duration(1000).playOn(findViewById(R.id.passwordfield_visible_button));
         YoYo.with(Techniques.FlipInX).duration(1000).playOn(findViewById(R.id.loginemailfield));
@@ -312,29 +313,15 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void saveLoginData()
-    {
-        SharedPreferences sharedPreferences = getSharedPreferences("LoginData", Context.MODE_PRIVATE);
+    private void saveLoginData() {
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("LoginData", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("email",mLoginEmailField.getText().toString());
-        editor.putString("password",mLoginPasswordField.getText().toString());
-        editor.commit();
-        Snackbar snackbar = Snackbar.make(activity_login_layout, "Login data is remember", Snackbar.LENGTH_LONG);
-        snackbar.show();
-    }
-
-    private void loadLoginData()
-    {
-        SharedPreferences sharedPreferences = getSharedPreferences("LoginData", Context.MODE_PRIVATE);
-        if(sharedPreferences.getString("email","").equals("")||sharedPreferences.getString("password","").equals(""))
-        {
-            Snackbar snackbar = Snackbar.make(activity_login_layout, "No data is found", Snackbar.LENGTH_LONG);
+        if (!mLoginEmailField.getText().toString().trim().equals("") || !mLoginPasswordField.getText().toString().trim().equals("")) {
+            editor.putString("email", mLoginEmailField.getText().toString());
+            editor.putString("password", mLoginPasswordField.getText().toString());
+            editor.commit();
+            Snackbar snackbar = Snackbar.make(activity_login_layout, "Login data is remember", Snackbar.LENGTH_LONG);
             snackbar.show();
-        }
-        else
-        {
-            mLoginEmailField.setText(sharedPreferences.getString("email",""));
-            mLoginPasswordField.setText(sharedPreferences.getString("password",""));
         }
     }
 
