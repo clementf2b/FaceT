@@ -10,13 +10,9 @@
         app:showAsAction="collapseActionView|ifRoom" />
 
     <item
-        android:id="@+id/action_setting"
-        android:title="Setting"
-        app:showAsAction="always"/>
-
-    <item
-        android:id="@+id/action_logout"
-        android:title="Log Out"
-        app:showAsAction="never"/>
+        android:id="@+id/action_refine"
+        android:icon="@drawable/refinelogo"
+        android:title="Refine"
+        app:showAsAction="collapseActionView|ifRoom" />
 
 </menu>

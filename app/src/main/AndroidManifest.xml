@@ -62,7 +62,8 @@
             android:theme="@style/AppTheme.NoActionBar_nav" />
         <activity
             android:name=".activity.PostActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar_nav"/>
         <activity
             android:name=".activity.MainMenuActivity"
             android:screenOrientation="portrait"
@@ -110,10 +111,6 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity
-            android:name=".activity.CategoryActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar_nav" />
         <activity
             android:name=".activity.SwapFaceActivity"
             android:screenOrientation="portrait" />

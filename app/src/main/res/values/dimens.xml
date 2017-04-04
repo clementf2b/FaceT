@@ -11,7 +11,7 @@
     <dimen name="profile_height">75dp</dimen>
 
     <dimen name="product_card_view_width">180dp</dimen>
-    <dimen name="product_card_view_height">250dp</dimen>
+    <dimen name="product_card_view_height">235dp</dimen>
 
     <dimen name="small_text_size">16dp</dimen>
     <dimen name="middle_text_size">24dp</dimen>

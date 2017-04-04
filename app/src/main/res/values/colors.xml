@@ -44,4 +44,6 @@
 
     <color name="sort_drawer_background">#39c5c1</color>
 
+    <color name="tab_selected_color">#EEEEEE</color>
+
 </resources>

@@ -95,7 +95,7 @@ dependencies {
     //swipe events
     compile 'com.github.pwittchen:swipe:0.0.1'
     //emoji
-    compile 'com.vanniktech:emoji-one:0.4.0'
+    compile 'com.vanniktech:emoji-one:0.5.0-SNAPSHOT'
     //easy permission
     compile 'pub.devrel:easypermissions:0.3.0'
     //ColorSeekBar
@@ -113,6 +113,8 @@ repositories {
     maven { url "https://dl.bintray.com/hani-momanii/maven" }
     maven { url "https://jitpack.io" }
     maven { url 'https://dl.bintray.com/azeesoft/maven' }
+    maven { url 'https://dl.bintray.com/azeesoft/maven' }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     mavenCentral()
     mavenLocal()
 }

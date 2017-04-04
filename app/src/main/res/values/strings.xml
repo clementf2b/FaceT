@@ -74,7 +74,7 @@
         <item>All</item>
         <item>Face</item>
         <item>Eyes</item>
-        <item>排骨飯</item>
+        <item>Lips</item>
     </string-array>
     <string-array name="sort_type_array">
         <item>Time</item>
@@ -93,11 +93,10 @@
     <string name="vertical_form_stepper_form_confirm_button">Create Product</string>
 
     <string-array name="product_type_array">
-        <item>雞腿飯</item>
-        <item>魯肉飯</item>
-        <item>排骨飯</item>
-        <item>仙人掌</item>
-        <item>牛肉麵</item>
+        <item>All</item>
+        <item>Face</item>
+        <item>Eyes</item>
+        <item>Lips</item>
     </string-array>
 
     <string-array name="steps_titles">
@@ -167,6 +166,7 @@
     <string name="product_title_text_title">Product Title</string>
     <string name="product_desc_text_title">Description</string>
     <string name="product_brand_text_title">Brand Name</string>
+    <string name="product_category_text_title">Category</string>
 
     <!--activity_profile_edit-->
     <string name="edit_profile_title">Edit Profile</string>

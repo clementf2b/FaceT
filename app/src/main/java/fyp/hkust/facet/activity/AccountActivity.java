@@ -240,7 +240,7 @@ public class AccountActivity extends AppCompatActivity {
                 navItemId = 3;
                 break;
             case R.id.nav_setting:
-                startActivity(new Intent(AccountActivity.this, CategoryActivity.class));
+                startActivity(new Intent(AccountActivity.this, MainActivity.class));
                 break;
             case R.id.navigation_view:
                 break;

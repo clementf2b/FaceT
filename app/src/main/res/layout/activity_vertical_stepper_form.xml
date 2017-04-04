@@ -1,12 +1,51 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_vertical_stepper_form_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ernestoyaquello.com.verticalstepperform.VerticalStepperFormLayout
-        android:id="@+id/vertical_stepper_form"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true" />
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.design.widget.AppBarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:theme="@style/AppTheme.AppBarOverlay"
+                app:elevation="2dp">
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="?attr/actionBarSize"
+                    app:elevation="2dp">
+
+                    <TextView
+                        android:id="@+id/toolbar_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical|center_horizontal"
+                        android:text="@string/app_name"
+                        android:textColor="@color/white"
+                        android:textSize="22dp" />
+
+                </android.support.v7.widget.Toolbar>
+
+            </android.support.design.widget.AppBarLayout>
+
+        </RelativeLayout>
+
+        <ernestoyaquello.com.verticalstepperform.VerticalStepperFormLayout
+            android:id="@+id/vertical_stepper_form"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true" />
+    </LinearLayout>
 
 </RelativeLayout>

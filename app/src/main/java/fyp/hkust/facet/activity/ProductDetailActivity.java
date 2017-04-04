@@ -1,6 +1,5 @@
 package fyp.hkust.facet.activity;
 
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -15,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -64,6 +64,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -95,6 +96,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -102,6 +104,7 @@ import java.util.Map;
 import de.hdodenhof.circleimageview.CircleImageView;
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.fragment.MultipleColorFragment;
+import fyp.hkust.facet.model.Brand;
 import fyp.hkust.facet.model.Comment;
 import fyp.hkust.facet.model.Favourite;
 import fyp.hkust.facet.model.Product;
@@ -110,10 +113,6 @@ import fyp.hkust.facet.model.ProductTypeTwo;
 import fyp.hkust.facet.model.User;
 import fyp.hkust.facet.util.CheckConnectivity;
 import fyp.hkust.facet.util.FontManager;
-import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip;
-
-import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 
 public class ProductDetailActivity extends AppCompatActivity implements OnChartValueSelectedListener {
 
@@ -129,6 +128,9 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
     private DatabaseReference mDatabaseUsers;
     private DatabaseReference mDatabaseComments;
     private DatabaseReference mDatabaseRatings;
+    private DatabaseReference mDatabaseBrand;
+    private DatabaseReference mDatabaseCommentsCurrentProduct;
+
     private ColorPickerDialog colorPickerDialog;
     private ExpandableTextView descTextview;
 
@@ -150,7 +152,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
     private ImageZoomButton detail_product_image;
     private CircleImageView user_profile_pic;
     private ProgressDialog mProgress;
-    private DatabaseReference mDatabaseCommentsCurrentProduct;
+    private Map<String, Brand> mBrand = new HashMap<String, Brand>();
     private RatingBar user_rating_bar;
     private ImageButton location_btn;
     private Button submitRatingButton;
@@ -180,7 +182,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
     private ProductTypeTwo product_data_two = null;
     private RecyclerView color_recycler_view;
     private TextView more_product_color_label;
-
+    private ImageView delete_rating;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -246,6 +248,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         mDatabaseCommentsCurrentProduct = FirebaseDatabase.getInstance().getReference().child("Comments").child(product_id);
         mDatabaseCommentsCurrentProduct.keepSynced(true);
         Log.d(TAG + "mDatabaseCommentsCurrentProduct", mDatabaseCommentsCurrentProduct.toString());
+        mDatabaseBrand = FirebaseDatabase.getInstance().getReference().child("Brand");
 
 //        product_color_imageview_1 = (CircleImageView) findViewById(R.id.product_color_1);
 //        product_color_imageview_1.setOnClickListener(new View.OnClickListener() {
@@ -280,9 +283,39 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         descTextview = (ExpandableTextView) findViewById(R.id.expand_text_view);
         descTextview.setText(getString(R.string.temp_description_label));
 
+        delete_rating = (ImageView) findViewById(R.id.delete_rating);
         user_profile_pic = (CircleImageView) findViewById(R.id.user_profile_pic);
         user_rating_bar = (RatingBar) findViewById(R.id.user_rating_bar);
         submitRatingButton = (Button) findViewById(R.id.submit_rating_btn);
+
+        delete_rating.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(ProductDetailActivity.this, R.style.Theme_AppCompat_Light_Dialog_Alert);
+                builder.setTitle("Delete Comments?");
+                builder.setMessage("Confirm delete");
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mDatabaseRatings.child(product_id).child(mAuth.getCurrentUser().getUid()).removeValue();
+                        Snackbar snackbar = Snackbar.make(activity_product_detail_layout, "Removed to Rating", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        Toast.makeText(getApplicationContext(), "pressed ok", Toast.LENGTH_SHORT).show();
+                        //refresh
+                        finish();
+                        startActivity(getIntent());
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(getApplicationContext(), "pressed cancel", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                builder.show();
+            }
+        });
 
         ratingPieChart = (PieChart) findViewById(R.id.rating_pie_chart);
         setEffectPieChart(ratingPieChart);
@@ -343,10 +376,26 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
             }
         });
 
+
+        mDatabaseFavourite.child(product_id).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    if (ds.getKey().contains(mAuth.getCurrentUser().getUid()))
+                        likeButton.setLiked(true);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
         likeButton.setOnLikeListener(new OnLikeListener() {
             @Override
             public void liked(LikeButton likeButton) {
                 addFavourite();
+                likeButton.setLiked(true);
                 addNotification("new Notification");
             }
 
@@ -504,6 +553,26 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                                 .load(product_data_two.getProductImage());
                     }
                 }
+
+                mDatabaseBrand.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            Brand result = ds.getValue(Brand.class);
+                            mBrand.put(ds.getKey(), result);
+                            Log.d(" brand " + ds.getKey(), result.toString());
+                        }
+                        if (product_data_one != null)
+                            brand_name_text.setText(mBrand.get(product_data_one.getBrandID()).getBrand());
+                        if (product_data_two != null)
+                            brand_name_text.setText(mBrand.get(product_data_two.getBrandID()).getBrand());
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
+
             }
 
             @Override
@@ -701,7 +770,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    if(ds.getKey() == mAuth.getCurrentUser().getUid()) {
+                    if (ds.getKey() == mAuth.getCurrentUser().getUid()) {
                         mDatabaseFavourite.child(product_id).child(ds.getKey()).removeValue();
                         Log.d(" remove favourite " + ds.getKey(), mAuth.getCurrentUser().getUid());
                     }
@@ -735,10 +804,10 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
 
         ) {
             @Override
-            protected void populateViewHolder(CommentViewHolder viewHolder, Comment model, int position) {
+            protected void populateViewHolder(CommentViewHolder viewHolder, final Comment model, int position) {
 
                 Log.d(TAG, "loading view " + position);
-                final String product_id = getRef(position).getKey();
+                final String comment_id = getRef(position).getKey();
                 viewHolder.setCommentTime(model.getComment_time());
                 viewHolder.setUsername(model.getUsername());
                 viewHolder.setComment(model.getComment());
@@ -746,6 +815,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                     viewHolder.setUserImage(getApplicationContext(), model.getUid_image());
                 if (model.getComment_image() != null)
                     viewHolder.setCommentImage(getApplicationContext(), model.getComment_image());
+
 //                viewHolder.mView.setOnClickListener(new View.OnClickListener() {
 //                    @Override
 //                    public void onClick(View v) {
@@ -756,6 +826,48 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
 //                        startActivity(productDetailIntent);
 //                    }
 //                });
+                viewHolder.mView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(ProductDetailActivity.this, R.style.Theme_AppCompat_Light_Dialog_Alert);
+                        builder.setTitle("Delete Comments?");
+                        builder.setMessage("Confirm delete");
+                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mDatabaseComments.child(product_id).addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        Map<String, Comment> temp = (HashMap<String, Comment>) dataSnapshot.getValue();
+                                        for (String key : temp.keySet()) {
+                                            if (key == comment_id) {
+                                                mDatabaseComments.child(product_id).child(comment_id).removeValue();
+                                                Log.d(" remove comment " + comment_id, key);
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
+                                Toast.makeText(getApplicationContext(), "您按下OK按鈕", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        //設定Negative按鈕資料
+                        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //按下按鈕時顯示快顯
+                                Toast.makeText(getApplicationContext(), "您按下Cancel按鈕", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        builder.show();
+                        return true;
+                    }
+                });
 
                 Snackbar snackbar = Snackbar.make(activity_product_detail_layout, "Loaded comments successful.", Snackbar.LENGTH_LONG);
                 snackbar.show();
@@ -874,16 +986,19 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                 if (dataSnapshot.getValue() != null) {
                     Log.d(TAG + " dataSnapshot.getChildren()", dataSnapshot.getValue().toString());
                     Map<String, Long> td = (HashMap<String, Long>) dataSnapshot.getValue();
+                    List<String> keys = new ArrayList<>(td.keySet());
                     List<Long> values = new ArrayList<>(td.values());
+                    if (keys.contains(mAuth.getCurrentUser().getUid())) {
+                        delete_rating.setVisibility(View.VISIBLE);
+                    }
 //                    Log.d(TAG + "  arraylist" , values.toString());
-
                     for (int i = 0; i < values.size(); i++) {
-                        Long temp = values.get(i);
+                        double temp = doubleValue(values.get(i));
                         barRatingCount = countEachRating(temp);
                         Log.d(TAG + " temp", temp + "");
                         totalRating += temp;
-                        ratingCount += 1;
                     }
+                    ratingCount = values.size();
                     Log.d(TAG + " total , ratingCount", totalRating + " , " + ratingCount);
                     averageRating = totalRating / ratingCount;
                     //round to 2 significant figures
@@ -911,7 +1026,11 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         });
     }
 
-    private float[] countEachRating(Long temp) {
+    private static double doubleValue(Object value) {
+        return (value instanceof Number ? ((Number) value).doubleValue() : -1.0);
+    }
+
+    private float[] countEachRating(Double temp) {
         int y = temp.intValue();
         switch (y) {
             case 1:

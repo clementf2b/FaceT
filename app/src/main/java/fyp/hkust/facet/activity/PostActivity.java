@@ -3,12 +3,17 @@ package fyp.hkust.facet.activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,6 +47,7 @@ import ernestoyaquello.com.verticalstepperform.VerticalStepperFormLayout;
 import ernestoyaquello.com.verticalstepperform.fragments.BackConfirmationFragment;
 import ernestoyaquello.com.verticalstepperform.interfaces.VerticalStepperForm;
 import fyp.hkust.facet.R;
+import fyp.hkust.facet.util.CheckConnectivity;
 import fyp.hkust.facet.util.FontManager;
 
 public class PostActivity extends AppCompatActivity implements VerticalStepperForm {
@@ -83,24 +89,34 @@ public class PostActivity extends AppCompatActivity implements VerticalStepperFo
     private boolean confirmBack = true;
 
     private String saved_title, saved_desc, saved_brand;
-    private TextView confirm_product_title,confirm_product_brand,confirm_product_desc;
+    private TextView confirm_product_title, confirm_product_brand, confirm_product_desc,confirm_product_category_text;
     private ImageView confirm_product_image;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vertical_stepper_form);
 
+        Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
+        Typeface titleFontType = FontManager.getTypeface(getApplicationContext(), FontManager.ROOT + FontManager.TITLE_FONT);
+        FontManager.markAsIconContainer(findViewById(R.id.activity_main_layout), fontType);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setBackground(new ColorDrawable(Color.parseColor("#00000000")));
+        setSupportActionBar(toolbar);
+
+        TextView toolbarTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
+        toolbarTitle.setTypeface(titleFontType);
+
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         initializeActivity();
 
     }
 
     private void initializeActivity() {
-
-        Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
-        FontManager.markAsIconContainer(findViewById(R.id.activity_vertical_stepper_form_layout), fontType);
-        FontManager.markAsIconContainer(findViewById(R.id.activity_post_layout), fontType);
-        FontManager.markAsIconContainer(findViewById(R.id.activity_post_summary_layout), fontType);
 
         mAuth = FirebaseAuth.getInstance();
         mStorage = FirebaseStorage.getInstance().getReference();
@@ -117,6 +133,8 @@ public class PostActivity extends AppCompatActivity implements VerticalStepperFo
 
         // Here we find and initialize the form
         verticalStepperForm = (VerticalStepperFormLayout) findViewById(R.id.vertical_stepper_form);
+        Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
+        FontManager.markAsIconContainer(findViewById(R.id.vertical_stepper_form), fontType);
         VerticalStepperFormLayout.Builder.newInstance(verticalStepperForm, stepsTitles, this, this)
                 //.stepsSubtitles(stepsSubtitles)
                 //.materialDesignInDisabledSteps(true) // false by default
@@ -155,11 +173,17 @@ public class PostActivity extends AppCompatActivity implements VerticalStepperFo
         RelativeLayout view =
                 (RelativeLayout) inflater.inflate(R.layout.activity_post, null, false);
 
+        Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
+
         mProductTitle = (EditText) view.findViewById(R.id.product_title);
         mProductDesc = (EditText) view.findViewById(R.id.product_desc);
         mProductBrand = (EditText) view.findViewById(R.id.product_brand_edittext);
+        mProductTitle.setTypeface(fontType);
+        mProductDesc.setTypeface(fontType);
+        mProductBrand.setTypeface(fontType);
 
         spinner = (Spinner) view.findViewById(R.id.product_type_spinner);
+        FontManager.markAsIconContainer(findViewById(R.id.product_type_spinner), fontType);
         ArrayAdapter<CharSequence> typeList = ArrayAdapter.createFromResource(PostActivity.this,
                 R.array.product_type_array,
                 android.R.layout.simple_spinner_dropdown_item);
@@ -180,6 +204,10 @@ public class PostActivity extends AppCompatActivity implements VerticalStepperFo
         LayoutInflater inflater2 = LayoutInflater.from(getBaseContext());
         LinearLayout view2 =
                 (LinearLayout) inflater2.inflate(R.layout.activity_post_image, null, false);
+
+        Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
+        FontManager.markAsIconContainer(findViewById(R.id.activity_post_layout), fontType);
+
         mSelectImage = (ImageButton) view2.findViewById(R.id.imageButton);
         mSelectImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -197,11 +225,19 @@ public class PostActivity extends AppCompatActivity implements VerticalStepperFo
         LayoutInflater inflater3 = LayoutInflater.from(getBaseContext());
         LinearLayout summaryLayoutContent = (LinearLayout) inflater3.inflate(R.layout.activity_post_summary, null, false);
 
+        Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
+        FontManager.markAsIconContainer(findViewById(R.id.activity_post_summary_layout), fontType);
+
         confirm_product_title = (TextView) summaryLayoutContent.findViewById(R.id.confirm_product_title);
         confirm_product_brand = (TextView) summaryLayoutContent.findViewById(R.id.confirm_product_brand);
         confirm_product_desc = (TextView) summaryLayoutContent.findViewById(R.id.confirm_product_desc);
         confirm_product_image = (ImageView) summaryLayoutContent.findViewById(R.id.confirm_product_image);
+        confirm_product_category_text = (TextView) summaryLayoutContent.findViewById(R.id.confirm_product_category_text);
 
+        confirm_product_title.setTypeface(fontType);
+        confirm_product_brand.setTypeface(fontType);
+        confirm_product_desc.setTypeface(fontType);
+        confirm_product_category_text.setTypeface(fontType);
         return summaryLayoutContent;
     }
 
@@ -217,12 +253,14 @@ public class PostActivity extends AppCompatActivity implements VerticalStepperFo
                 verticalStepperForm.setStepAsCompleted(stepNumber);
                 break;
             case STEP2_NUM:
+                Resources res = getResources();
+                final String[] categoryArray = res.getStringArray(R.array.product_type_array);
                 confirm_product_title.setText(mProductTitle.getText().toString().trim());
-                Log.d(TAG + " product_title" , mProductTitle.getText().toString().trim());
+                Log.d(TAG + " product_title", mProductTitle.getText().toString().trim());
                 confirm_product_brand.setText(mProductBrand.getText().toString().trim());
+                confirm_product_category_text.setText(categoryArray[spinner.getSelectedItemPosition()]);
                 confirm_product_desc.setText(mProductDesc.getText().toString().trim());
                 verticalStepperForm.setStepAsCompleted(stepNumber);
-
                 break;
             case STEP3_NUM:
                 verticalStepperForm.setStepAsCompleted(stepNumber);
@@ -261,6 +299,9 @@ public class PostActivity extends AppCompatActivity implements VerticalStepperFo
         final String title_val = mProductTitle.getText().toString().trim();
         final String desc_val = mProductDesc.getText().toString().trim();
         final String brand_val = mProductBrand.getText().toString().trim();
+        Resources res = getResources();
+        final String[] categoryArray = res.getStringArray(R.array.product_type_array);
+
         Log.d(TAG + " PostData", title_val + " : " + desc_val);
         if (!TextUtils.isEmpty(title_val) && !TextUtils.isEmpty(desc_val) && !TextUtils.isEmpty(brand_val) && mImageUri != null) {
             StorageReference filepath = mStorage.child("Product_Image").child(mImageUri.getLastPathSegment());
@@ -278,12 +319,13 @@ public class PostActivity extends AppCompatActivity implements VerticalStepperFo
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
 
-                            newProduct.child("title").setValue(title_val);
-                            newProduct.child("desc").setValue(desc_val);
+                            newProduct.child("productName").setValue(title_val);
+                            newProduct.child("description").setValue(desc_val);
                             newProduct.child("brand").setValue(brand_val);
-                            newProduct.child("image").setValue(downloadUrl.toString());
+                            newProduct.child("category").setValue(categoryArray[spinner.getSelectedItemPosition()]);
+                            newProduct.child("prductImage").setValue(downloadUrl.toString());
                             newProduct.child("uid").setValue(mCurrentUser.getUid());
-
+                            newProduct.child("validate").setValue(0);
                             newProduct.child("username").setValue(dataSnapshot.child("name").getValue()).addOnCompleteListener(new OnCompleteListener<Void>() {
 
                                 @Override
