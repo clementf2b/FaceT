@@ -46,4 +46,9 @@
 
     <color name="tab_selected_color">#EEEEEE</color>
 
+    <color name="shop_list_primary_text">#4A4A4A</color>
+    <color name="shop_list_secondary_text">#9B9B9B</color>
+    <color name="shop_list_background">#f0f0f0</color>
+    <color name="shop_list_item_background">#fafafa</color>
+
 </resources>

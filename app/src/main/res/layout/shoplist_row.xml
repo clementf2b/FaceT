@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/shop_list_item_background"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical"
+    android:paddingBottom="10dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="10dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/shop_image"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/com_facebook_profile_picture_blank_portrait"
+        app:civ_border_color="@color/colorPrimary"
+        app:civ_border_width="2dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginRight="4dp"/>
+
+    <TextView
+        android:id="@+id/shop_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@+id/shop_image"
+        android:maxLines="1"
+        android:text="123"
+        android:textSize="18dp"
+        android:textColor="@color/shop_list_primary_text"/>
+
+    <TextView
+        android:id="@+id/shop_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/shop_name"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="55dp"
+        android:layout_toRightOf="@+id/shop_image"
+        android:maxLines="3"
+        android:text="abc"
+        android:textColor="@color/shop_list_secondary_text"
+        android:textSize="12dp"
+        android:layout_marginTop="2dp"/>
+
+    <TextView
+        android:id="@+id/shop_district"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:text="sdfhfh"
+        android:textColor="@color/shop_list_secondary_text"
+        android:textSize="12dp"
+        android:layout_marginTop="4dp"/>
+
+</RelativeLayout>

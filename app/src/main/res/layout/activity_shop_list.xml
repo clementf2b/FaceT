@@ -39,7 +39,7 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="center_vertical|center_horizontal"
                         android:text="@string/app_name"
-                        android:textSize="22dp" />
+                        android:textSize="22dp"/>
 
                 </android.support.v7.widget.Toolbar>
 
@@ -88,7 +88,8 @@
                 android:id="@+id/viewpager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+                android:fitsSystemWindows="true"
+                android:background="@color/shop_list_background"/>
 
         </LinearLayout>
 
