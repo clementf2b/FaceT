@@ -480,10 +480,8 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
 
                     if (product_data_two.getColor() != null) {
                         Log.d(TAG + " color", product_data_two.getColor().get(0).toString() + " : " + product_data_two.getColor().get(0).get(0));
-                        for(int i = 0;i<product_data_two.getColor().size();i++)
-                        {
-                            for(int j = 0;j<product_data_two.getColor().get(i).size();j++)
-                            {
+                        for (int i = 0; i < product_data_two.getColor().size(); i++) {
+                            for (int j = 0; j < product_data_two.getColor().get(i).size(); j++) {
                                 colorSet.add(product_data_two.getColor().get(i).get(j));
                             }
                         }
@@ -678,7 +676,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         @Override
         public int getItemCount() {
             if (colorNo == 0) {
-                Log.d(TAG + " product_data_one size",colorSet.size()+"");
+                Log.d(TAG + " product_data_one size", colorSet.size() + "");
                 return colorSet.size();
             } else {
                 Log.d(TAG + " product_data_two size", product_data_two.getColor().get(0).size() + " ");
@@ -739,13 +737,8 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         final DatabaseReference currentNotification = mDatabaseNotifications.child(product_owner_id).push();
         currentNotification.child("action").setValue(action);
         currentNotification.child("product_id").setValue(product_id);
-        if (colorNo == 0) {
-            currentNotification.child("product_image").setValue(product_data_one.getProductImage());
-            currentNotification.child("product_name").setValue(product_data_one.getProductName());
-        } else if (colorNo == 1) {
-            currentNotification.child("product_image").setValue(product_data_two.getProductImage());
-            currentNotification.child("product_name").setValue(product_data_two.getProductName());
-        }
+        currentNotification.child("product_image").setValue(product_data_two.getProductImage());
+        currentNotification.child("product_name").setValue(product_data_two.getProductName());
         currentNotification.child("colorNo").setValue(colorNo);
         currentNotification.child("sender_user_id").setValue(mAuth.getCurrentUser().getUid());
         currentNotification.child("sender_username").setValue(mAuth.getCurrentUser().getUid());
@@ -850,11 +843,13 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                                 mDatabaseComments.child(product_id).addValueEventListener(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
-                                        Map<String, Comment> temp = (HashMap<String, Comment>) dataSnapshot.getValue();
-                                        for (String key : temp.keySet()) {
-                                            if (key == comment_id) {
-                                                mDatabaseComments.child(product_id).child(comment_id).removeValue();
-                                                Log.d(" remove comment " + comment_id, key);
+                                        if (dataSnapshot.getValue() != null) {
+                                            Map<String, Comment> temp = (HashMap<String, Comment>) dataSnapshot.getValue();
+                                            for (String key : temp.keySet()) {
+                                                if (key == comment_id) {
+                                                    mDatabaseComments.child(product_id).child(comment_id).removeValue();
+                                                    Log.d(" remove comment " + comment_id, key);
+                                                }
                                             }
                                         }
                                     }

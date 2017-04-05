@@ -60,9 +60,10 @@
                     app:tabGravity="fill"
                     app:tabIndicatorColor="@color/tab_selected_color"
                     app:tabIndicatorHeight="2dp"
-                    app:tabMode="fixed"
+                    app:tabMode="scrollable"
                     app:tabSelectedTextColor="@color/tab_selected_color"
-                    app:tabTextColor="#88FFFFFF" />
+                    app:tabTextColor="#88FFFFFF"
+                    />
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/product_list"

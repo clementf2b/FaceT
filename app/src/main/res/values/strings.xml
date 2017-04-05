@@ -72,9 +72,10 @@
     <!--activity_main-->
     <string-array name="category_type_array">
         <item>All</item>
-        <item>Face</item>
-        <item>Eyes</item>
-        <item>Lips</item>
+        <item>Foundation</item>
+        <item>Blush</item>
+        <item>Eyeshadows</item>
+        <item>Lipsticks</item>
     </string-array>
     <string-array name="sort_type_array">
         <item>Time</item>
@@ -94,9 +95,10 @@
 
     <string-array name="product_type_array">
         <item>All</item>
-        <item>Face</item>
-        <item>Eyes</item>
-        <item>Lips</item>
+        <item>Foundation</item>
+        <item>Blush</item>
+        <item>Eyeshadows</item>
+        <item>Lipsticks</item>
     </string-array>
 
     <string-array name="steps_titles">
@@ -206,9 +208,9 @@
 
     <!--activity_colorize_face-->
     <string name="blush_text">Blush</string>
-    <string name="eye_text">Eyeshadow</string>
-    <string name="rouge_text">Rouge</string>
-    <string name="lip_text">Lipstick</string>
+    <string name="eye_text">Eyeshadows</string>
+    <string name="rouge_text">Foundation</string>
+    <string name="lip_text">Lipsticks</string>
     <string name="compare_btn_text">Compare</string>
 
     <!--activity_shop_location-->

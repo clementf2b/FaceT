@@ -95,11 +95,13 @@ public class MainActivity extends AppCompatActivity {
     private NavigationView view;
     private Map<String, Product> mProducts = new HashMap<String, Product>();
     private Map<String, Brand> mBrand = new HashMap<String, Brand>();
+    private List<String> brandList = new ArrayList<>();
     private int order = 1;
     private int categoryResult = 0;
     private int sort = 0;
     private Spinner filterSpinner;
     private Spinner orderSpinner;
+    private int brandResult = 0;
     private static int firstTime = 0;
     private Map<String, Product> mSortedProducts = new HashMap<String, Product>();
     private ProductAdapter mProductAdapter;
@@ -107,6 +109,13 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private SearchView searchView;
     private MenuItem mMenuItem;
+    private int[] tabIcons = {
+            R.drawable.foundation,
+            R.drawable.blush,
+            R.drawable.eyeshadow,
+            R.drawable.lipstick
+    };
+    private List<String> brandIDList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "Network connected");
         } else {
             //Send a warning message to the user
-            Snackbar snackbar = Snackbar.make(activity_main_layout ,"No Internet Access", Snackbar.LENGTH_LONG);
+            Snackbar snackbar = Snackbar.make(activity_main_layout, "No Internet Access", Snackbar.LENGTH_LONG);
             snackbar.show();
         }
         //start
@@ -205,6 +214,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.addTab(tabLayout.newTab().setText(category[1]));
         tabLayout.addTab(tabLayout.newTab().setText(category[2]));
         tabLayout.addTab(tabLayout.newTab().setText(category[3]));
+        tabLayout.addTab(tabLayout.newTab().setText(category[4]));
 
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -223,6 +233,10 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "Tab " + tabLayout.getSelectedTabPosition(), Toast.LENGTH_SHORT).show();
                 } else if (tabLayout.getSelectedTabPosition() == 3) {
                     categoryResult = 3;
+                    setupProductList();
+                    Toast.makeText(MainActivity.this, "Tab " + tabLayout.getSelectedTabPosition(), Toast.LENGTH_SHORT).show();
+                } else if (tabLayout.getSelectedTabPosition() == 4) {
+                    categoryResult = 4;
                     setupProductList();
                     Toast.makeText(MainActivity.this, "Tab " + tabLayout.getSelectedTabPosition(), Toast.LENGTH_SHORT).show();
                 }
@@ -427,34 +441,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        filterSpinner = (Spinner) findViewById(R.id.shop_filter_spinner);
         Resources res = getResources();
-
-        final String[] category = res.getStringArray(R.array.category_type_array);
-        final ArrayAdapter<CharSequence> categoryList = ArrayAdapter.createFromResource(MainActivity.this,
-                R.array.category_type_array,
-                android.R.layout.simple_spinner_dropdown_item);
-        filterSpinner.setSelection(categoryResult);
-        filterSpinner.setAdapter(categoryList);
-
-        filterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                TextView tmpView = (TextView) filterSpinner.getSelectedView().findViewById(android.R.id.text1);
-                tmpView.setTextColor(Color.WHITE);
-                Toast.makeText(MainActivity.this, "You choose " + category[position], Toast.LENGTH_SHORT).show();
-                if (firstTime > 0) {
-                    categoryResult = position;
-                }
-                firstTime++;
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
         orderSpinner = (Spinner) findViewById(R.id.sort_spinner);
 
         final String[] sortString = res.getStringArray(R.array.sort_type_array);
@@ -516,9 +503,13 @@ public class MainActivity extends AppCompatActivity {
                 mDatabaseBrand.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
+                        brandIDList.clear();
+                        brandList.clear();
                         for (DataSnapshot ds : dataSnapshot.getChildren()) {
                             Brand result = ds.getValue(Brand.class);
                             mBrand.put(ds.getKey(), result);
+                            brandIDList.add(ds.getKey());
+                            brandList.add(result.getBrand());
                             Log.d(" brand " + ds.getKey(), result.toString());
 
                             Log.d(TAG, "going to filter");
@@ -526,7 +517,33 @@ public class MainActivity extends AppCompatActivity {
                             mProductAdapter = new ProductAdapter(mSortedProducts, getApplicationContext());
                             mProductList.setAdapter(mProductAdapter);
                             mProductAdapter.notifyDataSetChanged();
+
+
+                            filterSpinner = (Spinner) findViewById(R.id.shop_filter_spinner);
+
+                            final ArrayAdapter<String> categoryList = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, brandList);
+                            filterSpinner.setSelection(brandResult);
+                            filterSpinner.setAdapter(categoryList);
+
+                            filterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                @Override
+                                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                    TextView tmpView = (TextView) filterSpinner.getSelectedView().findViewById(android.R.id.text1);
+                                    tmpView.setTextColor(Color.WHITE);
+                                    Toast.makeText(MainActivity.this, "You choose " + brandList.get(position), Toast.LENGTH_SHORT).show();
+                                    if (firstTime > 0) {
+                                        brandResult = position;
+                                    }
+                                    firstTime++;
+                                }
+
+                                @Override
+                                public void onNothingSelected(AdapterView<?> parent) {
+
+                                }
+                            });
                         }
+
                     }
 
                     @Override
@@ -538,16 +555,54 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
+
         });
     }
 
     public void setupProductList() {
         // sort by name a - z
-        mSortedProducts = filterProduct(mProducts, categoryResult);
-        mSortedProducts = sortByComparator(mSortedProducts, sort, order);
-        mProductAdapter = new ProductAdapter(mSortedProducts, getApplicationContext());
-        mProductList.setAdapter(mProductAdapter);
-        mProductAdapter.notifyDataSetChanged();
+        if (mProducts.size() > 0) {
+            mSortedProducts = filterProduct(mProducts, categoryResult);
+
+            if (mSortedProducts.size() > 0)
+                mSortedProducts = filterBrand(mSortedProducts, brandResult);
+            if (mSortedProducts.size() > 0)
+                mSortedProducts = sortByComparator(mSortedProducts, sort, order);
+
+            mProductAdapter = new ProductAdapter(mSortedProducts, getApplicationContext());
+            mProductList.setAdapter(mProductAdapter);
+            mProductAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private Map<String, Product> filterBrand(Map<String, Product> unsortMap, int brandResult) {
+        List<Map.Entry<String, Product>> temp = new LinkedList<Map.Entry<String, Product>>(unsortMap.entrySet());
+
+        //compare temp
+        List<Map.Entry<String, Product>> temp2 = new LinkedList<Map.Entry<String, Product>>(unsortMap.entrySet());
+
+        int tempSize = temp2.size();
+        List<String> removeList = new ArrayList<>();
+
+        if (brandResult > 0) {
+            for (int i = 0; i < tempSize; i++) {
+                if (!brandIDList.get(brandResult).equals(temp2.get(i).getValue().getBrandID())) {
+                    Log.d(TAG + " remove : " + temp2.get(i).getKey(), brandIDList.get(categoryResult) + " : " + temp2.get(i).getValue().getBrandID());
+                    removeList.add(temp2.get(i).getKey());
+                }
+            }
+        }
+        Log.d("Filtered ", "Map");
+        // Maintaining insertion order with the help of LinkedList
+        Map<String, Product> filteredMap = new LinkedHashMap<String, Product>();
+        for (Map.Entry<String, Product> entry : temp) {
+            if (!removeList.contains(entry.getKey())) {
+                filteredMap.put(entry.getKey(), entry.getValue());
+                Log.d(entry.getKey(), entry.getValue().getProductName() + " : " + entry.getValue().getBrandID());
+            }
+        }
+
+        return filteredMap;
     }
 
     private Map<String, Product> filterProduct(Map<String, Product> unsortMap, int categoryResult) {
@@ -572,7 +627,7 @@ public class MainActivity extends AppCompatActivity {
         // Maintaining insertion order with the help of LinkedList
         Map<String, Product> filteredMap = new LinkedHashMap<String, Product>();
         for (Map.Entry<String, Product> entry : temp) {
-            if(!removeList.contains(entry.getKey())) {
+            if (!removeList.contains(entry.getKey())) {
                 filteredMap.put(entry.getKey(), entry.getValue());
                 Log.d(entry.getKey(), entry.getValue().getProductName() + " : " + entry.getValue().getCategory());
             }
