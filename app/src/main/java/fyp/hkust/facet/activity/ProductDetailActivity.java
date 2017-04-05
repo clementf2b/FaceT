@@ -183,6 +183,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
     private RecyclerView color_recycler_view;
     private TextView more_product_color_label;
     private ImageView delete_rating;
+    private List<String> colorSet = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -463,22 +464,31 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue() != null && colorNo == 0) {
-                    Log.i("product type one dataSnapshot.getValue()", dataSnapshot.getValue().toString());
-                    Log.i("product type one", colorNo + "");
-                    product_data_one = dataSnapshot.getValue(ProductTypeOne.class);
-                    if (product_data_one.getProductName() != null)
-                        product_name_text.setText(product_data_one.getProductName());
-                    if (product_data_one.getBrandID() != null)
-                        brand_name_text.setText(product_data_one.getBrandID());
-                    if (product_data_one.getDescription() != null)
-                        descTextview.setText(product_data_one.getDescription());
-                    if (product_data_one.getUid() != null)
-                        product_owner_id = product_data_one.getUid();
-                    if (product_data_one.getCategory() != null)
-                        category_type_name_text.setText(product_data_one.getCategory());
+                    Log.i("product type two dataSnapshot.getValue()", dataSnapshot.getValue().toString());
+                    Log.i("product type two", colorNo + "");
+                    product_data_two = dataSnapshot.getValue(ProductTypeTwo.class);
+                    if (product_data_two.getProductName() != null)
+                        product_name_text.setText(product_data_two.getProductName());
+                    if (product_data_two.getBrandID() != null)
+                        brand_name_text.setText(product_data_two.getBrandID());
+                    if (product_data_two.getDescription() != null)
+                        descTextview.setText(product_data_two.getDescription());
+                    if (product_data_two.getUid() != null)
+                        product_owner_id = product_data_two.getUid();
+                    if (product_data_two.getCategory() != null)
+                        category_type_name_text.setText(product_data_two.getCategory());
 
-                    if (product_data_one.getColor() != null) {
-                        Log.d(TAG + " color", product_data_one.getColor().toString() + " : " + product_data_one.getColor().get(0));
+                    if (product_data_two.getColor() != null) {
+                        Log.d(TAG + " color", product_data_two.getColor().get(0).toString() + " : " + product_data_two.getColor().get(0).get(0));
+                        for(int i = 0;i<product_data_two.getColor().size();i++)
+                        {
+                            for(int j = 0;j<product_data_two.getColor().get(i).size();j++)
+                            {
+                                colorSet.add(product_data_two.getColor().get(i).get(j));
+                            }
+                        }
+                        Log.d(TAG, product_data_two.getColor().toString());
+
                         color_recycler_view = (RecyclerView) findViewById(R.id.color_recycler_view);
                         color_recycler_view.setLayoutManager(new GridLayoutManager(getApplicationContext(), 6));//这里用线性宫格显示 类似于grid view
                         color_recycler_view.setAdapter(new RecyclerAdapter());
@@ -490,13 +500,14 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                         });
 
                     }
-                    if (product_data_one.getProductImage() != null && product_data_one.getProductImage().length() > 0) {
+
+                    if (product_data_two.getProductImage() != null && product_data_two.getProductImage().length() > 0) {
                         product_detail_loading_indicator.setVisibility(View.VISIBLE);
                         Ion.with(detail_product_image)
                                 .placeholder(R.mipmap.app_icon)
                                 .error(R.mipmap.app_icon)
                                 .animateIn(animFadein)
-                                .load(product_data_one.getProductImage());
+                                .load(product_data_two.getProductImage());
                     }
                 } else if (dataSnapshot.getValue() != null && colorNo == 1) {
                     Log.i("product type two dataSnapshot.getValue()", dataSnapshot.getValue().toString());
@@ -659,7 +670,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         @Override
         public void onBindViewHolder(ViewHolder viewHolder, int i) {
             if (colorNo == 0)
-                viewHolder.colorImage.setColorFilter(Color.parseColor(product_data_one.getColor().get(i)));
+                viewHolder.colorImage.setColorFilter(Color.parseColor(colorSet.get(i)));
             else
                 viewHolder.colorImage.setColorFilter(Color.parseColor(product_data_two.getColor().get(0).get(i)));
         }
@@ -667,8 +678,8 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         @Override
         public int getItemCount() {
             if (colorNo == 0) {
-                Log.d(TAG + " product_data_one size", product_data_one.getColor().size() + " ");
-                return product_data_one.getColor().size();
+                Log.d(TAG + " product_data_one size",colorSet.size()+"");
+                return colorSet.size();
             } else {
                 Log.d(TAG + " product_data_two size", product_data_two.getColor().get(0).size() + " ");
                 return product_data_two.getColor().get(0).size();
