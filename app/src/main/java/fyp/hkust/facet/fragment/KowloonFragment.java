@@ -25,7 +25,7 @@ import fyp.hkust.facet.model.Shop;
 
 public class KowloonFragment extends Fragment {
 
-    private List<Shop> shopList = new ArrayList<>();
+    private List<Shop> shopList;
     private RecyclerView recyclerView;
     private ShopsAdapter mAdapter;
     private View view;
@@ -46,46 +46,39 @@ public class KowloonFragment extends Fragment {
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_kowloon);
 
+        shopList = new ArrayList<>();
         mAdapter = new ShopsAdapter(shopList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(view.getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
-        prepareMovieData();
+        prepareShopData();
         return view;
     }
 //
 //    String shopName, String shopAddress, String shopDistrict, String shopImage, Double lantitide, Double longtitude
-    private void prepareMovieData() {
-        Shop shop = new Shop ("Sasa 1", "10 A, 123 Building, Llm Garden, ABCD Street, Hang Hau", "Hang Hau",
+    private void prepareShopData() {
+        Shop shop = new Shop ("Sasa 1", "10 A, 123 Building, Llm Garden, ABCD Street, Hang Hau", "Mong Kok",
                     "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcTTZ6kP7VzNmI3nSl7AZW0AI02EsrDaHg6CPPiFJoEXIJXvAJb2",
                     22.337586, 114.265288);
         shopList.add(shop);
 
-        Log.d("error", "1");
-
-        shop = new Shop ("Sasa 2", "10 A, 123 Building, Llm Garden, ABCD Street, Hang Hau", "Hang Hau",
+        shop = new Shop ("Sasa 2", "10 A, 123 Building, Llm Garden, ABCD Street, Hang Hau", "Mong Kok",
                 "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcTTZ6kP7VzNmI3nSl7AZW0AI02EsrDaHg6CPPiFJoEXIJXvAJb2",
                 22.337586, 114.265288);
         shopList.add(shop);
 
-        Log.d("error", "2");
-
-        shop = new Shop ("Sasa 3", "10 A, 123 Building, Llm Garden, ABCD Street, Hang Hau", "Hang Hau",
+        shop = new Shop ("Sasa 3", "10 A, 123 Building, Llm Garden, ABCD Street, Hang Hau", "Mong Kok",
                 "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcTTZ6kP7VzNmI3nSl7AZW0AI02EsrDaHg6CPPiFJoEXIJXvAJb2",
                 22.337586, 114.265288);
         shopList.add(shop);
 
-        Log.d("error", "3");
-
-        shop = new Shop ("Sasa 4", "10 A, 123 Building, Llm Garden, ABCD Street, Hang Hau", "Hang Hau",
+        shop = new Shop ("Sasa 4", "10 A, 123 Building, Llm Garden, ABCD Street, Hang Hau", "Mong Kok",
                 "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcTTZ6kP7VzNmI3nSl7AZW0AI02EsrDaHg6CPPiFJoEXIJXvAJb2",
                 22.337586, 114.265288);
         shopList.add(shop);
 
-
-
-        Log.d("shop", shopList.size()+"");
+        Log.d("shop_kow", shopList.size()+"");
 
         mAdapter.notifyDataSetChanged();
     }
