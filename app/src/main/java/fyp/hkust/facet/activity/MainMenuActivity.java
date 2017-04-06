@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -28,6 +29,7 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -62,6 +64,7 @@ public class MainMenuActivity extends AppCompatActivity {
     private ImageButton favBtn;
     private int buttonNumber = 0;
     private String captureImageFullPath = null;
+    private boolean doubleBackToExitPressedOnce = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +83,7 @@ public class MainMenuActivity extends AppCompatActivity {
                     WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
                     WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
+
         Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
         FontManager.markAsIconContainer(findViewById(R.id.activity_main_menu_layout), fontType);
 
@@ -159,6 +163,24 @@ public class MainMenuActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce=false;
+            }
+        }, 2000);
+    }
 
     private void showAlertDialog() {
 

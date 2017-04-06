@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ContextThemeWrapper;
@@ -1172,6 +1174,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
             emojiPopup.dismiss();
         } else {
             super.onBackPressed();
+            this.finish();
         }
     }
 

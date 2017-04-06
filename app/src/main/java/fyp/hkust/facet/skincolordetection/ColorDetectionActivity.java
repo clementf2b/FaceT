@@ -182,7 +182,7 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
 //            originalBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.test2);
             //get the image from intent
             Random rand = new Random();
-            n = rand.nextInt(11) + 1;
+            n = rand.nextInt(7) + 1;
             //12 is the maximum and the 1 is our minimum
             /*recycling unused objects in order to
             make the memory they currently occupy available for quick reuse.*/

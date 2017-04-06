@@ -8,6 +8,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BlurMaskFilter;
@@ -23,6 +24,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.Shader;
+import android.graphics.Typeface;
 import android.graphics.Xfermode;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -33,28 +35,47 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutCompat;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.pwittchen.swipe.library.Swipe;
 import com.github.pwittchen.swipe.library.SwipeEvent;
 import com.github.pwittchen.swipe.library.SwipeListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.melnykov.fab.FloatingActionButton;
 import com.rtugeek.android.colorseekbar.ColorSeekBar;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 import com.tzutalin.dlib.Constants;
 import com.tzutalin.dlib.FaceDet;
 import com.tzutalin.dlib.VisionDetRet;
@@ -82,12 +103,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import fyp.hkust.facet.R;
 
+import fyp.hkust.facet.model.Brand;
+import fyp.hkust.facet.model.Product;
+import fyp.hkust.facet.util.FontManager;
 import fyp.hkust.facet.util.PinchImageView;
 
 import id.zelory.compressor.Compressor;
@@ -116,7 +144,7 @@ public class ColorizeFaceActivity extends AppCompatActivity {
     private Bitmap temp = null;
     private FloatingActionButton drawbtn;
     private ImageButton show_hide_layout_button;
-    private CircleImageView face_button, eye_button, rouge_button, lip_button;
+    private Button foundation_button, eyeshadow_button, blush_button, lipstick_button;
     private SeekBar barHeightSeekBar, thumbHeightSeekBar;
     private ColorSeekBar mColorSeekBar;
     private boolean checkExpend = true;
@@ -174,6 +202,12 @@ public class ColorizeFaceActivity extends AppCompatActivity {
     private int currentImage = 0;
 
     private List<Bitmap> savedMakeUp = new ArrayList<>();
+    private RelativeLayout foundation_layout, blush_layout, eyeshadow_layout, lipstick_layout;
+    private RecyclerView makeup_product_list, makeup_color_list;
+    private int categoryResult;
+    private int stepCount = 0;
+    private DatabaseReference mDatabase;
+    private Map<String, Product> mProducts = new HashMap<String, Product>();
 
     /**
      * Checks if the app has permission to write to device storage
@@ -248,8 +282,11 @@ public class ColorizeFaceActivity extends AppCompatActivity {
 //        Display display = getWindowManager().getDefaultDisplay();
 //        Point size = new Point();
 //        display.getSize(size);
-        float width = 760;
-        float height = 1080;
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        float width = size.x * 0.7f;
+        float height = size.y * 0.7f;
         Log.d(TAG + "screen ", width + " : " + height);
 
         imageView = (PinchImageView) this.findViewById(R.id.imageView1);
@@ -287,52 +324,11 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         temp = originalImg.copy(bitmapConfig, true);
         bitmap = originalImg.copy(bitmapConfig, true);
 
-        makeup_select_layout = (LinearLayout) findViewById(R.id.makeup_select_layout);
-        face_button = (CircleImageView) this.findViewById(R.id.face_button);
-        eye_button = (CircleImageView) this.findViewById(R.id.eye_button);
-        rouge_button = (CircleImageView) this.findViewById(R.id.rouge_button);
-        lip_button = (CircleImageView) this.findViewById(R.id.lip_button);
+        databaseGetData();
+        setup();
 
-        show_hide_layout_button = (ImageButton) this.findViewById(R.id.show_hide_layout_button);
         drawbtn = (FloatingActionButton) this.findViewById(R.id.drawbtn);
         facebtn = (FloatingActionButton) this.findViewById(R.id.facebtn);
-
-        show_hide_layout_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (checkExpend == true) {
-                    makeup_select_layout.animate()
-                            .translationY(0)
-                            .alpha(0.0f)
-                            .setListener(new AnimatorListenerAdapter() {
-                                @Override
-                                public void onAnimationEnd(Animator animation) {
-                                    super.onAnimationEnd(animation);
-                                    makeup_select_layout.setVisibility(View.GONE);
-                                }
-                            });
-
-                    show_hide_layout_button.setImageResource(R.mipmap.ic_expand_more_black_24dp);
-                    checkExpend = false;
-                } else if (checkExpend == false) {
-                    makeup_select_layout.animate()
-                            .translationY(1)
-                            .alpha(1.0f)
-                            .setListener(new AnimatorListenerAdapter() {
-                                @Override
-                                public void onAnimationStart(Animator animation) {
-                                    super.onAnimationEnd(animation);
-                                    makeup_select_layout.setVisibility(View.VISIBLE);
-                                }
-                            });
-
-                    show_hide_layout_button.setImageResource(R.mipmap.ic_expand_less_black_24dp);
-                    checkExpend = true;
-                }
-
-            }
-        });
 
         swipe = new Swipe();
         swipe.addListener(new SwipeListener() {
@@ -467,6 +463,105 @@ public class ColorizeFaceActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void setup() {
+        Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
+        FontManager.markAsIconContainer(findViewById(R.id.makeup_select_layout), fontType);
+
+        makeup_color_list = (RecyclerView) findViewById(R.id.makeup_color_list);
+        makeup_product_list = (RecyclerView) findViewById(R.id.makeup_product_list);
+
+        makeup_select_layout = (LinearLayout) findViewById(R.id.makeup_select_layout);
+//        foundation_layout = (RelativeLayout) findViewById(R.id.foundation_layout);
+//        blush_layout = (RelativeLayout) findViewById(R.id.blush_layout);
+//        eyeshadow_layout = (RelativeLayout) findViewById(R.id.eyeshadow_layout);
+//        lipstick_layout = (RelativeLayout) findViewById(R.id.lipstick_layout);
+
+        foundation_button = (Button) this.findViewById(R.id.foundation_button);
+        foundation_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                categoryResult = 0;
+                viewControl(makeup_product_list, makeup_color_list, makeup_select_layout, 1);
+            }
+        });
+
+        eyeshadow_button = (Button) this.findViewById(R.id.eyeshadow_button);
+        eyeshadow_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                categoryResult = 1;
+                viewControl(makeup_product_list, makeup_color_list, makeup_select_layout, 1);
+            }
+        });
+
+        blush_button = (Button) this.findViewById(R.id.blush_button);
+        blush_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                categoryResult = 2;
+                viewControl(makeup_product_list, makeup_color_list, makeup_select_layout, 1);
+            }
+        });
+
+        lipstick_button = (Button) this.findViewById(R.id.lipstick_button);
+        lipstick_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                categoryResult = 3;
+                viewControl(makeup_product_list, makeup_color_list, makeup_select_layout, 1);
+            }
+        });
+
+        show_hide_layout_button = (ImageButton) this.findViewById(R.id.show_hide_layout_button);
+
+        show_hide_layout_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (stepCount) {
+                    case 0:
+                        // type select
+
+                        break;
+                    case 1:
+                        //product select
+                        viewControl(makeup_select_layout, makeup_product_list, makeup_color_list, 0);
+                        break;
+                    case 2:
+                        //color select layout
+                        viewControl(makeup_product_list, makeup_color_list, makeup_select_layout, 1);
+                        break;
+                }
+            }
+        });
+    }
+
+    private void viewControl(View view1, View view2, View view3, int step) {
+        view1.setVisibility(View.VISIBLE);
+        view2.setVisibility(View.GONE);
+        view3.setVisibility(View.GONE);
+        stepCount = step;
+    }
+
+    private void databaseGetData() {
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("Product");
+        mDatabase.keepSynced(true);
+        mDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    Product result = ds.getValue(Product.class);
+                    mProducts.put(ds.getKey(), result);
+                    Log.d(" product " + ds.getKey(), result.toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+
+        });
     }
 
     @Override
@@ -916,6 +1011,12 @@ public class ColorizeFaceActivity extends AppCompatActivity {
 // HSV back to BGR
         Imgproc.cvtColor(mHsvMat, mRgbMat, Imgproc.COLOR_HSV2BGR, channelCount);
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        this.finish();
     }
 
     private void detectRegion() {
@@ -1591,5 +1692,148 @@ public class ColorizeFaceActivity extends AppCompatActivity {
 
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+
+    private Map<String, Product> filterProduct(Map<String, Product> unsortMap, int categoryResult) {
+        List<Map.Entry<String, Product>> temp = new LinkedList<Map.Entry<String, Product>>(unsortMap.entrySet());
+        //compare temp
+        List<Map.Entry<String, Product>> temp2 = new LinkedList<Map.Entry<String, Product>>(unsortMap.entrySet());
+
+        int tempSize = temp2.size();
+        List<String> removeList = new ArrayList<>();
+        Resources res = getResources();
+        final String[] categoryArray = res.getStringArray(R.array.category_type_array);
+
+        if (categoryResult > 0) {
+            for (int i = 0; i < tempSize; i++) {
+                if (!categoryArray[categoryResult].equals(temp2.get(i).getValue().getCategory())) {
+                    Log.d(TAG + " remove : " + temp2.get(i).getKey(), categoryArray[categoryResult] + " : " + temp2.get(i).getValue().getCategory());
+                    removeList.add(temp2.get(i).getKey());
+                }
+            }
+        }
+        Log.d("Filtered ", "Map");
+        // Maintaining insertion order with the help of LinkedList
+        Map<String, Product> filteredMap = new LinkedHashMap<String, Product>();
+        for (Map.Entry<String, Product> entry : temp) {
+            if (!removeList.contains(entry.getKey())) {
+                filteredMap.put(entry.getKey(), entry.getValue());
+                Log.d(entry.getKey(), entry.getValue().getProductName() + " : " + entry.getValue().getCategory());
+            }
+        }
+
+        return filteredMap;
+    }
+
+    public class ProductAdapter extends RecyclerView.Adapter<MainActivity.ProductViewHolder> {
+
+        private Map<String, Product> mResultProducts = new HashMap<>();
+        // Allows to remember the last item shown on screen
+        private int lastPosition = -1;
+        private Context context;
+
+        public ProductAdapter(Map<String, Product> mProducts, Context c) {
+            this.context = c;
+            this.mResultProducts = mProducts;
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public MainActivity.ProductViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            Context context = parent.getContext();
+            View view = getLayoutInflater().inflate(R.layout.product_row, parent, false);
+            MainActivity.ProductViewHolder viewHolder = new MainActivity.ProductViewHolder(view);
+            return viewHolder;
+        }
+
+        @Override
+        public void onBindViewHolder(MainActivity.ProductViewHolder viewHolder, int position) {
+            List<Product> values = new ArrayList<>(mResultProducts.values());
+            final Product model = values.get(position);
+            List<String> keys = new ArrayList<>(mResultProducts.keySet());
+            final String product_id = keys.get(position);
+
+            Log.d(TAG + " product_id", product_id);
+            Log.d(TAG + " product name", model.getProductName());
+
+            Log.d(TAG, "loading view " + position);
+
+//            Log.d(TAG + " product id ", product_id);
+            viewHolder.setProductName(model.getProductName());
+            viewHolder.setImage(getApplicationContext(), model.getProductImage());
+            viewHolder.setUid(model.getUid());
+
+            viewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+//                    Intent productDetailIntent = new Intent();
+//                    productDetailIntent.setClass(MainActivity.this, ProductDetailActivity.class);
+//                    productDetailIntent.putExtra("product_id", product_id);
+//                    Log.d(TAG + " product_id", product_id);
+//                    productDetailIntent.putExtra("colorNo", model.getColorNo());
+//                    Log.d(TAG + " colorNo", model.getColorNo() + "");
+//                    startActivity(productDetailIntent);
+                }
+            });
+            setAnimation(viewHolder.itemView, position);
+            Log.d(TAG, "finish loading view");
+
+        }
+
+        /**
+         * Here is the key method to apply the animation
+         */
+        private void setAnimation(View viewToAnimate, int position) {
+            // If the bound view wasn't previously displayed on screen, it's animated
+            if (position > lastPosition) {
+                Animation animation = AnimationUtils.loadAnimation(context, android.R.anim.fade_in);
+                animation.setDuration(500);
+                viewToAnimate.startAnimation(animation);
+                lastPosition = position;
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return mResultProducts == null ? 0 : mResultProducts.size();
+        }
+    }
+
+    public static class ProductViewHolder extends RecyclerView.ViewHolder {
+
+        View mView;
+        private Typeface customTypeface = Typeface.createFromAsset(itemView.getContext().getAssets(), FontManager.APP_FONT);
+
+        public ProductViewHolder(View itemView) {
+            super(itemView);
+            mView = itemView;
+        }
+
+        public void setProductName(String productName) {
+            TextView product_title = (TextView) mView.findViewById(R.id.p_title);
+            product_title.setText(productName);
+            product_title.setTypeface(customTypeface, Typeface.BOLD);
+        }
+
+        public void setImage(final Context ctx, final String image) {
+            final ImageView post_image = (ImageView) mView.findViewById(R.id.product_image);
+            Picasso.with(ctx).load(image).networkPolicy(NetworkPolicy.OFFLINE).into(post_image, new Callback() {
+                @Override
+                public void onSuccess() {
+                    Log.d(TAG, "image loading success !");
+                }
+
+                @Override
+                public void onError() {
+                    Log.d(TAG, "image loading error !");
+                    Picasso.with(ctx)
+                            .load(image)
+                            .resize(100, 100)
+                            .centerCrop()
+                            .into(post_image);
+                }
+            });
+        }
     }
 }

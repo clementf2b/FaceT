@@ -219,6 +219,7 @@ public class ProfileEditActivity extends AppCompatActivity {
             emojiPopup.dismiss();
         } else {
             super.onBackPressed();
+            this.finish();
         }
     }
 
