@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/tools"
+    android:id="@+id/makeup_product_color_card"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal|center_vertical"
+    android:layout_marginBottom="5dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginTop="5dp"
+    card_view:cardCornerRadius="10dp">
+
+    <LinearLayout
+        android:id="@+id/select_color_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|center_vertical">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/makeup_product_color_image1"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_margin="8dp"
+            android:src="@color/gradient_end"
+            app:civ_border_color="@color/profile_edit_bg"
+            app:civ_border_width="1dp" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/makeup_product_color_image2"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_margin="8dp"
+            android:layout_toRightOf="@+id/product_color_image1"
+            android:src="@color/gradient_end"
+            android:visibility="gone"
+            app:civ_border_color="@color/profile_edit_bg"
+            app:civ_border_width="1dp" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/makeup_product_color_image3"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_margin="8dp"
+            android:layout_toRightOf="@+id/product_color_image2"
+            android:src="@color/gradient_end"
+            android:visibility="gone"
+            app:civ_border_color="@color/profile_edit_bg"
+            app:civ_border_width="1dp" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/makeup_product_color_image4"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_margin="8dp"
+            android:layout_toRightOf="@+id/product_color_image3"
+            android:src="@color/gradient_end"
+            android:visibility="gone"
+            app:civ_border_color="@color/profile_edit_bg"
+            app:civ_border_width="1dp" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/makeup_product_color_image5"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_margin="8dp"
+            android:layout_toRightOf="@+id/product_color_image4"
+            android:layout_weight="1"
+            android:src="@color/gradient_end"
+            android:visibility="gone"
+            app:civ_border_color="@color/profile_edit_bg"
+            app:civ_border_width="1dp" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/makeup_product_color_image6"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_margin="8dp"
+            android:layout_toRightOf="@+id/product_color_image5"
+            android:src="@color/gradient_end"
+            android:visibility="gone"
+            app:civ_border_color="@color/profile_edit_bg"
+            app:civ_border_width="1dp" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/makeup_product_color_image7"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_margin="5dp"
+            android:layout_toRightOf="@+id/product_color_image6"
+            android:src="@color/gradient_end"
+            android:visibility="gone"
+            app:civ_border_color="@color/profile_edit_bg"
+            app:civ_border_width="1dp" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/makeup_product_color_image8"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_margin="8dp"
+            android:layout_toRightOf="@+id/product_color_image7"
+            android:src="@color/gradient_end"
+            android:visibility="gone"
+            app:civ_border_color="@color/profile_edit_bg"
+            app:civ_border_width="1dp" />
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

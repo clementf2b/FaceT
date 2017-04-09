@@ -1,11 +1,11 @@
 package fyp.hkust.facet.activity;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ArgbEvaluator;
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -27,6 +27,7 @@ import android.graphics.Shader;
 import android.graphics.Typeface;
 import android.graphics.Xfermode;
 import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -34,14 +35,20 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutCompat;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
@@ -54,6 +61,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -96,15 +104,16 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -113,8 +122,9 @@ import java.util.Map;
 import de.hdodenhof.circleimageview.CircleImageView;
 import fyp.hkust.facet.R;
 
-import fyp.hkust.facet.model.Brand;
-import fyp.hkust.facet.model.Product;
+import fyp.hkust.facet.fragment.MakeupProductFragment;
+import fyp.hkust.facet.fragment.MultipleColorFragment;
+import fyp.hkust.facet.model.ProductTypeTwo;
 import fyp.hkust.facet.util.FontManager;
 import fyp.hkust.facet.util.PinchImageView;
 
@@ -138,8 +148,8 @@ public class ColorizeFaceActivity extends AppCompatActivity {
     private float mRelativeFaceSize = 0.2f;
     private int mAbsoluteFaceSize = 0;
 
-    private PinchImageView imageView = null;
     private Bitmap basicImg = null;
+    private PinchImageView imageView = null;
     private Bitmap originalImg = null;
     private Bitmap temp = null;
     private FloatingActionButton drawbtn;
@@ -172,7 +182,6 @@ public class ColorizeFaceActivity extends AppCompatActivity {
             android.Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
     private ProgressDialog progressDialog;
-    private FloatingActionButton facebtn;
     private Mat mRgbMat;
     private Mat mHsvMat;
     private Mat mMaskMat;
@@ -198,16 +207,36 @@ public class ColorizeFaceActivity extends AppCompatActivity {
     private int newWidth;
     private int newHeight;
     FaceDet mFaceDet;
-
-    private int currentImage = 0;
-
-    private List<Bitmap> savedMakeUp = new ArrayList<>();
     private RelativeLayout foundation_layout, blush_layout, eyeshadow_layout, lipstick_layout;
     private RecyclerView makeup_product_list, makeup_color_list;
     private int categoryResult;
     private int stepCount = 0;
     private DatabaseReference mDatabase;
-    private Map<String, Product> mProducts = new HashMap<String, Product>();
+    private Map<String, ProductTypeTwo> mProducts = new HashMap<>();
+    private Map<String, ProductTypeTwo> mSortedProducts = new HashMap<>();
+    private ProductAdapter mProductAdapter;
+    private Long colorNo;
+    private String selectedProductID;
+    private Button compare_button;
+    private List<String> colorSet = new ArrayList<>();
+    private ImageView expand_color_list_button;
+    private Boolean firstTime = true;
+    private String selectedFoundationID, selectedBlushID, selectedEyeshadowID, selectedLipstickID;
+    private int colorPosition;
+    private List<String> selectedColor = new ArrayList<>();
+    private Button eyeshadow_method1, eyeshadow_method2, eyeshadow_method3, eyeshadow_method4;
+    private LinearLayout eyeshadow_method_layout;
+    // number,bitmap
+    private Map<Integer, Bitmap> saveBitmap = new HashMap<>();
+    // number,color position
+    private Map<String, Integer> saveBitmapColorList = new HashMap<>();
+    // number,(ID,category)
+    private Map<Integer, List<String>> saveBitmapList = new HashMap<>();
+    // category , number
+    private Map<String, Integer> saveMakeupList = new HashMap<>();
+    private int makeupCount = 0;
+    private ImageButton back_button, undo_button, redo_button, save_button, apply_list_button;
+    private RelativeLayout activity_colorize_face_layout;
 
     /**
      * Checks if the app has permission to write to device storage
@@ -285,11 +314,15 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        float width = size.x * 0.7f;
-        float height = size.y * 0.7f;
+        float width = size.x;
+        float height = size.y;
         Log.d(TAG + "screen ", width + " : " + height);
 
         imageView = (PinchImageView) this.findViewById(R.id.imageView1);
+        android.view.ViewGroup.LayoutParams layoutParams = imageView.getLayoutParams();
+        layoutParams.width = (int) (width * 0.7);
+        layoutParams.height = (int) (height * 0.7);
+        imageView.setLayoutParams(layoutParams);
 
         final File f = new File(path);
 //        originalBitmap = BitmapFactory.decodeFile(f.getAbsolutePath());
@@ -311,6 +344,7 @@ public class ColorizeFaceActivity extends AppCompatActivity {
 
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = 1;
+
         originalImg = BitmapFactory.decodeFile(path, options);
         android.graphics.Bitmap.Config bitmapConfig = originalImg.getConfig();
         // set default bitmap config if none
@@ -328,7 +362,6 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         setup();
 
         drawbtn = (FloatingActionButton) this.findViewById(R.id.drawbtn);
-        facebtn = (FloatingActionButton) this.findViewById(R.id.facebtn);
 
         swipe = new Swipe();
         swipe.addListener(new SwipeListener() {
@@ -357,20 +390,48 @@ public class ColorizeFaceActivity extends AppCompatActivity {
             @Override
             public void onSwipedUp(final MotionEvent event) {
 //                Log.d(TAG, "SWIPED_UP");
-                makeup_select_layout.animate()
-                        .translationY(1)
-                        .alpha(1.0f)
-                        .setListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationStart(Animator animation) {
-                                super.onAnimationEnd(animation);
-                                makeup_select_layout.setVisibility(View.VISIBLE);
-                            }
-                        });
+                switch (stepCount) {
+                    case 0:
+                        // type select
+                        makeup_select_layout.animate()
+                                .translationY(0)
+                                .alpha(1.0f)
+                                .start();
+                        makeup_select_layout.setVisibility(View.VISIBLE);
+                        makeup_product_list.setVisibility(View.GONE);
+                        makeup_color_list.setVisibility(View.GONE);
+                        eyeshadow_method_layout.setVisibility(View.GONE);
+                        break;
+                    case 1:
+                        //product select
+                        makeup_product_list.animate()
+                                .translationY(0)
+                                .alpha(1.0f)
+                                .start();
+                        makeup_select_layout.setVisibility(View.GONE);
+                        makeup_product_list.setVisibility(View.VISIBLE);
+                        makeup_color_list.setVisibility(View.GONE);
+                        eyeshadow_method_layout.setVisibility(View.GONE);
+                        break;
+                    case 2:
+                        //color select layout
+                        makeup_color_list.animate()
+                                .translationY(0)
+                                .alpha(1.0f)
+                                .start();
+                        makeup_select_layout.setVisibility(View.GONE);
+                        makeup_product_list.setVisibility(View.GONE);
+                        makeup_color_list.setVisibility(View.VISIBLE);
+                        if (categoryResult == 3)
+                            eyeshadow_method_layout.setVisibility(View.VISIBLE);
+                        else
+                            eyeshadow_method_layout.setVisibility(View.GONE);
+                        break;
+                }
 
+                Log.d(TAG, stepCount + "");
                 show_hide_layout_button.setImageResource(R.mipmap.ic_expand_less_black_24dp);
                 checkExpend = true;
-
             }
 
             @Override
@@ -384,21 +445,19 @@ public class ColorizeFaceActivity extends AppCompatActivity {
                 makeup_select_layout.animate()
                         .translationY(0)
                         .alpha(0.0f)
-                        .setListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                super.onAnimationEnd(animation);
-                                makeup_select_layout.setVisibility(View.GONE);
-                            }
-                        });
+                        .start();
+                makeup_select_layout.setVisibility(View.GONE);
+                makeup_product_list.setVisibility(View.GONE);
+                makeup_color_list.setVisibility(View.GONE);
+                eyeshadow_method_layout.setVisibility(View.GONE);
 
                 show_hide_layout_button.setImageResource(R.mipmap.ic_expand_more_black_24dp);
                 checkExpend = false;
             }
         });
 
-
-        imageView.setOnTouchListener(new View.OnTouchListener() {
+        compare_button = (Button) findViewById(R.id.compare_button);
+        compare_button.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction() & MotionEvent.ACTION_MASK) {
@@ -407,8 +466,8 @@ public class ColorizeFaceActivity extends AppCompatActivity {
                         //=====Write down your Finger Pressed code here
                         //clear imageview
                         imageView.setImageBitmap(null);
-                        imageView.setImageBitmap(originalImg);
-                        Toast.makeText(getApplication(), "long touch image", Toast.LENGTH_SHORT).show();
+                        imageView.setImageBitmap(basicImg);
+//                        Toast.makeText(getApplication(), "long touch image", Toast.LENGTH_SHORT).show();
                         return true;
 
                     case MotionEvent.ACTION_UP:
@@ -435,64 +494,117 @@ public class ColorizeFaceActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 //                connectLipLine();
-                changeLipColor();
                 drawEyeShadowWithOneColorMethod1();
-                drawRouge();
-                lipLayer();
                 //mouth_lower_lip_left_contour 1- 3 : 39 - 41
 //                drawLocation(temp, drawCanvas);
                 Log.d(TAG + " point", j + " ");
                 j++;
                 imageView.setImageBitmap(temp);
-                savedMakeUp.add(temp);
-                currentImage++;
-                Log.d(TAG, savedMakeUp.size() + "");
             }
         });
-
-        facebtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                detectRegion();
-                detectRegion2();
-                imageView.setImageBitmap(null);
-                imageView.setImageBitmap(temp);
-                savedMakeUp.add(temp);
-                currentImage++;
-                Log.d(TAG, savedMakeUp.size() + "");
-            }
-        });
-
     }
 
     private void setup() {
         Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
         FontManager.markAsIconContainer(findViewById(R.id.makeup_select_layout), fontType);
-
+        activity_colorize_face_layout = (RelativeLayout) findViewById(R.id.activity_colorize_face_layout);
+        //toolbar button
+        back_button = (ImageButton) findViewById(R.id.back_button);
+        back_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        undo_button = (ImageButton) findViewById(R.id.undo_button);
+        redo_button = (ImageButton) findViewById(R.id.redo_button);
+        save_button = (ImageButton) findViewById(R.id.save_button);
+        save_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final View item = LayoutInflater.from(ColorizeFaceActivity.this).inflate(R.layout.save_image_layout, null);
+                final EditText editText = (EditText) item.findViewById(R.id.save_edittext);
+                String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
+                editText.setText("MakeupImage_" + timeStamp);
+                ImageView save_imageview = (ImageView) item.findViewById(R.id.save_imageview);
+                save_imageview.setImageBitmap(temp);
+                new AlertDialog.Builder(ColorizeFaceActivity.this)
+                        .setTitle("Set Image Name")
+                        .setView(item)
+                        .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                storeImage(temp, editText.getText().toString().trim());
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+            }
+        });
+        apply_list_button = (ImageButton) findViewById(R.id.apply_list_button);
+        apply_list_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MakeupProductFragment multipleColorFragment = new MakeupProductFragment();//Get Fragment Instance
+                Resources res = getResources();
+                final String[] categoryArray = res.getStringArray(R.array.category_type_array);
+                Bundle data = new Bundle();
+                if (selectedFoundationID != null && saveBitmapColorList.get(categoryArray[1]) != null) {
+                    data.putString("selectedFoundationID", selectedFoundationID);
+                    data.putInt("foundationColorPosition", saveBitmapColorList.get(categoryArray[1]).intValue());
+                }
+                if (selectedBlushID != null && saveBitmapColorList.get(categoryArray[2]) != null) {
+                    data.putString("selectedBlushID", selectedBlushID);
+                    data.putInt("blushColorPosition", saveBitmapColorList.get(categoryArray[2]).intValue());
+                    Log.d(TAG + "selectedBlushID", selectedBlushID + " " + saveBitmapColorList.get(categoryArray[2]).intValue());
+                }
+                if (selectedEyeshadowID != null && saveBitmapColorList.get(categoryArray[3]) != null) {
+                    data.putString("selectedEyeshadowID", selectedEyeshadowID);
+                    data.putInt("eyeshadowColorPosition", saveBitmapColorList.get(categoryArray[3]).intValue());
+                }
+                if (selectedLipstickID != null && saveBitmapColorList.get(categoryArray[4]) != null) {
+                    data.putString("selectedLipstickID", selectedLipstickID);
+                    data.putInt("lipstickColorPosition", saveBitmapColorList.get(categoryArray[4]).intValue());
+                }
+                multipleColorFragment.setArguments(data);//Finally set argument bundle to fragment
+                final FragmentManager fm = getFragmentManager();
+                multipleColorFragment.show(getFragmentManager(), "Apply Makeup List");
+            }
+        });
+        //bottom
+        expand_color_list_button = (ImageView) findViewById(R.id.expand_color_list_button);
         makeup_color_list = (RecyclerView) findViewById(R.id.makeup_color_list);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        llm.setOrientation(LinearLayoutManager.HORIZONTAL);
+        makeup_color_list.setLayoutManager(llm);
+        makeup_color_list.setItemAnimator(new DefaultItemAnimator());
+
         makeup_product_list = (RecyclerView) findViewById(R.id.makeup_product_list);
+        LinearLayoutManager llm2 = new LinearLayoutManager(this);
+        llm2.setOrientation(LinearLayoutManager.HORIZONTAL);
+        makeup_product_list.setLayoutManager(llm2);
+        makeup_product_list.setItemAnimator(new DefaultItemAnimator());
 
         makeup_select_layout = (LinearLayout) findViewById(R.id.makeup_select_layout);
-//        foundation_layout = (RelativeLayout) findViewById(R.id.foundation_layout);
-//        blush_layout = (RelativeLayout) findViewById(R.id.blush_layout);
-//        eyeshadow_layout = (RelativeLayout) findViewById(R.id.eyeshadow_layout);
-//        lipstick_layout = (RelativeLayout) findViewById(R.id.lipstick_layout);
+        eyeshadow_method_layout = (LinearLayout) findViewById(R.id.eyeshadow_method_layout);
+        eyeshadow_method1 = (Button) findViewById(R.id.eyeshadow_method1);
+        eyeshadow_method2 = (Button) findViewById(R.id.eyeshadow_method2);
+        eyeshadow_method3 = (Button) findViewById(R.id.eyeshadow_method3);
+        eyeshadow_method4 = (Button) findViewById(R.id.eyeshadow_method4);
 
         foundation_button = (Button) this.findViewById(R.id.foundation_button);
         foundation_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                categoryResult = 0;
-                viewControl(makeup_product_list, makeup_color_list, makeup_select_layout, 1);
-            }
-        });
-
-        eyeshadow_button = (Button) this.findViewById(R.id.eyeshadow_button);
-        eyeshadow_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
                 categoryResult = 1;
+                setupProductAdapter();
                 viewControl(makeup_product_list, makeup_color_list, makeup_select_layout, 1);
+                eyeshadow_method_layout.setVisibility(View.GONE);
             }
         });
 
@@ -501,7 +613,20 @@ public class ColorizeFaceActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 categoryResult = 2;
+                setupProductAdapter();
                 viewControl(makeup_product_list, makeup_color_list, makeup_select_layout, 1);
+                eyeshadow_method_layout.setVisibility(View.GONE);
+            }
+        });
+
+        eyeshadow_button = (Button) this.findViewById(R.id.eyeshadow_button);
+        eyeshadow_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                categoryResult = 3;
+                setupProductAdapter();
+                viewControl(makeup_product_list, makeup_color_list, makeup_select_layout, 1);
+                eyeshadow_method_layout.setVisibility(View.VISIBLE);
             }
         });
 
@@ -509,12 +634,15 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         lipstick_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                categoryResult = 3;
+                categoryResult = 4;
+                setupProductAdapter();
                 viewControl(makeup_product_list, makeup_color_list, makeup_select_layout, 1);
+                eyeshadow_method_layout.setVisibility(View.GONE);
             }
         });
 
         show_hide_layout_button = (ImageButton) this.findViewById(R.id.show_hide_layout_button);
+        viewControl(makeup_select_layout, makeup_product_list, makeup_color_list, 0);
 
         show_hide_layout_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -522,19 +650,23 @@ public class ColorizeFaceActivity extends AppCompatActivity {
                 switch (stepCount) {
                     case 0:
                         // type select
-
+                        viewControl(makeup_select_layout, makeup_product_list, makeup_color_list, 0);
+                        eyeshadow_method_layout.setVisibility(View.GONE);
                         break;
                     case 1:
                         //product select
                         viewControl(makeup_select_layout, makeup_product_list, makeup_color_list, 0);
+                        eyeshadow_method_layout.setVisibility(View.GONE);
                         break;
                     case 2:
                         //color select layout
                         viewControl(makeup_product_list, makeup_color_list, makeup_select_layout, 1);
+                        eyeshadow_method_layout.setVisibility(View.GONE);
                         break;
                 }
             }
         });
+
     }
 
     private void viewControl(View view1, View view2, View view3, int step) {
@@ -544,14 +676,25 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         stepCount = step;
     }
 
+    private void setupProductAdapter() {
+        if (mProducts.size() > 0) {
+            mSortedProducts = filterProduct(mProducts, categoryResult);
+
+            mProductAdapter = new ProductAdapter(mSortedProducts, getApplicationContext());
+            makeup_product_list.setAdapter(mProductAdapter);
+            mProductAdapter.notifyDataSetChanged();
+        }
+    }
+
     private void databaseGetData() {
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Product");
         mDatabase.keepSynced(true);
+
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    Product result = ds.getValue(Product.class);
+                    ProductTypeTwo result = ds.getValue(ProductTypeTwo.class);
                     mProducts.put(ds.getKey(), result);
                     Log.d(" product " + ds.getKey(), result.toString());
                 }
@@ -562,6 +705,7 @@ public class ColorizeFaceActivity extends AppCompatActivity {
             }
 
         });
+
     }
 
     @Override
@@ -624,10 +768,10 @@ public class ColorizeFaceActivity extends AppCompatActivity {
                             Log.d(TAG, count + " " + pointX + " : " + pointY);
                             count++;
 
-                            drawpoint(pointX, pointY, temp, canvas);
+//                            drawpoint(pointX, pointY, temp, canvas);
                         }
                         Log.d(TAG + " added landmark", count + "");
-
+                        detectRegion();
                     }
                 } else {
                     runOnUiThread(new Runnable() {
@@ -640,7 +784,7 @@ public class ColorizeFaceActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        imageView.setImageBitmap(originalImg);
+                        imageView.setImageBitmap(temp);
                         progressDialog.dismiss();
                     }
                 });
@@ -652,6 +796,7 @@ public class ColorizeFaceActivity extends AppCompatActivity {
 
     protected Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
         Bitmap resizedBitmap = Bitmap.createScaledBitmap(bm, newWidth, newHeight, true);
+        bm.recycle();
         return resizedBitmap;
     }
 
@@ -659,7 +804,7 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         Canvas drawCanvas = new Canvas(temp);
         Paint mPaint = new Paint();
 
-        int rougeLayer = 0x50FFFFFF;
+        int rougeLayer = 0x60FAFAFA;
         mPaint.setColor(rougeLayer);
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setStrokeJoin(Paint.Join.ROUND);    // set the join to round you want
@@ -714,28 +859,10 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         drawCanvas.restoreToCount(sc);
     }
 
-    private void detectRegion2() {
-
+    private void detectRegion() {
         Bitmap bmpTemp = basicImg.copy(Bitmap.Config.ARGB_8888, true);
         Utils.bitmapToMat(bmpTemp, mRgbMat);
         Imgproc.cvtColor(mRgbMat, mHsvMat, Imgproc.COLOR_RGB2HSV_FULL, channelCount);
-
-//        for (int i = 0; i < extra_landmark_pt_x.size(); i++) {
-//            extra_landmark_pt_y.set(i, extra_landmark_pt_y.get(i) - 5);
-//            do {
-////
-//                if (mHsvMat.get(Math.round(extra_landmark_pt_x.get(i)), Math.round(extra_landmark_pt_y.get(i)))[0] > 0 &&
-//                        mHsvMat.get(Math.round(extra_landmark_pt_x.get(i)), Math.round(extra_landmark_pt_y.get(i)))[0] < 45 &&
-//                        mHsvMat.get(Math.round(extra_landmark_pt_x.get(i)), Math.round(extra_landmark_pt_y.get(i)))[1] > 0.23 * 255 &&
-//                        mHsvMat.get(Math.round(extra_landmark_pt_x.get(i)), Math.round(extra_landmark_pt_y.get(i)))[1] < 0.68 * 255 &&
-//                        mHsvMat.get(Math.round(extra_landmark_pt_x.get(i)), Math.round(extra_landmark_pt_y.get(i)))[2] > 0.25 * 255 &&
-//                        mHsvMat.get(Math.round(extra_landmark_pt_x.get(i)), Math.round(extra_landmark_pt_y.get(i)))[2] < 0.8 * 255
-//                        ) {
-//                    extra_landmark_pt_y.set(i, extra_landmark_pt_y.get(i) - 5);
-//                } else
-//                    break;
-//            } while (true);
-//        }
 
         try {
             // load cascade file from application resources
@@ -983,26 +1110,36 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         //还原画布
         canvas.restoreToCount(sc);
 
-
         bitmapArray = new int[bitmap.getWidth() * bitmap.getHeight()];
         tempArray = new int[temp.getWidth() * temp.getHeight()];
 
         bitmap.getPixels(bitmapArray, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
         temp.getPixels(tempArray, 0, temp.getWidth(), 0, 0, temp.getWidth(), temp.getHeight());
+    }
 
-        for (int x = 0; x < bitmap.getWidth(); x++) {
-            for (int y = 0; y < bitmap.getHeight(); y++) {
-                if (bitmapArray[x + y * bitmap.getWidth()] == Color.BLUE) {
-                    float[] hsv = new float[3];
-                    Color.RGBToHSV(Color.red(tempArray[x + y * bitmap.getWidth()]), Color.green(tempArray[x + y * bitmap.getWidth()]), Color.blue(tempArray[x + y * bitmap.getWidth()]), hsv);
-                    hsv[0] = 26;
+    private void setupFoundation(String foundationColor) {
+
+        try {
+            int color = stringColorRGBToARGB(foundationColor, 250, 0, 0, 0);
+            float[] foundationHSV = new float[3];
+            Color.colorToHSV(color, foundationHSV);
+
+            for (int x = 0; x < bitmap.getWidth(); x++) {
+                for (int y = 0; y < bitmap.getHeight(); y++) {
+                    if (bitmapArray[x + y * bitmap.getWidth()] == Color.BLUE) {
+                        float[] hsv = new float[3];
+                        Color.RGBToHSV(Color.red(tempArray[x + y * bitmap.getWidth()]), Color.green(tempArray[x + y * bitmap.getWidth()]), Color.blue(tempArray[x + y * bitmap.getWidth()]), hsv);
+                        hsv[0] = foundationHSV[0];
+//                        Log.d(TAG + " hsv[0] = foundationHSV[0] ", hsv[0] + " " + foundationHSV[0]);
 //                    Log.d(TAG, "face["+ x +" , " +y +"] : " + hsv[0] + " , " + hsv[1] + " , " + hsv[2] + " ]");
-                    tempArray[x + y * bitmap.getWidth()] = Color.HSVToColor(hsv);
+                        tempArray[x + y * bitmap.getWidth()] = Color.HSVToColor(hsv);
+                    }
                 }
             }
+            temp.setPixels(tempArray, 0, temp.getWidth(), 0, 0, temp.getWidth(), temp.getHeight());
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
         }
-
-        temp.setPixels(tempArray, 0, temp.getWidth(), 0, 0, temp.getWidth(), temp.getHeight());
 
         Log.d("color", mHsvMat.get(Math.round(extra_landmark_pt_x.get(0)), Math.round(extra_landmark_pt_y.get(0)))[0] + " " +
                 mHsvMat.get(Math.round(extra_landmark_pt_x.get(0)), Math.round(extra_landmark_pt_y.get(0)))[1] + " " +
@@ -1010,7 +1147,6 @@ public class ColorizeFaceActivity extends AppCompatActivity {
 
 // HSV back to BGR
         Imgproc.cvtColor(mHsvMat, mRgbMat, Imgproc.COLOR_HSV2BGR, channelCount);
-
     }
 
     @Override
@@ -1019,71 +1155,7 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         this.finish();
     }
 
-    private void detectRegion() {
-
-        //get the image from gallery and change it into bitmap
-        Bitmap bmpTemp = originalImg.copy(Bitmap.Config.ARGB_8888, true);
-        Utils.bitmapToMat(bmpTemp, mRgbMat);
-        Imgproc.cvtColor(mRgbMat, mHsvMat, Imgproc.COLOR_RGB2HSV, channelCount);
-//        http://matmidia.org/sibgrapi2009/media/posters/59928.pdf
-//        The skin in channel H is characterized by values between 0 and 50,
-//        in the channel S from 0.23 to 0.68 for Asian and Caucasian ethnics.
-        Scalar lowerThreshold = new Scalar(0, 0.20 * 255, 70);
-        Scalar upperThreshold = new Scalar(30, 0.80 * 255, 200);
-        Core.inRange(mHsvMat, lowerThreshold, upperThreshold, mMaskMat);
-//        Imgproc.dilate(mMaskMat, mDilatedMat, new Mat());
-
-        Imgproc.findContours(mMaskMat, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
-
-        // Find max contour area
-        double maxArea = 0;
-        Iterator<MatOfPoint> each = contours.iterator();
-        while (each.hasNext()) {
-            MatOfPoint wrapper = each.next();
-            double area = Imgproc.contourArea(wrapper);
-            if (area > maxArea)
-                maxArea = area;
-        }
-
-        // Filter contours by area and resize to fit the original image size
-        mMaxContours.clear();
-        each = contours.iterator();
-        while (each.hasNext()) {
-            MatOfPoint contour = each.next();
-            if (Imgproc.contourArea(contour) > mMinContourArea * maxArea) {
-//                Core.multiply(contour, new Scalar(4,4), contour);
-                mMaxContours.add(contour);
-            }
-        }
-
-        Imgproc.drawContours(mRgbMat, mMaxContours, 0, colorGreen, 0);
-        Log.d(TAG + " contours", contours.size() + "");
-        Log.d(TAG + " contours", mMaxContours.size() + "");
-        Log.d(TAG + " contours row col", mMaxContours.get(0).toList().toString());
-        Log.d(TAG + " contours ", mMaxContours.get(0).toString());
-        counter++;
-
-//        Imgproc.drawContours(mRgbMat, contours,counter, colorGreen);
-
-//        for (int contourIdx = 0; contourIdx < contours.size(); contourIdx++) {
-//            if (contours.size() > 100)  // Minimum size allowed for consideration
-//            {
-//                Imgproc.drawContours(mRgbMat, contours, contourIdx, colorGreen, iLineThickness);
-//                Log.d(TAG + " contours " , contours.get(contourIdx).toString());
-//            }
-//        }
-
-        // convert to bitmap:
-        Bitmap bm = Bitmap.createBitmap(mRgbMat.cols(), mRgbMat.rows(), Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(mMaskMat, bm);
-
-        // find the imageview and draw it!
-        imageView.setImageBitmap(bm);
-    }
-
-
     public void drawpoint(float x, float y, Bitmap bitmap, Canvas canvas) {
-
         Paint paint = new Paint();
         paint.setColor(Color.GREEN);
         paint.setStrokeWidth(Math.max(originalImg.getWidth(), originalImg.getHeight()) / 100f);
@@ -1102,22 +1174,25 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         canvas.drawCircle(landmark_pt_x.get(j), landmark_pt_y.get(j), 2, paint);
     }
 
+    public void changeLipColor(String lipstickColor) {
 
-    public void changeLipColor() {
+        int color = stringColorRGBToARGB(lipstickColor, 255, 0, 0, 0);
+        float[] lipstickHSV = new float[3];
+        Color.colorToHSV(color, lipstickHSV);
+
         for (int x = 0; x < bitmap.getWidth(); x++) {
             for (int y = 0; y < bitmap.getHeight(); y++) {
                 if (bitmapArray[x + y * bitmap.getWidth()] == Color.GREEN) {
                     float[] hsv = new float[3];
                     Color.RGBToHSV(Color.red(tempArray[x + y * bitmap.getWidth()]), Color.green(tempArray[x + y * bitmap.getWidth()]), Color.blue(tempArray[x + y * bitmap.getWidth()]), hsv);
-                    hsv[0] = 350;
+                    hsv[0] = lipstickHSV[0];
+                    Log.d(TAG + " hsv , colorhsv", hsv[0] + " : " + hsv[1] + " : " + hsv[2] + " , " + lipstickHSV[0] + " : " + lipstickHSV[1] + " : " + lipstickHSV[2]);
                     tempArray[x + y * bitmap.getWidth()] = Color.HSVToColor(hsv);
                 }
             }
         }
         temp.setPixels(tempArray, 0, temp.getWidth(), 0, 0, temp.getWidth(), temp.getHeight());
-
     }
-
 
     public void connectLipLine() {
 
@@ -1237,6 +1312,85 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         return a << ALPHA_CHANNEL | r << RED_CHANNEL | g << GREEN_CHANNEL | b << BLUE_CHANNEL;
     }
 
+    private int stringColorRGBToARGB(String hexColor, int valueA, int valueR, int valueG, int valueB) {
+        //get color from db
+//        int color = Color.parseColor("#FF783928");
+        int color1 = Color.parseColor(hexColor);
+        int b = (color1) & 0xFF;
+        int g = (color1 >> 8) & 0xFF;
+        int r = (color1 >> 16) & 0xFF;
+        int a = valueA;
+        Log.d(TAG + " stringColorRGBToARGB a , r ,g ,b ", a + " " + r + " " + g + " " + b + "");
+
+        if (r + valueR > 255)
+            r = 255;
+        else if (r + valueR < 0)
+            r = 0;
+        else
+            r = r + valueR;
+
+        if (g + valueG > 255)
+            g = 255;
+        else if (g + valueG < 0)
+            g = 0;
+        else
+            g = g + valueG;
+
+        if (b + valueB > 255)
+            b = 255;
+        else if (b + valueB < 0)
+            b = 0;
+        else
+            b = b + valueB;
+
+        int color2 = a << 24 | r << 16 | g << 8 | b << 0;
+        Log.d(TAG + " color1_color2 ", color1 + " : " + color2);
+        return color2;
+    }
+
+    private int stringColorToARGB(String hexColor, int valueA, int valueR, int valueG, int valueB) {
+        //get color from db
+//        int color = Color.parseColor("#FF783928");
+        int color1 = Color.parseColor(hexColor);
+        int b = (color1) & 0xFF;
+        int g = (color1 >> 8) & 0xFF;
+        int r = (color1 >> 16) & 0xFF;
+        int a = (color1 >> 24) & 0xFF;
+        Log.d(TAG + "stringColorToARGB a , r ,g ,b ", a + " " + r + " " + g + " " + b + "");
+
+        if (a + valueA > 255)
+            a = 255;
+        else if (a + valueA < 0)
+            a = 0;
+        else
+            a = a + valueA;
+
+        if (r + valueR > 255)
+            r = 255;
+        else if (r + valueR < 0)
+            r = 0;
+        else
+            r = r + valueR;
+
+        if (g + valueG > 255)
+            g = 255;
+        else if (g + valueG < 0)
+            g = 0;
+        else
+            g = g + valueG;
+
+        if (b + valueB > 255)
+            b = 255;
+        else if (b + valueB < 0)
+            b = 0;
+        else
+            b = b + valueB;
+
+        int color2 = a << 24 | r << 16 | g << 8 | b << 0;
+        Log.d(TAG + " color1_color2 ", color1 + " : " + color2);
+        return color2;
+    }
+
     private void drawEyeShadowWithOneColorMethod1() {
         Canvas drawCanvas = new Canvas(temp);
 //        drawCanvas.drawColor(Color.WHITE);
@@ -1244,35 +1398,121 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setStrokeWidth(50f);
 //        drawCanvas.drawColor(Color.WHITE);
+        int color1 = stringColorToARGB("#FF783928", 0, 0, 0, 0);
+        int color2 = stringColorToARGB("#FF783928", 0, 0, 0, 0);
+//        int sc = drawCanvas.saveLayer(0, 0, temp.getWidth(), temp.getHeight(), null, Canvas.ALL_SAVE_FLAG);
+//        int mixColor = mixTwoColors(color1,color2,0.5f);
+//        Log.d(TAG, mixColor + "");
+//        mPaint.setColor(mixColor);
 
-        int color1 = 0xFF783928;
-        //get color from db
-//        1.
-//       String string = "#FFFF0000";
-//        int color = Integer.parseInt(string.replaceFirst("^#",""), 16);
-//        2.
-//        int color = Color.parseColor("#2222FF");
-        int b = (color1) & 0xFF;
-        int g = (color1 >> 8) & 0xFF;
-        int r = (color1 >> 16) & 0xFF;
-        int a = (color1 >> 24) & 0xFF;
-        if (r + 30 > 255)
-            r = 255;
-        else
-            r = r + 30;
+        mPaint.setShader(
+                new LinearGradient(landmark_pt_x.get(36), landmark_pt_y.get(36) - 10f,
+                        landmark_pt_x.get(39), landmark_pt_y.get(39) - 10f,
+                        color1, color2,
+                        Shader.TileMode.CLAMP));
 
-        if (g + 30 > 255)
-            g = 255;
-        else
-            g = g + 30;
+//       mPaint.setShader(new RadialGradient(
+//               landmark_pt_x.get(21) + (landmark_pt_x.get(25) - landmark_pt_x.get(21) / 2), landmark_pt_y.get(21), (landmark_pt_x.get(25) - landmark_pt_x.get(21) / 2),
+//                color1, color2,
+//                Shader.TileMode.CLAMP));
+        mPaint.setMaskFilter(new BlurMaskFilter(6, BlurMaskFilter.Blur.NORMAL));
 
-        if (b + 30 > 255)
-            b = 255;
-        else
-            b = b + 30;
+        float widthEyeShadow = (landmark_pt_y.get(37) - landmark_pt_y.get(19)) / 2.5f;
+        Log.d(TAG + " widthEyeShadow ", " " + widthEyeShadow);
 
-        int color2 = a << 24 | r << 16 | g << 8 | b << 0;
-        Log.d(TAG, color1 + " : " + color2);
+        Path path = new Path();
+        // left eye
+        path.reset();
+//        Float left_middle_eye_eyebrow_y = (landmark_pt_y.get(21) - landmark_pt_y.get(31) )/2;
+        //left_eye_left_corner
+        path.moveTo(landmark_pt_x.get(36) - 25f, landmark_pt_y.get(36) - 4f);
+
+        path.cubicTo(
+                //left_eye_top_left + a distance
+                landmark_pt_x.get(37) + 1f, landmark_pt_y.get(37) - widthEyeShadow,
+                //left_eye_top_right + a distance
+                landmark_pt_x.get(38) + 1f, landmark_pt_y.get(38) - widthEyeShadow,
+                //left_eye_right_corner
+                landmark_pt_x.get(39) + 10f, landmark_pt_y.get(39) - 7f);
+
+        path.cubicTo(
+                //left_eye_top_left
+                landmark_pt_x.get(38) + 1f, landmark_pt_y.get(38) - 10f,
+                //left_eye_top_right
+                landmark_pt_x.get(37) + 1f, landmark_pt_y.get(37) - 9f,
+                //left_eye_left_corner
+                landmark_pt_x.get(36) + 5f, landmark_pt_y.get(36) - 8f);
+
+        path.lineTo(landmark_pt_x.get(36) - 25f, landmark_pt_y.get(36) - 4f);
+
+        path.close();
+        drawCanvas.drawPath(path, mPaint);
+
+        // right eye
+//        4 colors
+//        LinearGradient linearGradient = new LinearGradient(0, 0, width, height,
+//                new int[] {
+//                        0xFF1e5799,
+//                        0xFF207cca,
+//                        0xFF2989d8,
+//                        0xFF207cca }, //substitute the correct colors for these
+//                new float[] {
+//                        0, 0.40f, 0.60f, 1 },
+//                Shader.TileMode.REPEAT);
+        mPaint.setShader(
+                new LinearGradient(landmark_pt_x.get(45), landmark_pt_y.get(45) - 10f,
+                        landmark_pt_x.get(42), landmark_pt_y.get(42) - 10f,
+                        color1, color2,
+                        Shader.TileMode.CLAMP));
+
+        path.reset();
+        //right_eye_right_corner
+        path.moveTo(landmark_pt_x.get(45) + 25f, landmark_pt_y.get(45) - 4f);
+
+        path.cubicTo(
+                //right_eye_top_right + a distance
+                landmark_pt_x.get(44), landmark_pt_y.get(44) - widthEyeShadow,
+                //right_eye_top_left + a distance
+                landmark_pt_x.get(43), landmark_pt_y.get(43) - widthEyeShadow,
+                //right_eye_left_corner
+                landmark_pt_x.get(42) - 10f, landmark_pt_y.get(42) - 5f);
+
+        path.cubicTo(
+                //right_eye_top_left
+                landmark_pt_x.get(43), landmark_pt_y.get(43) - 10f,
+                //right_eye_top_right
+                landmark_pt_x.get(44), landmark_pt_y.get(44) - 9f,
+                //right_eye_right_corner
+                landmark_pt_x.get(45) + 5f, landmark_pt_y.get(45) - 9f);
+
+        path.lineTo(landmark_pt_x.get(45) + 25f, landmark_pt_y.get(45) - 4f);
+
+        path.close();
+        drawCanvas.drawPath(path, mPaint);
+
+        //设置混合模式
+        mPaint.setXfermode(mXferScreenmode);
+
+        //src
+        // 再绘制src源图
+//        drawCanvas.drawBitmap(originalImg, 0, 0, mPaint);
+
+        //清除混合模式
+        mPaint.setXfermode(null);
+        //还原画布
+//        drawCanvas.restoreToCount(sc);
+    }
+
+    private void drawDownEyeShadowWithOneColorMethod1()
+    {
+        Canvas drawCanvas = new Canvas(temp);
+//        drawCanvas.drawColor(Color.WHITE);
+        Paint mPaint = new Paint();
+        mPaint.setStyle(Paint.Style.FILL);
+        mPaint.setStrokeWidth(50f);
+//        drawCanvas.drawColor(Color.WHITE);
+        int color1 = stringColorToARGB("#FF783928", 0, 0, 0, 0);
+        int color2 = stringColorToARGB("#FF783928", 0, 0, 0, 0);
 //        int sc = drawCanvas.saveLayer(0, 0, temp.getWidth(), temp.getHeight(), null, Canvas.ALL_SAVE_FLAG);
 //        int mixColor = mixTwoColors(color1,color2,0.5f);
 //        Log.d(TAG, mixColor + "");
@@ -1602,12 +1842,13 @@ public class ColorizeFaceActivity extends AppCompatActivity {
 //        drawCanvas.restoreToCount(sc);
     }
 
-    private void drawRouge() {
+    private void drawRouge(String blushColor) {
 
         Canvas drawCanvas = new Canvas(temp);
         Paint mPaint = new Paint();
 
-        int rougeColor = 0x10FA0005;
+        int rougeColor = stringColorRGBToARGB(blushColor, 10, 0, 0, 0);
+
         mPaint.setColor(rougeColor);
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setStrokeJoin(Paint.Join.ROUND);    // set the join to round you want
@@ -1695,17 +1936,17 @@ public class ColorizeFaceActivity extends AppCompatActivity {
     }
 
 
-    private Map<String, Product> filterProduct(Map<String, Product> unsortMap, int categoryResult) {
-        List<Map.Entry<String, Product>> temp = new LinkedList<Map.Entry<String, Product>>(unsortMap.entrySet());
+    private Map<String, ProductTypeTwo> filterProduct(Map<String, ProductTypeTwo> unsortMap, int categoryResult) {
+        List<Map.Entry<String, ProductTypeTwo>> temp = new LinkedList<Map.Entry<String, ProductTypeTwo>>(unsortMap.entrySet());
         //compare temp
-        List<Map.Entry<String, Product>> temp2 = new LinkedList<Map.Entry<String, Product>>(unsortMap.entrySet());
+        List<Map.Entry<String, ProductTypeTwo>> temp2 = new LinkedList<Map.Entry<String, ProductTypeTwo>>(unsortMap.entrySet());
 
         int tempSize = temp2.size();
         List<String> removeList = new ArrayList<>();
         Resources res = getResources();
         final String[] categoryArray = res.getStringArray(R.array.category_type_array);
 
-        if (categoryResult > 0) {
+        if (categoryResult >= 0) {
             for (int i = 0; i < tempSize; i++) {
                 if (!categoryArray[categoryResult].equals(temp2.get(i).getValue().getCategory())) {
                     Log.d(TAG + " remove : " + temp2.get(i).getKey(), categoryArray[categoryResult] + " : " + temp2.get(i).getValue().getCategory());
@@ -1715,8 +1956,8 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         }
         Log.d("Filtered ", "Map");
         // Maintaining insertion order with the help of LinkedList
-        Map<String, Product> filteredMap = new LinkedHashMap<String, Product>();
-        for (Map.Entry<String, Product> entry : temp) {
+        Map<String, ProductTypeTwo> filteredMap = new LinkedHashMap<>();
+        for (Map.Entry<String, ProductTypeTwo> entry : temp) {
             if (!removeList.contains(entry.getKey())) {
                 filteredMap.put(entry.getKey(), entry.getValue());
                 Log.d(entry.getKey(), entry.getValue().getProductName() + " : " + entry.getValue().getCategory());
@@ -1726,32 +1967,32 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         return filteredMap;
     }
 
-    public class ProductAdapter extends RecyclerView.Adapter<MainActivity.ProductViewHolder> {
+    public class ProductAdapter extends RecyclerView.Adapter<ProductViewHolder> {
 
-        private Map<String, Product> mResultProducts = new HashMap<>();
+        private Map<String, ProductTypeTwo> mResultProducts = new HashMap<>();
         // Allows to remember the last item shown on screen
         private int lastPosition = -1;
         private Context context;
 
-        public ProductAdapter(Map<String, Product> mProducts, Context c) {
+        public ProductAdapter(Map<String, ProductTypeTwo> mProducts, Context c) {
             this.context = c;
             this.mResultProducts = mProducts;
             notifyDataSetChanged();
         }
 
         @Override
-        public MainActivity.ProductViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ProductViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             Context context = parent.getContext();
-            View view = getLayoutInflater().inflate(R.layout.product_row, parent, false);
-            MainActivity.ProductViewHolder viewHolder = new MainActivity.ProductViewHolder(view);
+            View view = getLayoutInflater().inflate(R.layout.makeup_product_row, parent, false);
+            ProductViewHolder viewHolder = new ProductViewHolder(view);
             return viewHolder;
         }
 
         @Override
-        public void onBindViewHolder(MainActivity.ProductViewHolder viewHolder, int position) {
-            List<Product> values = new ArrayList<>(mResultProducts.values());
-            final Product model = values.get(position);
-            List<String> keys = new ArrayList<>(mResultProducts.keySet());
+        public void onBindViewHolder(ProductViewHolder viewHolder, final int position) {
+            List<ProductTypeTwo> values = new ArrayList<>(mResultProducts.values());
+            final ProductTypeTwo model = values.get(position);
+            final List<String> keys = new ArrayList<>(mResultProducts.keySet());
             final String product_id = keys.get(position);
 
             Log.d(TAG + " product_id", product_id);
@@ -1762,18 +2003,47 @@ public class ColorizeFaceActivity extends AppCompatActivity {
 //            Log.d(TAG + " product id ", product_id);
             viewHolder.setProductName(model.getProductName());
             viewHolder.setImage(getApplicationContext(), model.getProductImage());
-            viewHolder.setUid(model.getUid());
+//            viewHolder.setUid(model.getUid());
 
             viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    Intent productDetailIntent = new Intent();
-//                    productDetailIntent.setClass(MainActivity.this, ProductDetailActivity.class);
-//                    productDetailIntent.putExtra("product_id", product_id);
-//                    Log.d(TAG + " product_id", product_id);
-//                    productDetailIntent.putExtra("colorNo", model.getColorNo());
-//                    Log.d(TAG + " colorNo", model.getColorNo() + "");
-//                    startActivity(productDetailIntent);
+                    Log.d(TAG, "Click product_id = " + product_id + " colorNo = " + colorNo);
+                    colorNo = model.getColorNo();
+                    selectedProductID = keys.get(position);
+                    switch (categoryResult) {
+                        case 1:
+                            selectedFoundationID = product_id;
+                            break;
+                        case 2:
+                            selectedBlushID = product_id;
+                            break;
+                        case 3:
+                            selectedEyeshadowID = product_id;
+                            break;
+                        case 4:
+                            selectedLipstickID = product_id;
+                            break;
+                    }
+                    if (colorNo == 0) {
+                        colorSet.clear();
+                        for (int i = 0; i < mSortedProducts.get(selectedProductID).getColor().size(); i++) {
+                            for (int j = 0; j < mSortedProducts.get(selectedProductID).getColor().get(i).size(); j++) {
+                                colorSet.add(mSortedProducts.get(selectedProductID).getColor().get(i).get(j));
+                            }
+                        }
+                        makeup_color_list.setAdapter(new ColorRecyclerAdapter());
+                        mProductAdapter.notifyDataSetChanged();
+                        viewControl(makeup_color_list, makeup_select_layout, makeup_select_layout, 2);
+                        Log.d(TAG, mSortedProducts.get(selectedProductID).getColor().toString());
+                    } else {
+                        makeup_color_list.setAdapter(new MultipleColorAdapter(ColorizeFaceActivity.this, model.getColor()));
+                        viewControl(makeup_color_list, makeup_select_layout, makeup_select_layout, 2);
+                    }
+                    makeup_color_list.setVisibility(View.VISIBLE);
+                    makeup_select_layout.setVisibility(View.GONE);
+                    makeup_product_list.setVisibility(View.GONE);
+                    stepCount = 2;
                 }
             });
             setAnimation(viewHolder.itemView, position);
@@ -1781,9 +2051,6 @@ public class ColorizeFaceActivity extends AppCompatActivity {
 
         }
 
-        /**
-         * Here is the key method to apply the animation
-         */
         private void setAnimation(View viewToAnimate, int position) {
             // If the bound view wasn't previously displayed on screen, it's animated
             if (position > lastPosition) {
@@ -1811,14 +2078,14 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         }
 
         public void setProductName(String productName) {
-            TextView product_title = (TextView) mView.findViewById(R.id.p_title);
-            product_title.setText(productName);
-            product_title.setTypeface(customTypeface, Typeface.BOLD);
+            TextView makeup_product_name = (TextView) mView.findViewById(R.id.makeup_product_name);
+            makeup_product_name.setText(productName);
+            makeup_product_name.setTypeface(customTypeface, Typeface.BOLD);
         }
 
         public void setImage(final Context ctx, final String image) {
-            final ImageView post_image = (ImageView) mView.findViewById(R.id.product_image);
-            Picasso.with(ctx).load(image).networkPolicy(NetworkPolicy.OFFLINE).into(post_image, new Callback() {
+            final ImageView makeup_product_image = (ImageView) mView.findViewById(R.id.makeup_product_image);
+            Picasso.with(ctx).load(image).networkPolicy(NetworkPolicy.OFFLINE).into(makeup_product_image, new Callback() {
                 @Override
                 public void onSuccess() {
                     Log.d(TAG, "image loading success !");
@@ -1831,9 +2098,260 @@ public class ColorizeFaceActivity extends AppCompatActivity {
                             .load(image)
                             .resize(100, 100)
                             .centerCrop()
-                            .into(post_image);
+                            .into(makeup_product_image);
                 }
             });
+        }
+    }
+
+    public class ColorRecyclerAdapter extends RecyclerView.Adapter<ColorRecyclerAdapter.ColorViewHolder> {
+
+        public int selectedColorItemPosition = 0;
+
+        class ColorViewHolder extends RecyclerView.ViewHolder {
+            public LinearLayout select_color_layout;
+            View mView;
+            public int currentItem;
+            public de.hdodenhof.circleimageview.CircleImageView colorImage;
+
+            public ColorViewHolder(View itemView) {
+                super(itemView);
+                mView = itemView;
+                colorImage = (CircleImageView) itemView.findViewById(R.id.makeup_product_color_image1);
+                select_color_layout = (LinearLayout) itemView.findViewById(R.id.select_color_layout);
+            }
+        }
+
+        @Override
+        public ColorRecyclerAdapter.ColorViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+            View v = LayoutInflater.from(viewGroup.getContext())
+                    .inflate(R.layout.makeup_product_color_layout, viewGroup, false);
+            ColorRecyclerAdapter.ColorViewHolder viewHolder = new ColorRecyclerAdapter.ColorViewHolder(v);
+            return viewHolder;
+        }
+
+        @Override
+        public void onBindViewHolder(final ColorRecyclerAdapter.ColorViewHolder viewHolder, final int position) {
+            viewHolder.colorImage.setColorFilter(Color.parseColor(colorSet.get(position)));
+            final int sdk = android.os.Build.VERSION.SDK_INT;
+            viewHolder.select_color_layout.setBackgroundResource(0);
+            if (position == selectedColorItemPosition) {
+                if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                    viewHolder.select_color_layout.setBackgroundDrawable(getResources().getDrawable(R.drawable.circle_border));
+                } else {
+                    viewHolder.select_color_layout.setBackground(getResources().getDrawable(R.drawable.circle_border));
+                }
+            }
+
+            viewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    selectedColorItemPosition = position;
+                    viewHolder.select_color_layout.setBackgroundResource(0);
+                    notifyDataSetChanged();
+                    new LoadingMakeupAsyncTask().execute(new Integer(position));
+                    Snackbar.make(v, "Click detected on item " + position + " : " + colorSet.get(position).toString(),
+                            Snackbar.LENGTH_SHORT)
+                            .setAction("Action", null).show();
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            Log.d(TAG + " product_size", colorSet.size() + "");
+            return colorSet.size();
+        }
+    }
+
+    class LoadingMakeupAsyncTask extends AsyncTask<Integer, Integer, Integer> {
+        @Override
+        protected Integer doInBackground(Integer... position) {
+            colorPosition = position[0];
+            switch (categoryResult) {
+                case 1:
+                    setupFoundation(colorSet.get(position[0]));
+                    break;
+                case 2:
+                    drawRouge(colorSet.get(position[0]));
+                    break;
+                case 4:
+                    changeLipColor(colorSet.get(position[0]));
+                    lipLayer();
+                    break;
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(ColorizeFaceActivity.this);
+            progressDialog.setCancelable(false);
+            progressDialog.setTitle("Please Wait..");
+            Resources res = getResources();
+            final String[] categoryArray = res.getStringArray(R.array.category_type_array);
+            progressDialog.setMessage("Setting up " + categoryArray[categoryResult] + " ...");
+            progressDialog.show();
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            super.onPostExecute(result);
+            progressDialog.dismiss();
+//             number,bitmap
+//            private Map<Integer,Bitmap> saveBitmap = new HashMap<>();
+//             number,(color,ID,category)
+//            private Map<Integer,List<String>> saveBitmapList = new HashMap<>();
+//             category , bitmap number
+//            private Map<String,Integer> saveMakeupList = new HashMap<>();
+            ++makeupCount;
+            List<String> data = new ArrayList<>();
+            data.clear();
+            Resources res = getResources();
+            final String[] categoryArray = res.getStringArray(R.array.category_type_array);
+            saveBitmap.put(makeupCount, temp);
+            data.add(categoryArray[categoryResult]);
+            switch (categoryResult) {
+                case 1:
+                    data.add(selectedFoundationID);
+                    saveMakeupList.put(categoryArray[categoryResult], makeupCount);
+                    break;
+                case 2:
+                    data.add(selectedBlushID);
+                    saveMakeupList.put(categoryArray[categoryResult], makeupCount);
+                    break;
+                case 4:
+                    data.add(selectedLipstickID);
+                    saveMakeupList.put(categoryArray[categoryResult], makeupCount);
+                    break;
+            }
+            saveBitmapColorList.put(categoryArray[categoryResult], colorPosition);
+            saveBitmapList.put(makeupCount, data);
+            Log.d(TAG + " saveMakeupList.size : saveBitmap.size ", saveMakeupList.size() + " : " + saveBitmap.size());
+            Log.d(TAG + " saveBitmapList.get(makeupCount) ", saveBitmapList.get(makeupCount).get(0) + " " + saveBitmapList.get(makeupCount).get(1));
+            imageView.setImageBitmap(temp);
+        }
+    }
+
+    public class MultipleColorAdapter extends RecyclerView.Adapter<MultipleColorHolder> {
+
+        private final static String TAG = " MakeupProductAdapter ";
+        private final Context c;
+        public int selectedColorItemPosition = 0;
+        public ArrayList<ArrayList<String>> colorArray;
+
+
+        public MultipleColorAdapter(Context c, ArrayList<ArrayList<String>> colorArray) {
+            this.c = c;
+            this.colorArray = colorArray;
+        }
+
+        @Override
+        public MultipleColorHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+            View v = LayoutInflater.from(viewGroup.getContext())
+                    .inflate(R.layout.makeup_product_color_layout, viewGroup, false);
+            MultipleColorHolder viewHolder = new MultipleColorHolder(v);
+            return viewHolder;
+        }
+
+        @Override
+        public void onBindViewHolder(final MultipleColorHolder viewHolder, final int position) {
+            Log.d(TAG + " onBindViewHolder position", position + "");
+            Log.d(TAG + " data ", colorArray.toString());
+            for (int i = 0; i < colorArray.get(position).size(); i++) {
+                if (colorArray.get(position).get(i) != null) {
+                    final int sdk = android.os.Build.VERSION.SDK_INT;
+                    if (position == selectedColorItemPosition) {
+                        if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                            viewHolder.select_color_layout.setBackgroundDrawable(getResources().getDrawable(R.drawable.square_rounded_border));
+                        } else {
+                            viewHolder.select_color_layout.setBackground(getResources().getDrawable(R.drawable.square_rounded_border));
+                        }
+                    } else {
+                        viewHolder.select_color_layout.setBackgroundResource(0);
+                    }
+                    Log.d(TAG + " onBindViewHolder", colorArray.get(position).get(i).toString());
+                    viewHolder.makeup_product_color_image[i].setColorFilter(Color.parseColor(colorArray.get(position).get(i)));
+                    viewHolder.makeup_product_color_image[i].setVisibility(View.VISIBLE);
+                }
+            }
+            expand_color_list_button.setVisibility(View.VISIBLE);
+            viewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    selectedColorItemPosition = position;
+                    viewHolder.select_color_layout.setBackgroundResource(0);
+                    notifyDataSetChanged();
+
+                    Log.d(TAG, " selectedColorItemPosition :" + selectedColorItemPosition);
+                    Snackbar.make(v, "Click detected on item " + position + " : " + colorArray.get(position).toString(),
+                            Snackbar.LENGTH_SHORT)
+                            .setAction("Action", null).show();
+                }
+            });
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return colorArray.size();
+        }
+
+    }
+
+    public class MultipleColorHolder extends RecyclerView.ViewHolder {
+
+        private LinearLayout select_color_layout;
+        View mView;
+        public int currentItem;
+        public CircleImageView[] makeup_product_color_image = new CircleImageView[8];
+        public CardView makeup_product_color_card;
+
+        public MultipleColorHolder(View itemView) {
+            super(itemView);
+            mView = itemView;
+            makeup_product_color_card = (CardView) itemView.findViewById(R.id.makeup_product_color_card);
+            makeup_product_color_card.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            select_color_layout = (LinearLayout) itemView.findViewById(R.id.select_color_layout);
+
+            makeup_product_color_image[0] = (CircleImageView) itemView.findViewById(R.id.makeup_product_color_image1);
+            makeup_product_color_image[1] = (CircleImageView) itemView.findViewById(R.id.makeup_product_color_image2);
+            makeup_product_color_image[2] = (CircleImageView) itemView.findViewById(R.id.makeup_product_color_image3);
+            makeup_product_color_image[3] = (CircleImageView) itemView.findViewById(R.id.makeup_product_color_image4);
+            makeup_product_color_image[4] = (CircleImageView) itemView.findViewById(R.id.makeup_product_color_image5);
+            makeup_product_color_image[5] = (CircleImageView) itemView.findViewById(R.id.makeup_product_color_image6);
+            makeup_product_color_image[6] = (CircleImageView) itemView.findViewById(R.id.makeup_product_color_image7);
+            makeup_product_color_image[7] = (CircleImageView) itemView.findViewById(R.id.makeup_product_color_image8);
+        }
+    }
+
+    private void storeImage(Bitmap image, String imageName) {
+        FileOutputStream fOut;
+        try {
+            File dir = new File("/sdcard/faceT/");
+            if (!dir.exists()) {
+                dir.mkdir();
+            }
+            String mImageName = imageName;
+            String tmp = "/sdcard/faceT/" + mImageName + ".jpg";
+            fOut = new FileOutputStream(tmp);
+            image.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
+            Snackbar snackbar = Snackbar.make(activity_colorize_face_layout, "Save bitmap suceesfullly in " + tmp, Snackbar.LENGTH_SHORT);
+            snackbar.show();
+            try {
+                fOut.flush();
+                fOut.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
     }
 }

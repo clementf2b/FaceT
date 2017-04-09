@@ -522,7 +522,6 @@ public class MainActivity extends AppCompatActivity {
                             mProductList.setAdapter(mProductAdapter);
                             mProductAdapter.notifyDataSetChanged();
 
-
                             filterSpinner = (Spinner) findViewById(R.id.shop_filter_spinner);
 
                             final ArrayAdapter<String> categoryList = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, brandList);
@@ -762,6 +761,16 @@ public class MainActivity extends AppCompatActivity {
         public boolean onQueryTextSubmit(String query) {
             searchView.setFocusable(true);
             Log.d(TAG, "submit:" + query);
+            Map<String, Product> temp = new HashMap<>(mSortedProducts);
+            for (Iterator<Map.Entry<String, Product>> i = temp.entrySet().iterator(); i.hasNext(); ) {
+                Map.Entry<String, Product> e = i.next();
+                Product v = e.getValue();
+                if (!v.getProductName().contains(query))
+                    i.remove();
+            }
+            mProductAdapter = new ProductAdapter(temp, MainActivity.this);
+            mProductList.setAdapter(mProductAdapter);
+            mProductAdapter.notifyDataSetChanged();
             return false;
         }
     };
