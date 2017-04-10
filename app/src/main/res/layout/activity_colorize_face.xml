@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_colorize_face"
+    android:id="@+id/activity_colorize_face_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="fyp.hkust.facet.activity.ColorizeFaceActivity">
@@ -70,11 +70,10 @@
     <fyp.hkust.facet.util.PinchImageView
         android:id="@+id/imageView1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/top_bar_layout"
-        android:scaleType="fitStart" />
+        android:layout_below="@+id/top_bar_layout" />
 
     <Button
         android:id="@+id/compare_button"
@@ -95,26 +94,12 @@
         android:id="@+id/drawbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_margin="70dp"
+        android:layout_margin="40dp"
         android:src="@mipmap/ic_account_circle_white_36dp"
         fab:fab_colorNormal="@color/colorPrimary"
         fab:fab_colorPressed="@color/primary_pressed"
         fab:fab_colorRipple="@color/ripple"
         fab:fab_shadow="true" />
-
-    <com.melnykov.fab.FloatingActionButton
-        android:id="@+id/facebtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_margin="30dp"
-        android:src="@mipmap/ic_account_circle_white_36dp"
-        fab:fab_colorNormal="@color/colorPrimary"
-        fab:fab_colorPressed="@color/primary_pressed"
-        fab:fab_colorRipple="@color/ripple"
-        fab:fab_shadow="true"
-        />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -170,115 +155,173 @@
 
     </ScrollView>
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/expand_color_list_button"
+        android:src="@mipmap/ic_arrow_upward_black_24dp"
+        android:layout_alignTop="@+id/makeup_color_list"
+        android:layout_above="@+id/show_hide_layout_button"
+        android:visibility="gone"/>
+
+    <LinearLayout
+        android:id="@+id/eyeshadow_method_layout"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_above="@+id/makeup_color_list"
+        android:background="@color/white"
+        android:visibility="gone">
+
+        <Button
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:id="@+id/eyeshadow_method1"/>
+        <Button
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:id="@+id/eyeshadow_method2"/>
+        <Button
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:id="@+id/eyeshadow_method3"/>
+        <Button
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:id="@+id/eyeshadow_method4"/>
+
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/makeup_color_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:padding="10dp"
+        android:background="@color/makeup_transparent_background_color"
+        android:layout_above="@+id/show_hide_layout_button"/>
+        <!--android:layout_toEndOf="@+id/expand_color_list_button" -->
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/makeup_product_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:background="@color/makeup_transparent_background_color"
+        android:layout_above="@+id/show_hide_layout_button"
+        android:visibility="gone"/>
+
     <LinearLayout
         android:id="@+id/makeup_select_layout"
         android:layout_width="match_parent"
-        android:layout_height="140dp"
-        android:layout_above="@+id/show_hide_layout_button"
-        android:layout_alignParentBottom="true"
+        android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:background="@color/makeup_transparent_background_color"
+        android:paddingLeft="10dp"
+        android:paddingTop="10dp"
+        android:layout_above="@+id/show_hide_layout_button"
         android:visibility="gone">
 
-        <RelativeLayout
-            android:id="@+id/face_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="140dp"
-            android:layout_weight="1">
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/face_button"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:elevation="6dp"
-                android:src="@mipmap/ic_face_black_24dp" />
-
-            <TextView
+            <RelativeLayout
+                android:id="@+id/foundation_layout"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@id/face_button"
-                android:layout_alignParentBottom="true"
-                android:layout_alignRight="@id/face_button"
-                android:layout_below="@id/face_button"
-                android:text="@string/blush_text"
-                android:textAlignment="center" />
+                android:layout_height="105dp"
+                android:layout_weight="1">
 
-        </RelativeLayout>
+                <Button
+                    android:id="@+id/foundation_button"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="@drawable/foundation"
+                    android:elevation="6dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@id/foundation_button"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignRight="@id/foundation_button"
+                    android:layout_below="@id/foundation_button"
+                    android:text="@string/foundation_text"
+                    android:textAlignment="center" />
+            </RelativeLayout>
 
 
-        <RelativeLayout
-            android:id="@+id/eye_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="140dp"
-            android:layout_weight="1">
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/eye_button"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:elevation="6dp"
-                android:src="@mipmap/ic_face_black_24dp" />
-
-            <TextView
+            <RelativeLayout
+                android:id="@+id/blush_layout"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@id/eye_button"
-                android:layout_alignParentBottom="true"
-                android:layout_alignRight="@id/eye_button"
-                android:layout_below="@id/eye_button"
-                android:text="@string/eye_text"
-                android:textAlignment="center" />
-        </RelativeLayout>
+                android:layout_height="105dp"
+                android:layout_weight="1">
 
+                <Button
+                    android:id="@+id/blush_button"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="@drawable/blush"
+                    android:elevation="6dp" />
 
-        <RelativeLayout
-            android:id="@+id/rouge_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="140dp"
-            android:layout_weight="1">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@id/blush_button"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignRight="@id/blush_button"
+                    android:layout_below="@id/blush_button"
+                    android:text="@string/blush_text"
+                    android:textAlignment="center" />
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/rouge_button"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:elevation="6dp"
-                android:src="@mipmap/ic_face_black_24dp" />
+            </RelativeLayout>
 
-            <TextView
+            <RelativeLayout
+                android:id="@+id/eyeshadow_layout"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@id/rouge_button"
-                android:layout_alignParentBottom="true"
-                android:layout_alignRight="@id/rouge_button"
-                android:layout_below="@id/rouge_button"
-                android:text="@string/rouge_text"
-                android:textAlignment="center" />
-        </RelativeLayout>
+                android:layout_height="105dp"
+                android:layout_weight="1">
+
+                <Button
+                    android:id="@+id/eyeshadow_button"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="@drawable/eyeshadow"
+                    android:elevation="6dp"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@id/eyeshadow_button"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignRight="@id/eyeshadow_button"
+                    android:layout_below="@id/eyeshadow_button"
+                    android:text="@string/eye_text"
+                    android:gravity="center" />
+            </RelativeLayout>
 
 
-        <RelativeLayout
-            android:id="@+id/lip_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="140dp"
-            android:layout_weight="1">
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/lip_button"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:elevation="6dp"
-                android:src="@mipmap/ic_face_black_24dp" />
-
-            <TextView
+            <RelativeLayout
+                android:id="@+id/lipstick_layout"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@id/lip_button"
-                android:layout_alignParentBottom="true"
-                android:layout_alignRight="@id/lip_button"
-                android:layout_below="@id/lip_button"
-                android:text="@string/lip_text"
-                android:textAlignment="center" />
-        </RelativeLayout>
+                android:layout_height="105dp"
+                android:layout_weight="1">
+
+                <Button
+                    android:id="@+id/lipstick_button"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="@drawable/lipstick"
+                    android:elevation="6dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@id/lipstick_button"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignRight="@id/lipstick_button"
+                    android:layout_below="@id/lipstick_button"
+                    android:text="@string/lip_text"
+                    android:textAlignment="center" />
+            </RelativeLayout>
 
     </LinearLayout>
 
@@ -288,6 +331,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@color/makeup_transparent_background_color"
+        android:padding="5dp"
         android:src="@mipmap/ic_expand_less_black_24dp" />
 
 </RelativeLayout>

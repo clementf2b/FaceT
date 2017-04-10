@@ -207,9 +207,9 @@
     <string name="loading_image_error">image loading error !</string>
 
     <!--activity_colorize_face-->
+    <string name="foundation_text">Foundation</string>
     <string name="blush_text">Blush</string>
     <string name="eye_text">Eyeshadows</string>
-    <string name="rouge_text">Foundation</string>
     <string name="lip_text">Lipsticks</string>
     <string name="compare_btn_text">Compare</string>
 

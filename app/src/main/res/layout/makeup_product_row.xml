@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/tools"
+    android:layout_width="100dp"
+    android:layout_height="115dp"
+    card_view:cardPreventCornerOverlap="false"
+    android:id="@+id/makeup_product_list_row_layout"
+    android:background="@color/white"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="115dp"
+        android:orientation="vertical"
+        android:id="@+id/makeup_product_card"
+        android:padding="3dp"
+        android:background="@color/white">
+
+        <ProgressBar
+            android:id="@+id/loading_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateOnly="true"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+
+        <ImageView
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:id="@+id/makeup_product_image"
+            android:layout_centerHorizontal="true"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/blush_text"
+            android:gravity="center"
+            android:id="@+id/makeup_product_name"
+            android:layout_below="@+id/makeup_product_image"
+            android:maxLines="1"/>
+
+    </RelativeLayout>
+
+
+
+</android.support.v7.widget.CardView>

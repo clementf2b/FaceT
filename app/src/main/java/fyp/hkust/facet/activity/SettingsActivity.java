@@ -238,4 +238,10 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
         }
         return mDelegate;
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        this.finish();
+    }
 }

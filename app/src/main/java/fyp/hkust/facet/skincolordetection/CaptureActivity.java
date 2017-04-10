@@ -209,7 +209,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         taskCounter = 0;
 
         Random rand = new Random();
-        n = rand.nextInt(11) + 1;
+        n = rand.nextInt(7) + 1;
         //12 is the maximum and the 1 is our minimum
         try {
             /*recycling unused objects in order to

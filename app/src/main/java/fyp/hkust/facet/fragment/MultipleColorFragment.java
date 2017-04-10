@@ -4,7 +4,9 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -16,14 +18,28 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import fyp.hkust.facet.R;
+import fyp.hkust.facet.activity.MainActivity;
+import fyp.hkust.facet.activity.ProductDetailActivity;
 import fyp.hkust.facet.mMultipleColorRecycler.MultipleColorAdapter;
 import fyp.hkust.facet.mMultipleColorRecycler.MultipleColorHolder;
+import fyp.hkust.facet.model.Product;
+import fyp.hkust.facet.util.FontManager;
 
 /**
  * Created by ClementNg on 31/3/2017.
@@ -36,8 +52,7 @@ public class MultipleColorFragment extends DialogFragment {
     ArrayList<ArrayList<String>> data;
 
 
-    public Dialog onCreateDialog(Bundle savedInstanceState)
-    {
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -51,12 +66,11 @@ public class MultipleColorFragment extends DialogFragment {
         data = (ArrayList<ArrayList<String>>) getArguments().getSerializable("color");
         Log.d(TAG + " data ", data.toString());
 
-        rv.setAdapter(new MultipleColorAdapter(this.getActivity(),data));
+        rv.setAdapter(new MultipleColorAdapter(this.getActivity(), data));
 
         builder.setTitle("Color Set");
         builder.setView(rootView).setNegativeButton("Cancel", null);
 
         return builder.create();
     }
-
 }

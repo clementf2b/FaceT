@@ -114,11 +114,13 @@ public class OwnProductFragment extends Fragment {
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    Product result = ds.getValue(Product.class);
-                    if(result.getUid() == mAuth.getCurrentUser().getUid()) {
-                        mOwnProducts.put(ds.getKey(), result);
-                        Log.d(" product " + ds.getKey(), result.toString());
+                if (mAuth.getCurrentUser() != null) {
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        Product result = ds.getValue(Product.class);
+                        if (result.getUid() == mAuth.getCurrentUser().getUid()) {
+                            mOwnProducts.put(ds.getKey(), result);
+                            Log.d(" product " + ds.getKey(), result.toString());
+                        }
                     }
                 }
             }
@@ -236,6 +238,7 @@ public class OwnProductFragment extends Fragment {
             });
 
         }
+
     }
 
 

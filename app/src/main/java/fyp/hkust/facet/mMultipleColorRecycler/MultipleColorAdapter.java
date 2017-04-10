@@ -18,7 +18,7 @@ import fyp.hkust.facet.R;
 
 public class MultipleColorAdapter extends RecyclerView.Adapter<MultipleColorHolder> {
 
-    private final static String TAG = " MultipleColorAdapter ";
+    private final static String TAG = " MakeupProductAdapter ";
     private final Context c;
     private ArrayList<ArrayList<String>> colorArray;
 

@@ -342,7 +342,7 @@ public class ProfileActivity extends AppCompatActivity {
             drawerLayout.closeDrawer(GravityCompat.END);
         } else {
             super.onBackPressed();
-            System.exit(0);
+            this.finish();
         }
     }
 

@@ -8,11 +8,13 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.util.ArrayMap;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -470,13 +472,15 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else if (drawerLayout.isDrawerOpen(GravityCompat.END)) {  /*Closes the Appropriate Drawer*/
             drawerLayout.closeDrawer(GravityCompat.END);
-        } else {
-            super.onBackPressed();
-            System.exit(0);
+        }
+        else
+        {
+            this.finish();
         }
 
         if (searchView != null && !searchView.isIconified()) {
@@ -517,7 +521,6 @@ public class MainActivity extends AppCompatActivity {
                             mProductAdapter = new ProductAdapter(mSortedProducts, getApplicationContext());
                             mProductList.setAdapter(mProductAdapter);
                             mProductAdapter.notifyDataSetChanged();
-
 
                             filterSpinner = (Spinner) findViewById(R.id.shop_filter_spinner);
 
@@ -758,6 +761,16 @@ public class MainActivity extends AppCompatActivity {
         public boolean onQueryTextSubmit(String query) {
             searchView.setFocusable(true);
             Log.d(TAG, "submit:" + query);
+            Map<String, Product> temp = new HashMap<>(mSortedProducts);
+            for (Iterator<Map.Entry<String, Product>> i = temp.entrySet().iterator(); i.hasNext(); ) {
+                Map.Entry<String, Product> e = i.next();
+                Product v = e.getValue();
+                if (!v.getProductName().contains(query))
+                    i.remove();
+            }
+            mProductAdapter = new ProductAdapter(temp, MainActivity.this);
+            mProductList.setAdapter(mProductAdapter);
+            mProductAdapter.notifyDataSetChanged();
             return false;
         }
     };
