@@ -184,16 +184,15 @@
         android:layout_below="@+id/signingooglebtn"
         android:layout_marginTop="@dimen/activity_horizontal_margin"
         android:background="@color/facebookBlue"
-        android:drawableLeft="@drawable/ic_facebook_logo"
+        android:drawableLeft="@drawable/ic_facebooklogo"
         android:drawableTint="#ffffff"
         android:gravity="center"
-        android:paddingLeft="30dip"
-        android:paddingRight="30dp"
+        android:paddingLeft="18dp"
+        android:paddingRight="17dp"
         android:text="@string/login_with_facebook"
         android:textAlignment="center"
         android:textColor="#fff"
-        android:textSize="@dimen/small_text_size"
-        tools:ignore="RtlSymmetry" />
+        android:textSize="@dimen/small_text_size" />
 
     <!--logo-->
 
@@ -218,17 +217,14 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginTop="84dp"
-        android:background="@color/googleRed"
-        android:drawableLeft="@drawable/ic_google_glass_logo"
-        android:drawablePadding="20dip"
-        android:drawableTint="#ffffff"
+        android:background="#ffffff"
+        android:drawableLeft="@drawable/ic_search"
         android:gravity="center"
-        android:paddingLeft="30dip"
-        android:paddingRight="65dp"
+        android:paddingLeft="18dp"
+        android:paddingRight="37dp"
         android:text="@string/login_with_google"
         android:textAlignment="center"
-        android:textColor="#fff"
+        android:textColor="#7A000000"
         android:textSize="@dimen/small_text_size" />
-
 
 </RelativeLayout>

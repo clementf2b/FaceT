@@ -55,6 +55,7 @@ import com.google.gson.internal.LinkedTreeMap;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
+import com.webianks.library.PopupBubble;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -89,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference mDatabaseUsers;
 
     private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
     private static final String NAV_ITEM_ID = "nav_index";
     DrawerLayout drawerLayout;
     private int navItemId;
@@ -118,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
             R.drawable.lipstick
     };
     private List<String> brandIDList = new ArrayList<>();
+    private PopupBubble new_product_popup_bubble;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -292,22 +293,6 @@ public class MainActivity extends AppCompatActivity {
         //end
 
         mAuth = FirebaseAuth.getInstance();
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if (firebaseAuth.getCurrentUser() == null) {
-                    Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
-                    loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(loginIntent);
-                    // User is signed out
-                    Log.d(TAG, "onAuthStateChanged:signed_out. Haven't logged in before");
-                }
-                if (firebaseAuth.getCurrentUser() != null) {
-                    // User is signed in
-                    Log.d(TAG, "onAuthStateChanged:signed_in user_id:" + firebaseAuth.getCurrentUser().getUid());
-                }
-            }
-        };
 
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Product");
         mDatabase.keepSynced(true);
@@ -318,6 +303,16 @@ public class MainActivity extends AppCompatActivity {
         mProductList = (RecyclerView) findViewById(R.id.product_list);
         mgr = new GridLayoutManager(this, 2);
         mProductList.setLayoutManager(mgr);
+
+        new_product_popup_bubble = (PopupBubble) findViewById(R.id.new_product_popup_bubble);
+        new_product_popup_bubble.setPopupBubbleListener(new PopupBubble.PopupBubbleClickListener() {
+            @Override
+            public void bubbleClicked(Context context) {
+                mProductList.getLayoutManager().scrollToPosition(0);
+                //popup_bubble is clicked
+            }
+        });
+        new_product_popup_bubble.setRecyclerView(mProductList);
 
         checkUserExist();
         setupNavHeader();
@@ -493,15 +488,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        mAuth.addAuthStateListener(mAuthListener);
-
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     Product result = ds.getValue(Product.class);
-                    mProducts.put(ds.getKey(), result);
-                    Log.d(" product " + ds.getKey(), result.toString());
+                    if(result.getValidate() == 1) {
+                        mProducts.put(ds.getKey(), result);
+                        Log.d(" product " + ds.getKey(), result.toString());
+                    }
                 }
 
                 mDatabaseBrand.addValueEventListener(new ValueEventListener() {

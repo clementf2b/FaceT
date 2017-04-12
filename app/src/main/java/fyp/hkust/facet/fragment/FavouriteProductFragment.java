@@ -100,37 +100,39 @@ public class FavouriteProductFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //go into product_id(key)
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    Log.d(TAG, ds.toString());
-                    //go into user_id(key)
-                    for (DataSnapshot ds2 : ds.getChildren()) {
-                        if (ds2.getKey().equals(mAuth.getCurrentUser().getUid())) {
-                            //grab the product id
-                            mFavouriteList.add(ds.getKey());
-                        }
-                    }
-                }
-
-                mDatabase.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                            Product result = ds.getValue(Product.class);
-                            if (mFavouriteList.contains(ds.getKey())) {
-                                mFavouriteProducts.put(ds.getKey(), result);
-                                Log.d(TAG + " product " + ds.getKey(), result.getProductName() + " , " + result.getUid() + " : " + mAuth.getCurrentUser().getUid());
+                if(mAuth.getCurrentUser() != null) {
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        Log.d(TAG, ds.toString());
+                        //go into user_id(key)
+                        for (DataSnapshot ds2 : ds.getChildren()) {
+                            if (ds2.getKey().equals(mAuth.getCurrentUser().getUid())) {
+                                //grab the product id
+                                mFavouriteList.add(ds.getKey());
                             }
                         }
-                        mFavouriteProductAdapter = new FavouriteProductAdapter(mFavouriteProducts);
-                        mgr.setAutoMeasureEnabled(true);
-                        mFavouriteProductList.setAdapter(mFavouriteProductAdapter);
                     }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                    mDatabase.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                Product result = ds.getValue(Product.class);
+                                if (mFavouriteList.contains(ds.getKey())) {
+                                    mFavouriteProducts.put(ds.getKey(), result);
+                                    Log.d(TAG + " product " + ds.getKey(), result.getProductName() + " , " + result.getUid() + " : " + mAuth.getCurrentUser().getUid());
+                                }
+                            }
+                            mFavouriteProductAdapter = new FavouriteProductAdapter(mFavouriteProducts);
+                            mgr.setAutoMeasureEnabled(true);
+                            mFavouriteProductList.setAdapter(mFavouriteProductAdapter);
+                        }
 
-                    }
-                });
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {

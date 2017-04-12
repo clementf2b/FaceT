@@ -62,6 +62,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.larvalabs.svgandroid.SVGParser;
 
 import org.json.JSONObject;
 
@@ -81,6 +82,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button mLoginBtn;
     private Button mGoRegister;
     private Button mFacebookBtn;
+    private Button mGoogleBtn;
     private ImageButton passwordVisibleButton;
     private CheckBox mRemeberPasswordCheckBox;
     private boolean pw_shown;
@@ -88,8 +90,6 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
     private DatabaseReference mDatabaseUsers;
-
-    private Button mGoogleBtn;
 
     private ProgressDialog mProgress;
 

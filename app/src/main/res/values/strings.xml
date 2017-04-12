@@ -73,7 +73,7 @@
     <string-array name="category_type_array">
         <item>All</item>
         <item>Foundation</item>
-        <item>Blush</item>
+        <item>Brush</item>
         <item>Eyeshadows</item>
         <item>Lipsticks</item>
     </string-array>
@@ -96,7 +96,7 @@
     <string-array name="product_type_array">
         <item>All</item>
         <item>Foundation</item>
-        <item>Blush</item>
+        <item>Brush</item>
         <item>Eyeshadows</item>
         <item>Lipsticks</item>
     </string-array>
@@ -122,6 +122,7 @@
 
     <!--catLoading_main-->
     <string name="cat_loading_text">L O A D I N G ...</string>
+    <string name="new_product_text">New Product</string>
 
     <!--nav_header_main-->
     <string name="nav_username_text">Peter</string>
@@ -208,10 +209,12 @@
 
     <!--activity_colorize_face-->
     <string name="foundation_text">Foundation</string>
-    <string name="blush_text">Blush</string>
+    <string name="brush_text">Brush</string>
     <string name="eye_text">Eyeshadows</string>
     <string name="lip_text">Lipsticks</string>
     <string name="compare_btn_text">Compare</string>
+    <string name="after_text">After</string>
+    <string name="before_text">Before</string>
 
     <!--activity_shop_location-->
     <string name="title_activity_shop_location">Map</string>

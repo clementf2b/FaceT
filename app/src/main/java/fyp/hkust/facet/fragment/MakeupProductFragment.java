@@ -5,6 +5,7 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
@@ -59,8 +61,10 @@ public class MakeupProductFragment extends DialogFragment {
     RecyclerView rv;
     private DatabaseReference mDatabase;
     private Map<String, ProductTypeTwo> mAppliedProducts = new HashMap<>();
-    private String selectedFoundationID, selectedBlushID, selectedEyeshadowID, selectedLipstickID;
-    private int foundationColorPostion, blushColorPostion, eyeshadowColorPostion, lipstickColorPostion;
+    private String selectedFoundationID, selectedBrushID, selectedEyeshadowID, selectedLipstickID;
+    private int foundationColorPostion, brushColorPostion, eyeshadowColorPostion, lipstickColorPostion;
+    private ImageView before_imageview;
+    private ImageView after_imageview;
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -73,10 +77,10 @@ public class MakeupProductFragment extends DialogFragment {
             foundationColorPostion = getArguments().getInt("foundationColorPosition");
             Log.d(TAG + " f ", selectedFoundationID + " " + foundationColorPostion);
         }
-        if (getArguments().getString("selectedBlushID") != null) {
-            selectedBlushID = getArguments().getString("selectedBlushID");
-            blushColorPostion = getArguments().getInt("blushColorPosition");
-            Log.d(TAG + " b ", selectedBlushID + " " + blushColorPostion);
+        if (getArguments().getString("selectedBrushID") != null) {
+            selectedBrushID = getArguments().getString("selectedBrushID");
+            brushColorPostion = getArguments().getInt("brushColorPosition");
+            Log.d(TAG + " b ", selectedBrushID + " " + brushColorPostion);
         }
         if (getArguments().getString("selectedEyeshadowID") != null) {
             selectedEyeshadowID = getArguments().getString("selectedEyeshadowID");
@@ -91,14 +95,31 @@ public class MakeupProductFragment extends DialogFragment {
 
         getDatabaseProductData();
 
+        before_imageview = (ImageView) rootView.findViewById(R.id.before_imageview);
+        after_imageview = (ImageView) rootView.findViewById(R.id.after_imageview);
+        Bitmap basicImg = getArguments().getParcelable("basicImg");
+        Bitmap temp = getArguments().getParcelable("temp");
+        before_imageview.setImageBitmap(basicImg);
+        after_imageview.setImageBitmap(temp);
+
+        Log.i("before height:", basicImg.getHeight() +"");
+        Log.i("after height:", temp.getHeight() +"");
+
         rv = (RecyclerView) rootView.findViewById(R.id.makeup_product_recyclerview);
         rv.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+        rv.setHasFixedSize(true);
+        rv.setNestedScrollingEnabled(false);
 
         rv.setAdapter(new MakeupProductAdapter(mAppliedProducts, this.getActivity()));
         builder.setTitle("Applied Products");
-        builder.setView(rootView).setNegativeButton("Cancel", null);
 
-        return builder.create();
+        //make dialog full screen
+        Dialog d = builder.setView(rootView).setNegativeButton("Cancel", null).create();
+        // (That new View is just there to have something inside the dialog that can grow big enough to cover the whole screen.)
+
+        d.show();
+
+        return d;
     }
 
     public void getDatabaseProductData() {
@@ -108,10 +129,10 @@ public class MakeupProductFragment extends DialogFragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    if (ds.getKey().equals(selectedFoundationID) || ds.getKey().equals(selectedBlushID) || ds.getKey().equals(selectedEyeshadowID) || ds.getKey().equals(selectedLipstickID)) {
+                    if (ds.getKey().equals(selectedFoundationID) || ds.getKey().equals(selectedBrushID) || ds.getKey().equals(selectedEyeshadowID) || ds.getKey().equals(selectedLipstickID)) {
                         ProductTypeTwo result = ds.getValue(ProductTypeTwo.class);
                         mAppliedProducts.put(ds.getKey(), result);
-                        Log.d(" product key " , ds.getKey());
+                        Log.d(" product key ", ds.getKey());
                     }
                 }
             }
@@ -166,7 +187,7 @@ public class MakeupProductFragment extends DialogFragment {
             if (model.getCategory().equals("Foundation")) {
                 viewHolder.setProduct_color_image(model.getColor().get(foundationColorPostion));
             } else if (model.getCategory().equals("Blush")) {
-                viewHolder.setProduct_color_image(model.getColor().get(blushColorPostion));
+                viewHolder.setProduct_color_image(model.getColor().get(brushColorPostion));
             } else if (model.getCategory().equals("Eyeshadows")) {
                 viewHolder.setProduct_color_image(model.getColor().get(eyeshadowColorPostion));
             } else if (model.getCategory().equals("Lipsticks")) {

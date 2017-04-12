@@ -1,1 +1,1 @@
-include ':app', ':openCVLibrary310', ':dlib'
+include ':app', ':openCVLibrary310', ':dlib', ':svg-android-1.1'

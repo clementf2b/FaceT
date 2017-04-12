@@ -16,6 +16,19 @@ public class Product {
     private String category;
     private String uid;
     private Long releaseDate;
+    private int validate;
+
+    public Product(String productName, String brandID, String description, String productImage, Long colorNo, String category, String uid, Long releaseDate, int validate) {
+        this.productName = productName;
+        this.brandID = brandID;
+        this.description = description;
+        this.productImage = productImage;
+        this.colorNo = colorNo;
+        this.category = category;
+        this.uid = uid;
+        this.releaseDate = releaseDate;
+        this.validate = validate;
+    }
 
     public Product(String productName, String brandID, String description, String productImage, Long colorNo, String category, String uid, Long releaseDate) {
         this.productName = productName;
@@ -32,7 +45,6 @@ public class Product {
     {
 
     }
-
 
     public String getProductName() {
         return productName;
@@ -97,4 +109,13 @@ public class Product {
     public void setReleaseDate(Long releaseDate) {
         this.releaseDate = releaseDate;
     }
+
+    public int getValidate() {
+        return validate;
+    }
+
+    public void setValidate(int validate) {
+        this.validate = validate;
+    }
+
 }
