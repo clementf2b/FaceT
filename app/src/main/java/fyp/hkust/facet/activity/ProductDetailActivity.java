@@ -596,40 +596,46 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         dialog.dismiss();
 
         // username change listener
-        mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue() != null) {
-                    Log.i("user dataSnapshot.getValue()", dataSnapshot.getValue().toString());
-                    final User user_data = dataSnapshot.getValue(User.class);
-                    Log.e(user_data.getName(), "User data is null!");
-                    current_username = user_data.getName();
-                    user_image_url = user_data.getImage();
-                    Log.d(TAG + " current user", current_username);
-                    Picasso.with(getApplicationContext()).load(user_data.getImage()).networkPolicy(NetworkPolicy.OFFLINE).into(user_profile_pic, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                        }
+        if(mAuth.getCurrentUser() != null) {
+            mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.getValue() != null) {
+                        Log.i("user dataSnapshot.getValue()", dataSnapshot.getValue().toString());
+                        final User user_data = dataSnapshot.getValue(User.class);
+                        Log.e(user_data.getName(), "User data is null!");
+                        current_username = user_data.getName();
+                        user_image_url = user_data.getImage();
+                        Log.d(TAG + " current user", current_username);
+                        Picasso.with(getApplicationContext()).load(user_data.getImage()).networkPolicy(NetworkPolicy.OFFLINE).into(user_profile_pic, new Callback() {
+                            @Override
+                            public void onSuccess() {
+                            }
 
-                        @Override
-                        public void onError() {
-                            Picasso.with(getApplicationContext())
-                                    .load(user_data.getImage())
-                                    .fit()
-                                    .centerCrop()
-                                    .into(user_profile_pic);
-                        }
-                    });
+                            @Override
+                            public void onError() {
+                                Picasso.with(getApplicationContext())
+                                        .load(user_data.getImage())
+                                        .fit()
+                                        .centerCrop()
+                                        .into(user_profile_pic);
+                            }
+                        });
 
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.e(TAG, "Failed to read username value.", error.toException());
-            }
-        });
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    // Failed to read value
+                    Log.e(TAG, "Failed to read username value.", error.toException());
+                }
+            });
+        }else
+        {
+            Snackbar snackbar = Snackbar.make(activity_product_detail_layout, "Haven't logged in", Snackbar.LENGTH_LONG);
+            snackbar.show();
+        }
 
         setUpEmojiPopup();
         checkUserExist();
@@ -669,9 +675,9 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
 
         @Override
         public void onBindViewHolder(ViewHolder viewHolder, int i) {
-            if (colorNo == 0)
+            if (colorNo == 0 && colorSet != null)
                 viewHolder.colorImage.setColorFilter(Color.parseColor(colorSet.get(i)));
-            else
+            else if (colorNo == 1 && product_data_two.getColor() != null)
                 viewHolder.colorImage.setColorFilter(Color.parseColor(product_data_two.getColor().get(0).get(i)));
         }
 
@@ -957,81 +963,90 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
     }
 
     private void checkRatingOrNot() {
-        mDatabaseRatings.child(product_id).child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue() != null) {
-                    Log.d(TAG + " dataSnapshot check", dataSnapshot.getValue().getClass().getName());
-                    if (dataSnapshot.getValue().getClass().getName().equals("java.lang.Long")) {
-                        Long temp = (Long) dataSnapshot.getValue();
-                        user_rating_bar.setRating((float) temp);
-                        user_rating_bar.setIsIndicator(true);
-                        submitRatingButton.setVisibility(View.GONE);
-                    } else if (dataSnapshot.getValue().getClass().getName().equals("java.lang.double")) {
-                        double temp = (double) dataSnapshot.getValue();
-                        user_rating_bar.setRating((float) temp);
-                        user_rating_bar.setIsIndicator(true);
-                        submitRatingButton.setVisibility(View.GONE);
+        if(mAuth.getCurrentUser() != null) {
+            mDatabaseRatings.child(product_id).child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.getValue() != null) {
+                        Log.d(TAG + " dataSnapshot check", dataSnapshot.getValue().getClass().getName());
+                        if (dataSnapshot.getValue().getClass().getName().equals("java.lang.Long")) {
+                            Long temp = (Long) dataSnapshot.getValue();
+                            user_rating_bar.setRating((float) temp);
+                            user_rating_bar.setIsIndicator(true);
+                            submitRatingButton.setVisibility(View.GONE);
+                        } else if (dataSnapshot.getValue().getClass().getName().equals("java.lang.double")) {
+                            double temp = (double) dataSnapshot.getValue();
+                            user_rating_bar.setRating((float) temp);
+                            user_rating_bar.setIsIndicator(true);
+                            submitRatingButton.setVisibility(View.GONE);
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.e(TAG, "Failed to get value.", error.toException());
-            }
-        });
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    // Failed to read value
+                    Log.e(TAG, "Failed to get value.", error.toException());
+                }
+            });
+        }
     }
 
     private void getAverageRating() {
 
-        //average ratings change listener
-        mDatabaseRatings.child(product_id).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                int totalRating = 0;
-                if (dataSnapshot.getValue() != null) {
-                    Log.d(TAG + " dataSnapshot.getChildren()", dataSnapshot.getValue().toString());
-                    Map<String, Long> td = (HashMap<String, Long>) dataSnapshot.getValue();
-                    List<String> keys = new ArrayList<>(td.keySet());
-                    List<Long> values = new ArrayList<>(td.values());
-                    if (keys.contains(mAuth.getCurrentUser().getUid())) {
-                        delete_rating.setVisibility(View.VISIBLE);
-                    }
+        if(mAuth.getCurrentUser() != null) {
+            //average ratings change listener
+            mDatabaseRatings.child(product_id).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    int totalRating = 0;
+                    if (dataSnapshot.getValue() != null) {
+                        Log.d(TAG + " dataSnapshot.getChildren()", dataSnapshot.getValue().toString());
+                        Map<String, Long> td = (HashMap<String, Long>) dataSnapshot.getValue();
+                        List<String> keys = new ArrayList<>(td.keySet());
+                        List<Long> values = new ArrayList<>(td.values());
+                        if (keys.contains(mAuth.getCurrentUser().getUid())) {
+                            delete_rating.setVisibility(View.VISIBLE);
+                        }
 //                    Log.d(TAG + "  arraylist" , values.toString());
-                    for (int i = 0; i < values.size(); i++) {
-                        double temp = doubleValue(values.get(i));
-                        barRatingCount = countEachRating(temp);
-                        Log.d(TAG + " temp", temp + "");
-                        totalRating += temp;
+                        for (int i = 0; i < values.size(); i++) {
+                            double temp = doubleValue(values.get(i));
+                            barRatingCount = countEachRating(temp);
+                            Log.d(TAG + " temp", temp + "");
+                            totalRating += temp;
+                        }
+                        ratingCount = values.size();
+                        Log.d(TAG + " total , ratingCount", totalRating + " , " + ratingCount);
+                        averageRating = totalRating / ratingCount;
+                        //round to 2 significant figures
+                        BigDecimal bd = new BigDecimal(averageRating);
+                        bd = bd.round(new MathContext(2));
+                        averageRating = bd.floatValue();
+
+                        Log.d(TAG + " average", averageRating + "");
+                        ratingChartBar.setData(getBarData());
+                        setData(ratingPieChart, averageRating);
+                        rating_textview.setText(averageRating + "");
+                        top_rating_bar.setRating(averageRating);
+                        rating_population_number_text.setText(ratingCount + "");
+                        Log.d("rating_population_number_text.setText(ratingCount)", ratingCount + "");
+                        ratingChartBar.invalidate();
+                        ratingPieChart.invalidate();
                     }
-                    ratingCount = values.size();
-                    Log.d(TAG + " total , ratingCount", totalRating + " , " + ratingCount);
-                    averageRating = totalRating / ratingCount;
-                    //round to 2 significant figures
-                    BigDecimal bd = new BigDecimal(averageRating);
-                    bd = bd.round(new MathContext(2));
-                    averageRating = bd.floatValue();
-
-                    Log.d(TAG + " average", averageRating + "");
-                    ratingChartBar.setData(getBarData());
-                    setData(ratingPieChart, averageRating);
-                    rating_textview.setText(averageRating + "");
-                    top_rating_bar.setRating(averageRating);
-                    rating_population_number_text.setText(ratingCount + "");
-                    Log.d("rating_population_number_text.setText(ratingCount)", ratingCount + "");
-                    ratingChartBar.invalidate();
-                    ratingPieChart.invalidate();
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.e(TAG, "Failed to get value.", error.toException());
-            }
-        });
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    // Failed to read value
+                    Log.e(TAG, "Failed to get value.", error.toException());
+                }
+            });
+        }
+        else
+        {
+            Snackbar snackbar = Snackbar.make(activity_product_detail_layout, "Haven't logged in.", Snackbar.LENGTH_LONG);
+            snackbar.show();
+        }
     }
 
     private static double doubleValue(Object value) {

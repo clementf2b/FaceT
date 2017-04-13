@@ -122,10 +122,12 @@ import java.util.Map;
 import de.hdodenhof.circleimageview.CircleImageView;
 import fyp.hkust.facet.R;
 
+import fyp.hkust.facet.fragment.ColorSelectFragment;
 import fyp.hkust.facet.fragment.MakeupProductFragment;
 import fyp.hkust.facet.fragment.MultipleColorFragment;
 import fyp.hkust.facet.model.ProductTypeTwo;
 import fyp.hkust.facet.util.FontManager;
+import fyp.hkust.facet.util.MyItemTouchHelperCallback;
 import fyp.hkust.facet.util.PinchImageView;
 
 import id.zelory.compressor.Compressor;
@@ -138,7 +140,7 @@ import me.shaohui.advancedluban.Luban;
  *
  * @author moon5ckq
  */
-public class ColorizeFaceActivity extends AppCompatActivity {
+public class ColorizeFaceActivity extends AppCompatActivity implements ColorSelectFragment.OnDataPass {
 
     private static final String TAG = ColorizeFaceActivity.class.getSimpleName();
 
@@ -151,8 +153,7 @@ public class ColorizeFaceActivity extends AppCompatActivity {
     private Bitmap basicImg = null;
     private PinchImageView imageView = null;
     private Bitmap originalImg = null;
-    private Bitmap temp = null;
-    private FloatingActionButton drawbtn;
+    private Bitmap temp = null, temp2 = null, bitmap = null;
     private ImageButton show_hide_layout_button;
     private Button foundation_button, eyeshadow_button, blush_button, lipstick_button;
     private SeekBar barHeightSeekBar, thumbHeightSeekBar;
@@ -198,7 +199,6 @@ public class ColorizeFaceActivity extends AppCompatActivity {
     private String path;
     private LinearLayout makeup_select_layout;
     private Swipe swipe;
-    private Bitmap bitmap;
     private HandlerThread mThread;
     private Handler mThreadHandler;
     private int[] tempArray;
@@ -224,7 +224,6 @@ public class ColorizeFaceActivity extends AppCompatActivity {
     private String selectedFoundationID, selectedBrushID, selectedEyeshadowID, selectedLipstickID;
     private String selectedFoundationColor, selectedBrushColor, selectedLipstickColor;
     private int colorPosition;
-    private List<String> selectedColor = new ArrayList<>();
     private Button eyeshadow_method1, eyeshadow_method2, eyeshadow_method3, eyeshadow_method4;
     private LinearLayout eyeshadow_method_layout;
     // number,bitmap
@@ -238,7 +237,8 @@ public class ColorizeFaceActivity extends AppCompatActivity {
     private int makeupCount = 0;
     private ImageButton back_button, undo_button, redo_button, save_button, apply_list_button;
     private RelativeLayout activity_colorize_face_layout;
-    private List<String> SavedEyeshadowColor = new ArrayList<>();
+    private ArrayList<String> savedEyeshadowColor = new ArrayList<>();
+    private int methodNumber = 1;
 
     /**
      * Checks if the app has permission to write to device storage
@@ -363,8 +363,6 @@ public class ColorizeFaceActivity extends AppCompatActivity {
 
         databaseGetData();
         setup();
-
-        drawbtn = (FloatingActionButton) this.findViewById(R.id.drawbtn);
 
         swipe = new Swipe();
         swipe.addListener(new SwipeListener() {
@@ -492,19 +490,6 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         mThread.start();
         mThreadHandler = new Handler(mThread.getLooper());
         mThreadHandler.post(landmarkDetection);
-
-        drawbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                connectLipLine();
-                drawEyeShadowWithOneColorMethod1();
-                //mouth_lower_lip_left_contour 1- 3 : 39 - 41
-//                drawLocation(temp, drawCanvas);
-                Log.d(TAG + " point", j + " ");
-                j++;
-                imageView.setImageBitmap(temp);
-            }
-        });
     }
 
     private void setup() {
@@ -601,6 +586,9 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         eyeshadow_method1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                selectedColor.clear();
+//                onDataPass(selectedColor);
+                methodNumber = 1;
                 new LoadingMakeupAsyncTask().execute();
             }
         });
@@ -608,21 +596,24 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         eyeshadow_method2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                methodNumber = 2;
+                new LoadingMakeupAsyncTask().execute();
             }
         });
         eyeshadow_method3 = (Button) findViewById(R.id.eyeshadow_method3);
         eyeshadow_method3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                methodNumber = 3;
+                new LoadingMakeupAsyncTask().execute();
             }
         });
         eyeshadow_method4 = (Button) findViewById(R.id.eyeshadow_method4);
         eyeshadow_method4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                methodNumber = 4;
+                new LoadingMakeupAsyncTask().execute();
             }
         });
 
@@ -802,6 +793,8 @@ public class ColorizeFaceActivity extends AppCompatActivity {
                         }
                         Log.d(TAG + " added landmark", count + "");
                         detectRegion();
+                        originalImg = temp.copy(temp.getConfig(), true);
+                        temp2 = temp.copy(temp.getConfig(), true);
                     }
                 } else {
                     runOnUiThread(new Runnable() {
@@ -1147,7 +1140,7 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         temp.getPixels(tempArray, 0, temp.getWidth(), 0, 0, temp.getWidth(), temp.getHeight());
     }
 
-    private void setupFoundation(String foundationColor) {
+    private void setupFoundation(String foundationColor, Bitmap getBitmap) {
 
         try {
             selectedFoundationColor = foundationColor;
@@ -1168,7 +1161,7 @@ public class ColorizeFaceActivity extends AppCompatActivity {
                     }
                 }
             }
-            temp.setPixels(tempArray, 0, temp.getWidth(), 0, 0, temp.getWidth(), temp.getHeight());
+            getBitmap.setPixels(tempArray, 0, getBitmap.getWidth(), 0, 0, getBitmap.getWidth(), getBitmap.getHeight());
         } catch (Exception e) {
             Log.e(TAG, e.toString());
         }
@@ -1206,7 +1199,7 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         canvas.drawCircle(landmark_pt_x.get(j), landmark_pt_y.get(j), 2, paint);
     }
 
-    public void changeLipColor(String lipstickColor) {
+    public void changeLipColor(String lipstickColor, Bitmap getBitmap) {
 
         selectedLipstickColor = lipstickColor;
         int color = stringColorRGBToARGB(lipstickColor, 255, 0, 0, 0);
@@ -1224,7 +1217,7 @@ public class ColorizeFaceActivity extends AppCompatActivity {
                 }
             }
         }
-        temp.setPixels(tempArray, 0, temp.getWidth(), 0, 0, temp.getWidth(), temp.getHeight());
+        getBitmap.setPixels(tempArray, 0, getBitmap.getWidth(), 0, 0, getBitmap.getWidth(), getBitmap.getHeight());
     }
 
     public static int mixTwoColors(int color1, int color2, float amount) {
@@ -1326,15 +1319,34 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         return color2;
     }
 
-    private void drawEyeShadowWithOneColorMethod1() {
-
-        Canvas drawCanvas = new Canvas(temp);
+    private void drawEyeShadowWithFourColorMethod1(Bitmap getBitmap) {
+        Canvas drawCanvas = new Canvas(getBitmap);
         Paint mPaint = new Paint();
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setStrokeWidth(50f);
-        int size = SavedEyeshadowColor.size();
-        int color1 = stringColorToARGB(SavedEyeshadowColor.get(0), 0, 0, 0, 0);
-        int color2 = stringColorToARGB(SavedEyeshadowColor.get(1), 0, 0, 0, 0);
+        int size = savedEyeshadowColor.size();
+        int color1 = 0, color2 = 0, color3 = 0, color4 = 0;
+        if (size == 1) {
+            color1 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
+            color2 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
+            color3 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
+            color4 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
+            mPaint.setMaskFilter(new BlurMaskFilter(6f, BlurMaskFilter.Blur.NORMAL));
+        } else if (size == 3) {
+            color1 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
+            color2 = stringColorToARGB(savedEyeshadowColor.get(1), 0, 0, 0, 0);
+            color3 = stringColorToARGB(savedEyeshadowColor.get(2), 0, 0, 0, 0);
+            color4 = stringColorToARGB(savedEyeshadowColor.get(2), 0, 0, 0, 0);
+            mPaint.setMaskFilter(new BlurMaskFilter(6f, BlurMaskFilter.Blur.NORMAL));
+        }
+        if (size == 4) {
+            color1 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
+            color2 = stringColorToARGB(savedEyeshadowColor.get(1), 0, 0, 0, 0);
+            color3 = stringColorToARGB(savedEyeshadowColor.get(2), 0, 0, 0, 0);
+            color4 = stringColorToARGB(savedEyeshadowColor.get(3), 0, 0, 0, 0);
+            mPaint.setMaskFilter(new BlurMaskFilter(4.5f, BlurMaskFilter.Blur.NORMAL));
+        }
+
 //        int sc = drawCanvas.saveLayer(0, 0, temp.getWidth(), temp.getHeight(), null, Canvas.ALL_SAVE_FLAG);
 //        int mixColor = mixTwoColors(color1,color2,0.5f);
 //        Log.d(TAG, mixColor + "");
@@ -1351,9 +1363,9 @@ public class ColorizeFaceActivity extends AppCompatActivity {
 //               landmark_pt_x.get(21) + (landmark_pt_x.get(25) - landmark_pt_x.get(21) / 2), landmark_pt_y.get(21), (landmark_pt_x.get(25) - landmark_pt_x.get(21) / 2),
 //                color1, color2,
 //                Shader.TileMode.CLAMP));
-        mPaint.setMaskFilter(new BlurMaskFilter(6, BlurMaskFilter.Blur.NORMAL));
 
-        float widthEyeShadow = (landmark_pt_y.get(37) - landmark_pt_y.get(19)) / 2.5f;
+
+        float widthEyeShadow = (landmark_pt_y.get(37) - landmark_pt_y.get(19)) / 2.2f;
         Log.d(TAG + " widthEyeShadow ", " " + widthEyeShadow);
 
         Path path = new Path();
@@ -1361,7 +1373,7 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         path.reset();
 //        Float left_middle_eye_eyebrow_y = (landmark_pt_y.get(21) - landmark_pt_y.get(31) )/2;
         //left_eye_left_corner
-        path.moveTo(landmark_pt_x.get(36) - 25f, landmark_pt_y.get(36) - 5f);
+        path.moveTo(landmark_pt_x.get(36) - 15f, landmark_pt_y.get(36) - 5f);
 
         path.cubicTo(
                 //left_eye_top_left + a distance
@@ -1369,19 +1381,19 @@ public class ColorizeFaceActivity extends AppCompatActivity {
                 //left_eye_top_right + a distance
                 landmark_pt_x.get(38) + 1f, landmark_pt_y.get(38) - widthEyeShadow,
                 //left_eye_right_corner
-                landmark_pt_x.get(39) + 16f, landmark_pt_y.get(39) - 3f);
+                landmark_pt_x.get(39) + 7f, landmark_pt_y.get(39) - 1f);
 
-        path.lineTo(landmark_pt_x.get(39) + 14f, landmark_pt_y.get(39));
+        path.lineTo(landmark_pt_x.get(39) + 6f, landmark_pt_y.get(39));
 
         path.cubicTo(
                 //left_eye_top_left
                 landmark_pt_x.get(38) + 1f, landmark_pt_y.get(38) - 10f,
                 //left_eye_top_right
-                landmark_pt_x.get(37) + 1f, landmark_pt_y.get(37) - 9f,
+                landmark_pt_x.get(37) + 1f, landmark_pt_y.get(37) - 8f,
                 //left_eye_left_corner
                 landmark_pt_x.get(36), landmark_pt_y.get(36) - 9f);
 
-        path.lineTo(landmark_pt_x.get(36) - 25f, landmark_pt_y.get(36) - 5f);
+        path.lineTo(landmark_pt_x.get(36) - 15f, landmark_pt_y.get(36) - 5f);
 
         path.close();
         drawCanvas.drawPath(path, mPaint);
@@ -1403,11 +1415,10 @@ public class ColorizeFaceActivity extends AppCompatActivity {
                 color1,
                 color2,
                 Shader.TileMode.CLAMP));
-        mPaint.setMaskFilter(new BlurMaskFilter(6, BlurMaskFilter.Blur.NORMAL));
 
         path.reset();
         //right_eye_right_corner
-        path.moveTo(landmark_pt_x.get(45) + 25f, landmark_pt_y.get(45) - 5f);
+        path.moveTo(landmark_pt_x.get(45) + 15f, landmark_pt_y.get(45) - 5f);
 
         path.cubicTo(
                 //right_eye_top_right + a distance
@@ -1415,19 +1426,19 @@ public class ColorizeFaceActivity extends AppCompatActivity {
                 //right_eye_top_left + a distance
                 landmark_pt_x.get(43) - 1f, landmark_pt_y.get(43) - widthEyeShadow,
                 //right_eye_left_corner
-                landmark_pt_x.get(42) - 16f, landmark_pt_y.get(42) - 3f);
+                landmark_pt_x.get(42) - 7f, landmark_pt_y.get(42) - 1f);
 
-        path.lineTo(landmark_pt_x.get(42) - 14f, landmark_pt_y.get(42));
+        path.lineTo(landmark_pt_x.get(42) - 6f, landmark_pt_y.get(42));
 
         path.cubicTo(
                 //right_eye_top_left
                 landmark_pt_x.get(43) - 1f, landmark_pt_y.get(43) - 10f,
                 //right_eye_top_right
-                landmark_pt_x.get(44) - 1f, landmark_pt_y.get(44) - 9f,
+                landmark_pt_x.get(44) - 1f, landmark_pt_y.get(44) - 8f,
                 //right_eye_right_corner
                 landmark_pt_x.get(45), landmark_pt_y.get(45) - 9f);
 
-        path.lineTo(landmark_pt_x.get(45) + 25f, landmark_pt_y.get(45) - 5f);
+        path.lineTo(landmark_pt_x.get(45) + 15f, landmark_pt_y.get(45) - 5f);
 
         path.close();
         drawCanvas.drawPath(path, mPaint);
@@ -1441,8 +1452,6 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setStrokeWidth(50f);
 //        drawCanvas.drawColor(Color.WHITE);
-        int color3 = stringColorToARGB(SavedEyeshadowColor.get(2), 0, 0, 0, 0);
-        int color4 = stringColorToARGB(SavedEyeshadowColor.get(3), 0, 0, 0, 0);
 
         mPaint.setShader(
                 new LinearGradient(landmark_pt_x.get(36), landmark_pt_y.get(36) + 10f,
@@ -1450,16 +1459,16 @@ public class ColorizeFaceActivity extends AppCompatActivity {
                         color3, color4,
                         Shader.TileMode.CLAMP));
 
-        mPaint.setMaskFilter(new BlurMaskFilter(6, BlurMaskFilter.Blur.NORMAL));
+        mPaint.setMaskFilter(new BlurMaskFilter(4f, BlurMaskFilter.Blur.NORMAL));
 
-        widthEyeShadow = (landmark_pt_y.get(37) - landmark_pt_y.get(19)) / 4f;
+        widthEyeShadow = (landmark_pt_y.get(37) - landmark_pt_y.get(19)) / 3f;
         Log.d(TAG + " widthEyeShadow ", " " + widthEyeShadow);
 
         // left eye
         path.reset();
 //        Float left_middle_eye_eyebrow_y = (landmark_pt_y.get(21) - landmark_pt_y.get(31) )/2;
         //left_eye_left_corner
-        path.moveTo(landmark_pt_x.get(36) - 15f, landmark_pt_y.get(36) + 5f);
+        path.moveTo(landmark_pt_x.get(36) - 10f, landmark_pt_y.get(36) + 5f);
 
         path.cubicTo(
                 //left_eye_top_left + a distance
@@ -1467,19 +1476,19 @@ public class ColorizeFaceActivity extends AppCompatActivity {
                 //left_eye_top_right + a distance
                 landmark_pt_x.get(40) + 1f, landmark_pt_y.get(40) + widthEyeShadow,
                 //left_eye_right_corner
-                landmark_pt_x.get(39) + 15f, landmark_pt_y.get(39) + 3f);
+                landmark_pt_x.get(39) + 12f, landmark_pt_y.get(39) + 5f);
 
 //        path.lineTo(landmark_pt_x.get(39) + 13f, landmark_pt_y.get(39));
 
         path.cubicTo(
                 //left_eye_top_left
-                landmark_pt_x.get(40) + 1f, landmark_pt_y.get(40) + 9f,
+                landmark_pt_x.get(40) + 1f, landmark_pt_y.get(40) + 10f,
                 //left_eye_top_right
-                landmark_pt_x.get(41) + 1f, landmark_pt_y.get(41) + 7f,
+                landmark_pt_x.get(41) + 1f, landmark_pt_y.get(41) + 8f,
                 //left_eye_left_corner
-                landmark_pt_x.get(36), landmark_pt_y.get(36) + 8f);
+                landmark_pt_x.get(36), landmark_pt_y.get(36) + 9f);
 
-        path.lineTo(landmark_pt_x.get(36) - 15f, landmark_pt_y.get(36) + 5f);
+        path.lineTo(landmark_pt_x.get(36) - 10f, landmark_pt_y.get(36) + 5f);
 
         path.close();
         drawCanvas.drawPath(path, mPaint);
@@ -1501,11 +1510,11 @@ public class ColorizeFaceActivity extends AppCompatActivity {
                         landmark_pt_x.get(42), landmark_pt_y.get(42) + 10f,
                         color3, color4,
                         Shader.TileMode.CLAMP));
-        mPaint.setMaskFilter(new BlurMaskFilter(6, BlurMaskFilter.Blur.NORMAL));
+        mPaint.setMaskFilter(new BlurMaskFilter(4f, BlurMaskFilter.Blur.NORMAL));
 
         path.reset();
         //right_eye_right_corner
-        path.moveTo(landmark_pt_x.get(45) + 15f, landmark_pt_y.get(45) + 5f);
+        path.moveTo(landmark_pt_x.get(45) + 10f, landmark_pt_y.get(45) + 5f);
 
         path.cubicTo(
                 //right_eye_top_right + a distance
@@ -1513,19 +1522,19 @@ public class ColorizeFaceActivity extends AppCompatActivity {
                 //right_eye_top_left + a distance
                 landmark_pt_x.get(47) - 1f, landmark_pt_y.get(47) + widthEyeShadow,
                 //right_eye_left_corner
-                landmark_pt_x.get(42) - 15f, landmark_pt_y.get(42) + 3f);
+                landmark_pt_x.get(42) - 12f, landmark_pt_y.get(42) + 5f);
 
 //        path.lineTo(landmark_pt_x.get(42) - 13f, landmark_pt_y.get(42));
 
         path.cubicTo(
                 //right_eye_top_left
-                landmark_pt_x.get(47) - 1f, landmark_pt_y.get(47) + 9f,
+                landmark_pt_x.get(47) - 1f, landmark_pt_y.get(47) + 10f,
                 //right_eye_top_right
-                landmark_pt_x.get(46) - 1f, landmark_pt_y.get(46) + 7f,
+                landmark_pt_x.get(46) - 1f, landmark_pt_y.get(46) + 8f,
                 //right_eye_right_corner
-                landmark_pt_x.get(45), landmark_pt_y.get(45) + 8f);
+                landmark_pt_x.get(45), landmark_pt_y.get(45) + 9f);
 
-        path.lineTo(landmark_pt_x.get(45) + 15f, landmark_pt_y.get(45) + 5f);
+        path.lineTo(landmark_pt_x.get(45) + 10f, landmark_pt_y.get(45) + 5f);
 
         path.close();
         drawCanvas.drawPath(path, mPaint);
@@ -1537,15 +1546,472 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         mPaint.setXfermode(null);
     }
 
-    private void drawEyeShadowWithTwoColorMethod1() {
-
-        Canvas drawCanvas = new Canvas(temp);
+    private void drawEyeShadowWithFourColorMethod2(Bitmap getBitmap) {
+        Canvas drawCanvas = new Canvas(getBitmap);
         Paint mPaint = new Paint();
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setStrokeWidth(50f);
-        int size = SavedEyeshadowColor.size();
-        int color1 = stringColorToARGB(SavedEyeshadowColor.get(0), 0, 0, 0, 0);
-        int color2 = stringColorToARGB(SavedEyeshadowColor.get(1), 0, 0, 0, 0);
+        int size = savedEyeshadowColor.size();
+        int color1 = 0, color2 = 0, color3 = 0, color4 = 0;
+        if (size == 4) {
+            color1 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
+            color2 = stringColorToARGB(savedEyeshadowColor.get(1), 0, 0, 0, 0);
+            color3 = stringColorToARGB(savedEyeshadowColor.get(2), 0, 0, 0, 0);
+            color4 = stringColorToARGB(savedEyeshadowColor.get(3), 0, 0, 0, 0);
+//            mPaint.setMaskFilter(new BlurMaskFilter(4.5f, BlurMaskFilter.Blur.NORMAL));
+        }
+
+//        1.
+        mPaint.setColor(color1);
+        mPaint.setMaskFilter(new BlurMaskFilter(6f, BlurMaskFilter.Blur.NORMAL));
+
+        float widthEyeShadow = (landmark_pt_y.get(37) - landmark_pt_y.get(19)) / 2.2f;
+        Log.d(TAG + " widthEyeShadow ", " " + widthEyeShadow);
+
+        Path path = new Path();
+        // left eye
+        path.reset();
+        //left_eye_left_corner
+        path.moveTo(landmark_pt_x.get(36) - 15f, landmark_pt_y.get(36) - 5f);
+
+        path.cubicTo(
+                //left_eye_top_left + a distance
+                landmark_pt_x.get(37) + 1f, landmark_pt_y.get(37) - widthEyeShadow,
+                //left_eye_top_right + a distance
+                landmark_pt_x.get(38) + 1f, landmark_pt_y.get(38) - widthEyeShadow,
+                //left_eye_right_corner
+                landmark_pt_x.get(39) + 7f, landmark_pt_y.get(39) - 1f);
+
+        path.lineTo(landmark_pt_x.get(39) + 6f, landmark_pt_y.get(39));
+
+        path.cubicTo(
+                //left_eye_top_left
+                landmark_pt_x.get(38) + 1f, landmark_pt_y.get(38) - 10f,
+                //left_eye_top_right
+                landmark_pt_x.get(37) + 1f, landmark_pt_y.get(37) - 8f,
+                //left_eye_left_corner
+                landmark_pt_x.get(36), landmark_pt_y.get(36) - 9f);
+
+        path.lineTo(landmark_pt_x.get(36) - 15f, landmark_pt_y.get(36) - 5f);
+
+        path.close();
+        drawCanvas.drawPath(path, mPaint);
+
+        path.reset();
+        //right_eye_right_corner
+        path.moveTo(landmark_pt_x.get(45) + 15f, landmark_pt_y.get(45) - 5f);
+
+        path.cubicTo(
+                //right_eye_top_right + a distance
+                landmark_pt_x.get(44) + 1f, landmark_pt_y.get(44) - widthEyeShadow,
+                //right_eye_top_left + a distance
+                landmark_pt_x.get(43) + 1f, landmark_pt_y.get(43) - widthEyeShadow,
+                //right_eye_left_corner
+                landmark_pt_x.get(42) - 7f, landmark_pt_y.get(42) - 1f);
+
+        path.lineTo(landmark_pt_x.get(42) - 6f, landmark_pt_y.get(42));
+
+        path.cubicTo(
+                //right_eye_top_left
+                landmark_pt_x.get(43) + 1f, landmark_pt_y.get(43) - 10f,
+                //right_eye_top_right
+                landmark_pt_x.get(44) + 1f, landmark_pt_y.get(44) - 8f,
+                //right_eye_right_corner
+                landmark_pt_x.get(45), landmark_pt_y.get(45) - 9f);
+
+        path.lineTo(landmark_pt_x.get(45) + 15f, landmark_pt_y.get(45) - 5f);
+
+        path.close();
+        drawCanvas.drawPath(path, mPaint);
+
+        //设置混合模式
+        mPaint.setXfermode(mXferScreenmode);
+
+        mPaint.setXfermode(null);
+
+        // 2.
+        mPaint.setColor(color2);
+        mPaint.setMaskFilter(new BlurMaskFilter(6f, BlurMaskFilter.Blur.NORMAL));
+        mPaint.setStrokeJoin(Paint.Join.ROUND);    // set the join to round you want
+        mPaint.setStrokeCap(Paint.Cap.ROUND);      // set the paint cap to round too
+        mPaint.setPathEffect(new CornerPathEffect(50));
+        // left eye
+        path.reset();
+        //left_eye_left_corner
+        path.moveTo(landmark_pt_x.get(37) - 10f, landmark_pt_y.get(37) - 5f);
+        path.lineTo(landmark_pt_x.get(37) - 10f, landmark_pt_y.get(37) - 8f);
+        path.lineTo(landmark_pt_x.get(36) - 17f, landmark_pt_y.get(36) - 8f);
+        path.lineTo(landmark_pt_x.get(41) - 10f, landmark_pt_y.get(41) + 8f);
+        path.lineTo(landmark_pt_x.get(36) - 10f, landmark_pt_y.get(36) - 5f);
+        path.lineTo(landmark_pt_x.get(37) - 10f, landmark_pt_y.get(37) - 5f);
+
+        path.close();
+        drawCanvas.drawPath(path, mPaint);
+
+        path.reset();
+        //left_eye_left_corner
+        path.moveTo(landmark_pt_x.get(44) + 10f, landmark_pt_y.get(44) - 5f);
+        path.lineTo(landmark_pt_x.get(45) + 10f, landmark_pt_y.get(45) - 8f);
+        path.lineTo(landmark_pt_x.get(45) + 17f, landmark_pt_y.get(45) - 8f);
+        path.lineTo(landmark_pt_x.get(46) + 10f, landmark_pt_y.get(46) + 8f);
+        path.lineTo(landmark_pt_x.get(45) + 10f, landmark_pt_y.get(45) - 5f);
+        path.lineTo(landmark_pt_x.get(44) + 10f, landmark_pt_y.get(44) - 5f);
+
+        path.close();
+        drawCanvas.drawPath(path, mPaint);
+
+        //设置混合模式
+        mPaint.setXfermode(mXferScreenmode);
+
+        mPaint.setXfermode(null);
+
+        // 3.
+        mPaint.setColor(color3);
+//        mPaint.setMaskFilter(new BlurMaskFilter(1f, BlurMaskFilter.Blur.NORMAL));
+        path.reset();
+
+        path.moveTo(landmark_pt_x.get(36) - 1f, landmark_pt_y.get(36) - 4f);
+        path.lineTo(landmark_pt_x.get(37) - 1f, landmark_pt_y.get(37) - 4f);
+        path.lineTo(landmark_pt_x.get(38) - 1f, landmark_pt_y.get(38) - 4f);
+        path.lineTo(landmark_pt_x.get(39) - 1f, landmark_pt_y.get(39) - 4f);
+        path.lineTo(landmark_pt_x.get(39) - 1f, landmark_pt_y.get(39) - 5.5f);
+        path.lineTo(landmark_pt_x.get(38) - 1f, landmark_pt_y.get(38) - 6.5f);
+        path.lineTo(landmark_pt_x.get(37) - 1f, landmark_pt_y.get(37) - 6.5f);
+        path.lineTo(landmark_pt_x.get(36) - 1f, landmark_pt_y.get(36) - 6.5f);
+
+        path.moveTo(landmark_pt_x.get(45) + 1f, landmark_pt_y.get(45) - 4f);
+        path.lineTo(landmark_pt_x.get(44) + 1f, landmark_pt_y.get(44) - 4f);
+        path.lineTo(landmark_pt_x.get(43) + 1f, landmark_pt_y.get(43) - 4f);
+        path.lineTo(landmark_pt_x.get(42) + 1f, landmark_pt_y.get(42) - 4f);
+        path.lineTo(landmark_pt_x.get(42) + 1f, landmark_pt_y.get(42) - 5.5f);
+        path.lineTo(landmark_pt_x.get(43) + 1f, landmark_pt_y.get(43) - 6.5f);
+        path.lineTo(landmark_pt_x.get(44) + 1f, landmark_pt_y.get(44) - 6.5f);
+        path.lineTo(landmark_pt_x.get(45) + 1f, landmark_pt_y.get(45) - 6.5f);
+
+        path.close();
+        drawCanvas.drawPath(path, mPaint);
+        //设置混合模式
+        mPaint.setXfermode(mXferScreenmode);
+
+        mPaint.setXfermode(null);
+
+        // 3.
+        mPaint.setColor(color3);
+//        mPaint.setMaskFilter(new BlurMaskFilter(6f, BlurMaskFilter.Blur.NORMAL));
+        mPaint.setStrokeJoin(Paint.Join.ROUND);    // set the join to round you want
+        mPaint.setStrokeCap(Paint.Cap.ROUND);      // set the paint cap to round too
+        mPaint.setPathEffect(new CornerPathEffect(50));
+        // left eye
+        path.reset();
+        //left_eye_left_corner
+        path.moveTo(landmark_pt_x.get(37) - 10f, landmark_pt_y.get(37) - 5f);
+        path.lineTo(landmark_pt_x.get(37) - 10f, landmark_pt_y.get(37) - 8f);
+        path.lineTo(landmark_pt_x.get(36) - 17f, landmark_pt_y.get(36) - 8f);
+        path.lineTo(landmark_pt_x.get(41) - 10f, landmark_pt_y.get(41) + 8f);
+        path.lineTo(landmark_pt_x.get(36) - 10f, landmark_pt_y.get(36) - 5f);
+        path.lineTo(landmark_pt_x.get(37) - 10f, landmark_pt_y.get(37) - 5f);
+
+        path.close();
+        drawCanvas.drawPath(path, mPaint);
+
+        path.reset();
+        //left_eye_left_corner
+        path.moveTo(landmark_pt_x.get(44) + 10f, landmark_pt_y.get(44) - 5f);
+        path.lineTo(landmark_pt_x.get(45) + 10f, landmark_pt_y.get(45) - 8f);
+        path.lineTo(landmark_pt_x.get(45) + 17f, landmark_pt_y.get(45) - 8f);
+        path.lineTo(landmark_pt_x.get(46) + 10f, landmark_pt_y.get(46) + 8f);
+        path.lineTo(landmark_pt_x.get(45) + 10f, landmark_pt_y.get(45) - 5f);
+        path.lineTo(landmark_pt_x.get(44) + 10f, landmark_pt_y.get(44) - 5f);
+
+        path.close();
+        drawCanvas.drawPath(path, mPaint);
+
+//        down eye shadow
+//        4.
+        mPaint.setColor(color4);
+        mPaint.setMaskFilter(new BlurMaskFilter(5f, BlurMaskFilter.Blur.NORMAL));
+
+//        widthEyeShadow = (landmark_pt_y.get(37) - landmark_pt_y.get(19)) / 3.5f;
+        Log.d(TAG + " down widthEyeShadow ", " " + widthEyeShadow);
+        // left eye
+        path.reset();
+//        Float left_middle_eye_eyebrow_y = (landmark_pt_y.get(21) - landmark_pt_y.get(31) )/2;
+        //left_eye_left_corner
+        path.moveTo(landmark_pt_x.get(36) - 10f, landmark_pt_y.get(36) + 5f);
+
+        path.cubicTo(
+                //left_eye_top_left + a distance
+                landmark_pt_x.get(41) + 1f, landmark_pt_y.get(41) + 6f,
+                //left_eye_top_right + a distance
+                landmark_pt_x.get(40) + 1f, landmark_pt_y.get(40) + 6f,
+                //left_eye_right_corner
+                landmark_pt_x.get(39) + 12f, landmark_pt_y.get(39) + 3f);
+
+//        path.lineTo(landmark_pt_x.get(39) + 13f, landmark_pt_y.get(39));
+
+        path.cubicTo(
+                //left_eye_top_left
+                landmark_pt_x.get(40) + 1f, landmark_pt_y.get(40) + 5f,
+                //left_eye_top_right
+                landmark_pt_x.get(41) + 1f, landmark_pt_y.get(41) + 4f,
+                //left_eye_left_corner
+                landmark_pt_x.get(36), landmark_pt_y.get(36) + 4f);
+
+        path.lineTo(landmark_pt_x.get(36) - 10f, landmark_pt_y.get(36) + 5f);
+
+        path.close();
+        drawCanvas.drawPath(path, mPaint);
+
+        path.reset();
+        //right_eye_right_corner
+        path.moveTo(landmark_pt_x.get(45) + 10f, landmark_pt_y.get(45) + 5f);
+
+        path.cubicTo(
+                //right_eye_top_right + a distance
+                landmark_pt_x.get(46) - 1f, landmark_pt_y.get(46) + 6f,
+                //right_eye_top_left + a distance
+                landmark_pt_x.get(47) - 1f, landmark_pt_y.get(47) + 6f,
+                //right_eye_left_corner
+                landmark_pt_x.get(42) - 12f, landmark_pt_y.get(42) + 3f);
+
+//        path.lineTo(landmark_pt_x.get(42) - 13f, landmark_pt_y.get(42));
+
+        path.cubicTo(
+                //right_eye_top_left
+                landmark_pt_x.get(47) - 1f, landmark_pt_y.get(47) + 5f,
+                //right_eye_top_right
+                landmark_pt_x.get(46) - 1f, landmark_pt_y.get(46) + 4f,
+                //right_eye_right_corner
+                landmark_pt_x.get(45), landmark_pt_y.get(45) + 4f);
+
+        path.lineTo(landmark_pt_x.get(45) + 10f, landmark_pt_y.get(45) + 5f);
+
+        path.close();
+        drawCanvas.drawPath(path, mPaint);
+
+        //设置混合模式
+        mPaint.setXfermode(mXferScreenmode);
+
+        //清除混合模式
+        mPaint.setXfermode(null);
+    }
+
+    private void drawEyeShadowWithFourColorMethod3(Bitmap getBitmap) {
+        Canvas drawCanvas = new Canvas(getBitmap);
+        Paint mPaint = new Paint();
+        mPaint.setStyle(Paint.Style.FILL);
+        mPaint.setStrokeWidth(50f);
+        int size = savedEyeshadowColor.size();
+        int color1 = 0, color2 = 0, color3 = 0, color4 = 0;
+        if (size == 4) {
+            color1 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
+            color2 = stringColorToARGB(savedEyeshadowColor.get(1), 0, 0, 0, 0);
+            color3 = stringColorToARGB(savedEyeshadowColor.get(2), 0, 0, 0, 0);
+            color4 = stringColorToARGB(savedEyeshadowColor.get(3), 0, 0, 0, 0);
+        }
+
+//        1.
+        mPaint.setColor(color1);
+        mPaint.setStrokeJoin(Paint.Join.ROUND);    // set the join to round you want
+        mPaint.setStrokeCap(Paint.Cap.ROUND);      // set the paint cap to round too
+        mPaint.setPathEffect(new CornerPathEffect(50));
+        mPaint.setMaskFilter(new BlurMaskFilter(5f, BlurMaskFilter.Blur.NORMAL));
+
+        float widthEyeShadow = (landmark_pt_y.get(37) - landmark_pt_y.get(19)) / 2.2f;
+        Log.d(TAG + " widthEyeShadow ", " " + widthEyeShadow);
+
+        Path path = new Path();
+        // left eye
+        path.reset();
+        //left_eye_left_corner
+        path.moveTo(landmark_pt_x.get(39) + 15f, landmark_pt_y.get(39) + 1f);
+        path.lineTo(landmark_pt_x.get(38) - 5f, landmark_pt_y.get(38) - 16f);
+        path.lineTo(landmark_pt_x.get(38) - 4f, landmark_pt_y.get(38) - 7f);
+        path.lineTo(landmark_pt_x.get(39) + 15f, landmark_pt_y.get(39) + 1f);
+        //right
+        path.moveTo(landmark_pt_x.get(42) - 15f, landmark_pt_y.get(42) + 1f);
+        path.lineTo(landmark_pt_x.get(43) + 5f, landmark_pt_y.get(43) - 16f);
+        path.lineTo(landmark_pt_x.get(43) + 4f, landmark_pt_y.get(43) - 7f);
+        path.lineTo(landmark_pt_x.get(42) - 15f, landmark_pt_y.get(42) + 1f);
+        path.close();
+        drawCanvas.drawPath(path, mPaint);
+        mPaint.setXfermode(mXferScreenmode);
+        mPaint.setXfermode(null);
+
+        mPaint.setColor(color4);
+        path.reset();
+        //left_eye_left_corner
+        path.moveTo(landmark_pt_x.get(38) + 10f, landmark_pt_y.get(38) - 6f);
+        path.lineTo(landmark_pt_x.get(37) - 5f, landmark_pt_y.get(37) - 10f);
+        path.lineTo(landmark_pt_x.get(37) - 4f, landmark_pt_y.get(37) - 7f);
+        path.lineTo(landmark_pt_x.get(38) + 10f, landmark_pt_y.get(38) - 6f);
+        //right
+        path.moveTo(landmark_pt_x.get(43) - 15f, landmark_pt_y.get(43) - 6f);
+        path.lineTo(landmark_pt_x.get(44) + 5f, landmark_pt_y.get(44) - 10f);
+        path.lineTo(landmark_pt_x.get(44) + 4f, landmark_pt_y.get(44) - 7f);
+        path.lineTo(landmark_pt_x.get(43) - 15f, landmark_pt_y.get(43) - 6f);
+        path.close();
+        drawCanvas.drawPath(path, mPaint);
+        mPaint.setXfermode(mXferScreenmode);
+        mPaint.setXfermode(null);
+
+        mPaint.setColor(color4);
+        path.reset();
+        //left_eye_left_corner
+        path.moveTo(landmark_pt_x.get(37) + 10f, landmark_pt_y.get(37) - 8f);
+        path.lineTo(landmark_pt_x.get(36) - 10f, landmark_pt_y.get(36) - 16f);
+        path.lineTo(landmark_pt_x.get(36) - 16f, landmark_pt_y.get(36) - 8f);
+        path.lineTo(landmark_pt_x.get(37) + 10f, landmark_pt_y.get(37) - 8f);
+        //right
+        path.moveTo(landmark_pt_x.get(44) - 10f, landmark_pt_y.get(44) - 8f);
+        path.lineTo(landmark_pt_x.get(45) + 10f, landmark_pt_y.get(45) - 16f);
+        path.lineTo(landmark_pt_x.get(45) + 16f, landmark_pt_y.get(45) - 8f);
+        path.lineTo(landmark_pt_x.get(44) - 10f, landmark_pt_y.get(44) - 8f);
+        path.close();
+        drawCanvas.drawPath(path, mPaint);
+        mPaint.setXfermode(mXferScreenmode);
+        mPaint.setXfermode(null);
+        // down eye shadow
+        //        3.
+        mPaint.setColor(color2);
+
+//        mPaint.setMaskFilter(new BlurMaskFilter(4f, BlurMaskFilter.Blur.NORMAL));
+        // left eye
+        path.reset();
+        //left_eye_left_corner
+        path.moveTo(landmark_pt_x.get(37) - 6f, landmark_pt_y.get(37) - 3f);
+        path.lineTo(landmark_pt_x.get(37) - 6f, landmark_pt_y.get(37) - 6f);
+        path.lineTo(landmark_pt_x.get(36) - 12f, landmark_pt_y.get(36) - 6f);
+        path.lineTo(landmark_pt_x.get(41) - 6f, landmark_pt_y.get(41) + 6f);
+        path.lineTo(landmark_pt_x.get(36) - 6f, landmark_pt_y.get(36) - 3f);
+        path.lineTo(landmark_pt_x.get(37) - 6f, landmark_pt_y.get(37) - 3f);
+
+        path.close();
+        drawCanvas.drawPath(path, mPaint);
+
+        path.reset();
+        //left_eye_left_corner
+        path.moveTo(landmark_pt_x.get(44) + 6f, landmark_pt_y.get(44) - 3f);
+        path.lineTo(landmark_pt_x.get(45) + 6f, landmark_pt_y.get(45) - 6f);
+        path.lineTo(landmark_pt_x.get(45) + 12f, landmark_pt_y.get(45) - 6f);
+        path.lineTo(landmark_pt_x.get(46) + 6f, landmark_pt_y.get(46) + 6f);
+        path.lineTo(landmark_pt_x.get(45) + 6f, landmark_pt_y.get(45) - 3f);
+        path.lineTo(landmark_pt_x.get(44) + 6f, landmark_pt_y.get(44) - 3f);
+
+        path.close();
+        drawCanvas.drawPath(path, mPaint);
+
+        //        mPaint.setMaskFilter(new BlurMaskFilter(4f, BlurMaskFilter.Blur.NORMAL));
+        // left eye
+        path.reset();
+        mPaint.setColor(color3);
+        //left_eye_left_corner
+        path.moveTo(landmark_pt_x.get(37) - 9f, landmark_pt_y.get(37) - 3f);
+        path.lineTo(landmark_pt_x.get(37) - 9f, landmark_pt_y.get(37) - 6f);
+        path.lineTo(landmark_pt_x.get(36) - 14f, landmark_pt_y.get(36) - 6f);
+        path.lineTo(landmark_pt_x.get(41) - 9f, landmark_pt_y.get(41) + 6f);
+        path.lineTo(landmark_pt_x.get(36) - 9f, landmark_pt_y.get(36) - 3f);
+        path.lineTo(landmark_pt_x.get(37) - 9f, landmark_pt_y.get(37) - 3f);
+
+        path.close();
+        drawCanvas.drawPath(path, mPaint);
+
+        path.reset();
+        //left_eye_left_corner
+        path.moveTo(landmark_pt_x.get(44) + 9f, landmark_pt_y.get(44) - 3f);
+        path.lineTo(landmark_pt_x.get(45) + 9f, landmark_pt_y.get(45) - 6f);
+        path.lineTo(landmark_pt_x.get(45) + 14f, landmark_pt_y.get(45) - 6f);
+        path.lineTo(landmark_pt_x.get(46) + 9f, landmark_pt_y.get(46) + 6f);
+        path.lineTo(landmark_pt_x.get(45) + 9f, landmark_pt_y.get(45) - 3f);
+        path.lineTo(landmark_pt_x.get(44) + 9f, landmark_pt_y.get(44) - 3f);
+
+        path.close();
+        drawCanvas.drawPath(path, mPaint);
+
+//        down eye shadow
+//        4.
+        mPaint.setColor(color1);
+//        mPaint.setMaskFilter(new BlurMaskFilter(3f, BlurMaskFilter.Blur.NORMAL));
+
+//        widthEyeShadow = (landmark_pt_y.get(37) - landmark_pt_y.get(19)) / 3.5f;
+        Log.d(TAG + " down widthEyeShadow ", " " + widthEyeShadow);
+        // left eye
+        path.reset();
+//        Float left_middle_eye_eyebrow_y = (landmark_pt_y.get(21) - landmark_pt_y.get(31) )/2;
+        //left_eye_left_corner
+        path.moveTo(landmark_pt_x.get(41), landmark_pt_y.get(41) + 6f);
+
+        path.cubicTo(
+                //left_eye_top_left + a distance
+                landmark_pt_x.get(41) + 1f, landmark_pt_y.get(41) + 8f,
+                //left_eye_top_right + a distance
+                landmark_pt_x.get(40) + 1f, landmark_pt_y.get(40) + 6f,
+                //left_eye_right_corner
+                landmark_pt_x.get(39) + 12f, landmark_pt_y.get(39) + 3f);
+
+//        path.lineTo(landmark_pt_x.get(39) + 13f, landmark_pt_y.get(39));
+
+        path.cubicTo(
+                //left_eye_top_left
+                landmark_pt_x.get(40) + 1f, landmark_pt_y.get(40) + 5f,
+                //left_eye_top_right
+                landmark_pt_x.get(41) + 1f, landmark_pt_y.get(41) + 4f,
+                //left_eye_left_corner
+                landmark_pt_x.get(36) - 5f, landmark_pt_y.get(36) + 3f);
+
+        path.close();
+        drawCanvas.drawPath(path, mPaint);
+
+        path.reset();
+        //right_eye_right_corner
+        path.moveTo(landmark_pt_x.get(45) + 10f, landmark_pt_y.get(45) + 6f);
+
+        path.cubicTo(
+                //right_eye_top_right + a distance
+                landmark_pt_x.get(46) - 1f, landmark_pt_y.get(46) + 8f,
+                //right_eye_top_left + a distance
+                landmark_pt_x.get(47) - 1f, landmark_pt_y.get(47) + 6f,
+                //right_eye_left_corner
+                landmark_pt_x.get(42) - 12f, landmark_pt_y.get(42) + 3f);
+
+//        path.lineTo(landmark_pt_x.get(42) - 13f, landmark_pt_y.get(42));
+
+        path.cubicTo(
+                //right_eye_top_left
+                landmark_pt_x.get(47) - 1f, landmark_pt_y.get(47) + 5f,
+                //right_eye_top_right
+                landmark_pt_x.get(46) - 1f, landmark_pt_y.get(46) + 4f,
+                //right_eye_right_corner
+                landmark_pt_x.get(45), landmark_pt_y.get(45) + 3f);
+
+//        path.lineTo(landmark_pt_x.get(45) + 10f, landmark_pt_y.get(45) + 5f);
+
+        path.close();
+        drawCanvas.drawPath(path, mPaint);
+
+        //设置混合模式
+        mPaint.setXfermode(mXferScreenmode);
+
+        //清除混合模式
+        mPaint.setXfermode(null);
+    }
+
+    private void drawEyeShadowWithTwoColorMethod1(Bitmap getBitmap) {
+
+        Canvas drawCanvas = new Canvas(getBitmap);
+        Paint mPaint = new Paint();
+        mPaint.setStyle(Paint.Style.FILL);
+        mPaint.setStrokeWidth(50f);
+        int size = savedEyeshadowColor.size();
+        int color1 = 0, color2 = 0;
+        if (size == 1) {
+            color1 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
+            color2 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
+        } else if (size == 2) {
+            color1 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
+            color2 = stringColorToARGB(savedEyeshadowColor.get(1), 0, 0, 0, 0);
+        }
+
 //        int sc = drawCanvas.saveLayer(0, 0, temp.getWidth(), temp.getHeight(), null, Canvas.ALL_SAVE_FLAG);
 //        int mixColor = mixTwoColors(color1,color2,0.5f);
 //        Log.d(TAG, mixColor + "");
@@ -1564,7 +2030,126 @@ public class ColorizeFaceActivity extends AppCompatActivity {
 //                Shader.TileMode.CLAMP));
         mPaint.setMaskFilter(new BlurMaskFilter(6, BlurMaskFilter.Blur.NORMAL));
 
-        float widthEyeShadow = (landmark_pt_y.get(37) - landmark_pt_y.get(19)) / 2.5f;
+        float widthEyeShadow = (landmark_pt_y.get(37) - landmark_pt_y.get(19)) / 3f;
+        Log.d(TAG + " widthEyeShadow ", " " + widthEyeShadow);
+
+        Path path = new Path();
+        // left eye
+        path.reset();
+//        Float left_middle_eye_eyebrow_y = (landmark_pt_y.get(21) - landmark_pt_y.get(31) )/2;
+        //left_eye_left_corner
+        path.moveTo(landmark_pt_x.get(36) - 25f, landmark_pt_y.get(36) - 5f);
+
+        path.cubicTo(
+                //left_eye_top_left + a distance
+                landmark_pt_x.get(37) + 1f, landmark_pt_y.get(37) - widthEyeShadow,
+                //left_eye_top_right + a distance
+                landmark_pt_x.get(38) + 1f, landmark_pt_y.get(38) - widthEyeShadow,
+                //left_eye_right_corner
+                landmark_pt_x.get(39) + 16f, landmark_pt_y.get(39) - 1f);
+
+        path.lineTo(landmark_pt_x.get(39) + 14f, landmark_pt_y.get(39));
+
+        path.cubicTo(
+                //left_eye_top_left
+                landmark_pt_x.get(38) + 1f, landmark_pt_y.get(38) - 10f,
+                //left_eye_top_right
+                landmark_pt_x.get(37) + 1f, landmark_pt_y.get(37) - 9f,
+                //left_eye_left_corner
+                landmark_pt_x.get(36), landmark_pt_y.get(36) - 9f);
+
+        path.lineTo(landmark_pt_x.get(36) - 25f, landmark_pt_y.get(36) - 5f);
+
+        path.close();
+        drawCanvas.drawPath(path, mPaint);
+
+        // right eye
+//        4 colors
+//        LinearGradient linearGradient = new LinearGradient(0, 0, width, height,
+//                new int[] {
+//                        0xFF1e5799,
+//                        0xFF207cca,
+//                        0xFF2989d8,
+//                        0xFF207cca }, //substitute the correct colors for these
+//                new float[] {
+//                        0, 0.40f, 0.60f, 1 },
+//                Shader.TileMode.REPEAT);
+        mPaint.setShader(new LinearGradient(
+                landmark_pt_x.get(45), landmark_pt_y.get(45) - 15f,
+                landmark_pt_x.get(42), landmark_pt_y.get(42) - 15f,
+                color1,
+                color2,
+                Shader.TileMode.CLAMP));
+        mPaint.setMaskFilter(new BlurMaskFilter(6, BlurMaskFilter.Blur.NORMAL));
+
+        path.reset();
+        //right_eye_right_corner
+        path.moveTo(landmark_pt_x.get(45) + 25f, landmark_pt_y.get(45) - 5f);
+
+        path.cubicTo(
+                //right_eye_top_right + a distance
+                landmark_pt_x.get(44) - 1f, landmark_pt_y.get(44) - widthEyeShadow,
+                //right_eye_top_left + a distance
+                landmark_pt_x.get(43) - 1f, landmark_pt_y.get(43) - widthEyeShadow,
+                //right_eye_left_corner
+                landmark_pt_x.get(42) - 16f, landmark_pt_y.get(42) - 1f);
+
+        path.lineTo(landmark_pt_x.get(42) - 14f, landmark_pt_y.get(42));
+
+        path.cubicTo(
+                //right_eye_top_left
+                landmark_pt_x.get(43) - 1f, landmark_pt_y.get(43) - 10f,
+                //right_eye_top_right
+                landmark_pt_x.get(44) - 1f, landmark_pt_y.get(44) - 9f,
+                //right_eye_right_corner
+                landmark_pt_x.get(45), landmark_pt_y.get(45) - 9f);
+
+        path.lineTo(landmark_pt_x.get(45) + 25f, landmark_pt_y.get(45) - 5f);
+
+        path.close();
+        drawCanvas.drawPath(path, mPaint);
+
+        //设置混合模式
+        mPaint.setXfermode(mXferScreenmode);
+
+        mPaint.setXfermode(null);
+    }
+
+    private void drawEyeShadowWithTwoColorMethod2(Bitmap getBitmap) {
+
+        Canvas drawCanvas = new Canvas(getBitmap);
+        Paint mPaint = new Paint();
+        mPaint.setStyle(Paint.Style.FILL);
+        mPaint.setStrokeWidth(50f);
+        int size = savedEyeshadowColor.size();
+        int color1 = 0, color2 = 0;
+        if (size == 1) {
+            color1 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
+            color2 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
+        } else if (size == 2) {
+            color1 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
+            color2 = stringColorToARGB(savedEyeshadowColor.get(1), 0, 0, 0, 0);
+        }
+
+//        int sc = drawCanvas.saveLayer(0, 0, temp.getWidth(), temp.getHeight(), null, Canvas.ALL_SAVE_FLAG);
+//        int mixColor = mixTwoColors(color1,color2,0.5f);
+//        Log.d(TAG, mixColor + "");
+//        mPaint.setColor(mixColor);
+
+        mPaint.setShader(new LinearGradient(
+                landmark_pt_x.get(36), landmark_pt_y.get(36) - 10f,
+                landmark_pt_x.get(39), landmark_pt_y.get(39) - 10f,
+                color1,
+                color1,
+                Shader.TileMode.CLAMP));
+
+//       mPaint.setShader(new RadialGradient(
+//               landmark_pt_x.get(21) + (landmark_pt_x.get(25) - landmark_pt_x.get(21) / 2), landmark_pt_y.get(21), (landmark_pt_x.get(25) - landmark_pt_x.get(21) / 2),
+//                color1, color2,
+//                Shader.TileMode.CLAMP));
+        mPaint.setMaskFilter(new BlurMaskFilter(6, BlurMaskFilter.Blur.NORMAL));
+
+        float widthEyeShadow = (landmark_pt_y.get(37) - landmark_pt_y.get(19)) / 3f;
         Log.d(TAG + " widthEyeShadow ", " " + widthEyeShadow);
 
         Path path = new Path();
@@ -1612,7 +2197,7 @@ public class ColorizeFaceActivity extends AppCompatActivity {
                 landmark_pt_x.get(45), landmark_pt_y.get(45) - 15f,
                 landmark_pt_x.get(42), landmark_pt_y.get(42) - 15f,
                 color1,
-                color2,
+                color1,
                 Shader.TileMode.CLAMP));
         mPaint.setMaskFilter(new BlurMaskFilter(6, BlurMaskFilter.Blur.NORMAL));
 
@@ -1649,237 +2234,11 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         mPaint.setXfermode(null);
     }
 
-    private void drawEyeShadowWithOneColorMethod2() {
-        Canvas drawCanvas = new Canvas(temp);
-        Paint mPaint = new Paint();
-        mPaint.setStyle(Paint.Style.FILL);
-        mPaint.setStrokeWidth(50f);
-
-        int color1 = 0xFF783928;
-        int b = (color1) & 0xFF;
-        int g = (color1 >> 8) & 0xFF;
-        int r = (color1 >> 16) & 0xFF;
-        int a = (color1 >> 24) & 0xFF;
-        if (r + 30 > 255)
-            r = 255;
-        else
-            r = r + 30;
-
-        if (g + 30 > 255)
-            g = 255;
-        else
-            g = g + 30;
-
-        if (b + 30 > 255)
-            b = 255;
-        else
-            b = b + 30;
-
-        int color2 = a << 24 | r << 16 | g << 8 | b << 0;
-        Log.d(TAG, color1 + " : " + color2);
-//        int sc = drawCanvas.saveLayer(0, 0, temp.getWidth(), temp.getHeight(), null, Canvas.ALL_SAVE_FLAG);
-//        int mixColor = mixTwoColors(color1,color2,0.5f);
-//        Log.d(TAG, mixColor + "");
-//        mPaint.setColor(mixColor);
-
-        mPaint.setShader(
-                new LinearGradient(landmark_pt_x.get(36), landmark_pt_y.get(36) - 10f,
-                        landmark_pt_x.get(39), landmark_pt_y.get(39) - 10f,
-                        color1, color2,
-                        Shader.TileMode.CLAMP));
-
-//       mPaint.setShader(new RadialGradient(
-//               landmark_pt_x.get(21) + (landmark_pt_x.get(25) - landmark_pt_x.get(21) / 2), landmark_pt_y.get(21), (landmark_pt_x.get(25) - landmark_pt_x.get(21) / 2),
-//                color1, color2,
-//                Shader.TileMode.CLAMP));
-        mPaint.setMaskFilter(new BlurMaskFilter(6, BlurMaskFilter.Blur.NORMAL));
-
-        float widthEyeShadow = 15f;
-        Path path = new Path();
-        // left eye
-        path.reset();
-//        Float left_middle_eye_eyebrow_y = (landmark_pt_y.get(21) - landmark_pt_y.get(31) )/2;
-        //left_eye_left_corner
-        path.moveTo(landmark_pt_x.get(36) - 25f, landmark_pt_y.get(36) - 4f);
-
-        path.cubicTo(
-                //left_eye_top_left + a distance
-                landmark_pt_x.get(37) + 1f, landmark_pt_y.get(37) - widthEyeShadow,
-                //left_eye_top_right + a distance
-                landmark_pt_x.get(38) + 1f, landmark_pt_y.get(38) - widthEyeShadow,
-                //left_eye_right_corner
-                landmark_pt_x.get(39) + 10f, landmark_pt_y.get(39) - 7f);
-
-        path.cubicTo(
-                //left_eye_top_left
-                landmark_pt_x.get(38) + 1f, landmark_pt_y.get(38) - 10f,
-                //left_eye_top_right
-                landmark_pt_x.get(37) + 1f, landmark_pt_y.get(37) - 9f,
-                //left_eye_left_corner
-                landmark_pt_x.get(36) + 5f, landmark_pt_y.get(36) - 8f);
-
-        path.lineTo(landmark_pt_x.get(36) - 25f, landmark_pt_y.get(36) - 4f);
-
-        path.close();
-        drawCanvas.drawPath(path, mPaint);
-
-        // right eye
-//        4 colors
-//        LinearGradient linearGradient = new LinearGradient(0, 0, width, height,
-//                new int[] {
-//                        0xFF1e5799,
-//                        0xFF207cca,
-//                        0xFF2989d8,
-//                        0xFF207cca }, //substitute the correct colors for these
-//                new float[] {
-//                        0, 0.40f, 0.60f, 1 },
-//                Shader.TileMode.REPEAT);
-        mPaint.setShader(
-                new LinearGradient(landmark_pt_x.get(45), landmark_pt_y.get(45) - 10f,
-                        landmark_pt_x.get(42), landmark_pt_y.get(42) - 10f,
-                        color1, color2,
-                        Shader.TileMode.CLAMP));
-
-        path.reset();
-        //right_eye_right_corner
-        path.moveTo(landmark_pt_x.get(45) + 25f, landmark_pt_y.get(45) - 4f);
-
-        path.cubicTo(
-                //right_eye_top_right + a distance
-                landmark_pt_x.get(44), landmark_pt_y.get(44) - widthEyeShadow,
-                //right_eye_top_left + a distance
-                landmark_pt_x.get(43), landmark_pt_y.get(43) - widthEyeShadow,
-                //right_eye_left_corner
-                landmark_pt_x.get(42) - 10f, landmark_pt_y.get(42) - 5f);
-
-        path.cubicTo(
-                //right_eye_top_left
-                landmark_pt_x.get(43), landmark_pt_y.get(43) - 10f,
-                //right_eye_top_right
-                landmark_pt_x.get(44), landmark_pt_y.get(44) - 9f,
-                //right_eye_right_corner
-                landmark_pt_x.get(45) + 5f, landmark_pt_y.get(45) - 9f);
-
-        path.lineTo(landmark_pt_x.get(45) + 25f, landmark_pt_y.get(45) - 4f);
-
-        path.close();
-        drawCanvas.drawPath(path, mPaint);
-
-        //设置混合模式
-        mPaint.setXfermode(mXferScreenmode);
-
-        //清除混合模式
-        mPaint.setXfermode(null);
-        //还原画布
-//        drawCanvas.restoreToCount(sc);
-    }
-
-    private void drawEyeShadow() {
-        Canvas drawCanvas = new Canvas(temp);
-//        drawCanvas.drawColor(Color.WHITE);
-        Paint mPaint = new Paint();
-        mPaint.setStyle(Paint.Style.FILL);
-        mPaint.setStrokeWidth(50f);
-//        drawCanvas.drawColor(Color.WHITE);
-
-        int color1 = 0xDDfbc2ba;
-        int color2 = 0xDD7a6c3e;
-//        int sc = drawCanvas.saveLayer(0, 0, temp.getWidth(), temp.getHeight(), null, Canvas.ALL_SAVE_FLAG);
-        int mixColor = mixTwoColors(color1, color2, 0.5f);
-        Log.d(TAG, mixColor + "");
-        mPaint.setColor(mixColor);
-
-//        mPaint.setShader(
-//                new LinearGradient(landmark_pt_x.get(36) - 25f, landmark_pt_y.get(36) - 20f,
-//                        landmark_pt_x.get(39) + 20f, landmark_pt_y.get(39) - 8f,
-//                        color1, color2,
-//                        Shader.TileMode.CLAMP));
-
-//       mPaint.setShader(new RadialGradient(
-//               landmark_pt_x.get(21) + (landmark_pt_x.get(25) - landmark_pt_x.get(21) / 2), landmark_pt_y.get(21), (landmark_pt_x.get(25) - landmark_pt_x.get(21) / 2),
-//                color1, color2,
-//                Shader.TileMode.CLAMP));
-        mPaint.setMaskFilter(new BlurMaskFilter(7, BlurMaskFilter.Blur.NORMAL));
-
-        float widthEyeShadow = 15f;
-        Path path = new Path();
-        // left eye
-        path.reset();
-//        Float left_middle_eye_eyebrow_y = (landmark_pt_y.get(21) - landmark_pt_y.get(31) )/2;
-        //left_eye_left_corner
-        path.moveTo(landmark_pt_x.get(36) - 25f, landmark_pt_y.get(36) - 4f);
-
-        path.cubicTo(
-                //left_eye_top_left + a distance
-                landmark_pt_x.get(37), landmark_pt_y.get(37) - widthEyeShadow,
-                //left_eye_top_right + a distance
-                landmark_pt_x.get(38), landmark_pt_y.get(38) - widthEyeShadow,
-                //left_eye_right_corner
-                landmark_pt_x.get(39) + 10f, landmark_pt_y.get(39) + 5f);
-
-        path.cubicTo(
-                //left_eye_top_left
-                landmark_pt_x.get(38), landmark_pt_y.get(38) - 11f,
-                //left_eye_top_right
-                landmark_pt_x.get(37), landmark_pt_y.get(37) - 9f,
-                //left_eye_left_corner
-                landmark_pt_x.get(36) - 5f, landmark_pt_y.get(36) - 8f);
-
-        path.lineTo(landmark_pt_x.get(36) - 25f, landmark_pt_y.get(36) - 4f);
-
-        path.close();
-        drawCanvas.drawPath(path, mPaint);
-
-        // right eye
-        mPaint.setShader(
-                new LinearGradient(landmark_pt_x.get(45) + 25f, landmark_pt_y.get(45) - 20f,
-                        landmark_pt_x.get(42) - 20f, landmark_pt_y.get(42) - 4f,
-                        color1, color2,
-                        Shader.TileMode.CLAMP));
-
-        path.reset();
-        //right_eye_right_corner
-        path.moveTo(landmark_pt_x.get(45) + 25f, landmark_pt_y.get(45) - 4f);
-
-        path.cubicTo(
-                //right_eye_top_right + a distance
-                landmark_pt_x.get(44), landmark_pt_y.get(44) - widthEyeShadow,
-                //right_eye_top_left + a distance
-                landmark_pt_x.get(43), landmark_pt_y.get(43) - widthEyeShadow,
-                //right_eye_left_corner
-                landmark_pt_x.get(42) - 10f, landmark_pt_y.get(42) - 5f);
-
-        path.cubicTo(
-                //right_eye_top_left
-                landmark_pt_x.get(43), landmark_pt_y.get(43) - 11f,
-                //right_eye_top_right
-                landmark_pt_x.get(44), landmark_pt_y.get(44) - 9f,
-                //right_eye_right_corner
-                landmark_pt_x.get(45) + 5f, landmark_pt_y.get(45) - 8f);
-
-        path.lineTo(landmark_pt_x.get(45) + 25f, landmark_pt_y.get(45) - 4f);
-
-        path.close();
-        drawCanvas.drawPath(path, mPaint);
-
-        //设置混合模式
-        mPaint.setXfermode(mXfermode);
-
-        //src
-        // 再绘制src源图
-//        drawCanvas.drawBitmap(originalImg, 0, 0, mPaint);
-
-        //清除混合模式
-        mPaint.setXfermode(null);
-        //还原画布
-//        drawCanvas.restoreToCount(sc);
-    }
-
-    private void drawRouge(String blushColor) {
+    private void drawRouge(String blushColor, Bitmap getBitmap) {
 
         selectedBrushColor = blushColor;
         Log.d(TAG + " selectedBlushColor ", selectedBrushColor);
-        Canvas drawCanvas = new Canvas(temp);
+        Canvas drawCanvas = new Canvas(getBitmap);
         Paint mPaint = new Paint();
 
         int rougeColor = stringColorRGBToARGB(blushColor, 10, 0, 0, 0);
@@ -1890,7 +2249,7 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         mPaint.setStrokeCap(Paint.Cap.ROUND);      // set the paint cap to round too
         mPaint.setPathEffect(new CornerPathEffect(50));
         mPaint.setStrokeWidth(1f);
-        int sc = drawCanvas.saveLayer(0, 0, temp.getWidth(), temp.getHeight(), null, Canvas.ALL_SAVE_FLAG);
+        int sc = drawCanvas.saveLayer(0, 0, getBitmap.getWidth(), getBitmap.getHeight(), null, Canvas.ALL_SAVE_FLAG);
         mPaint.setMaskFilter(new BlurMaskFilter(10, BlurMaskFilter.Blur.NORMAL));
 
         //nose_contour_left2 - contour_left3
@@ -1943,7 +2302,7 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         mPaint.setXfermode(null);
         //还原画布
         drawCanvas.restoreToCount(sc);
-        drawCanvas.setBitmap(temp);
+        drawCanvas.setBitmap(getBitmap);
     }
 
 
@@ -2060,7 +2419,7 @@ public class ColorizeFaceActivity extends AppCompatActivity {
                             selectedLipstickID = product_id;
                             break;
                     }
-                    if (colorNo == 0) {
+                    if (colorNo == null) {
                         colorSet.clear();
                         for (int i = 0; i < mSortedProducts.get(selectedProductID).getColor().size(); i++) {
                             for (int j = 0; j < mSortedProducts.get(selectedProductID).getColor().get(i).size(); j++) {
@@ -2199,24 +2558,104 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         }
     }
 
+    private void errorDialogEvent(String title, String message) {
+        new AlertDialog.Builder(ColorizeFaceActivity.this)
+                .setTitle(title)
+                .setMessage(message)
+                .setNegativeButton(R.string.cancel_text, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .show();
+    }
+
     class LoadingMakeupAsyncTask extends AsyncTask<Integer, Integer, Integer> {
         @Override
         protected Integer doInBackground(Integer... position) {
             switch (categoryResult) {
                 case 1:
                     colorPosition = position[0];
-                    setupFoundation(colorSet.get(position[0]));
+                    setupFoundation(colorSet.get(position[0]), temp);
                     break;
                 case 2:
                     colorPosition = position[0];
-                    drawRouge(colorSet.get(position[0]));
+                    drawRouge(colorSet.get(position[0]), temp);
                     break;
                 case 3:
-                    drawEyeShadowWithOneColorMethod1();
+                    if (selectedFoundationColor != null)
+                        setupFoundation(selectedFoundationColor, temp2);
+
+                    if (selectedBrushColor != null)
+                        drawRouge(selectedBrushColor, temp2);
+
+                    if (selectedLipstickColor != null) {
+                        changeLipColor(selectedLipstickColor, temp2);
+                        lipLayer();
+                    }
+
+                    if (savedEyeshadowColor.size() == 1) {
+                        switch (methodNumber) {
+                            case 1:
+                                drawEyeShadowWithFourColorMethod1(temp2);
+                                break;
+                            case 2:
+                                drawEyeShadowWithTwoColorMethod1(temp2);
+                                break;
+                            case 3:
+                                break;
+                            case 4:
+                                break;
+                        }
+                    } else if (savedEyeshadowColor.size() == 2) {
+                        switch (methodNumber) {
+                            case 1:
+                                drawEyeShadowWithTwoColorMethod1(temp2);
+                                break;
+                            case 2:
+                                break;
+                            case 3:
+                                break;
+                            case 4:
+                                break;
+                        }
+                    } else if (savedEyeshadowColor.size() == 3) {
+                        switch (methodNumber) {
+
+                            case 1:
+                                break;
+                            case 2:
+                                break;
+                            case 3:
+                                drawEyeShadowWithFourColorMethod1(temp2);
+                                break;
+                            case 4:
+                                break;
+                        }
+                    }
+                    if (savedEyeshadowColor.size() == 4) {
+                        switch (methodNumber) {
+                            case 1:
+                                drawEyeShadowWithFourColorMethod1(temp2);
+                                break;
+                            case 2:
+                                drawEyeShadowWithFourColorMethod2(temp2);
+                                break;
+                            case 3:
+                                drawEyeShadowWithFourColorMethod3(temp2);
+                                break;
+                            case 4:
+                                break;
+                        }
+                    }
+
+                    Log.d(TAG, " method number : " + methodNumber + " selectedColor.size(): " + savedEyeshadowColor.size());
+                    temp = temp2.copy(temp2.getConfig(), true);
+                    temp2 = basicImg.copy(temp.getConfig(), true);
                     break;
                 case 4:
                     colorPosition = position[0];
-                    changeLipColor(colorSet.get(position[0]));
+                    changeLipColor(colorSet.get(position[0]), temp);
                     lipLayer();
                     break;
             }
@@ -2334,12 +2773,21 @@ public class ColorizeFaceActivity extends AppCompatActivity {
                     notifyDataSetChanged();
 
                     Log.d(TAG, " selectedColorItemPosition :" + selectedColorItemPosition);
-                    SavedEyeshadowColor.clear();
-                    SavedEyeshadowColor = new ArrayList<String>(colorArray.get(position));
+                    savedEyeshadowColor.clear();
+                    savedEyeshadowColor = new ArrayList<String>(colorArray.get(position));
+                    if (categoryResult == 4)
+                        eyeshadow_method_layout.setVisibility(View.VISIBLE);
 //                    drawEyeShadowWithOneColorMethod1(multipleColor);
                     Snackbar.make(v, "Click detected on item " + position + " : " + colorArray.get(position).toString(),
                             Snackbar.LENGTH_SHORT)
                             .setAction("Action", null).show();
+
+//                    ColorSelectFragment colorSelectFragment  = new ColorSelectFragment();//Get Fragment Instance
+//                    Bundle data = new Bundle();
+//                    data.putSerializable("selectedColor", savedEyeshadowColor);
+//                    colorSelectFragment .setArguments(data);//Finally set argument bundle to fragment
+//                    final FragmentManager fm = getFragmentManager();
+//                    colorSelectFragment .show(getFragmentManager(), "Select Color");
                 }
             });
 
@@ -2400,5 +2848,10 @@ public class ColorizeFaceActivity extends AppCompatActivity {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onDataPass(List<String> data) {
+        Log.d("LOG", "hello " + data.toString());
     }
 }
