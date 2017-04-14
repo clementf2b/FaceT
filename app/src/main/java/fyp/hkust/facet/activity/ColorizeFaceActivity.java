@@ -584,8 +584,6 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         eyeshadow_method1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                selectedColor.clear();
-//                onDataPass(selectedColor);
                 methodNumber = 1;
                 new LoadingMakeupAsyncTask().execute();
             }
@@ -824,8 +822,9 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
     private void lipLayer() {
         Canvas drawCanvas = new Canvas(temp);
         Paint mPaint = new Paint();
+        mPaint.setXfermode(mXfermode);
 
-        int rougeLayer = 0x60FAFAFA;
+        int rougeLayer = 0xEEFAFAFA;
         mPaint.setColor(rougeLayer);
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setStrokeJoin(Paint.Join.ROUND);    // set the join to round you want
@@ -834,7 +833,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         mPaint.setStrokeWidth(1f);
 
         int sc = drawCanvas.saveLayer(0, 0, temp.getWidth(), temp.getHeight(), null, Canvas.ALL_SAVE_FLAG);
-        mPaint.setMaskFilter(new BlurMaskFilter(50, BlurMaskFilter.Blur.OUTER));
+        mPaint.setMaskFilter(new BlurMaskFilter(60f, BlurMaskFilter.Blur.OUTER));
 
         Path path = new Path();
 
@@ -869,15 +868,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         path.lineTo(landmark_pt_x.get(48), landmark_pt_y.get(48) - 2f);
 
         path.close();
-
-        mPaint.setXfermode(mXfermode);
-
         drawCanvas.drawPath(path, mPaint);
-
-        //清除混合模式
-        mPaint.setXfermode(null);
-        //还原画布
-        drawCanvas.restoreToCount(sc);
     }
 
     private void detectRegion() {
@@ -1143,7 +1134,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         try {
             selectedFoundationColor = foundationColor;
             Log.d(TAG + " selectedFoundationColor ", selectedFoundationColor);
-            int color = stringColorRGBToARGB(foundationColor, 250, 0, 0, 0);
+            int color = stringColorRGBToARGB(foundationColor, 150, 0, 0, 0);
             float[] foundationHSV = new float[3];
             Color.colorToHSV(color, foundationHSV);
 
@@ -1152,9 +1143,10 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                     if (bitmapArray[x + y * bitmap.getWidth()] == Color.BLUE) {
                         float[] hsv = new float[3];
                         Color.RGBToHSV(Color.red(tempArray[x + y * bitmap.getWidth()]), Color.green(tempArray[x + y * bitmap.getWidth()]), Color.blue(tempArray[x + y * bitmap.getWidth()]), hsv);
+//                        Log.d(TAG, "face["+ x +" , " +y +"] : " + hsv[0] + " , " + hsv[1] + " , " + hsv[2] + " ] " + foundationHSV[0] + " " + foundationHSV[1] +  " " + foundationHSV[2] );
                         hsv[0] = foundationHSV[0];
+//                        hsv[2] = hsv[2] + Math.abs(hsv[2] - foundationHSV[2]);
 //                        Log.d(TAG + " hsv[0] = foundationHSV[0] ", hsv[0] + " " + foundationHSV[0]);
-//                    Log.d(TAG, "face["+ x +" , " +y +"] : " + hsv[0] + " , " + hsv[1] + " , " + hsv[2] + " ]");
                         tempArray[x + y * bitmap.getWidth()] = Color.HSVToColor(hsv);
                     }
                 }
@@ -1210,6 +1202,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                     float[] hsv = new float[3];
                     Color.RGBToHSV(Color.red(tempArray[x + y * bitmap.getWidth()]), Color.green(tempArray[x + y * bitmap.getWidth()]), Color.blue(tempArray[x + y * bitmap.getWidth()]), hsv);
                     hsv[0] = lipstickHSV[0];
+                    hsv[1] = hsv[1] + Math.abs((lipstickHSV[1] - hsv[1]) / 5f);
                     Log.d(TAG + " hsv , colorhsv", hsv[0] + " : " + hsv[1] + " : " + hsv[2] + " , " + lipstickHSV[0] + " : " + lipstickHSV[1] + " : " + lipstickHSV[2]);
                     tempArray[x + y * bitmap.getWidth()] = Color.HSVToColor(hsv);
                 }
@@ -1551,14 +1544,12 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
             color2 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
             color3 = stringColorToARGB(savedEyeshadowColor.get(0), -100, 0, 0, 0);
             color4 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
-        }
-        else if (size == 2) {
+        } else if (size == 2) {
             color1 = stringColorToARGB(savedEyeshadowColor.get(1), 0, 0, 0, 0);
             color2 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
             color3 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
             color4 = stringColorToARGB(savedEyeshadowColor.get(1), 0, 0, 0, 0);
-        }
-        else if (size == 3) {
+        } else if (size == 3) {
             color1 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
             color2 = stringColorToARGB(savedEyeshadowColor.get(1), 0, 0, 0, 0);
             color3 = stringColorToARGB(savedEyeshadowColor.get(2), 0, 0, 0, 0);
@@ -1689,6 +1680,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
 
         // 3.
         mPaint.setColor(color3);
+        mPaint.setMaskFilter(new BlurMaskFilter(5f, BlurMaskFilter.Blur.NORMAL));
         // left eye
         path.reset();
         //left_eye_left_corner
@@ -1801,20 +1793,16 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
             color1 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
             color2 = stringColorToARGB(savedEyeshadowColor.get(1), 0, 0, 0, 0);
             color3 = stringColorToARGB(savedEyeshadowColor.get(2), 0, 0, 0, 0);
-        }
-        else if (size == 4) {
+        } else if (size == 4) {
             shapeColor = stringColorToARGB(savedEyeshadowColor.get(0), -60, 0, 0, 0);
-            color1 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
-            color2 = stringColorToARGB(savedEyeshadowColor.get(1), 0, 0, 0, 0);
+            color1 = stringColorToARGB(savedEyeshadowColor.get(0), -20, 0, 0, 0);
+            color2 = stringColorToARGB(savedEyeshadowColor.get(1), -20, 0, 0, 0);
             color3 = stringColorToARGB(savedEyeshadowColor.get(2), 0, 0, 0, 0);
             color4 = stringColorToARGB(savedEyeshadowColor.get(3), 0, 0, 0, 0);
         }
 
 //        1.
         mPaint.setColor(color1);
-        mPaint.setStrokeJoin(Paint.Join.ROUND);    // set the join to round you want
-        mPaint.setStrokeCap(Paint.Cap.ROUND);      // set the paint cap to round too
-        mPaint.setPathEffect(new CornerPathEffect(50));
         mPaint.setMaskFilter(new BlurMaskFilter(5f, BlurMaskFilter.Blur.NORMAL));
 
         float widthEyeShadow = (landmark_pt_y.get(37) - landmark_pt_y.get(19)) / 2.2f;
@@ -1890,7 +1878,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         //        3.
         mPaint.setColor(color2);
 
-//        mPaint.setMaskFilter(new BlurMaskFilter(4f, BlurMaskFilter.Blur.NORMAL));
+        mPaint.setMaskFilter(new BlurMaskFilter(4f, BlurMaskFilter.Blur.NORMAL));
         // left eye
         path.reset();
         //left_eye_left_corner
@@ -1915,8 +1903,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
 
         path.close();
         drawCanvas.drawPath(path, mPaint);
-
-        //        mPaint.setMaskFilter(new BlurMaskFilter(4f, BlurMaskFilter.Blur.NORMAL));
+        mPaint.setMaskFilter(new BlurMaskFilter(4f, BlurMaskFilter.Blur.NORMAL));
         // left eye
         path.reset();
         mPaint.setColor(color3);
@@ -1946,7 +1933,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
 //        down eye shadow
 //        4.
         mPaint.setColor(color1);
-//        mPaint.setMaskFilter(new BlurMaskFilter(3f, BlurMaskFilter.Blur.NORMAL));
+        mPaint.setMaskFilter(new BlurMaskFilter(3f, BlurMaskFilter.Blur.NORMAL));
 
 //        widthEyeShadow = (landmark_pt_y.get(37) - landmark_pt_y.get(19)) / 3.5f;
         Log.d(TAG + " down widthEyeShadow ", " " + widthEyeShadow);
@@ -2015,7 +2002,6 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         Paint mPaint = new Paint();
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setStrokeWidth(50f);
-        //设置混合模式
         mPaint.setXfermode(mXfermode);
 
         int size = savedEyeshadowColor.size();
@@ -2025,35 +2011,29 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
             color3 = stringColorToARGB(savedEyeshadowColor.get(0), -160, 0, 0, 0);
             color4 = stringColorToARGB(savedEyeshadowColor.get(0), -170, 0, 0, 0);
             mPaint.setMaskFilter(new BlurMaskFilter(6, BlurMaskFilter.Blur.NORMAL));
-        }
-        else if (size == 2) {
+        } else if (size == 2) {
             color2 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
             color3 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
             color4 = stringColorToARGB(savedEyeshadowColor.get(1), 0, 0, 0, 0);
             shapeColor = stringColorToARGB(savedEyeshadowColor.get(1), -60, 0, 0, 0);
             mPaint.setMaskFilter(new BlurMaskFilter(6f, BlurMaskFilter.Blur.NORMAL));
-        }
-        else if (size == 3) {
+        } else if (size == 3) {
             color1 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
             color2 = stringColorToARGB(savedEyeshadowColor.get(2), 0, 0, 0, 0);
             color3 = stringColorToARGB(savedEyeshadowColor.get(1), 0, 0, 0, 0);
             color4 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
             shapeColor = stringColorToARGB(savedEyeshadowColor.get(0), -60, 0, 0, 0);
             mPaint.setMaskFilter(new BlurMaskFilter(6f, BlurMaskFilter.Blur.NORMAL));
-        }
-        else if (size == 4) {
+        } else {
             color1 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
             color2 = stringColorToARGB(savedEyeshadowColor.get(1), 0, 0, 0, 0);
-            color3 = stringColorToARGB(savedEyeshadowColor.get(2), -55, 0, 0, 0);
+            color3 = stringColorToARGB(savedEyeshadowColor.get(2), 0, 0, 0, 0);
             color4 = stringColorToARGB(savedEyeshadowColor.get(3), 0, 0, 0, 0);
             shapeColor = stringColorToARGB(savedEyeshadowColor.get(0), -60, 0, 0, 0);
             mPaint.setMaskFilter(new BlurMaskFilter(5f, BlurMaskFilter.Blur.NORMAL));
         }
 //        1.
         mPaint.setColor(color1);
-        mPaint.setStrokeJoin(Paint.Join.ROUND);    // set the join to round you want
-        mPaint.setStrokeCap(Paint.Cap.ROUND);      // set the paint cap to round too
-        mPaint.setPathEffect(new CornerPathEffect(50));
 
         Path path = new Path();
 
@@ -2081,6 +2061,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         drawCanvas.drawPath(path, mPaint);
 
         path.reset();
+
         mPaint.setColor(shapeColor);
         //打影
         path.moveTo(landmark_pt_x.get(17) + 5f, landmark_pt_y.get(17) + 3f);
@@ -2102,15 +2083,15 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         mPaint.setColor(color2);
         path.reset();
         // left eye
-        path.moveTo(landmark_pt_x.get(39) + 11f, landmark_pt_y.get(39));
+        path.moveTo(landmark_pt_x.get(39) + 10f, landmark_pt_y.get(39));
         path.lineTo(landmark_pt_x.get(38), landmark_pt_y.get(38) - 10f);
         path.lineTo(landmark_pt_x.get(37), landmark_pt_y.get(37) - 10f);
-        path.lineTo(landmark_pt_x.get(36) - 11f, landmark_pt_y.get(36) - 11f);
+        path.lineTo(landmark_pt_x.get(36) - 10f, landmark_pt_y.get(36) - 10f);
         path.lineTo(landmark_pt_x.get(36) - 6f, landmark_pt_y.get(36) - 6f);
         path.lineTo(landmark_pt_x.get(37), landmark_pt_y.get(37) - 5f);
         path.lineTo(landmark_pt_x.get(38), landmark_pt_y.get(37) - 5f);
         path.lineTo(landmark_pt_x.get(39) + 6f, landmark_pt_y.get(39));
-        path.lineTo(landmark_pt_x.get(39) + 11f, landmark_pt_y.get(39));
+        path.lineTo(landmark_pt_x.get(39) + 10f, landmark_pt_y.get(39));
 
         path.moveTo(landmark_pt_x.get(42) - 10f, landmark_pt_y.get(42));
         path.lineTo(landmark_pt_x.get(43), landmark_pt_y.get(43) - 10f);
@@ -2128,29 +2109,29 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         mPaint.setColor(color2);
         path.reset();
         // left eye
-        path.moveTo(landmark_pt_x.get(36) - 10f, landmark_pt_y.get(36));
-        path.lineTo(landmark_pt_x.get(41) + 3f, landmark_pt_y.get(41) + 10f);
-        path.lineTo(landmark_pt_x.get(40) + 3f, landmark_pt_y.get(40) + 10f);
+        path.moveTo(landmark_pt_x.get(36) - 9f, landmark_pt_y.get(36));
+        path.lineTo(landmark_pt_x.get(41) + 3f, landmark_pt_y.get(41) + 9f);
+        path.lineTo(landmark_pt_x.get(40) + 3f, landmark_pt_y.get(40) + 9f);
         path.lineTo(landmark_pt_x.get(40) + 3f, landmark_pt_y.get(40) + 7f);
         path.lineTo(landmark_pt_x.get(41) + 3f, landmark_pt_y.get(41) + 7f);
         path.lineTo(landmark_pt_x.get(36) + 6f, landmark_pt_y.get(36));
         path.lineTo(landmark_pt_x.get(36) - 7f, landmark_pt_y.get(36));
-        path.lineTo(landmark_pt_x.get(36) - 10f, landmark_pt_y.get(36));
+        path.lineTo(landmark_pt_x.get(36) - 9f, landmark_pt_y.get(36));
 
-        path.moveTo(landmark_pt_x.get(45) + 10f, landmark_pt_y.get(45));
-        path.lineTo(landmark_pt_x.get(46) - 3f, landmark_pt_y.get(46) + 10f);
-        path.lineTo(landmark_pt_x.get(47) - 3f, landmark_pt_y.get(47) + 10f);
+        path.moveTo(landmark_pt_x.get(45) + 9f, landmark_pt_y.get(45));
+        path.lineTo(landmark_pt_x.get(46) - 3f, landmark_pt_y.get(46) + 9f);
+        path.lineTo(landmark_pt_x.get(47) - 3f, landmark_pt_y.get(47) + 9f);
         path.lineTo(landmark_pt_x.get(47) - 3f, landmark_pt_y.get(47) + 7f);
         path.lineTo(landmark_pt_x.get(46) - 3f, landmark_pt_y.get(46) + 7f);
         path.lineTo(landmark_pt_x.get(45) - 6f, landmark_pt_y.get(45));
         path.lineTo(landmark_pt_x.get(45) + 7f, landmark_pt_y.get(45));
-        path.lineTo(landmark_pt_x.get(45) + 10f, landmark_pt_y.get(45));
+        path.lineTo(landmark_pt_x.get(45) + 9f, landmark_pt_y.get(45));
 
         path.close();
         drawCanvas.drawPath(path, mPaint);
 
         path.reset();
-        mPaint.setColor(color3);
+        mPaint.setColor(color2);
         //left_eye_left_corner
         path.moveTo(landmark_pt_x.get(38) - 5f, landmark_pt_y.get(38) - 3f);
         path.lineTo(landmark_pt_x.get(37) - 9f, landmark_pt_y.get(37) - 3f);
@@ -2169,6 +2150,12 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         path.lineTo(landmark_pt_x.get(45) + 9f, landmark_pt_y.get(45) - 3f);
         path.lineTo(landmark_pt_x.get(44) + 9f, landmark_pt_y.get(44) - 3f);
         path.lineTo(landmark_pt_x.get(43) + 5f, landmark_pt_y.get(43) - 3f);
+
+        path.close();
+        drawCanvas.drawPath(path, mPaint);
+
+        path.reset();
+        mPaint.setColor(color3);
 
         path.moveTo(landmark_pt_x.get(37) - 10f, landmark_pt_y.get(37) - 5f);
         path.lineTo(landmark_pt_x.get(37) - 10f, landmark_pt_y.get(37) - 8f);
@@ -2218,7 +2205,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         mPaint.setStrokeCap(Paint.Cap.ROUND);      // set the paint cap to round too
         mPaint.setPathEffect(new CornerPathEffect(50));
         mPaint.setXfermode(mXfermode);
-        
+
         int size = savedEyeshadowColor.size();
         int color1 = 0, color2 = 0;
         if (size == 1) {
@@ -2633,7 +2620,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                             selectedLipstickID = product_id;
                             break;
                     }
-                    if (colorNo == null) {
+                    if (colorNo == 0) {
                         colorSet.clear();
                         for (int i = 0; i < mSortedProducts.get(selectedProductID).getColor().size(); i++) {
                             for (int j = 0; j < mSortedProducts.get(selectedProductID).getColor().get(i).size(); j++) {
@@ -2840,7 +2827,6 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                         }
                     } else if (savedEyeshadowColor.size() == 3) {
                         switch (methodNumber) {
-
                             case 1:
                                 drawEyeShadowWithFourColorMethod1(temp2);
                                 break;
@@ -2996,8 +2982,12 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                     notifyDataSetChanged();
 
                     Log.d(TAG, " selectedColorItemPosition :" + selectedColorItemPosition);
+
                     savedEyeshadowColor.clear();
-                    savedEyeshadowColor = new ArrayList<String>(colorArray.get(position));
+                    savedEyeshadowColor = new ArrayList<>();
+                    for (int i = 0; i < colorArray.get(position).size(); i++)
+                        savedEyeshadowColor.add(colorArray.get(position).get(i));
+
                     if (categoryResult == 3)
                         eyeshadow_method_layout.setVisibility(View.VISIBLE);
 //                    drawEyeShadowWithOneColorMethod1(multipleColor);

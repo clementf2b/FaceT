@@ -56,7 +56,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/button"
-                android:onClick="jump"
                 android:textColor="@color/fbutton_color_asbestos"
                 app:sub_btn_background="@color/white"
                 app:sub_btn_duration="1500"
@@ -65,6 +64,7 @@
                 app:sub_btn_tick_color="@color/white"
                 android:layout_centerHorizontal="true"
                 android:layout_alignParentBottom="true"
+                android:clickable="false"
                 />
 
         </RelativeLayout>

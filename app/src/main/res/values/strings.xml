@@ -118,7 +118,7 @@
     <string name="join_us">Join Us</string>
 
     <!--activity_show_camera_view-->
-    <string name="process_text">Start Processing</string>
+    <string name="process_text">Click to capture</string>
 
     <!--catLoading_main-->
     <string name="cat_loading_text">L O A D I N G ...</string>
