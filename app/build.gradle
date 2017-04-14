@@ -115,10 +115,6 @@ dependencies {
     compile 'com.github.rtugeek:ColorSeekBar:1.2.2'
     // new post PopupBubble
     compile 'com.webianks.library:popup-bubble:1.0.3'
-    //drag layout library
-    compile ('com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.10.5@aar'){
-        transitive=true
-    }
     testCompile 'junit:junit:4.12'
 }
 apply plugin: 'com.google.gms.google-services'

@@ -9,6 +9,16 @@
     card_view:cardBackgroundColor="@color/profile_bg"
     card_view:cardElevation="0dp">
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="72dp"
+        android:layout_marginStart="72dp"
+        android:background="#ECECEC" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,10 +28,10 @@
             android:id="@+id/order_product_color_card"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_centerHorizontal="true"
             android:src="@color/gradient_end"
             app:civ_border_color="@color/profile_edit_bg"
-            app:civ_border_width="1dp"
-            android:layout_centerHorizontal="true"/>
+            app:civ_border_width="1dp" />
 
     </RelativeLayout>
 

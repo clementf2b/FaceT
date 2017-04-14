@@ -169,6 +169,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="fyp.hkust.facet.activity.MainMenuActivity" />
         </activity>
+
     </application>
 
 </manifest>

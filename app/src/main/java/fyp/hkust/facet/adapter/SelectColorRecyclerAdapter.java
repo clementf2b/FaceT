@@ -23,8 +23,7 @@ import fyp.hkust.facet.util.MyItemTouchHelperCallback;
  */
 
 public class SelectColorRecyclerAdapter extends
-        RecyclerView.Adapter<SelectColorRecyclerAdapter.SelectColorViewHolder>
-        implements MyItemTouchHelperCallback.ItemTouchHelperAdapter {
+        RecyclerView.Adapter<SelectColorRecyclerAdapter.SelectColorViewHolder> {
 
     private final Context c;
     public List<String> selectedColorSet = new ArrayList<>();
@@ -59,7 +58,7 @@ public class SelectColorRecyclerAdapter extends
     @Override
     public SelectColorViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.show_color_layout, viewGroup, false);
+                .inflate(R.layout.order_color_layout, viewGroup, false);
         SelectColorViewHolder viewHolder = new SelectColorViewHolder(v);
         return viewHolder;
     }
@@ -73,25 +72,5 @@ public class SelectColorRecyclerAdapter extends
     public int getItemCount() {
 
         return selectedColorSet.size();
-    }
-
-    @Override
-    public void onItemDismiss(int position) {
-        selectedColorSet.remove(position);
-        notifyItemRemoved(position);
-    }
-
-    @Override
-    public void onItemMove(int fromPosition, int toPosition) {
-        if (fromPosition < toPosition) {
-            for (int i = fromPosition; i < toPosition; i++) {
-                Collections.swap(selectedColorSet, i, i + 1);
-            }
-        } else {
-            for (int i = fromPosition; i > toPosition; i--) {
-                Collections.swap(selectedColorSet, i, i - 1);
-            }
-        }
-        notifyItemMoved(fromPosition, toPosition);
     }
 }

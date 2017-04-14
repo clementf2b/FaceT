@@ -155,15 +155,6 @@
 
     </ScrollView>
 
-    <ImageView
-        android:id="@+id/expand_color_list_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/show_hide_layout_button"
-        android:layout_alignTop="@+id/makeup_color_list"
-        android:src="@mipmap/ic_arrow_upward_black_24dp"
-        android:visibility="gone" />
-
     <LinearLayout
         android:id="@+id/eyeshadow_method_layout"
         android:layout_width="match_parent"

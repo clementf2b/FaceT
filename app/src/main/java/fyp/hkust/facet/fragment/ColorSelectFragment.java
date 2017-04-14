@@ -21,19 +21,16 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import fyp.hkust.facet.R;
-import fyp.hkust.facet.activity.ProductDetailActivity;
 import fyp.hkust.facet.adapter.SelectColorRecyclerAdapter;
-import fyp.hkust.facet.mMultipleColorRecycler.MultipleColorAdapter;
+import fyp.hkust.facet.util.CallbackItemTouch;
 import fyp.hkust.facet.util.MyItemTouchHelperCallback;
-
 
 /**
  * Created by ClementNg on 31/3/2017.
  */
 
-public class ColorSelectFragment extends DialogFragment{
+public class ColorSelectFragment extends DialogFragment implements CallbackItemTouch {
 
     private final String TAG = "SwapColorFragment";
     RecyclerView color_select_recyclerview;
@@ -59,10 +56,9 @@ public class ColorSelectFragment extends DialogFragment{
 
         color_select_recyclerview.setAdapter(new SelectColorRecyclerAdapter(this.getActivity(), data));
 
-        ItemTouchHelper.Callback callback =
-                new MyItemTouchHelperCallback(adapter);
-        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
-        touchHelper.attachToRecyclerView(color_select_recyclerview);
+        ItemTouchHelper.Callback callback = new MyItemTouchHelperCallback(this);// create MyItemTouchHelperCallback
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback); // Create ItemTouchHelper and pass with parameter the MyItemTouchHelperCallback
+        touchHelper.attachToRecyclerView(color_select_recyclerview); // Attach ItemTouchHelper to RecyclerView
 
         builder.setTitle("Swap Color position");
         builder.setView(rootView).setPositiveButton("Ok",new DialogInterface.OnClickListener() {
@@ -92,9 +88,10 @@ public class ColorSelectFragment extends DialogFragment{
     public void passData(List<String> data) {
         dataPasser.onDataPass(data);
     }
-    public interface ItemTouchHelperAdapter {
 
-        void onItemMove(int fromPosition, int toPosition);
-        void onItemDismiss(int position);
+    @Override
+    public void itemTouchOnMove(int oldPosition, int newPosition) {
+        data.add(newPosition,data.remove(oldPosition));// change position
+        adapter.notifyItemMoved(oldPosition, newPosition); //notifies changes in adapter, in this case use the notifyItemMoved
     }
 }
