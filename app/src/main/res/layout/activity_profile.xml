@@ -120,8 +120,10 @@
                         app:tabIndicatorColor="@color/white"
                         app:tabIndicatorHeight="2dp"
                         app:tabMode="fixed"
-                        app:tabSelectedTextColor="@color/white"
-                        app:tabTextColor="#88FFFFFF" />
+                        app:tabSelectedTextColor="@color/tab_selected_color"
+                        app:tabTextColor="#88FFFFFF"
+                        />
+
                 </RelativeLayout>
 
             </android.support.design.widget.CollapsingToolbarLayout>

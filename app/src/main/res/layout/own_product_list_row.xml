@@ -1,34 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/tools"
-    android:layout_width="120dp"
-    android:layout_height="120dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="@dimen/product_card_view_width"
+    android:layout_height="@dimen/product_card_view_height"
     card_view:cardPreventCornerOverlap="false"
     android:id="@+id/own_product_list_row_layout"
->
+    app:cardElevation="0dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:id="@+id/own_product_card"
-        android:padding="3dp"
-        android:background="@color/profile_bg">
+        android:id="@+id/own_product_card">
+
+        <TextView
+            android:id="@+id/own_product_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="59dp"
+            android:padding="5dp"
+            android:text="@string/product_username_text"
+            android:textAllCaps="true"
+            android:textSize="10dp"
+            android:visibility="gone" />
 
         <ProgressBar
             android:id="@+id/loading_indicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
+            android:layout_margin="70dp"
             android:indeterminateOnly="true" />
 
+        <TextView
+            android:id="@+id/own_product_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/own_product_title"
+            android:layout_alignParentBottom="true"
+            android:layout_alignStart="@+id/own_product_title"
+            android:layout_below="@+id/own_product_title"
+            android:layout_weight="0.04"
+            android:layout_marginTop="2dp"
+            android:text="@string/product_desc_text"
+            android:textSize="12dp"
+            android:maxLines="2"
+            android:textColor="@color/product_detail_label_color"
+            android:layout_toStartOf="@+id/own_product_rating_bar"
+            android:ellipsize="end"/>
+
+
+        <RatingBar
+            android:id="@+id/own_product_rating_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:numStars="5"
+            android:progressTint="@color/colorPrimary"
+            android:rating="0.0"
+            android:scaleX="0.8"
+            android:scaleY="0.8"
+            android:paddingTop="2dp"
+            android:layout_marginBottom="30dp"
+            android:layout_marginRight="15dp"
+            android:secondaryProgressTint="@color/colorPrimary"
+            android:stepSize="1.0"
+            android:layout_below="@+id/own_product_title"
+            style="?attr/ratingBarStyleSmall"
+            android:layout_alignParentEnd="true"
+            android:isIndicator="true"/>
+
+
+        <TextView
+            android:id="@+id/own_product_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/own_product_image"
+            android:layout_alignLeft="@+id/own_product_image"
+            android:layout_alignRight="@+id/own_product_image"
+            android:layout_alignStart="@+id/own_product_image"
+            android:layout_below="@+id/own_product_image"
+            android:maxLines="1"
+            android:layout_marginTop="5dp"
+            android:text="@string/product_title_text"
+            android:textSize="14dp"
+            android:ellipsize="end"
+            />
+
         <ImageView
-            android:layout_width="120dp"
-            android:layout_height="120dp"
             android:id="@+id/own_product_image"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true" />
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="15dp" />
 
     </RelativeLayout>
 

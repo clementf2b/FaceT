@@ -2781,6 +2781,17 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                     break;
                 case 2:
                     colorPosition = position[0];
+                    if (selectedFoundationColor != null)
+                        setupFoundation(selectedFoundationColor, temp2);
+
+                    if (selectedLipstickColor != null) {
+                        changeLipColor(selectedLipstickColor, temp2);
+                        lipLayer();
+                    }
+
+                    if(savedEyeshadowColor != null)
+                    eyeshadowMethodSelect();
+
                     drawRouge(colorSet.get(position[0]), temp);
                     break;
                 case 3:
@@ -2794,73 +2805,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                         changeLipColor(selectedLipstickColor, temp2);
                         lipLayer();
                     }
-
-                    if (savedEyeshadowColor.size() == 1) {
-                        switch (methodNumber) {
-                            case 1:
-                                drawEyeShadowWithFourColorMethod1(temp2);
-                                break;
-                            case 2:
-                                drawEyeShadowWithTwoColorMethod1(temp2);
-                                break;
-                            case 3:
-                                drawEyeShadowWithFourColorMethod2(temp2);
-                                break;
-                            case 4:
-                                drawEyeShadowWithFourColorMethod4(temp2);
-                                break;
-                        }
-                    } else if (savedEyeshadowColor.size() == 2) {
-                        switch (methodNumber) {
-                            case 1:
-                                drawEyeShadowWithTwoColorMethod1(temp2);
-                                break;
-                            case 2:
-                                drawEyeShadowWithFourColorMethod2(temp2);
-                                break;
-                            case 3:
-                                drawEyeShadowWithFourColorMethod3(temp2);
-                                break;
-                            case 4:
-                                drawEyeShadowWithFourColorMethod4(temp2);
-                                break;
-                        }
-                    } else if (savedEyeshadowColor.size() == 3) {
-                        switch (methodNumber) {
-                            case 1:
-                                drawEyeShadowWithFourColorMethod1(temp2);
-                                break;
-                            case 2:
-                                drawEyeShadowWithFourColorMethod2(temp2);
-                                break;
-                            case 3:
-                                drawEyeShadowWithFourColorMethod3(temp2);
-                                break;
-                            case 4:
-                                drawEyeShadowWithFourColorMethod4(temp2);
-                                break;
-                        }
-                    }
-                    if (savedEyeshadowColor.size() == 4) {
-                        switch (methodNumber) {
-                            case 1:
-                                drawEyeShadowWithFourColorMethod1(temp2);
-                                break;
-                            case 2:
-                                drawEyeShadowWithFourColorMethod2(temp2);
-                                break;
-                            case 3:
-                                drawEyeShadowWithFourColorMethod3(temp2);
-                                break;
-                            case 4:
-                                drawEyeShadowWithFourColorMethod4(temp2);
-                                break;
-                        }
-                    }
-
-                    Log.d(TAG, " method number : " + methodNumber + " selectedColor.size(): " + savedEyeshadowColor.size());
-                    temp = temp2.copy(temp2.getConfig(), true);
-                    temp2 = basicImg.copy(temp.getConfig(), true);
+                    eyeshadowMethodSelect();
                     break;
                 case 4:
                     colorPosition = position[0];
@@ -2869,6 +2814,76 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                     break;
             }
             return null;
+        }
+
+        private void eyeshadowMethodSelect()
+        {
+            if (savedEyeshadowColor.size() == 1) {
+                switch (methodNumber) {
+                    case 1:
+                        drawEyeShadowWithFourColorMethod1(temp2);
+                        break;
+                    case 2:
+                        drawEyeShadowWithTwoColorMethod1(temp2);
+                        break;
+                    case 3:
+                        drawEyeShadowWithFourColorMethod2(temp2);
+                        break;
+                    case 4:
+                        drawEyeShadowWithFourColorMethod4(temp2);
+                        break;
+                }
+            } else if (savedEyeshadowColor.size() == 2) {
+                switch (methodNumber) {
+                    case 1:
+                        drawEyeShadowWithTwoColorMethod1(temp2);
+                        break;
+                    case 2:
+                        drawEyeShadowWithFourColorMethod2(temp2);
+                        break;
+                    case 3:
+                        drawEyeShadowWithFourColorMethod3(temp2);
+                        break;
+                    case 4:
+                        drawEyeShadowWithFourColorMethod4(temp2);
+                        break;
+                }
+            } else if (savedEyeshadowColor.size() == 3) {
+                switch (methodNumber) {
+                    case 1:
+                        drawEyeShadowWithFourColorMethod1(temp2);
+                        break;
+                    case 2:
+                        drawEyeShadowWithFourColorMethod2(temp2);
+                        break;
+                    case 3:
+                        drawEyeShadowWithFourColorMethod3(temp2);
+                        break;
+                    case 4:
+                        drawEyeShadowWithFourColorMethod4(temp2);
+                        break;
+                }
+            }
+            if (savedEyeshadowColor.size() == 4) {
+                switch (methodNumber) {
+                    case 1:
+                        drawEyeShadowWithFourColorMethod1(temp2);
+                        break;
+                    case 2:
+                        drawEyeShadowWithFourColorMethod2(temp2);
+                        break;
+                    case 3:
+                        drawEyeShadowWithFourColorMethod3(temp2);
+                        break;
+                    case 4:
+                        drawEyeShadowWithFourColorMethod4(temp2);
+                        break;
+                }
+            }
+
+            Log.d(TAG, " method number : " + methodNumber + " selectedColor.size(): " + savedEyeshadowColor.size());
+            temp = temp2.copy(temp2.getConfig(), true);
+            temp2 = basicImg.copy(temp.getConfig(), true);
         }
 
         @Override

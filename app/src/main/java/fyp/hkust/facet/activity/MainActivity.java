@@ -7,6 +7,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.media.Rating;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -38,6 +39,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -88,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private DatabaseReference mDatabaseBrand;
     private DatabaseReference mDatabaseUsers;
+    private DatabaseReference mDatabaseRatings;
 
     private FirebaseAuth mAuth;
     private static final String NAV_ITEM_ID = "nav_index";
@@ -299,6 +302,9 @@ public class MainActivity extends AppCompatActivity {
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         mDatabaseUsers.keepSynced(true);
         mDatabaseBrand = FirebaseDatabase.getInstance().getReference().child("Brand");
+        mDatabaseRatings = FirebaseDatabase.getInstance().getReference().child("Ratings");
+        mDatabaseRatings.keepSynced(true);
+        Log.d(TAG + "mDatabaseRatings", mDatabaseRatings.toString());
 
         mProductList = (RecyclerView) findViewById(R.id.product_list);
         mgr = new GridLayoutManager(this, 2);
@@ -472,9 +478,7 @@ public class MainActivity extends AppCompatActivity {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else if (drawerLayout.isDrawerOpen(GravityCompat.END)) {  /*Closes the Appropriate Drawer*/
             drawerLayout.closeDrawer(GravityCompat.END);
-        }
-        else
-        {
+        } else {
             this.finish();
         }
 
@@ -493,59 +497,88 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     Product result = ds.getValue(Product.class);
-                    if(result.getValidate() == 1) {
+                    if (result.getValidate() == 1) {
                         mProducts.put(ds.getKey(), result);
                         Log.d(" product " + ds.getKey(), result.toString());
                     }
                 }
 
-                mDatabaseBrand.addValueEventListener(new ValueEventListener() {
+                mDatabaseRatings.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        brandIDList.clear();
-                        brandList.clear();
-                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                            Brand result = ds.getValue(Brand.class);
-                            mBrand.put(ds.getKey(), result);
-                            brandIDList.add(ds.getKey());
-                            brandList.add(result.getBrand());
-                            Log.d(" brand " + ds.getKey(), result.toString());
-
-                            Log.d(TAG, "going to filter");
-                            mSortedProducts = filterProduct(mProducts, categoryResult);
-                            mProductAdapter = new ProductAdapter(mSortedProducts, getApplicationContext());
-                            mProductList.setAdapter(mProductAdapter);
-                            mProductAdapter.notifyDataSetChanged();
-
-                            filterSpinner = (Spinner) findViewById(R.id.shop_filter_spinner);
-
-                            final ArrayAdapter<String> categoryList = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, brandList);
-                            filterSpinner.setSelection(brandResult);
-                            filterSpinner.setAdapter(categoryList);
-
-                            filterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                                @Override
-                                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                                    TextView tmpView = (TextView) filterSpinner.getSelectedView().findViewById(android.R.id.text1);
-                                    tmpView.setTextColor(Color.WHITE);
-                                    Toast.makeText(MainActivity.this, "You choose " + brandList.get(position), Toast.LENGTH_SHORT).show();
-                                    if (firstTime > 0) {
-                                        brandResult = position;
-                                    }
-                                    firstTime++;
-                                }
-
-                                @Override
-                                public void onNothingSelected(AdapterView<?> parent) {
-
-                                }
-                            });
+                        int count = 0;
+                        double totalRating = 0.0;
+                        for (DataSnapshot ratingDs : dataSnapshot.getChildren()) {
+                            Map<String, Long> td = (HashMap<String, Long>) ratingDs.getValue();
+                            List<String> keys = new ArrayList<>(td.keySet());
+                            List<Long> values = new ArrayList<>(td.values());
+                            for (int i = 0; i < values.size(); i++) {
+                                double temp = doubleValue(values.get(i));
+                                Log.d(TAG + " temp", temp + "");
+                                totalRating += temp;
+                                count++;
+                            }
+                            Log.d(" rating " + ratingDs.getKey(), ratingDs.getValue().toString());
+                            mProducts.get(ratingDs.getKey()).setRating((long) (totalRating / count));
+                            Log.d(" mProduct rating ", mProducts.get(ratingDs.getKey()).getRating() + "");
                         }
 
+
+                        mDatabaseBrand.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                brandIDList.clear();
+                                brandList.clear();
+                                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                    Brand result = ds.getValue(Brand.class);
+                                    mBrand.put(ds.getKey(), result);
+                                    brandIDList.add(ds.getKey());
+                                    brandList.add(result.getBrand());
+                                    Log.d(" brand " + ds.getKey(), result.toString());
+
+                                    Log.d(TAG, "going to filter");
+                                    mSortedProducts = filterProduct(mProducts, categoryResult);
+                                    mProductAdapter = new ProductAdapter(mSortedProducts, getApplicationContext());
+                                    mProductList.setAdapter(mProductAdapter);
+                                    mProductAdapter.notifyDataSetChanged();
+
+                                    filterSpinner = (Spinner) findViewById(R.id.shop_filter_spinner);
+
+                                    final ArrayAdapter<String> categoryList = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, brandList);
+                                    filterSpinner.setSelection(brandResult);
+                                    filterSpinner.setAdapter(categoryList);
+
+                                    filterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                        @Override
+                                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                            TextView tmpView = (TextView) filterSpinner.getSelectedView().findViewById(android.R.id.text1);
+                                            tmpView.setTextColor(Color.WHITE);
+                                            Toast.makeText(MainActivity.this, "You choose " + brandList.get(position), Toast.LENGTH_SHORT).show();
+                                            if (firstTime > 0) {
+                                                brandResult = position;
+                                            }
+                                            firstTime++;
+                                        }
+
+                                        @Override
+                                        public void onNothingSelected(AdapterView<?> parent) {
+
+                                        }
+                                    });
+                                }
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                            }
+                        });
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                    public void onCancelled(DatabaseError error) {
+                        // Failed to read value
+                        Log.e(TAG, "Failed to get value.", error.toException());
                     }
                 });
             }
@@ -555,6 +588,10 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
+    }
+
+    private static double doubleValue(Object value) {
+        return (value instanceof Number ? ((Number) value).doubleValue() : -1.0);
     }
 
     public void setupProductList() {
@@ -853,7 +890,10 @@ public class MainActivity extends AppCompatActivity {
                 viewHolder.setBrandName(mBrand.get(model.getBrandID()).getBrand());
             viewHolder.setImage(getApplicationContext(), model.getProductImage());
             viewHolder.setUid(model.getUid());
-
+            if (model.getRating() == null)
+                viewHolder.setRating((long)0);
+            else
+                viewHolder.setRating(model.getRating());
             viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -898,6 +938,11 @@ public class MainActivity extends AppCompatActivity {
         public ProductViewHolder(View itemView) {
             super(itemView);
             mView = itemView;
+        }
+
+        public void setRating(Long rating) {
+            RatingBar product_rating_bar = (RatingBar) mView.findViewById(R.id.product_rating_bar);
+            product_rating_bar.setRating(rating);
         }
 
         public void setProductName(String productName) {
