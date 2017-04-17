@@ -6,66 +6,83 @@ package fyp.hkust.facet.model;
 
 public class Shop {
 
-    private String shopName, shopAddress, shopDistrict, shopImage;
-    private Double lantitide, longtitude;
+    private String name, address, district, area, brandID, image;
+    private Double latitude, longitude;
 
     public Shop() {
     }
 
-    public Shop(String shopName, String shopAddress, String shopDistrict, String shopImage, Double lantitide, Double longtitude) {
-        this.shopName = shopName;
-        this.shopAddress = shopAddress;
-        this.shopDistrict = shopDistrict;
-        this.shopImage = shopImage;
-        this.lantitide = lantitide;
-        this.longtitude = longtitude;
+    public Shop(String name, String address, String district, String area, String image, Double latitude, Double longitude) {
+        this.name = name;
+        this.address = address;
+        this.district = district;
+        this.area = area;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.image = image;
     }
 
-    public String getShopName() {
-        return shopName;
+    public String getName() {
+        return name;
     }
 
-    public void setShopName(String shopName) {
-        this.shopName = shopName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getShopAddress() {
-        return shopAddress;
+    public String getAddress() {
+        return address;
     }
 
-    public void setShopAddress(String shopAddress) {
-        this.shopAddress = shopAddress;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
-    public String getShopDistrict() {
-        return shopDistrict;
+    public String getDistrict() {
+        return district;
     }
 
-    public void setShopDistrict(String shopDistrict) {
-        this.shopDistrict = shopDistrict;
+    public void setDistrict(String district) {
+        this.district = district;
     }
 
-    public Double getLantitide() {
-        return lantitide;
+    public String getArea() {
+        return area;
     }
 
-    public void setLantitide(Double lantitide) {
-        this.lantitide = lantitide;
+    public void setArea(String area) {
+        this.area = area;
     }
 
-    public Double getLongtitude() {
-        return longtitude;
+    public Double getLatitude() {
+        return latitude;
     }
 
-    public void setLongtitude(Double longtitude) {
-        this.longtitude = longtitude;
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
     }
 
-    public String getShopImage() {
-        return shopImage;
+    public Double getLongitude() {
+        return longitude;
     }
 
-    public void setShopImage(String shopImage) {
-        this.shopImage = shopImage;
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getBrandID() {
+        return brandID;
+    }
+
+    public void setBrandID(String brandID) {
+        this.brandID = brandID;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }
