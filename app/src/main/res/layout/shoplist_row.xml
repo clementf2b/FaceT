@@ -57,6 +57,6 @@
         android:text="sdfhfh"
         android:textColor="@color/shop_list_secondary_text"
         android:textSize="12dp"
-        android:layout_marginTop="4dp"/>
+        android:layout_marginTop="6dp"/>
 
 </RelativeLayout>
