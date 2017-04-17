@@ -596,7 +596,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         dialog.dismiss();
 
         // username change listener
-        if(mAuth.getCurrentUser() != null) {
+        if (mAuth.getCurrentUser() != null) {
             mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -631,8 +631,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                     Log.e(TAG, "Failed to read username value.", error.toException());
                 }
             });
-        }else
-        {
+        } else {
             Snackbar snackbar = Snackbar.make(activity_product_detail_layout, "Haven't logged in", Snackbar.LENGTH_LONG);
             snackbar.show();
         }
@@ -976,7 +975,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
     }
 
     private void checkRatingOrNot() {
-        if(mAuth.getCurrentUser() != null) {
+        if (mAuth.getCurrentUser() != null) {
             mDatabaseRatings.child(product_id).child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -1007,7 +1006,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
 
     private void getAverageRating() {
 
-        if(mAuth.getCurrentUser() != null) {
+        if (mAuth.getCurrentUser() != null) {
             //average ratings change listener
             mDatabaseRatings.child(product_id).addValueEventListener(new ValueEventListener() {
                 @Override
@@ -1054,9 +1053,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                     Log.e(TAG, "Failed to get value.", error.toException());
                 }
             });
-        }
-        else
-        {
+        } else {
             Snackbar snackbar = Snackbar.make(activity_product_detail_layout, "Haven't logged in.", Snackbar.LENGTH_LONG);
             snackbar.show();
         }
@@ -1299,7 +1296,8 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         // the chart.
 
 //        colorPie.setCenterTextTypeface(mTfLight);
-        colorPie.setCenterTextColor(ColorTemplate.getHoloBlue());
+        int centerTextColor = android.graphics.Color.argb(255, 57, 197, 193);
+        colorPie.setCenterTextColor(centerTextColor);
 
         PieDataSet dataSet = new PieDataSet(entries, "");
         dataSet.setSliceSpace(3f);
@@ -1307,11 +1305,11 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
 
         // add a lot of colors
         ArrayList<Integer> colors = new ArrayList<Integer>();
-        colors.add(Color.argb(100, 0, 185, 245));
+        colors.add(Color.argb(120, 57, 197, 193));
         colorPie.setCenterText(value + "");
         colorPie.setCenterTextSize(30);
 
-        colors.add(Color.argb(80, 214, 214, 214));
+        colors.add(Color.argb(100, 214, 214, 214));
         dataSet.setColors(colors);
 
         PieData data = new PieData(dataSet);
@@ -1410,4 +1408,5 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
 
         return data;
     }
+
 }

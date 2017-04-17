@@ -527,36 +527,47 @@
             <RelativeLayout
                 android:id="@+id/user_comment_edit_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:background="@drawable/round_button_white_bg"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:padding="5dp">
 
                 <ImageView
                     android:id="@+id/insert_image_btn"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
                     android:layout_marginTop="6dp"
                     android:layout_toRightOf="@+id/emoji_btn"
                     android:paddingBottom="4dp"
                     android:paddingTop="4dp"
-                    android:src="@mipmap/ic_insert_photo_black_24dp" />
+                    android:layout_marginLeft="3dp"
+                    android:layout_marginRight="3dp"
+                    android:background="@mipmap/ic_insert_photo_black_24dp"
+                    android:backgroundTint="@color/ligth_grey"/>
 
                 <ImageView
                     android:id="@+id/emoji_btn"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
                     android:layout_below="@+id/skin_type_spinner"
                     android:layout_marginTop="6dp"
                     android:paddingBottom="4dp"
                     android:paddingTop="4dp"
-                    android:src="@mipmap/smiley" />
+                    android:layout_marginRight="3dp"
+                    android:background="@mipmap/smiley"
+                    android:backgroundTint="@color/ligth_grey"/>
 
                 <ImageView
                     android:id="@+id/submit_btn"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
                     android:layout_alignParentRight="true"
                     android:layout_marginTop="6dp"
                     android:padding="4dp"
-                    android:src="@mipmap/ic_send_grey600_18dp" />
+                    android:background="@mipmap/ic_send_grey600_18dp"
+                    android:backgroundTint="@color/colorPrimaryDark"
+                    android:layout_marginRight="3dp"/>
 
                 <com.vanniktech.emoji.EmojiEditText
                     android:id="@+id/comment_edittext"
@@ -564,7 +575,7 @@
                     android:layout_height="match_parent"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="85dp"
-                    android:layout_marginRight="5dp"
+                    android:layout_marginRight="10dp"
                     android:layout_toRightOf="@+id/insert_image_btn"
                     android:layout_toStartOf="@+id/submit_btn"
                     android:hint="@string/comment_hint_text"
