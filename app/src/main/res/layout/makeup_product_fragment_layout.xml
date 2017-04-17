@@ -1,14 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/makeup_product_recyclerview"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="15dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    </android.support.v7.widget.RecyclerView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="2"
+            android:padding="5dp">
 
-</LinearLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:layout_weight="1"
+                android:gravity="top">
+
+                <ImageView
+                    android:id="@+id/before_imageview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/app_icon" />
+
+                <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignEnd="@+id/before_imageview"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/round_button_black_bg"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="9dp"
+                    android:paddingRight="9dp"
+                    android:paddingTop="5dp"
+                    android:text="@string/before_text"
+                    android:textColor="@color/white" />
+
+            </RelativeLayout>
+            <View
+                android:id="@+id/linebreak1"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentStart="true"
+                android:background="#8F000000"></View>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:layout_weight="1"
+                android:gravity="top">
+
+                <ImageView
+                    android:id="@+id/after_imageview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/app_icon" />
+
+                <TextView
+                    android:id="@+id/textView5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignEnd="@+id/after_imageview"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/round_button_black_bg"
+                    android:padding="5dp"
+                    android:text="@string/after_text"
+                    android:textColor="@color/white" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/makeup_product_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>

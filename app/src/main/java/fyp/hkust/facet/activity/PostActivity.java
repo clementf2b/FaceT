@@ -304,7 +304,7 @@ public class PostActivity extends AppCompatActivity implements VerticalStepperFo
 
         Log.d(TAG + " PostData", title_val + " : " + desc_val);
         if (!TextUtils.isEmpty(title_val) && !TextUtils.isEmpty(desc_val) && !TextUtils.isEmpty(brand_val) && mImageUri != null) {
-            StorageReference filepath = mStorage.child("Product_Image").child(mImageUri.getLastPathSegment());
+            StorageReference filepath = mStorage.child("Product_Images").child(mImageUri.getLastPathSegment());
             filepath.putFile(mImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {

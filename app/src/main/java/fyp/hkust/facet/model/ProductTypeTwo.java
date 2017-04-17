@@ -17,10 +17,24 @@ public class ProductTypeTwo {
     private String uid;
     private ArrayList<ArrayList<String>> color;
     private Long releaseDate;
+    private int validate;
 
     public ProductTypeTwo()
     {
 
+    }
+
+    public ProductTypeTwo(String productName, String brandID, String description, String productImage, Long colorNo, String category, String uid, ArrayList<ArrayList<String>> color, Long releaseDate, int validate) {
+        this.productName = productName;
+        this.brandID = brandID;
+        this.description = description;
+        this.productImage = productImage;
+        this.colorNo = colorNo;
+        this.category = category;
+        this.uid = uid;
+        this.color = color;
+        this.releaseDate = releaseDate;
+        this.validate = validate;
     }
 
     public ProductTypeTwo(String productName, String brandID, String description, String productImage, Long colorNo, String category, String uid, ArrayList<ArrayList<String>> color, Long releaseDate) {
@@ -106,4 +120,13 @@ public class ProductTypeTwo {
     public void setReleaseDate(Long releaseDate) {
         this.releaseDate = releaseDate;
     }
+
+    public int getValidate() {
+        return validate;
+    }
+
+    public void setValidate(int validate) {
+        this.validate = validate;
+    }
+
 }

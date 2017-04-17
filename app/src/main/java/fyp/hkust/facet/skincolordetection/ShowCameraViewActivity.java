@@ -21,11 +21,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.nhaarman.supertooltips.ToolTip;
 import com.nhaarman.supertooltips.ToolTipRelativeLayout;
 import com.nhaarman.supertooltips.ToolTipView;
+import com.spark.submitbutton.SubmitButton;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -54,7 +56,7 @@ import fyp.hkust.facet.R;
 import fyp.hkust.facet.util.FontManager;
 
 //AppCompatActivity
-public class ShowCameraViewActivity extends Activity implements CvCameraViewListener2, View.OnTouchListener, View.OnClickListener, ToolTipView.OnToolTipViewClickedListener {
+public class ShowCameraViewActivity extends Activity implements CvCameraViewListener2, View.OnClickListener, ToolTipView.OnToolTipViewClickedListener {
 
     private static final String TAG = "AutoCam::MainActivity";
     private static final Scalar FACE_RECT_COLOR = new Scalar(0, 255, 0, 255);
@@ -84,7 +86,6 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
     //private CameraBridgeViewBase   mOpenCvCameraView;
     private CameraView mOpenCvCameraView;
 
-
     private boolean mIsColorSelected = false;
     private Scalar mBlobColorRgba;
     private Scalar mBlobColorHsv;
@@ -100,7 +101,8 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
 
     private ToolTipView mBlueToolTipView;
     private ToolTipRelativeLayout toolTipRelativeLayout;
-    private Button btnJump;
+    private LinearLayout activity_show_camera_view_layout;
+    private SubmitButton sb;
     /**
      * Id to identify a camera permission request.
      */
@@ -123,6 +125,7 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_show_camera_view);
 
+        activity_show_camera_view_layout = (LinearLayout)findViewById(R.id.activity_show_camera_view_layout);
         windowManager = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
 
         Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
@@ -159,6 +162,28 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
             }
         }, 1100);
         //end of hint
+
+        sb = (SubmitButton) findViewById(R.id.button);
+        sb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                touchToCapture();
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //過兩秒後要做的事情
+                        Intent intent = new Intent();
+                        intent.setClass(ShowCameraViewActivity.this, CaptureActivity.class);
+                        intent.putExtra("path", last_photo_name);
+                        intent.putExtra("activity", "ShowCameraViewActivity");
+                        //intent.putExtra("color" , "" + mBlobColorHsv);
+                        startActivity(intent);
+                    }
+                }, 1700);
+                Log.d(TAG, "onClick: Submit");
+            }
+        });
 
         Log.i(TAG, "called onCreate");
         Camera.Size resolution = null;
@@ -360,6 +385,7 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
         return true;
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Log.i(TAG, "called onOptionsItemSelected; selected item: " + item);
@@ -379,11 +405,18 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
         return true;
     }
 
+//    @SuppressLint("SimpleDateFormat")
+//    @Override
+//    public boolean onTouch(View v, MotionEvent event) {
+//        Log.i(TAG, "onTouch event");
+//        touchToCapture();
+//        return false;
+//        //       mOpenCvCameraView.disableView();
+// // don't need subsequent touch events
+//    }
 
-    @SuppressLint("SimpleDateFormat")
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        Log.i(TAG, "onTouch event");
+    private void touchToCapture()
+    {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
         String currentDateandTime = sdf.format(new Date());
         String saveDir = Environment.getExternalStorageDirectory().getPath() + "/DCIM/OCV/TouchSave";
@@ -418,20 +451,20 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
         Log.i(TAG, "Touch image coordinates: (" + x + ", " + y + ")");
         Log.i(TAG, "Offset coordinates: (" + xOffset + ", " + yOffset + ")");
 
-        if ((x < 0) || (y < 0) || (x > cols) || (y > rows)) return false;
 
-        Rect touchedRect = new Rect();
+        if ((x > 0) || (y > 0) || (x <= cols) || (y <= rows)) {
+            Rect touchedRect = new Rect();
 
-        touchedRect.x = (x > 4) ? x - 4 : 0;
-        touchedRect.y = (y > 4) ? y - 4 : 0;
+            touchedRect.x = (x > 4) ? x - 4 : 0;
+            touchedRect.y = (y > 4) ? y - 4 : 0;
 
-        touchedRect.width = (x + 4 < cols) ? x + 4 - touchedRect.x : cols - touchedRect.x;
-        touchedRect.height = (y + 4 < rows) ? y + 4 - touchedRect.y : rows - touchedRect.y;
+            touchedRect.width = (x + 4 < cols) ? x + 4 - touchedRect.x : cols - touchedRect.x;
+            touchedRect.height = (y + 4 < rows) ? y + 4 - touchedRect.y : rows - touchedRect.y;
 
-        Mat touchedRegionRgba = mRgba.submat(touchedRect);
+            Mat touchedRegionRgba = mRgba.submat(touchedRect);
 
-        Mat touchedRegionHsv = new Mat();
-        Imgproc.cvtColor(touchedRegionRgba, touchedRegionHsv, Imgproc.COLOR_RGB2HSV_FULL);
+            Mat touchedRegionHsv = new Mat();
+            Imgproc.cvtColor(touchedRegionRgba, touchedRegionHsv, Imgproc.COLOR_RGB2HSV_FULL);
 
 //        // Calculate average color of touched region
 //        mBlobColorHsv = Core.sumElems(touchedRegionHsv);
@@ -452,12 +485,9 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
 //
 //        mIsColorSelected = true;
 
-        touchedRegionRgba.release();
-        touchedRegionHsv.release();
-
-        //       mOpenCvCameraView.disableView();
-
-        return false; // don't need subsequent touch events
+            touchedRegionRgba.release();
+            touchedRegionHsv.release();
+        }
     }
 
     private Scalar converScalarHsv2Rgba(Scalar hsvColor) {
@@ -492,27 +522,6 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
         mRelativeFaceSize = faceSize;
         mAbsoluteFaceSize = 0;
     }
-
-    @SuppressLint("SimpleDateFormat")
-    public void jump(View view) {
-        view.bringToFront();
-        view.requestLayout();
-        view.invalidate();
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //過兩秒後要做的事情
-                Intent intent = new Intent();
-                intent.setClass(ShowCameraViewActivity.this, CaptureActivity.class);
-                intent.putExtra("path", last_photo_name);
-                intent.putExtra("activity", "ShowCameraViewActivity");
-                //intent.putExtra("color" , "" + mBlobColorHsv);
-                startActivity(intent);
-            }
-        }, 1700);
-    }
-
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -582,7 +591,6 @@ public class ShowCameraViewActivity extends Activity implements CvCameraViewList
                     }
 
                     mOpenCvCameraView.enableView();
-                    mOpenCvCameraView.setOnTouchListener(ShowCameraViewActivity.this);
 
                 }
                 break;

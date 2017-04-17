@@ -34,7 +34,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="@string/blush_text"
+            android:text="@string/brush_text"
             android:gravity="center"
             android:id="@+id/makeup_product_name"
             android:layout_below="@+id/makeup_product_image"

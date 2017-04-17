@@ -155,15 +155,6 @@
 
     </ScrollView>
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/expand_color_list_button"
-        android:src="@mipmap/ic_arrow_upward_black_24dp"
-        android:layout_alignTop="@+id/makeup_color_list"
-        android:layout_above="@+id/show_hide_layout_button"
-        android:visibility="gone"/>
-
     <LinearLayout
         android:id="@+id/eyeshadow_method_layout"
         android:layout_width="match_parent"
@@ -173,21 +164,24 @@
         android:visibility="gone">
 
         <Button
+            android:id="@+id/eyeshadow_method1"
             android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:id="@+id/eyeshadow_method1"/>
+            android:layout_height="60dp" />
+
         <Button
+            android:id="@+id/eyeshadow_method2"
             android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:id="@+id/eyeshadow_method2"/>
+            android:layout_height="60dp" />
+
         <Button
+            android:id="@+id/eyeshadow_method3"
             android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:id="@+id/eyeshadow_method3"/>
+            android:layout_height="60dp" />
+
         <Button
+            android:id="@+id/eyeshadow_method4"
             android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:id="@+id/eyeshadow_method4"/>
+            android:layout_height="60dp" />
 
     </LinearLayout>
 
@@ -195,133 +189,133 @@
         android:id="@+id/makeup_color_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/show_hide_layout_button"
         android:layout_alignParentEnd="true"
-        android:padding="10dp"
         android:background="@color/makeup_transparent_background_color"
-        android:layout_above="@+id/show_hide_layout_button"/>
-        <!--android:layout_toEndOf="@+id/expand_color_list_button" -->
+        android:padding="10dp" />
+    <!--android:layout_toEndOf="@+id/expand_color_list_button" -->
 
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/makeup_product_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/show_hide_layout_button"
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
         android:background="@color/makeup_transparent_background_color"
-        android:layout_above="@+id/show_hide_layout_button"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/makeup_select_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/show_hide_layout_button"
         android:layout_alignParentStart="true"
         android:background="@color/makeup_transparent_background_color"
         android:paddingLeft="10dp"
         android:paddingTop="10dp"
-        android:layout_above="@+id/show_hide_layout_button"
         android:visibility="gone">
 
-            <RelativeLayout
-                android:id="@+id/foundation_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="105dp"
-                android:layout_weight="1">
+        <RelativeLayout
+            android:id="@+id/foundation_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="105dp"
+            android:layout_weight="1">
 
-                <Button
-                    android:id="@+id/foundation_button"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:background="@drawable/foundation"
-                    android:elevation="6dp" />
+            <Button
+                android:id="@+id/foundation_button"
+                android:layout_width="76dp"
+                android:layout_height="76dp"
+                android:background="@drawable/foundation"
+                android:elevation="6dp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignLeft="@id/foundation_button"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignRight="@id/foundation_button"
-                    android:layout_below="@id/foundation_button"
-                    android:text="@string/foundation_text"
-                    android:textAlignment="center" />
-            </RelativeLayout>
-
-
-            <RelativeLayout
-                android:id="@+id/blush_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="105dp"
-                android:layout_weight="1">
-
-                <Button
-                    android:id="@+id/blush_button"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:background="@drawable/blush"
-                    android:elevation="6dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignLeft="@id/blush_button"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignRight="@id/blush_button"
-                    android:layout_below="@id/blush_button"
-                    android:text="@string/blush_text"
-                    android:textAlignment="center" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/eyeshadow_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="105dp"
-                android:layout_weight="1">
-
-                <Button
-                    android:id="@+id/eyeshadow_button"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:background="@drawable/eyeshadow"
-                    android:elevation="6dp"
-                    android:gravity="center"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignLeft="@id/eyeshadow_button"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignRight="@id/eyeshadow_button"
-                    android:layout_below="@id/eyeshadow_button"
-                    android:text="@string/eye_text"
-                    android:gravity="center" />
-            </RelativeLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/foundation_button"
+                android:layout_alignParentBottom="true"
+                android:layout_alignRight="@id/foundation_button"
+                android:layout_below="@id/foundation_button"
+                android:text="@string/foundation_text"
+                android:textAlignment="center" />
+        </RelativeLayout>
 
 
-            <RelativeLayout
-                android:id="@+id/lipstick_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="105dp"
-                android:layout_weight="1">
+        <RelativeLayout
+            android:id="@+id/blush_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="105dp"
+            android:layout_weight="1">
 
-                <Button
-                    android:id="@+id/lipstick_button"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:background="@drawable/lipstick"
-                    android:elevation="6dp" />
+            <Button
+                android:id="@+id/blush_button"
+                android:layout_width="76dp"
+                android:layout_height="76dp"
+                android:background="@drawable/blush"
+                android:elevation="6dp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignLeft="@id/lipstick_button"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignRight="@id/lipstick_button"
-                    android:layout_below="@id/lipstick_button"
-                    android:text="@string/lip_text"
-                    android:textAlignment="center" />
-            </RelativeLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/blush_button"
+                android:layout_alignParentBottom="true"
+                android:layout_alignRight="@id/blush_button"
+                android:layout_below="@id/blush_button"
+                android:text="@string/brush_text"
+                android:textAlignment="center" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/eyeshadow_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="105dp"
+            android:layout_weight="1">
+
+            <Button
+                android:id="@+id/eyeshadow_button"
+                android:layout_width="76dp"
+                android:layout_height="76dp"
+                android:background="@drawable/eyeshadow"
+                android:elevation="6dp"
+                android:gravity="center" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/eyeshadow_button"
+                android:layout_alignParentBottom="true"
+                android:layout_alignRight="@id/eyeshadow_button"
+                android:layout_below="@id/eyeshadow_button"
+                android:gravity="center"
+                android:text="@string/eye_text" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/lipstick_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="105dp"
+            android:layout_weight="1">
+
+            <Button
+                android:id="@+id/lipstick_button"
+                android:layout_width="76dp"
+                android:layout_height="76dp"
+                android:background="@drawable/lipstick"
+                android:elevation="6dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/lipstick_button"
+                android:layout_alignParentBottom="true"
+                android:layout_alignRight="@id/lipstick_button"
+                android:layout_below="@id/lipstick_button"
+                android:text="@string/lip_text"
+                android:textAlignment="center" />
+        </RelativeLayout>
 
     </LinearLayout>
 

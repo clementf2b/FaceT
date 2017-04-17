@@ -1,0 +1,2 @@
+configurations.maybeCreate("default")
+artifacts.add("default", file('svg-android-1.1.jar'))

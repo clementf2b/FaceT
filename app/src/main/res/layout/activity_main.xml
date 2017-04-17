@@ -68,7 +68,22 @@
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/product_list"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent">
+
+                </android.support.v7.widget.RecyclerView>
+
+                <com.webianks.library.PopupBubble
+                    android:id="@+id/new_product_popup_bubble"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center_horizontal"
+                    android:layout_margin="16dp"
+                    app:pb_backgroundColor="?attr/colorPrimary"
+                    app:pb_icon="@drawable/ic_arrow_upward_white_18dp"
+                    app:pb_iconColor="#ffffff"
+                    app:pb_text="@string/new_product_text"
+                    app:pb_textColor="#ffffff" />
 
             </LinearLayout>
 

@@ -62,7 +62,6 @@ public class MultipleColorFragment extends DialogFragment {
         rv = (RecyclerView) rootView.findViewById(R.id.multiple_color_recyclerview);
         rv.setLayoutManager(new LinearLayoutManager(this.getActivity()));
 
-
         data = (ArrayList<ArrayList<String>>) getArguments().getSerializable("color");
         Log.d(TAG + " data ", data.toString());
 

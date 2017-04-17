@@ -3,6 +3,7 @@ package fyp.hkust.facet.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,9 +17,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RatingBar;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,6 +48,7 @@ import fyp.hkust.facet.activity.MainActivity;
 import fyp.hkust.facet.activity.ProductDetailActivity;
 import fyp.hkust.facet.activity.ProfileActivity;
 import fyp.hkust.facet.activity.ProfileEditActivity;
+import fyp.hkust.facet.model.Brand;
 import fyp.hkust.facet.model.Product;
 import fyp.hkust.facet.util.FontManager;
 
@@ -68,14 +75,20 @@ public class OwnProductFragment extends Fragment {
     private RecyclerView mOwnProductList;
 
     private FirebaseAuth mAuth;
-    private DatabaseReference mDatabaseUsers;
     private StorageReference mStorageProfileImage;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private DatabaseReference mDatabase;
+    private DatabaseReference mDatabaseBrand;
+    private DatabaseReference mDatabaseUsers;
+    private DatabaseReference mDatabaseRatings;
+
     private GridLayoutManager mgr;
     private FragmentActivity context;
     private ownProductAdapter mOwnProductAdapter;
     private Map<String, Product> mOwnProducts = new HashMap<>();
+    private Map<String, Brand> mBrand = new HashMap<String, Brand>();
+    private List<String> brandList = new ArrayList<>();
+    private List<String> brandIDList = new ArrayList<>();
 
     public OwnProductFragment() {
         // Required empty public constructor
@@ -97,9 +110,12 @@ public class OwnProductFragment extends Fragment {
         mDatabase.keepSynced(true);
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         mDatabaseUsers.keepSynced(true);
+        mDatabaseBrand = FirebaseDatabase.getInstance().getReference().child("Brand");
+        mDatabaseRatings = FirebaseDatabase.getInstance().getReference().child("Ratings");
+        mDatabaseRatings.keepSynced(true);
 
         mOwnProductList = (RecyclerView) view.findViewById(R.id.ownproductlist);
-        mgr = new GridLayoutManager(getContext(), 3);
+        mgr = new GridLayoutManager(getContext(), 2);
         mOwnProductList.setLayoutManager(mgr);
 
         checkUserExist();
@@ -122,6 +138,58 @@ public class OwnProductFragment extends Fragment {
                             Log.d(" product " + ds.getKey(), result.toString());
                         }
                     }
+
+                    mDatabaseRatings.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            int count = 0;
+                            double totalRating = 0.0;
+                            for (DataSnapshot ratingDs : dataSnapshot.getChildren()) {
+                                if(mOwnProducts.containsKey(ratingDs.getKey())) {
+                                    Map<String, Long> td = (HashMap<String, Long>) ratingDs.getValue();
+                                    List<String> keys = new ArrayList<>(td.keySet());
+                                    List<Long> values = new ArrayList<>(td.values());
+                                    for (int i = 0; i < values.size(); i++) {
+                                        double temp = doubleValue(values.get(i));
+                                        Log.d(TAG + " temp", temp + "");
+                                        totalRating += temp;
+                                        count++;
+                                    }
+                                    Log.d(" rating " + ratingDs.getKey(), ratingDs.getValue().toString());
+                                    mOwnProducts.get(ratingDs.getKey()).setRating((long) (totalRating / count));
+                                    Log.d(" mProduct rating ", mOwnProducts.get(ratingDs.getKey()).getRating() + "");
+                                }
+                            }
+
+                            mDatabaseBrand.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    brandIDList.clear();
+                                    brandList.clear();
+                                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                        Brand result = ds.getValue(Brand.class);
+                                        mBrand.put(ds.getKey(), result);
+                                        brandIDList.add(ds.getKey());
+                                        brandList.add(result.getBrand());
+                                        Log.d(" brand " + ds.getKey(), result.toString());
+                                    }
+
+                                    mOwnProductAdapter = new ownProductAdapter(mOwnProducts);
+                                    mgr.setAutoMeasureEnabled(true);
+                                    mOwnProductList.setAdapter(mOwnProductAdapter);
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
                 }
             }
 
@@ -130,10 +198,10 @@ public class OwnProductFragment extends Fragment {
 
             }
         });
+    }
 
-        mOwnProductAdapter = new ownProductAdapter(mOwnProducts);
-        mgr.setAutoMeasureEnabled(true);
-        mOwnProductList.setAdapter(mOwnProductAdapter);
+    private static double doubleValue(Object value) {
+        return (value instanceof Number ? ((Number) value).doubleValue() : -1.0);
     }
 
     public class ownProductAdapter extends RecyclerView.Adapter<OwnProductViewHolder> {
@@ -167,7 +235,14 @@ public class OwnProductFragment extends Fragment {
 
             Log.d(TAG, "loading view " + position);
 
+            viewHolder.setProductName(model.getProductName());
+            if (mBrand != null)
+                viewHolder.setBrandName(mBrand.get(model.getBrandID()).getBrand());
             viewHolder.setImage(getContext(), model.getProductImage());
+            if (model.getRating() == null)
+                viewHolder.setRating((long) 0);
+            else
+                viewHolder.setRating(model.getRating());
 
             viewHolder.mOwnProductView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -195,29 +270,29 @@ public class OwnProductFragment extends Fragment {
     public static class OwnProductViewHolder extends RecyclerView.ViewHolder {
 
         View mOwnProductView;
+        private Typeface customTypeface = Typeface.createFromAsset(itemView.getContext().getAssets(), FontManager.APP_FONT);
 
         public OwnProductViewHolder(View itemView) {
             super(itemView);
             mOwnProductView = itemView;
         }
 
-//        public void setTitle(String title)
-//        {
-//            TextView own_product_title = (TextView) mView.findViewById(R.id.own_p_title);
-//            own_product_title.setText(title);
-//        }
-//
-//        public void setDesc(String desc)
-//        {
-//            TextView own_product_desc = (TextView) mView.findViewById(R.id.own_p_desc);
-//            own_product_desc.setText(desc);
-//        }
-//
-//        public void setUsername(String username)
-//        {
-//            TextView own_product_username = (TextView) mView.findViewById(R.id.own_p_username);
-//            own_product_username.setText(username);
-//        }
+        public void setRating(Long rating) {
+            RatingBar product_rating_bar = (RatingBar) mOwnProductView.findViewById(R.id.own_product_rating_bar);
+            product_rating_bar.setRating(rating);
+        }
+
+        public void setProductName(String productName) {
+            TextView product_title = (TextView) mOwnProductView.findViewById(R.id.own_product_title);
+            product_title.setText(productName);
+            product_title.setTypeface(customTypeface, Typeface.BOLD);
+        }
+
+        public void setBrandName(String brand) {
+            TextView product_desc = (TextView) mOwnProductView.findViewById(R.id.own_product_desc);
+            product_desc.setText(brand);
+            product_desc.setTypeface(customTypeface);
+        }
 
         public void setImage(final Context ctx, final String image) {
             final ImageView own_post_image = (ImageView) mOwnProductView.findViewById(R.id.own_product_image);

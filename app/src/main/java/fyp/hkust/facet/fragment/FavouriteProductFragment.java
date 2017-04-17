@@ -14,6 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -34,6 +36,7 @@ import java.util.Map;
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.activity.ProductDetailActivity;
 import fyp.hkust.facet.activity.ProfileEditActivity;
+import fyp.hkust.facet.model.Brand;
 import fyp.hkust.facet.model.Favourite;
 import fyp.hkust.facet.model.Product;
 import fyp.hkust.facet.util.FontManager;
@@ -47,9 +50,12 @@ public class FavouriteProductFragment extends Fragment {
     private RecyclerView mFavouriteProductList;
 
     private FirebaseAuth mAuth;
-    private DatabaseReference mDatabaseUsers;
     private DatabaseReference mDatabaseFavourite;
     private DatabaseReference mDatabase;
+    private DatabaseReference mDatabaseBrand;
+    private DatabaseReference mDatabaseUsers;
+    private DatabaseReference mDatabaseRatings;
+
     private StorageReference mStorageProfileImage;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
@@ -58,6 +64,10 @@ public class FavouriteProductFragment extends Fragment {
     private FavouriteProductAdapter mFavouriteProductAdapter;
     private Map<String, Product> mFavouriteProducts = new HashMap<>();
     private List<String> mFavouriteList = new ArrayList<>();
+
+    private Map<String, Brand> mBrand = new HashMap<String, Brand>();
+    private List<String> brandList = new ArrayList<>();
+    private List<String> brandIDList = new ArrayList<>();
 
     public FavouriteProductFragment() {
         // Required empty public constructor
@@ -81,9 +91,12 @@ public class FavouriteProductFragment extends Fragment {
         mDatabaseFavourite.keepSynced(true);
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         mDatabaseUsers.keepSynced(true);
+        mDatabaseBrand = FirebaseDatabase.getInstance().getReference().child("Brand");
+        mDatabaseRatings = FirebaseDatabase.getInstance().getReference().child("Ratings");
+        mDatabaseRatings.keepSynced(true);
 
         mFavouriteProductList = (RecyclerView) view.findViewById(R.id.favouriteproductlist);
-        mgr = new GridLayoutManager(getContext(), 3);
+        mgr = new GridLayoutManager(getContext(), 2);
         mFavouriteProductList.setLayoutManager(mgr);
 
         checkUserExist();
@@ -100,44 +113,99 @@ public class FavouriteProductFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //go into product_id(key)
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    Log.d(TAG, ds.toString());
-                    //go into user_id(key)
-                    for (DataSnapshot ds2 : ds.getChildren()) {
-                        if (ds2.getKey().equals(mAuth.getCurrentUser().getUid())) {
-                            //grab the product id
-                            mFavouriteList.add(ds.getKey());
-                        }
-                    }
-                }
-
-                mDatabase.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                            Product result = ds.getValue(Product.class);
-                            if (mFavouriteList.contains(ds.getKey())) {
-                                mFavouriteProducts.put(ds.getKey(), result);
-                                Log.d(TAG + " product " + ds.getKey(), result.getProductName() + " , " + result.getUid() + " : " + mAuth.getCurrentUser().getUid());
+                if (mAuth.getCurrentUser() != null) {
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        Log.d(TAG, ds.toString());
+                        //go into user_id(key)
+                        for (DataSnapshot ds2 : ds.getChildren()) {
+                            if (ds2.getKey().equals(mAuth.getCurrentUser().getUid())) {
+                                //grab the product id
+                                mFavouriteList.add(ds.getKey());
                             }
                         }
-                        mFavouriteProductAdapter = new FavouriteProductAdapter(mFavouriteProducts);
-                        mgr.setAutoMeasureEnabled(true);
-                        mFavouriteProductList.setAdapter(mFavouriteProductAdapter);
                     }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                    mDatabase.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                Product result = ds.getValue(Product.class);
+                                if (mFavouriteList.contains(ds.getKey())) {
+                                    mFavouriteProducts.put(ds.getKey(), result);
+                                    Log.d(TAG + " product " + ds.getKey(), result.getProductName() + " , " + result.getUid() + " : " + mAuth.getCurrentUser().getUid());
+                                }
+                            }
 
-                    }
-                });
+                            mDatabaseRatings.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    int count = 0;
+                                    double totalRating = 0.0;
+                                    for (DataSnapshot ratingDs : dataSnapshot.getChildren()) {
+                                        if(mFavouriteProducts.containsKey(ratingDs.getKey())) {
+                                            Map<String, Long> td = (HashMap<String, Long>) ratingDs.getValue();
+                                            List<String> keys = new ArrayList<>(td.keySet());
+                                            List<Long> values = new ArrayList<>(td.values());
+                                            for (int i = 0; i < values.size(); i++) {
+                                                double temp = doubleValue(values.get(i));
+                                                Log.d(TAG + " temp", temp + "");
+                                                totalRating += temp;
+                                                count++;
+                                            }
+                                            Log.d(" rating " + ratingDs.getKey(), ratingDs.getValue().toString());
+                                            mFavouriteProducts.get(ratingDs.getKey()).setRating((long) (totalRating / count));
+                                            Log.d(" mProduct rating ", mFavouriteProducts.get(ratingDs.getKey()).getRating() + "");
+                                        }
+                                    }
+
+                                    mDatabaseBrand.addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            brandIDList.clear();
+                                            brandList.clear();
+                                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                                Brand result = ds.getValue(Brand.class);
+                                                mBrand.put(ds.getKey(), result);
+                                                brandIDList.add(ds.getKey());
+                                                brandList.add(result.getBrand());
+                                                Log.d(" brand " + ds.getKey(), result.toString());
+                                            }
+
+                                            mFavouriteProductAdapter = new FavouriteProductAdapter(mFavouriteProducts);
+                                            mgr.setAutoMeasureEnabled(true);
+                                            mFavouriteProductList.setAdapter(mFavouriteProductAdapter);
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
             }
         });
+    }
 
+    private static double doubleValue(Object value) {
+        return (value instanceof Number ? ((Number) value).doubleValue() : -1.0);
     }
 
     @Override
@@ -177,7 +245,14 @@ public class FavouriteProductFragment extends Fragment {
 
             Log.d(TAG, "loading view " + position);
 
+            viewHolder.setProductName(model.getProductName());
+            if (mBrand != null)
+                viewHolder.setBrandName(mBrand.get(model.getBrandID()).getBrand());
             viewHolder.setImage(getContext(), model.getProductImage());
+            if (model.getRating() == null)
+                viewHolder.setRating((long) 0);
+            else
+                viewHolder.setRating(model.getRating());
 
             viewHolder.mFavouriteProductView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -205,10 +280,29 @@ public class FavouriteProductFragment extends Fragment {
     public static class FavouriteProductViewHolder extends RecyclerView.ViewHolder {
 
         View mFavouriteProductView;
+        private Typeface customTypeface = Typeface.createFromAsset(itemView.getContext().getAssets(), FontManager.APP_FONT);
 
         public FavouriteProductViewHolder(View itemView) {
             super(itemView);
             this.mFavouriteProductView = itemView;
+        }
+
+
+        public void setRating(Long rating) {
+            RatingBar product_rating_bar = (RatingBar) mFavouriteProductView.findViewById(R.id.favourite_product_rating_bar);
+            product_rating_bar.setRating(rating);
+        }
+
+        public void setProductName(String productName) {
+            TextView product_title = (TextView) mFavouriteProductView.findViewById(R.id.favourite_product_title);
+            product_title.setText(productName);
+            product_title.setTypeface(customTypeface, Typeface.BOLD);
+        }
+
+        public void setBrandName(String brand) {
+            TextView product_desc = (TextView) mFavouriteProductView.findViewById(R.id.favourite_product_desc);
+            product_desc.setText(brand);
+            product_desc.setTypeface(customTypeface);
         }
 
         public void setImage(final Context ctx, final String image) {

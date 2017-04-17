@@ -81,6 +81,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button mLoginBtn;
     private Button mGoRegister;
     private Button mFacebookBtn;
+    private Button mGoogleBtn;
     private ImageButton passwordVisibleButton;
     private CheckBox mRemeberPasswordCheckBox;
     private boolean pw_shown;
@@ -88,8 +89,6 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
     private DatabaseReference mDatabaseUsers;
-
-    private Button mGoogleBtn;
 
     private ProgressDialog mProgress;
 
