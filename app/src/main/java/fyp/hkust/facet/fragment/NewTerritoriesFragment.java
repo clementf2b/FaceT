@@ -24,10 +24,11 @@ import fyp.hkust.facet.model.Shop;
 
 public class NewTerritoriesFragment extends Fragment {
 
-    private List<Shop> shopList;
+    private List<Shop> shopList = new ArrayList<>();
     private RecyclerView recyclerView;
     private ShopsAdapter mAdapter;
     private View view;
+    private String TAG = this.getClass().getSimpleName();
 
     public NewTerritoriesFragment() {
         // Required empty public constructor
@@ -47,39 +48,68 @@ public class NewTerritoriesFragment extends Fragment {
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_nTerritories);
 
-        shopList = new ArrayList<>();
         mAdapter = new ShopsAdapter(shopList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(view.getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
-        prepareShopData();
+        mAdapter.notifyDataSetChanged();
         return view;
     }
 
-    private void prepareShopData() {
-        Shop shop = new Shop ("Sasa 1", "10 A, 123 Building, Llm Garden, ABCD Street, Hang Hau", "Sai Kung",
-                "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcTTZ6kP7VzNmI3nSl7AZW0AI02EsrDaHg6CPPiFJoEXIJXvAJb2",
-                22.337586, 114.265288);
-        shopList.add(shop);
 
-        shop = new Shop ("Sasa 2", "10 A, 123 Building, Llm Garden, ABCD Street, Hang Hau", "Sai Kung",
-                "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcTTZ6kP7VzNmI3nSl7AZW0AI02EsrDaHg6CPPiFJoEXIJXvAJb2",
-                22.337586, 114.265288);
-        shopList.add(shop);
+    public void setShopList (List<Shop> shopList_nt){
+        shopList = shopList_nt;
+        Log.d("FragmentNT_shopList_nt", ""+shopList_nt.size());
+        Log.d("FragmentNT_shopList", ""+shopList.size());
+//        mAdapter = new ShopsAdapter(shopList);
+//        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(view.getContext());
+//        recyclerView.setLayoutManager(mLayoutManager);
+//        recyclerView.setItemAnimator(new DefaultItemAnimator());
+//        recyclerView.setAdapter(mAdapter);
+//        mAdapter.notifyDataSetChanged();
+    }
+//    private void prepareShopData() {
+//        Shop shop = new Shop ("Sasa 1", "10 A, 123 Building, Llm Garden, ABCD Street, Hang Hau", "Sai Kung", "nt",
+//                "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcTTZ6kP7VzNmI3nSl7AZW0AI02EsrDaHg6CPPiFJoEXIJXvAJb2",
+//                22.337586, 114.265288);
+//        shopList.add(shop);
+//
+//        shop = new Shop ("Sasa 2", "10 A, 123 Building, Llm Garden, ABCD Street, Hang Hau", "Sai Kung", "nt",
+//                "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcTTZ6kP7VzNmI3nSl7AZW0AI02EsrDaHg6CPPiFJoEXIJXvAJb2",
+//                22.337586, 114.265288);
+//        shopList.add(shop);
+//
+//        shop = new Shop ("Sasa 3", "10 A, 123 Building, Llm Garden, ABCD Street, Hang Hau", "Sai Kung", "nt",
+//                "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcTTZ6kP7VzNmI3nSl7AZW0AI02EsrDaHg6CPPiFJoEXIJXvAJb2",
+//                22.337586, 114.265288);
+//        shopList.add(shop);
+//
+//        shop = new Shop ("Sasa 4", "10 A, 123 Building, Llm Garden, ABCD Street, Hang Hau", "Sai Kung", "nt",
+//                "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcTTZ6kP7VzNmI3nSl7AZW0AI02EsrDaHg6CPPiFJoEXIJXvAJb2",
+//                22.337586, 114.265288);
+//        shopList.add(shop);
+//
+//        Log.d("shop_new", shopList.size()+"");
+//
+//        mAdapter.notifyDataSetChanged();
+//    }
 
-        shop = new Shop ("Sasa 3", "10 A, 123 Building, Llm Garden, ABCD Street, Hang Hau", "Sai Kung",
-                "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcTTZ6kP7VzNmI3nSl7AZW0AI02EsrDaHg6CPPiFJoEXIJXvAJb2",
-                22.337586, 114.265288);
-        shopList.add(shop);
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, " onDestroy");
+    }
 
-        shop = new Shop ("Sasa 4", "10 A, 123 Building, Llm Garden, ABCD Street, Hang Hau", "Sai Kung",
-                "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcTTZ6kP7VzNmI3nSl7AZW0AI02EsrDaHg6CPPiFJoEXIJXvAJb2",
-                22.337586, 114.265288);
-        shopList.add(shop);
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d(TAG, " onPause");
+    }
 
-        Log.d("shop_new", shopList.size()+"");
-
-        mAdapter.notifyDataSetChanged();
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, " onResume");
     }
 }

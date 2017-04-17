@@ -13,15 +13,18 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import fyp.hkust.facet.R;
+import fyp.hkust.facet.model.ProductTypeTwo;
 import fyp.hkust.facet.model.Shop;
 
 public class ShopsAdapter extends RecyclerView.Adapter<ShopsAdapter.ShopViewHolder> {
 
-    private List<Shop> shopList;
+    private List<Shop> shopList ;
 
     public class ShopViewHolder extends RecyclerView.ViewHolder {
         public TextView shopName, shopAddress, shopDistrict;
@@ -39,7 +42,7 @@ public class ShopsAdapter extends RecyclerView.Adapter<ShopsAdapter.ShopViewHold
 
         public void setShopImage(String image)
         {
-            Picasso.with(view.getContext()).load(image).into(shopImage);
+            Picasso.with(view.getContext()).load(image).error(R.drawable.cast_mini_controller_progress_drawable).into(shopImage);
         }
     }
 
@@ -59,15 +62,21 @@ public class ShopsAdapter extends RecyclerView.Adapter<ShopsAdapter.ShopViewHold
     @Override
     public void onBindViewHolder(ShopViewHolder holder, int position) {
 
+//        List<Shop> tempShop = new ArrayList<>(shopList);
+//        final Shop model = tempShop.get(position);
+//        final List<String> keys = new ArrayList<>(shopList.keySet());
+//        final String product_id = keys.get(position);
+
         Shop shop = shopList.get(position);
-        holder.shopName.setText(shop.getShopName());
-        holder.shopAddress.setText(shop.getShopAddress());
-        holder.shopDistrict.setText(shop.getShopDistrict());
-        holder.setShopImage(shop.getShopImage());
+        holder.shopName.setText(shop.getName());
+        holder.shopAddress.setText(shop.getAddress());
+        holder.shopDistrict.setText(shop.getDistrict());
+        holder.setShopImage(shop.getImage());
     }
 
     @Override
     public int getItemCount() {
         return shopList.size();
     }
+
 }

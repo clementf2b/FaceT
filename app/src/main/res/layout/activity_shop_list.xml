@@ -72,7 +72,7 @@
             </RelativeLayout>
 
             <android.support.design.widget.TabLayout
-                android:id="@+id/tabs"
+                android:id="@+id/tabs_shop_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:tabMode="fixed"
@@ -85,7 +85,7 @@
                 app:tabTextAppearance="@style/TabLayoutStyle"/>
 
             <android.support.v4.view.ViewPager
-                android:id="@+id/viewpager"
+                android:id="@+id/viewpager_shop_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
@@ -94,7 +94,7 @@
         </LinearLayout>
 
         <android.support.design.widget.NavigationView
-            android:id="@+id/navigation_view"
+            android:id="@+id/navigation_view_shop_list"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="start"

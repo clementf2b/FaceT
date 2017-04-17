@@ -15,11 +15,11 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/shop_image"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
         android:src="@drawable/com_facebook_profile_picture_blank_portrait"
         app:civ_border_color="@color/colorPrimary"
-        app:civ_border_width="2dp"
+        app:civ_border_width="0.5dp"
         android:layout_marginTop="2dp"
         android:layout_marginRight="4dp"/>
 
