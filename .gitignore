@@ -9,3 +9,6 @@
 .externalNativeBuild
 .idea
 build/*
+
+#openCVLibrary biuld folder
+**/openCVLibrary310/build/
