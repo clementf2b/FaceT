@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
@@ -132,6 +133,8 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
     private DatabaseReference mDatabaseRatings;
     private DatabaseReference mDatabaseBrand;
     private DatabaseReference mDatabaseCommentsCurrentProduct;
+    private DatabaseReference mDatabaseFavourite;
+    private DatabaseReference mDatabaseNotifications;
 
     private ColorPickerDialog colorPickerDialog;
     private ExpandableTextView descTextview;
@@ -175,8 +178,6 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
     // Animation
     private Animation animFadein;
     private ProgressBar product_detail_loading_indicator;
-    private DatabaseReference mDatabaseFavourite;
-    private DatabaseReference mDatabaseNotifications;
     private LikeButton likeButton;
     private String product_owner_id;
     private Long colorNo;
@@ -698,7 +699,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                     @Override
                     public void onEmojiBackspaceClicked(final View v) {
                         emojiPopup.dismiss();
-                        Log.d(TAG, "Clicked on Backspace");
+//                        Log.d(TAG, "Clicked on Backspace");
                     }
                 })
                 .setOnEmojiClickedListener(new OnEmojiClickedListener() {
@@ -710,7 +711,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                 .setOnEmojiPopupShownListener(new OnEmojiPopupShownListener() {
                     @Override
                     public void onEmojiPopupShown() {
-                        emojiButton.setImageResource(R.drawable.ic_keyboard);
+                        emojiButton.setBackground(ContextCompat.getDrawable(ProductDetailActivity.this,R.drawable.ic_keyboard));
                     }
                 })
                 .setOnSoftKeyboardOpenListener(new OnSoftKeyboardOpenListener() {
@@ -722,7 +723,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                 .setOnEmojiPopupDismissListener(new OnEmojiPopupDismissListener() {
                     @Override
                     public void onEmojiPopupDismiss() {
-                        emojiButton.setImageResource(R.drawable.emoji_one_category_people);
+                        emojiButton.setBackground(ContextCompat.getDrawable(ProductDetailActivity.this,R.drawable.emoji_one_category_people));
                     }
                 })
                 .setOnSoftKeyboardCloseListener(new OnSoftKeyboardCloseListener() {
