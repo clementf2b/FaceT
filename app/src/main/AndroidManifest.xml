@@ -68,7 +68,7 @@
             android:name=".activity.MainMenuActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar_nav">
+            android:theme="@style/AppTheme.NoActionBar_Dark_nav">
             <intent-filter>
                 <action
                     android:name="android.intent.action.MAIN"

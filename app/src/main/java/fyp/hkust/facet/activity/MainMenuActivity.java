@@ -33,6 +33,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
+
 import java.io.File;
 import java.text.DateFormat;
 import java.util.Date;
@@ -68,6 +71,7 @@ public class MainMenuActivity extends AppCompatActivity {
     private String captureImageFullPath = null;
     private boolean doubleBackToExitPressedOnce = false;
     private TextView main_menu_title;
+    private RelativeLayout product_layout, account_layout, store_layout, fav_layout, photo_camera_layout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +88,11 @@ public class MainMenuActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         activity_main_menu_layout = (RelativeLayout) findViewById(R.id.activity_main_menu_layout);
+        photo_camera_layout = (RelativeLayout) findViewById(R.id.photo_camera_layout);
+        fav_layout = (RelativeLayout) findViewById(R.id.fav_layout);
+        store_layout = (RelativeLayout) findViewById(R.id.store_layout);
+        account_layout = (RelativeLayout) findViewById(R.id.account_layout);
+        product_layout = (RelativeLayout) findViewById(R.id.product_layout);
 
         Typeface titleFontType = FontManager.getTypeface(getApplicationContext(), FontManager.ROOT + FontManager.TITLE_FONT);
         Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
@@ -97,7 +106,13 @@ public class MainMenuActivity extends AppCompatActivity {
         storeBtn = (ImageButton) findViewById(R.id.store_button);
         favBtn = (ImageButton) findViewById(R.id.fav_button);
 
-        photoCameraBtn.setOnClickListener(new View.OnClickListener() {
+        YoYo.with(Techniques.SlideInDown).duration(800).playOn(findViewById(R.id.photo_camera_layout));
+        YoYo.with(Techniques.SlideInDown).duration(1300).playOn(findViewById(R.id.fav_layout));
+        YoYo.with(Techniques.SlideInDown).duration(1800).playOn(findViewById(R.id.store_layout));
+        YoYo.with(Techniques.SlideInDown).duration(2300).playOn(findViewById(R.id.account_layout));
+        YoYo.with(Techniques.SlideInDown).duration(2800).playOn(findViewById(R.id.product_layout));
+
+        photo_camera_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -105,7 +120,7 @@ public class MainMenuActivity extends AppCompatActivity {
             }
         });
 
-        shoppingBtn.setOnClickListener(new View.OnClickListener() {
+        product_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent Intent = new Intent(MainMenuActivity.this, MainActivity.class);
@@ -114,7 +129,7 @@ public class MainMenuActivity extends AppCompatActivity {
             }
         });
 
-        accountBtn.setOnClickListener(new View.OnClickListener() {
+        account_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -125,14 +140,14 @@ public class MainMenuActivity extends AppCompatActivity {
             }
         });
 
-        storeBtn.setOnClickListener(new View.OnClickListener() {
+        fav_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showMakeUpDialog();
             }
         });
 
-        favBtn.setOnClickListener(new View.OnClickListener() {
+        store_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 

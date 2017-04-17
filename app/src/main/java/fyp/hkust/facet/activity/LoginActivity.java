@@ -224,7 +224,6 @@ public class LoginActivity extends AppCompatActivity {
                 Intent regIntent = new Intent(LoginActivity.this, RegisterActivity.class);
 //                regIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(regIntent);
-                LoginActivity.this.finish();
             }
         });
 
@@ -336,14 +335,12 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public boolean onSupportNavigateUp() {
         startActivity(new Intent(LoginActivity.this, MainMenuActivity.class));
-        LoginActivity.this.finish();
         return true;
     }
 
     private void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
-        LoginActivity.this.finish();
     }
 
     @Override

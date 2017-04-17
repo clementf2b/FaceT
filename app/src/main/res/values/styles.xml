@@ -34,6 +34,14 @@
         <item name="android:backgroundDimAmount">0.6</item>
     </style>
 
+    <style name="AppTheme.NoActionBar_Dark_nav" >
+        <item name="android:colorBackground">#000000</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="windowActionBarOverlay">false</item>
+    </style>
+
     <style name="AppTheme.NoActionBar_nav" >
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

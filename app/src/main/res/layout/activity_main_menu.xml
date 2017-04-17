@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="12dp"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -29,7 +29,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_margin="10dp"
+                android:layout_margin="7dp"
                 android:background="@mipmap/app_icon"
                 android:backgroundTint="@color/white"
                 android:scaleX="1.4"
@@ -46,7 +46,7 @@
                 android:gravity="center"
                 android:text="@string/app_name"
                 android:textColor="#FFFFFF"
-                android:textSize="26dp"
+                android:textSize="28dp"
                 android:textStyle="bold" />
 
         </RelativeLayout>
@@ -58,7 +58,7 @@
             android:layout_marginBottom="15dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:background="#7FFFFFFF"
+            android:background="#6FFFFFFF"
             ></View>
 
         <LinearLayout
@@ -70,13 +70,14 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp">
+                android:layout_margin="10dp"
+                android:id="@+id/photo_camera_layout">
 
                 <ImageButton
                     android:id="@+id/photo_camera"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="15dp"
+                    android:layout_marginRight="20dp"
                     android:background="@drawable/main_menu_border"
                     android:padding="10dp"
                     android:src="@mipmap/ic_photo_camera_white_36dp" />
@@ -99,7 +100,8 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp">
+                android:layout_margin="10dp"
+                android:id="@+id/fav_layout">
 
                 <TextView
                     android:id="@+id/fav_text"
@@ -117,7 +119,7 @@
                     android:id="@+id/fav_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="15dp"
+                    android:layout_marginRight="20dp"
                     android:background="@drawable/main_menu_border"
                     android:padding="10dp"
                     android:src="@mipmap/ic_favorite_white_36dp" />
@@ -127,13 +129,14 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp">
+                android:layout_margin="10dp"
+                android:id="@+id/store_layout">
 
                 <ImageButton
                     android:id="@+id/store_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="15dp"
+                    android:layout_marginRight="20dp"
                     android:background="@drawable/main_menu_border"
                     android:padding="10dp"
                     android:src="@mipmap/ic_location_on_white_36dp" />
@@ -155,7 +158,8 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp">
+                android:layout_margin="10dp"
+                android:id="@+id/account_layout">
 
                 <TextView
                     android:id="@+id/account_text"
@@ -174,7 +178,7 @@
                     android:id="@+id/account_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="15dp"
+                    android:layout_marginRight="20dp"
                     android:background="@drawable/main_menu_border"
                     android:padding="10dp"
                     android:src="@mipmap/ic_account_circle_white_36dp" />
@@ -184,7 +188,8 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp">
+                android:layout_margin="10dp"
+                android:id="@+id/product_layout">
 
                 <TextView
                     android:id="@+id/product_text"
@@ -202,7 +207,7 @@
                     android:id="@+id/shopping_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="15dp"
+                    android:layout_marginRight="20dp"
                     android:background="@drawable/main_menu_border"
                     android:padding="10dp"
                     android:src="@mipmap/ic_shopping_basket_white_36dp" />
