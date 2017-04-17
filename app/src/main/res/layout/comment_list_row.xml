@@ -39,7 +39,8 @@
             android:text="@string/product_username_text"
             android:textColor="@color/colorPrimaryDark"
             android:textIsSelectable="true"
-            android:textSize="16dp" />
+            android:textSize="16dp"
+            />
 
         <TextView
             android:id="@+id/comment_date"

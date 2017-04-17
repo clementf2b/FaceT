@@ -3,8 +3,10 @@ package fyp.hkust.facet.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -291,6 +293,11 @@ public class FavouriteProductFragment extends Fragment {
         public void setRating(Long rating) {
             RatingBar product_rating_bar = (RatingBar) mFavouriteProductView.findViewById(R.id.favourite_product_rating_bar);
             product_rating_bar.setRating(rating);
+            SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(mFavouriteProductView.getContext());
+            boolean ratingDisplayCheck = SP.getBoolean("ratingButton", true);
+            if(ratingDisplayCheck == false)
+                product_rating_bar.setVisibility(View.INVISIBLE);
+            Log.d(TAG + " ratingDisplayCheck", ratingDisplayCheck + "");
         }
 
         public void setProductName(String productName) {

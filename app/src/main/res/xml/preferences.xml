@@ -4,15 +4,48 @@
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <EditTextPreference
-        android:key="username"
-        android:summary="Please provide your username"
-        android:title="Your Name" />
+    <PreferenceCategory
+        android:selectable="false"
+        android:key="@string/category1_key"
+        android:title="@string/category1_text"
+        ></PreferenceCategory>
+
+    <!--<EditTextPreference-->
+        <!--android:key="username"-->
+        <!--android:summary="Please provide your username"-->
+        <!--android:title="Your Name" />-->
     <!--<CheckBoxPreference-->
     <!--android:defaultValue="false"-->
     <!--android:key="applicationUpdates"-->
     <!--android:summary="This option if selected will allow the application to check for latest versions."-->
     <!--android:title="Application Updates" />-->
+
+    <CheckBoxPreference
+        android:key="@string/notification_receive_key"
+        android:summaryOff="@string/notification_receive_desc_off"
+        android:summaryOn="@string/notification_receive_desc_on"
+        android:title="@string/notification_text"
+        android:defaultValue="true">
+    </CheckBoxPreference>
+
+    <CheckBoxPreference
+        android:key="@string/rating_display_key"
+        android:summaryOff="@string/rating_display_desc_off"
+        android:summaryOn="@string/rating_display_desc_on"
+        android:title="@string/rating_display_text"
+        android:defaultValue="true">
+    </CheckBoxPreference>
+
+    <PreferenceCategory
+        android:selectable="false"
+        android:key="@string/category2_key"
+        android:title="@string/category2_text"
+        ></PreferenceCategory>
+
+    <Preference
+        android:key="@string/open_source_licenses_key"
+        android:summary="@string/open_source_licenses_desc"
+        android:title="@string/open_source_licenses_text" />
     <Preference
         android:key="aboutUs"
         android:summary="@string/aboutUs_faceT"

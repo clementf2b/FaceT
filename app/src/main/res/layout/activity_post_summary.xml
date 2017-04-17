@@ -8,8 +8,7 @@
     <ImageView
         android:id="@+id/confirm_product_image"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@mipmap/app_icon" />
+        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/confirm_product_text"

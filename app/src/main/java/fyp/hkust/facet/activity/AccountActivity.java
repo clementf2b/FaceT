@@ -353,9 +353,4 @@ public class AccountActivity extends AppCompatActivity {
             });
         }
     }
-
-    private void logout() {
-        mAuth.signOut();
-    }
-
 }

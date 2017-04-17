@@ -3,127 +3,214 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main_menu_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/temp"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="fyp.hkust.facet.activity.MainMenuActivity"
-    android:background="@drawable/background_dark_circle">
+    tools:context="fyp.hkust.facet.activity.MainMenuActivity">
 
-
-    <ImageButton
-        android:layout_width="65dp"
-        android:layout_height="65dp"
-        android:background="@mipmap/ic_location_on_white_36dp"
-        android:id="@+id/store_button"
-        android:layout_below="@+id/photo_camera"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <ImageButton
-        android:layout_width="65dp"
-        android:layout_height="65dp"
-        android:background="@mipmap/ic_favorite_white_36dp"
-        android:id="@+id/fav_button"
-        android:layout_below="@+id/photo_camera"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <TextView
-        android:id="@+id/location_text"
-        android:layout_width="80dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/store_text"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/store_button"
-        android:layout_alignEnd="@+id/store_button"
-        android:layout_below="@+id/store_button" />
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="15dp"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/fav_text"
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/favourite_text"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
-        android:layout_below="@+id/fav_button"
-        android:layout_alignLeft="@+id/fav_button"
-        android:layout_alignStart="@+id/fav_button" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp">
 
-    <TextView
-        android:id="@+id/account_text"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/my_account_text"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
-        android:layout_below="@+id/account_button"
-        android:layout_alignLeft="@+id/account_button"
-        android:layout_alignStart="@+id/account_button" />
+            <ImageButton
+                android:id="@+id/main_menu_pic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="10dp"
+                android:background="@mipmap/app_icon"
+                android:backgroundTint="@color/white"
+                android:scaleX="1.4"
+                android:scaleY="1.4" />
 
-    <TextView
-        android:id="@+id/photo_camera_text"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/facet_match_text"
-        android:layout_marginLeft="5dp"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
-        android:layout_above="@+id/fav_text"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="58dp" />
+            <TextView
+                android:id="@+id/main_menu_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/main_menu_pic"
+                android:layout_centerInParent="true"
+                android:layout_centerVertical="true"
+                android:layout_margin="10dp"
+                android:gravity="center"
+                android:text="@string/app_name"
+                android:textColor="#FFFFFF"
+                android:textSize="26dp"
+                android:textStyle="bold" />
 
-    <ImageButton
-        android:layout_width="125dp"
-        android:layout_height="125dp"
-        android:background="@mipmap/ic_photo_camera_white_36dp"
-        android:id="@+id/photo_camera"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        />
+        </RelativeLayout>
 
-    <ImageButton
-        android:layout_width="65dp"
-        android:layout_height="65dp"
-        android:background="@mipmap/ic_account_circle_white_36dp"
-        android:id="@+id/account_button"
-        android:layout_alignTop="@+id/shopping_button"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        />
+        <View
+            android:id="@+id/linebreak1"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginBottom="15dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="#7FFFFFFF"
+            ></View>
 
-    <TextView
-        android:id="@+id/product_text"
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/all_products_text"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignBottom="@+id/account_text"
-        android:layout_below="@+id/account_button"
-        android:layout_alignRight="@+id/shopping_button"
-        android:layout_alignEnd="@+id/shopping_button" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
 
-    <ImageButton
-        android:layout_width="65dp"
-        android:layout_height="65dp"
-        android:background="@mipmap/ic_shopping_basket_white_36dp"
-        android:id="@+id/shopping_button"
-        android:layout_marginBottom="15dp"
-        android:layout_marginLeft="5dp"
-        android:layout_above="@+id/photo_camera"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp">
+
+                <ImageButton
+                    android:id="@+id/photo_camera"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="15dp"
+                    android:background="@drawable/main_menu_border"
+                    android:padding="10dp"
+                    android:src="@mipmap/ic_photo_camera_white_36dp" />
+
+                <TextView
+                    android:id="@+id/photo_camera_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="10dp"
+                    android:layout_toRightOf="@+id/photo_camera"
+                    android:gravity="center"
+                    android:text="@string/facet_match_text"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp">
+
+                <TextView
+                    android:id="@+id/fav_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="10dp"
+                    android:layout_toRightOf="@+id/fav_button"
+                    android:text="@string/favourite_text"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+
+                <ImageButton
+                    android:id="@+id/fav_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="15dp"
+                    android:background="@drawable/main_menu_border"
+                    android:padding="10dp"
+                    android:src="@mipmap/ic_favorite_white_36dp" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp">
+
+                <ImageButton
+                    android:id="@+id/store_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="15dp"
+                    android:background="@drawable/main_menu_border"
+                    android:padding="10dp"
+                    android:src="@mipmap/ic_location_on_white_36dp" />
+
+                <TextView
+                    android:id="@+id/location_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="10dp"
+                    android:layout_toRightOf="@+id/store_button"
+                    android:text="@string/store_text"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp">
+
+                <TextView
+                    android:id="@+id/account_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="10dp"
+                    android:layout_toRightOf="@+id/account_button"
+                    android:gravity="center"
+                    android:text="@string/my_account_text"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+
+                <ImageButton
+                    android:id="@+id/account_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="15dp"
+                    android:background="@drawable/main_menu_border"
+                    android:padding="10dp"
+                    android:src="@mipmap/ic_account_circle_white_36dp" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp">
+
+                <TextView
+                    android:id="@+id/product_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="10dp"
+                    android:layout_toRightOf="@+id/shopping_button"
+                    android:text="@string/all_products_text"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+
+                <ImageButton
+                    android:id="@+id/shopping_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="15dp"
+                    android:background="@drawable/main_menu_border"
+                    android:padding="10dp"
+                    android:src="@mipmap/ic_shopping_basket_white_36dp" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+    </LinearLayout>
 
 </RelativeLayout>
+

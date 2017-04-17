@@ -3,10 +3,12 @@ package fyp.hkust.facet.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -89,6 +91,8 @@ public class OwnProductFragment extends Fragment {
     private Map<String, Brand> mBrand = new HashMap<String, Brand>();
     private List<String> brandList = new ArrayList<>();
     private List<String> brandIDList = new ArrayList<>();
+    private String userId;
+    private TextView no_product_textview;
 
     public OwnProductFragment() {
         // Required empty public constructor
@@ -106,6 +110,13 @@ public class OwnProductFragment extends Fragment {
         FontManager.markAsIconContainer(view.findViewById(R.id.fragment_own_product_layout), fontType);
 
         mAuth = FirebaseAuth.getInstance();
+
+        if (getArguments() != null) {
+            userId = getArguments().getString("user_id");
+            Log.d(TAG + " user Id ", userId.toString());
+        } else if (userId == null && mAuth.getCurrentUser() != null)
+            userId = mAuth.getCurrentUser().getUid();
+
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Product");
         mDatabase.keepSynced(true);
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
@@ -117,6 +128,8 @@ public class OwnProductFragment extends Fragment {
         mOwnProductList = (RecyclerView) view.findViewById(R.id.ownproductlist);
         mgr = new GridLayoutManager(getContext(), 2);
         mOwnProductList.setLayoutManager(mgr);
+
+        no_product_textview = (TextView) view.findViewById(R.id.no_product_textview);
 
         checkUserExist();
         return view;
@@ -133,7 +146,7 @@ public class OwnProductFragment extends Fragment {
                 if (mAuth.getCurrentUser() != null) {
                     for (DataSnapshot ds : dataSnapshot.getChildren()) {
                         Product result = ds.getValue(Product.class);
-                        if (result.getUid() == mAuth.getCurrentUser().getUid()) {
+                        if (result.getUid() == userId) {
                             mOwnProducts.put(ds.getKey(), result);
                             Log.d(" product " + ds.getKey(), result.toString());
                         }
@@ -145,7 +158,7 @@ public class OwnProductFragment extends Fragment {
                             int count = 0;
                             double totalRating = 0.0;
                             for (DataSnapshot ratingDs : dataSnapshot.getChildren()) {
-                                if(mOwnProducts.containsKey(ratingDs.getKey())) {
+                                if (mOwnProducts.containsKey(ratingDs.getKey())) {
                                     Map<String, Long> td = (HashMap<String, Long>) ratingDs.getValue();
                                     List<String> keys = new ArrayList<>(td.keySet());
                                     List<Long> values = new ArrayList<>(td.values());
@@ -174,9 +187,16 @@ public class OwnProductFragment extends Fragment {
                                         Log.d(" brand " + ds.getKey(), result.toString());
                                     }
 
-                                    mOwnProductAdapter = new ownProductAdapter(mOwnProducts);
-                                    mgr.setAutoMeasureEnabled(true);
-                                    mOwnProductList.setAdapter(mOwnProductAdapter);
+                                    if (mOwnProducts.size() > 0) {
+                                        no_product_textview.setVisibility(View.GONE);
+                                        mOwnProductList.setVisibility(View.VISIBLE);
+                                        mOwnProductAdapter = new ownProductAdapter(mOwnProducts);
+                                        mgr.setAutoMeasureEnabled(true);
+                                        mOwnProductList.setAdapter(mOwnProductAdapter);
+                                    } else if (mOwnProducts.size() <= 0) {
+                                        no_product_textview.setVisibility(View.VISIBLE);
+                                        mOwnProductList.setVisibility(View.GONE);
+                                    }
                                 }
 
                                 @Override
@@ -280,6 +300,11 @@ public class OwnProductFragment extends Fragment {
         public void setRating(Long rating) {
             RatingBar product_rating_bar = (RatingBar) mOwnProductView.findViewById(R.id.own_product_rating_bar);
             product_rating_bar.setRating(rating);
+            SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(mOwnProductView.getContext());
+            boolean ratingDisplayCheck = SP.getBoolean("ratingButton", true);
+            if (ratingDisplayCheck == false)
+                product_rating_bar.setVisibility(View.INVISIBLE);
+            Log.d(TAG + " ratingDisplayCheck", ratingDisplayCheck + "");
         }
 
         public void setProductName(String productName) {

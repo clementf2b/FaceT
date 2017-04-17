@@ -148,7 +148,7 @@
     <string name="move_report_text">View Report</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="no_product_text">No product is added</string>
     <string name="own_product">own_product</string>
     <string name="profile_email">handsomeguy@gmail.com</string>
     <string name="profile_username">Handsome Guy</string>
@@ -239,16 +239,37 @@
     <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->
+    <string name="category1_text">User controls</string>
+    <string name="category2_text">About</string>
+    <string name="category1_key">userControls</string>
+    <string name="category2_key">about</string>
+
     <string name="logout_text">Logout</string>
     <string name="logout_description">Click this button to logout</string>
-    <string name="aboutUs_text">About Us</string>
+    <string name="aboutUs_text">About us</string>
     <string name="aboutUs_faceT">FaceT =]</string>
+    <string name="open_source_licenses_key">openSourceLicenses</string>
+    <string name="open_source_licenses_desc">License details for open source library</string>
+    <string name="open_source_licenses_text">Open source licenses</string>
+    <string name="bottom_title">About</string>
+    <string name="rating_display_key">ratingButton</string>
+    <string name="rating_display_desc_on">Rating will display on product list</string>
+    <string name="rating_display_desc_off">Rating will not display on product list</string>
+    <string name="rating_display_text">Display rating</string>
+    <string name="notification_receive_key">notificationReceiveButton</string>
+    <string name="notification_receive_desc_on">Notification will be received</string>
+    <string name="notification_receive_desc_off">Notification will not be received</string>
+    <string name="notification_receive_text">Receive notification</string>
 
     <!--activity_shop_list-->
     <string name="nearby_button">SHOP NEARBY</string>
     <string name="tab_hkisland">Hong Kong Island</string>
     <string name="tab_kowloon">Kowloon</string>
     <string name="tab_nTerritories">New Territories</string>
+
+    <!--activity_about_us-->
+    <string name="aboutus_title">FaceT</string>
+    <string name="aboutus_desc">The prime mission of the project was to develop an aesthetic and easy-to- use mobile app platform for enhancing women’s experience in shopping for cosmetic products. Different targets were set for each part when conducting the project. It was designed according to the following seven objectives for providing a good User Experience:</string>
 
 </resources>
 

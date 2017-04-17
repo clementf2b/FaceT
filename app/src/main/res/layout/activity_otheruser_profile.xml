@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_above="@+id/tabs"
+        android:layout_below="@+id/toolbar"
+        android:background="@color/white" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/otheruser_profile_picture"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="15dp"
+        android:elevation="6dp"
+        android:src="@mipmap/app_icon"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/otheruser_profile_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/otheruser_profile_picture"
+        android:text="@string/profile_username"
+        android:layout_margin="10dp"
+        android:textAlignment="center"
+        android:textColor="@color/profile_email_text_color"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/otheruser_profile_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/otheruser_profile_username"
+        android:layout_margin="5dp"
+        android:textAlignment="center"
+        android:text="@string/profile_email"
+        android:textColor="@color/profile_email_text_color"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/addedproducttitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/otheruser_profile_email"
+        android:layout_margin="15dp"
+
+        android:textColor="@color/colorPrimary"
+        android:textSize="24sp" />
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/addedproducttitle"
+        android:background="@color/colorPrimary"
+        app:tabGravity="fill"
+        app:tabIndicatorColor="@color/white"
+        app:tabIndicatorHeight="2dp"
+        app:tabMode="fixed"
+        app:tabSelectedTextColor="@color/tab_selected_color"
+        app:tabTextColor="#88FFFFFF"
+        />
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tabs"
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/tabs" />
+
+    </android.support.v4.widget.NestedScrollView>
+
+</RelativeLayout>
+
+
+

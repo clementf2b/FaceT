@@ -7,6 +7,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
@@ -19,6 +20,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.style.StyleSpan;
 import android.text.style.TypefaceSpan;
 import android.util.Log;
 import android.view.MenuInflater;
@@ -68,6 +70,7 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
         SpannableStringBuilder ss;
         if (somePreference.getTitle() != null) {
             ss = new SpannableStringBuilder(somePreference.getTitle().toString());
+            ss.setSpan(new StyleSpan(Typeface.BOLD), 0, ss.length(), 0);
             ss.setSpan(customTypefaceSpan, 0, ss.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
             somePreference.setTitle(ss);
         }
@@ -113,9 +116,41 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
             };
             mAuth.addAuthStateListener(mAuthListener);
 
-            Preference button = findPreference("logoutButton");
-            convertPreferenceToUseCustomFont(button);
-            button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            PreferenceCategory category1 = (PreferenceCategory)findPreference("userControls");
+            convertPreferenceToUseCustomFont(category1);
+            PreferenceCategory category2 = (PreferenceCategory)findPreference("about");
+            convertPreferenceToUseCustomFont(category2);
+
+            Preference notificationReceiveButton = findPreference("notificationReceiveButton");
+            convertPreferenceToUseCustomFont(notificationReceiveButton);
+
+            Preference openSourceLicenses = findPreference("openSourceLicenses");
+            convertPreferenceToUseCustomFont(openSourceLicenses);
+
+            Preference aboutButton = findPreference("aboutUs");
+            convertPreferenceToUseCustomFont(aboutButton);
+            aboutButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    //code for what you want it to do
+                    startActivity(new Intent(getActivity(),AboutUsActivity.class));
+                    return true;
+                }
+            });
+
+            Preference ratingButton = findPreference("ratingButton");
+            convertPreferenceToUseCustomFont(ratingButton);
+            ratingButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    //code for what you want it to do
+                    return true;
+                }
+            });
+
+            Preference logoutButton = findPreference("logoutButton");
+            convertPreferenceToUseCustomFont(logoutButton);
+            logoutButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     //code for what you want it to do

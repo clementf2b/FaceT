@@ -50,6 +50,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -223,6 +224,7 @@ public class LoginActivity extends AppCompatActivity {
                 Intent regIntent = new Intent(LoginActivity.this, RegisterActivity.class);
 //                regIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(regIntent);
+                LoginActivity.this.finish();
             }
         });
 
@@ -288,16 +290,21 @@ public class LoginActivity extends AppCompatActivity {
                         parameters.putString("fields", "id,name,link,email,birthday,gender,picture");
                         request.setParameters(parameters);
                         request.executeAsync();
+                        mProgress.dismiss();
                     }
 
                     @Override
                     public void onCancel() {
-                        Toast.makeText(LoginActivity.this, "Login Cancel", Toast.LENGTH_LONG).show();
+                        Snackbar snackbar = Snackbar.make(activity_login_layout, "Login Cancel", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        mProgress.dismiss();
                     }
 
                     @Override
                     public void onError(FacebookException exception) {
-                        Toast.makeText(LoginActivity.this, exception.getMessage(), Toast.LENGTH_LONG).show();
+                        Snackbar snackbar = Snackbar.make(activity_login_layout, exception.getMessage(), Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        mProgress.dismiss();
                     }
                 });
 
@@ -305,6 +312,8 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //Facebook Login
+                mProgress.setMessage("Starting Sign in ...");
+                mProgress.show();
                 LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList(
                         "public_profile", "email", "user_birthday", "user_friends"));
             }
@@ -327,12 +336,14 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public boolean onSupportNavigateUp() {
         startActivity(new Intent(LoginActivity.this, MainMenuActivity.class));
+        LoginActivity.this.finish();
         return true;
     }
 
     private void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
+        LoginActivity.this.finish();
     }
 
     @Override
@@ -378,6 +389,8 @@ public class LoginActivity extends AppCompatActivity {
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             mProgress.dismiss();
+                            Snackbar snackbar = Snackbar.make(activity_login_layout, "Login successfully", Snackbar.LENGTH_SHORT);
+                            snackbar.show();
                             checkUserExist();
                         }
                     }
@@ -398,13 +411,25 @@ public class LoginActivity extends AppCompatActivity {
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithCredential", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+                            Snackbar snackbar = Snackbar.make(activity_login_layout, "Authentication failed.", Snackbar.LENGTH_SHORT);
+                            snackbar.show();
                         } else {
+                            Snackbar snackbar = Snackbar.make(activity_login_layout, "Login successfully", Snackbar.LENGTH_SHORT);
+                            snackbar.show();
                             mProgress.dismiss();
                             checkUserExist();
                         }
 
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        mProgress.dismiss();
+                        Snackbar snackbar = Snackbar.make(activity_login_layout, e.toString(), Snackbar.LENGTH_SHORT);
+                        snackbar.show();
+                        YoYo.with(Techniques.Shake).playOn(findViewById(R.id.loginemailfield));
+                        YoYo.with(Techniques.Shake).playOn(findViewById(R.id.loginpasswordfield));
                     }
                 });
     }
@@ -417,18 +442,25 @@ public class LoginActivity extends AppCompatActivity {
         if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
             mProgress.setMessage("Checking Login ...");
             mProgress.show();
-            mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()) {
-                        mProgress.dismiss();
-                        checkUserExist();
-                    } else {
-                        mProgress.dismiss();
-                        Toast.makeText(LoginActivity.this, "Error Login", Toast.LENGTH_LONG).show();
-                    }
-                }
-            });
+            mAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                mProgress.dismiss();
+                                checkUserExist();
+                            }
+                        }
+
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            mProgress.dismiss();
+                            Snackbar snackbar = Snackbar.make(activity_login_layout, e.toString(), Snackbar.LENGTH_SHORT);
+                            snackbar.show();
+                        }
+                    });
         }
     }
 

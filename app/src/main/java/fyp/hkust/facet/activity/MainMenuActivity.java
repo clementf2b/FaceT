@@ -1,6 +1,7 @@
 package fyp.hkust.facet.activity;
 
 import android.Manifest;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
@@ -29,6 +30,7 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -65,6 +67,7 @@ public class MainMenuActivity extends AppCompatActivity {
     private int buttonNumber = 0;
     private String captureImageFullPath = null;
     private boolean doubleBackToExitPressedOnce = false;
+    private TextView main_menu_title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,21 +75,22 @@ public class MainMenuActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main_menu);
 
         SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        String strUserName = SP.getString("username", "NA");
-        Log.d(TAG + "username", strUserName);
+//        String strUserName = SP.getString("username", "NA");
+//        Log.d(TAG + " username", strUserName);
+        boolean notificationCheck = SP.getBoolean("notificationReceiveButton", true);
+        Log.d(TAG + " notificationReceiveButton", notificationCheck + "");
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         activity_main_menu_layout = (RelativeLayout) findViewById(R.id.activity_main_menu_layout);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Window window = getWindow();
-            // Translucent status bar
-            window.setFlags(
-                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
-                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
 
+        Typeface titleFontType = FontManager.getTypeface(getApplicationContext(), FontManager.ROOT + FontManager.TITLE_FONT);
         Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
         FontManager.markAsIconContainer(findViewById(R.id.activity_main_menu_layout), fontType);
 
+        main_menu_title = (TextView) findViewById(R.id.main_menu_title);
+        main_menu_title.setTypeface(titleFontType);
         photoCameraBtn = (ImageButton) findViewById(R.id.photo_camera);
         shoppingBtn = (ImageButton) findViewById(R.id.shopping_button);
         accountBtn = (ImageButton) findViewById(R.id.account_button);
@@ -158,9 +162,11 @@ public class MainMenuActivity extends AppCompatActivity {
             }
         }
 
-        if (!isMyServiceRunning(MyService.class))
+        if (!isMyServiceRunning(MyService.class) && notificationCheck != false)
             startService(new Intent(this, MyService.class));
 
+        if (notificationCheck == false)
+            stopService(new Intent(this, MyService.class));
     }
 
     @Override
@@ -177,7 +183,7 @@ public class MainMenuActivity extends AppCompatActivity {
 
             @Override
             public void run() {
-                doubleBackToExitPressedOnce=false;
+                doubleBackToExitPressedOnce = false;
             }
         }, 2000);
     }

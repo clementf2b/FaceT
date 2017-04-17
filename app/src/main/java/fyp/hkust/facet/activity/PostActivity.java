@@ -10,7 +10,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -47,7 +46,6 @@ import ernestoyaquello.com.verticalstepperform.VerticalStepperFormLayout;
 import ernestoyaquello.com.verticalstepperform.fragments.BackConfirmationFragment;
 import ernestoyaquello.com.verticalstepperform.interfaces.VerticalStepperForm;
 import fyp.hkust.facet.R;
-import fyp.hkust.facet.util.CheckConnectivity;
 import fyp.hkust.facet.util.FontManager;
 
 public class PostActivity extends AppCompatActivity implements VerticalStepperForm {
@@ -212,9 +210,10 @@ public class PostActivity extends AppCompatActivity implements VerticalStepperFo
         mSelectImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                galleryIntent.setType("image/*");
-                startActivityForResult(galleryIntent, GALLERY_REQUEST);
+                Intent intent = new Intent(
+                        Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, GALLERY_REQUEST);
             }
         });
         return view2;
@@ -318,15 +317,14 @@ public class PostActivity extends AppCompatActivity implements VerticalStepperFo
                     mDatabaseUser.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-
+                            newProduct.child("username").setValue(dataSnapshot.child("name").getValue());
                             newProduct.child("productName").setValue(title_val);
                             newProduct.child("description").setValue(desc_val);
                             newProduct.child("brand").setValue(brand_val);
                             newProduct.child("category").setValue(categoryArray[spinner.getSelectedItemPosition()]);
-                            newProduct.child("prductImage").setValue(downloadUrl.toString());
                             newProduct.child("uid").setValue(mCurrentUser.getUid());
                             newProduct.child("validate").setValue(0);
-                            newProduct.child("username").setValue(dataSnapshot.child("name").getValue()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            newProduct.child("productImage").setValue(downloadUrl.toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
 
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
@@ -357,6 +355,7 @@ public class PostActivity extends AppCompatActivity implements VerticalStepperFo
 
         if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK) {
             mImageUri = data.getData();
+
             mSelectImage.setImageURI(mImageUri);
             confirm_product_image.setImageURI(mImageUri);
         }

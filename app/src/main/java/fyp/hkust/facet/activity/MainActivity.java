@@ -3,19 +3,17 @@ package fyp.hkust.facet.activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
-import android.media.Rating;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.annotation.NonNull;
+import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.util.ArrayMap;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -31,6 +29,7 @@ import android.text.SpannableString;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -44,23 +43,20 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.github.pwittchen.swipe.library.Swipe;
+import com.github.pwittchen.swipe.library.SwipeListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.gson.internal.LinkedHashTreeMap;
-import com.google.gson.internal.LinkedTreeMap;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.webianks.library.PopupBubble;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -69,8 +65,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import fyp.hkust.facet.R;
@@ -122,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
     };
     private List<String> brandIDList = new ArrayList<>();
     private PopupBubble new_product_popup_bubble;
+    private Swipe swipe;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -213,51 +208,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
-        Resources res = getResources();
-        final String[] category = res.getStringArray(R.array.category_type_array);
-        tabLayout.addTab(tabLayout.newTab().setText(category[0]));
-        tabLayout.addTab(tabLayout.newTab().setText(category[1]));
-        tabLayout.addTab(tabLayout.newTab().setText(category[2]));
-        tabLayout.addTab(tabLayout.newTab().setText(category[3]));
-        tabLayout.addTab(tabLayout.newTab().setText(category[4]));
-
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                if (tabLayout.getSelectedTabPosition() == 0) {
-                    categoryResult = 0;
-                    setupProductList();
-                    Toast.makeText(MainActivity.this, "Tab " + tabLayout.getSelectedTabPosition(), Toast.LENGTH_SHORT).show();
-                } else if (tabLayout.getSelectedTabPosition() == 1) {
-                    categoryResult = 1;
-                    setupProductList();
-                    Toast.makeText(MainActivity.this, "Tab " + tabLayout.getSelectedTabPosition(), Toast.LENGTH_SHORT).show();
-                } else if (tabLayout.getSelectedTabPosition() == 2) {
-                    categoryResult = 2;
-                    setupProductList();
-                    Toast.makeText(MainActivity.this, "Tab " + tabLayout.getSelectedTabPosition(), Toast.LENGTH_SHORT).show();
-                } else if (tabLayout.getSelectedTabPosition() == 3) {
-                    categoryResult = 3;
-                    setupProductList();
-                    Toast.makeText(MainActivity.this, "Tab " + tabLayout.getSelectedTabPosition(), Toast.LENGTH_SHORT).show();
-                } else if (tabLayout.getSelectedTabPosition() == 4) {
-                    categoryResult = 4;
-                    setupProductList();
-                    Toast.makeText(MainActivity.this, "Tab " + tabLayout.getSelectedTabPosition(), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
+        setupTabLayout();
 
         NavigationView sort_view = (NavigationView) findViewById(R.id.sort_navigation_view);
         sort_view.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -309,6 +260,7 @@ public class MainActivity extends AppCompatActivity {
         mProductList = (RecyclerView) findViewById(R.id.product_list);
         mgr = new GridLayoutManager(this, 2);
         mProductList.setLayoutManager(mgr);
+        mProductList.setItemAnimator(new DefaultItemAnimator());
 
         new_product_popup_bubble = (PopupBubble) findViewById(R.id.new_product_popup_bubble);
         new_product_popup_bubble.setPopupBubbleListener(new PopupBubble.PopupBubbleClickListener() {
@@ -322,6 +274,55 @@ public class MainActivity extends AppCompatActivity {
 
         checkUserExist();
         setupNavHeader();
+    }
+
+    private void setupTabLayout() {
+
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        Resources res = getResources();
+        final String[] category = res.getStringArray(R.array.category_type_array);
+        tabLayout.addTab(tabLayout.newTab().setText(category[0]));
+        tabLayout.addTab(tabLayout.newTab().setText(category[1]));
+        tabLayout.addTab(tabLayout.newTab().setText(category[2]));
+        tabLayout.addTab(tabLayout.newTab().setText(category[3]));
+        tabLayout.addTab(tabLayout.newTab().setText(category[4]));
+
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(final TabLayout.Tab tab) {
+                if (tabLayout.getSelectedTabPosition() == 0) {
+                    categoryResult = 0;
+                    setupProductList();
+                    Toast.makeText(MainActivity.this, "Tab " + tabLayout.getSelectedTabPosition(), Toast.LENGTH_SHORT).show();
+                } else if (tabLayout.getSelectedTabPosition() == 1) {
+                    categoryResult = 1;
+                    setupProductList();
+                    Toast.makeText(MainActivity.this, "Tab " + tabLayout.getSelectedTabPosition(), Toast.LENGTH_SHORT).show();
+                } else if (tabLayout.getSelectedTabPosition() == 2) {
+                    categoryResult = 2;
+                    setupProductList();
+                    Toast.makeText(MainActivity.this, "Tab " + tabLayout.getSelectedTabPosition(), Toast.LENGTH_SHORT).show();
+                } else if (tabLayout.getSelectedTabPosition() == 3) {
+                    categoryResult = 3;
+                    setupProductList();
+                    Toast.makeText(MainActivity.this, "Tab " + tabLayout.getSelectedTabPosition(), Toast.LENGTH_SHORT).show();
+                } else if (tabLayout.getSelectedTabPosition() == 4) {
+                    categoryResult = 4;
+                    setupProductList();
+                    Toast.makeText(MainActivity.this, "Tab " + tabLayout.getSelectedTabPosition(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
 
     private void applyCustomFontToWholeMenu() {
@@ -350,17 +351,26 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupNavHeader() {
 
+        View header = view.getHeaderView(0);
+        final TextView usernameHeader = (TextView) header.findViewById(R.id.username_header);
+        final TextView emailHeader = (TextView) header.findViewById(R.id.email_header);
+        final  CircleImageView headerphoto = (CircleImageView) header.findViewById(R.id.profile_image);
+        headerphoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent accountIntent = new Intent(MainActivity.this, AccountActivity.class);
+                accountIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(accountIntent);
+            }
+        });
+
         if (mAuth.getCurrentUser() != null) {
             mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     final User user_data = dataSnapshot.getValue(User.class);
                     if (user_data != null) {
-                        View header = view.getHeaderView(0);
 
-                        TextView usernameHeader = (TextView) header.findViewById(R.id.username_header);
-                        TextView emailHeader = (TextView) header.findViewById(R.id.email_header);
-                        final CircleImageView headerphoto = (CircleImageView) header.findViewById(R.id.profile_image);
                         Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
                         usernameHeader.setTypeface(fontType);
                         emailHeader.setTypeface(fontType);
@@ -846,10 +856,6 @@ public class MainActivity extends AppCompatActivity {
         outState.putInt(NAV_ITEM_ID, navItemId);
     }
 
-    private void logout() {
-        mAuth.signOut();
-    }
-
     public class ProductAdapter extends RecyclerView.Adapter<ProductViewHolder> {
 
         private Map<String, Product> mResultProducts = new HashMap<>();
@@ -943,6 +949,11 @@ public class MainActivity extends AppCompatActivity {
         public void setRating(Long rating) {
             RatingBar product_rating_bar = (RatingBar) mView.findViewById(R.id.product_rating_bar);
             product_rating_bar.setRating(rating);
+            SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(itemView.getContext());
+            boolean ratingDisplayCheck = SP.getBoolean("ratingButton", true);
+            if(ratingDisplayCheck == false)
+                product_rating_bar.setVisibility(View.INVISIBLE);
+            Log.d(TAG + " ratingDisplayCheck", ratingDisplayCheck + "");
         }
 
         public void setProductName(String productName) {

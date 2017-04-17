@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragment_own_product_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/profile_bg"
     tools:context="fyp.hkust.facet.fragment.OwnProductFragment">
 
@@ -11,9 +11,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true"
-        >
+        android:layout_alignParentStart="true">
 
     </android.support.v7.widget.RecyclerView>
+
+    <TextView
+        android:id="@+id/no_product_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="130dp"
+        android:text="@string/no_product_text"
+        android:textSize="30sp"
+        android:visibility="gone"/>
 
 </RelativeLayout>

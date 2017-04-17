@@ -820,6 +820,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
 
                 Log.d(TAG, "loading view " + position);
                 final String comment_id = getRef(position).getKey();
+                final String user_id = model.getUid();
                 viewHolder.setCommentTime(model.getComment_time());
                 viewHolder.setUsername(model.getUsername());
                 viewHolder.setComment(model.getComment());
@@ -828,16 +829,26 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                 if (model.getComment_image() != null)
                     viewHolder.setCommentImage(getApplicationContext(), model.getComment_image());
 
-//                viewHolder.mView.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        Intent productDetailIntent = new Intent();
-//                        productDetailIntent.setClass(MainActivity.this,ProductDetailActivity.class);
-//                        productDetailIntent.putExtra("product_id",product_id);
-//                        Log.d(TAG + " product_id", product_id);
-//                        startActivity(productDetailIntent);
-//                    }
-//                });
+                viewHolder.user_image.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent();
+                        intent.setClass(ProductDetailActivity.this, OtheruserProfileActivity.class);
+                        intent.putExtra("user_id", user_id);
+                        startActivity(intent);
+                    }
+                });
+
+                viewHolder.comment_username.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent();
+                        intent.setClass(ProductDetailActivity.this, OtheruserProfileActivity.class);
+                        intent.putExtra("user_id", user_id);//可放所有基本類別
+                        startActivity(intent);
+                    }
+                });
+
                 viewHolder.mView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
@@ -897,10 +908,14 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
 
         View mView;
         private Typeface customTypeface = Typeface.createFromAsset(itemView.getContext().getAssets(), FontManager.APP_FONT);
+        TextView comment_username;
+        CircleImageView user_image;
 
         public CommentViewHolder(View itemView) {
             super(itemView);
             mView = itemView;
+            comment_username = (TextView) mView.findViewById(R.id.comment_username);
+            user_image = (CircleImageView) mView.findViewById(R.id.comment_profilepic);
         }
 
         public void setComment(String comment) {
@@ -916,13 +931,11 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         }
 
         public void setUsername(String username) {
-            TextView comment_username = (TextView) mView.findViewById(R.id.comment_username);
             comment_username.setText(username);
             comment_username.setTypeface(customTypeface);
         }
 
         public void setUserImage(final Context ctx, final String userImage) {
-            final CircleImageView user_image = (CircleImageView) mView.findViewById(R.id.comment_profilepic);
             if (userImage != null && userImage.length() > 0) {
                 Log.d(TAG + "userImage", userImage);
                 Picasso.with(ctx).load(userImage).networkPolicy(NetworkPolicy.OFFLINE).into(user_image, new Callback() {

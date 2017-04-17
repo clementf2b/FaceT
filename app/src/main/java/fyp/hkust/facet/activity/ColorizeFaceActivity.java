@@ -238,6 +238,10 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
     private RelativeLayout activity_colorize_face_layout;
     private ArrayList<String> savedEyeshadowColor = new ArrayList<>();
     private int methodNumber = 1;
+    private boolean doubleBackToExitPressedOnce = false;
+    private LinearLayout rouge_alpha_select;
+    private SeekBar alpha_seekBar;
+    private int alphaValueRouge = 10;
 
     /**
      * Checks if the app has permission to write to device storage
@@ -504,7 +508,31 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
             }
         });
         undo_button = (ImageButton) findViewById(R.id.undo_button);
+        undo_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (makeupCount - 1 > 0) {
+                    makeupCount--;
+                    temp = saveBitmap.get(makeupCount).copy(temp.getConfig(), true);
+                    imageView.setImageBitmap(temp);
+                    Log.d(TAG + " undo ", saveBitmap.size() + " " + makeupCount);
+                }
+            }
+        });
+
         redo_button = (ImageButton) findViewById(R.id.redo_button);
+        redo_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (makeupCount + 1 < saveBitmap.size()) {
+                    makeupCount++;
+                    temp = saveBitmap.get(makeupCount).copy(temp.getConfig(), true);
+                    imageView.setImageBitmap(temp);
+                    Log.d(TAG + " redo ", saveBitmap.size() + " " + makeupCount);
+                }
+            }
+        });
+
         save_button = (ImageButton) findViewById(R.id.save_button);
         save_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -836,7 +864,6 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         mPaint.setMaskFilter(new BlurMaskFilter(60f, BlurMaskFilter.Blur.OUTER));
 
         Path path = new Path();
-
         path.reset();
         path.moveTo(landmark_pt_x.get(48), landmark_pt_y.get(48));
 
@@ -1004,15 +1031,25 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
 
         //change lip part to green
         paint.setColor(Color.GREEN);
+        paint.setStrokeJoin(Paint.Join.ROUND);    // set the join to round you want
+        paint.setStrokeCap(Paint.Cap.ROUND);      // set the paint cap to round too
+        paint.setPathEffect(new CornerPathEffect(70));
         path.reset();
-        path.moveTo(landmark_pt_x.get(48), landmark_pt_y.get(48));
 
-        for (int i = 49; i < 55; i++)
-            path.lineTo(landmark_pt_x.get(i), landmark_pt_y.get(i));
+        path.moveTo(landmark_pt_x.get(48), landmark_pt_y.get(48));
+        path.lineTo(landmark_pt_x.get(49), landmark_pt_y.get(49));
+        path.lineTo(landmark_pt_x.get(50), landmark_pt_y.get(50));
+        path.lineTo(landmark_pt_x.get(51), landmark_pt_y.get(51));
+        path.lineTo(landmark_pt_x.get(52), landmark_pt_y.get(52));
+        path.lineTo(landmark_pt_x.get(53), landmark_pt_y.get(53));
+        path.lineTo(landmark_pt_x.get(54), landmark_pt_y.get(54));
 
         path.lineTo(landmark_pt_x.get(64), landmark_pt_y.get(64));
-        path.lineTo(landmark_pt_x.get(63), landmark_pt_y.get(63));
-        path.lineTo(landmark_pt_x.get(62), landmark_pt_y.get(62));
+        path.cubicTo(
+                landmark_pt_x.get(63), landmark_pt_y.get(63),
+                landmark_pt_x.get(62), landmark_pt_y.get(62),
+                landmark_pt_x.get(61), landmark_pt_y.get(61)
+        );
         path.lineTo(landmark_pt_x.get(60), landmark_pt_y.get(60));
         path.lineTo(landmark_pt_x.get(48), landmark_pt_y.get(48));
 
@@ -1028,8 +1065,13 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         path.lineTo(landmark_pt_x.get(55), landmark_pt_y.get(55));
         path.lineTo(landmark_pt_x.get(54), landmark_pt_y.get(54));
 
-        for (int i = 64; i < 68; i++)
-            path.lineTo(landmark_pt_x.get(i), landmark_pt_y.get(i));
+        path.lineTo(landmark_pt_x.get(64), landmark_pt_y.get(64));
+
+        path.cubicTo(
+                landmark_pt_x.get(65), landmark_pt_y.get(65),
+                landmark_pt_x.get(66), landmark_pt_y.get(66),
+                landmark_pt_x.get(67), landmark_pt_y.get(67)
+        );
 
         path.lineTo(landmark_pt_x.get(60), landmark_pt_y.get(60));
         path.lineTo(landmark_pt_x.get(48), landmark_pt_y.get(48));
@@ -1167,7 +1209,21 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        this.finish();
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce = false;
+            }
+        }, 2000);
     }
 
     public void drawpoint(float x, float y, Bitmap bitmap, Canvas canvas) {
@@ -1306,6 +1362,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
             b = b + valueB;
 
         int color2 = a << 24 | r << 16 | g << 8 | b << 0;
+        Log.d(TAG + "stringColorToARGB2 a , r ,g ,b ", a + " " + r + " " + g + " " + b + "");
         Log.d(TAG + " color1_color2 ", color1 + " : " + color2);
         return color2;
     }
@@ -1794,11 +1851,11 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
             color2 = stringColorToARGB(savedEyeshadowColor.get(1), 0, 0, 0, 0);
             color3 = stringColorToARGB(savedEyeshadowColor.get(2), 0, 0, 0, 0);
         } else if (size == 4) {
-            shapeColor = stringColorToARGB(savedEyeshadowColor.get(0), -60, 0, 0, 0);
-            color1 = stringColorToARGB(savedEyeshadowColor.get(0), -20, 0, 0, 0);
-            color2 = stringColorToARGB(savedEyeshadowColor.get(1), -20, 0, 0, 0);
-            color3 = stringColorToARGB(savedEyeshadowColor.get(2), 0, 0, 0, 0);
-            color4 = stringColorToARGB(savedEyeshadowColor.get(3), 0, 0, 0, 0);
+            shapeColor = stringColorToARGB(savedEyeshadowColor.get(0), -120, 0, 0, 0);
+            color1 = stringColorToARGB(savedEyeshadowColor.get(0), -80, 0, 0, 0);
+            color2 = stringColorToARGB(savedEyeshadowColor.get(1), -80, 0, 0, 0);
+            color3 = stringColorToARGB(savedEyeshadowColor.get(2), -80, 0, 0, 0);
+            color4 = stringColorToARGB(savedEyeshadowColor.get(3), -80, 0, 0, 0);
         }
 
 //        1.
@@ -2010,7 +2067,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
             color2 = stringColorToARGB(savedEyeshadowColor.get(0), -150, 0, 0, 0);
             color3 = stringColorToARGB(savedEyeshadowColor.get(0), -160, 0, 0, 0);
             color4 = stringColorToARGB(savedEyeshadowColor.get(0), -170, 0, 0, 0);
-            mPaint.setMaskFilter(new BlurMaskFilter(6, BlurMaskFilter.Blur.NORMAL));
+            mPaint.setMaskFilter(new BlurMaskFilter(6f, BlurMaskFilter.Blur.NORMAL));
         } else if (size == 2) {
             color2 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
             color3 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
@@ -2025,12 +2082,12 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
             shapeColor = stringColorToARGB(savedEyeshadowColor.get(0), -60, 0, 0, 0);
             mPaint.setMaskFilter(new BlurMaskFilter(6f, BlurMaskFilter.Blur.NORMAL));
         } else {
-            color1 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
-            color2 = stringColorToARGB(savedEyeshadowColor.get(1), 0, 0, 0, 0);
-            color3 = stringColorToARGB(savedEyeshadowColor.get(2), 0, 0, 0, 0);
-            color4 = stringColorToARGB(savedEyeshadowColor.get(3), 0, 0, 0, 0);
-            shapeColor = stringColorToARGB(savedEyeshadowColor.get(0), -60, 0, 0, 0);
-            mPaint.setMaskFilter(new BlurMaskFilter(5f, BlurMaskFilter.Blur.NORMAL));
+            color1 = stringColorToARGB(savedEyeshadowColor.get(0), -120, 0, 0, 0);
+            color2 = stringColorToARGB(savedEyeshadowColor.get(1), -120, 0, 0, 0);
+            color3 = stringColorToARGB(savedEyeshadowColor.get(2), -120, 0, 0, 0);
+            color4 = stringColorToARGB(savedEyeshadowColor.get(3), -120, 0, 0, 0);
+            shapeColor = stringColorToARGB(savedEyeshadowColor.get(0), -150, 0, 0, 0);
+//            mPaint.setMaskFilter(new BlurMaskFilter(5f, BlurMaskFilter.Blur.NORMAL));
         }
 //        1.
         mPaint.setColor(color1);
@@ -2038,23 +2095,23 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         Path path = new Path();
 
         path.moveTo(landmark_pt_x.get(39) + 13f, landmark_pt_y.get(39));
-        path.lineTo(landmark_pt_x.get(38), landmark_pt_y.get(38) - 13f);
-        path.lineTo(landmark_pt_x.get(37), landmark_pt_y.get(37) - 13f);
-        path.lineTo(landmark_pt_x.get(36) - 15f, landmark_pt_y.get(36) - 15f);
-        path.lineTo(landmark_pt_x.get(36) - 6f, landmark_pt_y.get(36) - 6f);
-        path.lineTo(landmark_pt_x.get(37), landmark_pt_y.get(37) - 5f);
-        path.lineTo(landmark_pt_x.get(38), landmark_pt_y.get(37) - 5f);
-        path.lineTo(landmark_pt_x.get(39) + 6f, landmark_pt_y.get(39));
+        path.lineTo(landmark_pt_x.get(38), landmark_pt_y.get(38) - 12f);
+        path.lineTo(landmark_pt_x.get(37), landmark_pt_y.get(37) - 12f);
+        path.lineTo(landmark_pt_x.get(36) - 14f, landmark_pt_y.get(36) - 14f);
+        path.lineTo(landmark_pt_x.get(36) - 9f, landmark_pt_y.get(36) - 9f);
+        path.lineTo(landmark_pt_x.get(37), landmark_pt_y.get(37) - 9f);
+        path.lineTo(landmark_pt_x.get(38), landmark_pt_y.get(37) - 9f);
+        path.lineTo(landmark_pt_x.get(39) + 9f, landmark_pt_y.get(39));
         path.lineTo(landmark_pt_x.get(39) + 13f, landmark_pt_y.get(39));
 
         path.moveTo(landmark_pt_x.get(42) - 13f, landmark_pt_y.get(42));
-        path.lineTo(landmark_pt_x.get(43), landmark_pt_y.get(43) - 13f);
-        path.lineTo(landmark_pt_x.get(44), landmark_pt_y.get(44) - 13f);
-        path.lineTo(landmark_pt_x.get(45) + 15f, landmark_pt_y.get(45) - 15f);
-        path.lineTo(landmark_pt_x.get(45) + 6f, landmark_pt_y.get(45) - 6f);
-        path.lineTo(landmark_pt_x.get(44), landmark_pt_y.get(44) - 5f);
-        path.lineTo(landmark_pt_x.get(43), landmark_pt_y.get(43) - 5f);
-        path.lineTo(landmark_pt_x.get(42) - 6f, landmark_pt_y.get(42));
+        path.lineTo(landmark_pt_x.get(43), landmark_pt_y.get(43) - 12f);
+        path.lineTo(landmark_pt_x.get(44), landmark_pt_y.get(44) - 12f);
+        path.lineTo(landmark_pt_x.get(45) + 14f, landmark_pt_y.get(45) - 14f);
+        path.lineTo(landmark_pt_x.get(45) + 9f, landmark_pt_y.get(45) - 9f);
+        path.lineTo(landmark_pt_x.get(44), landmark_pt_y.get(44) - 9f);
+        path.lineTo(landmark_pt_x.get(43), landmark_pt_y.get(43) - 9f);
+        path.lineTo(landmark_pt_x.get(42) - 9f, landmark_pt_y.get(42));
         path.lineTo(landmark_pt_x.get(42) - 13f, landmark_pt_y.get(42));
 
         path.close();
@@ -2083,25 +2140,25 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         mPaint.setColor(color2);
         path.reset();
         // left eye
-        path.moveTo(landmark_pt_x.get(39) + 10f, landmark_pt_y.get(39));
-        path.lineTo(landmark_pt_x.get(38), landmark_pt_y.get(38) - 10f);
-        path.lineTo(landmark_pt_x.get(37), landmark_pt_y.get(37) - 10f);
-        path.lineTo(landmark_pt_x.get(36) - 10f, landmark_pt_y.get(36) - 10f);
+        path.moveTo(landmark_pt_x.get(39) + 9f, landmark_pt_y.get(39));
+        path.lineTo(landmark_pt_x.get(38), landmark_pt_y.get(38) - 9f);
+        path.lineTo(landmark_pt_x.get(37), landmark_pt_y.get(37) - 9f);
+        path.lineTo(landmark_pt_x.get(36) - 9f, landmark_pt_y.get(36) - 9f);
         path.lineTo(landmark_pt_x.get(36) - 6f, landmark_pt_y.get(36) - 6f);
         path.lineTo(landmark_pt_x.get(37), landmark_pt_y.get(37) - 5f);
         path.lineTo(landmark_pt_x.get(38), landmark_pt_y.get(37) - 5f);
         path.lineTo(landmark_pt_x.get(39) + 6f, landmark_pt_y.get(39));
-        path.lineTo(landmark_pt_x.get(39) + 10f, landmark_pt_y.get(39));
+        path.lineTo(landmark_pt_x.get(39) + 9f, landmark_pt_y.get(39));
 
-        path.moveTo(landmark_pt_x.get(42) - 10f, landmark_pt_y.get(42));
-        path.lineTo(landmark_pt_x.get(43), landmark_pt_y.get(43) - 10f);
-        path.lineTo(landmark_pt_x.get(44), landmark_pt_y.get(44) - 10f);
-        path.lineTo(landmark_pt_x.get(45) + 10f, landmark_pt_y.get(45) - 10f);
+        path.moveTo(landmark_pt_x.get(42) - 9f, landmark_pt_y.get(42));
+        path.lineTo(landmark_pt_x.get(43), landmark_pt_y.get(43) - 9f);
+        path.lineTo(landmark_pt_x.get(44), landmark_pt_y.get(44) - 9f);
+        path.lineTo(landmark_pt_x.get(45) + 9f, landmark_pt_y.get(45) - 9f);
         path.lineTo(landmark_pt_x.get(45) + 6f, landmark_pt_y.get(45) - 6f);
         path.lineTo(landmark_pt_x.get(44), landmark_pt_y.get(44) - 5f);
         path.lineTo(landmark_pt_x.get(43), landmark_pt_y.get(43) - 5f);
         path.lineTo(landmark_pt_x.get(42) - 6f, landmark_pt_y.get(42));
-        path.lineTo(landmark_pt_x.get(42) - 10f, landmark_pt_y.get(42));
+        path.lineTo(landmark_pt_x.get(42) - 9f, landmark_pt_y.get(42));
 
         path.close();
         drawCanvas.drawPath(path, mPaint);
@@ -2440,7 +2497,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         Canvas drawCanvas = new Canvas(getBitmap);
         Paint mPaint = new Paint();
 
-        int rougeColor = stringColorRGBToARGB(blushColor, 100, 0, 0, 0);
+        int rougeColor = stringColorRGBToARGB(blushColor, 40 + alphaValueRouge, 0, 0, 0);
 
         mPaint.setColor(rougeColor);
         mPaint.setStyle(Paint.Style.FILL);
@@ -2492,11 +2549,6 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         path.lineTo(landmark_pt_x.get(14) - 3f, landmark_pt_y.get(14));
 
         drawCanvas.drawPath(path, mPaint);
-
-//        Log.d(TAG + "" , landmark_pt_y.get(56) + " " + landmark_pt_x.get(56) +  " : " +landmark_pt_y.get(60) + " " +  landmark_pt_x.get(60));
-//        Log.d(TAG + " rouge " , rouge_left_x + " " + rouge_left_y + " : " + rouge_right_x + " " + rouge_right_y);
-//        drawCanvas.drawCircle(rouge_right_x, rouge_right_y, 30f, mPaint);
-
         //设置混合模式
         mPaint.setXfermode(mXfermode);
         //清除混合模式
@@ -2620,7 +2672,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                             selectedLipstickID = product_id;
                             break;
                     }
-                    if (colorNo == 0) {
+                    if (colorNo == 0 && categoryResult != 3) {
                         colorSet.clear();
                         for (int i = 0; i < mSortedProducts.get(selectedProductID).getColor().size(); i++) {
                             for (int j = 0; j < mSortedProducts.get(selectedProductID).getColor().get(i).size(); j++) {
@@ -2748,6 +2800,36 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                     Snackbar.make(v, "Click detected on item " + position + " : " + colorSet.get(position).toString(),
                             Snackbar.LENGTH_SHORT)
                             .setAction("Action", null).show();
+
+                    rouge_alpha_select = (LinearLayout) findViewById(R.id.rouge_alpha_select);
+                    alpha_seekBar = (SeekBar) findViewById(R.id.alpha_seekBar);
+                    if (categoryResult == 2) {
+                        rouge_alpha_select.setVisibility(View.VISIBLE);
+                        alpha_seekBar.setProgress(10);
+                    }
+                    alpha_seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                        int progress = 0;
+
+                        @Override
+                        public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) {
+                            progress = progresValue;
+                        }
+
+                        @Override
+                        public void onStartTrackingTouch(SeekBar seekBar) {
+                            // Do something here,
+                            //if you want to do anything at the start of
+                            // touching the seekbar
+                        }
+
+                        @Override
+                        public void onStopTrackingTouch(SeekBar seekBar) {
+                            // Display the value in textview
+                            alphaValueRouge = progress;
+                            Log.d(TAG, " " + progress + "/" + seekBar.getMax());
+                            new LoadingMakeupAsyncTask().execute(new Integer(position));
+                        }
+                    });
                 }
             });
         }
@@ -2789,8 +2871,8 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                         lipLayer();
                     }
 
-                    if(savedEyeshadowColor != null)
-                    eyeshadowMethodSelect();
+                    if (savedEyeshadowColor != null)
+                        eyeshadowMethodSelect();
 
                     drawRouge(colorSet.get(position[0]), temp);
                     break;
@@ -2816,8 +2898,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
             return null;
         }
 
-        private void eyeshadowMethodSelect()
-        {
+        private void eyeshadowMethodSelect() {
             if (savedEyeshadowColor.size() == 1) {
                 switch (methodNumber) {
                     case 1:

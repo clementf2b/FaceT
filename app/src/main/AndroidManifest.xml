@@ -63,11 +63,11 @@
         <activity
             android:name=".activity.PostActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar_nav"/>
+            android:theme="@style/AppTheme.NoActionBar_nav" />
         <activity
             android:name=".activity.MainMenuActivity"
-            android:screenOrientation="portrait"
             android:launchMode="singleTop"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar_nav">
             <intent-filter>
                 <action
@@ -150,12 +150,14 @@
             android:name=".activity.ShopLocationActivity"
             android:label="@string/title_activity_shop_location"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".activity.ShopListActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar_nav">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar_nav"></activity>
+        <activity
+            android:name=".activity.OtheruserProfileActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" />
 
         <!-- defining the service class here -->
         <service android:name=".notificationservice.MyService" />
@@ -163,13 +165,13 @@
         <activity
             android:name=".activity.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".activity.MainMenuActivity">
+            android:parentActivityName=".activity.MainMenuActivity"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="fyp.hkust.facet.activity.MainMenuActivity" />
         </activity>
-
+        <activity android:name=".activity.AboutUsActivity"></activity>
     </application>
 
 </manifest>
