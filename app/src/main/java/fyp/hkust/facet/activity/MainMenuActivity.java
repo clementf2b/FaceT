@@ -107,10 +107,10 @@ public class MainMenuActivity extends AppCompatActivity {
         favBtn = (ImageButton) findViewById(R.id.fav_button);
 
         YoYo.with(Techniques.SlideInDown).duration(800).playOn(findViewById(R.id.photo_camera_layout));
-        YoYo.with(Techniques.SlideInDown).duration(1300).playOn(findViewById(R.id.fav_layout));
-        YoYo.with(Techniques.SlideInDown).duration(1800).playOn(findViewById(R.id.store_layout));
-        YoYo.with(Techniques.SlideInDown).duration(2300).playOn(findViewById(R.id.account_layout));
-        YoYo.with(Techniques.SlideInDown).duration(2800).playOn(findViewById(R.id.product_layout));
+        YoYo.with(Techniques.SlideInDown).duration(1200).playOn(findViewById(R.id.fav_layout));
+        YoYo.with(Techniques.SlideInDown).duration(1600).playOn(findViewById(R.id.store_layout));
+        YoYo.with(Techniques.SlideInDown).duration(2000).playOn(findViewById(R.id.account_layout));
+        YoYo.with(Techniques.SlideInDown).duration(2400).playOn(findViewById(R.id.product_layout));
 
         photo_camera_layout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -180,8 +180,10 @@ public class MainMenuActivity extends AppCompatActivity {
         if (!isMyServiceRunning(MyService.class) && notificationCheck != false)
             startService(new Intent(this, MyService.class));
 
-        if (notificationCheck == false)
+        if (notificationCheck == false) {
             stopService(new Intent(this, MyService.class));
+            Log.d(TAG , " stopped Service ");
+        }
     }
 
     @Override

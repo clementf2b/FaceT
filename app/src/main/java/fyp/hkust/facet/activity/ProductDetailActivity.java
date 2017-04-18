@@ -12,6 +12,9 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -123,6 +126,8 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
     private DatabaseReference mDatabaseRatings;
     private DatabaseReference mDatabaseBrand;
     private DatabaseReference mDatabaseCommentsCurrentProduct;
+    private DatabaseReference mDatabaseFavourite;
+    private DatabaseReference mDatabaseNotifications;
 
     private ColorPickerDialog colorPickerDialog;
     private ExpandableTextView descTextview;
@@ -166,8 +171,6 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
     // Animation
     private Animation animFadein;
     private ProgressBar product_detail_loading_indicator;
-    private DatabaseReference mDatabaseFavourite;
-    private DatabaseReference mDatabaseNotifications;
     private LikeButton likeButton;
     private String product_owner_id;
     private Long colorNo;
@@ -587,7 +590,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         dialog.dismiss();
 
         // username change listener
-        if(mAuth.getCurrentUser() != null) {
+        if (mAuth.getCurrentUser() != null) {
             mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -622,8 +625,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                     Log.e(TAG, "Failed to read username value.", error.toException());
                 }
             });
-        }else
-        {
+        } else {
             Snackbar snackbar = Snackbar.make(activity_product_detail_layout, "Haven't logged in", Snackbar.LENGTH_LONG);
             snackbar.show();
         }
@@ -690,7 +692,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                     @Override
                     public void onEmojiBackspaceClicked(final View v) {
                         emojiPopup.dismiss();
-                        Log.d(TAG, "Clicked on Backspace");
+//                        Log.d(TAG, "Clicked on Backspace");
                     }
                 })
                 .setOnEmojiClickedListener(new OnEmojiClickedListener() {
@@ -702,7 +704,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                 .setOnEmojiPopupShownListener(new OnEmojiPopupShownListener() {
                     @Override
                     public void onEmojiPopupShown() {
-                        emojiButton.setImageResource(R.drawable.ic_keyboard);
+                        emojiButton.setBackground(ContextCompat.getDrawable(ProductDetailActivity.this,R.drawable.ic_keyboard));
                     }
                 })
                 .setOnSoftKeyboardOpenListener(new OnSoftKeyboardOpenListener() {
@@ -714,7 +716,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                 .setOnEmojiPopupDismissListener(new OnEmojiPopupDismissListener() {
                     @Override
                     public void onEmojiPopupDismiss() {
-                        emojiButton.setImageResource(R.drawable.emoji_one_category_people);
+                        emojiButton.setBackground(ContextCompat.getDrawable(ProductDetailActivity.this,R.drawable.emoji_one_category_people));
                     }
                 })
                 .setOnSoftKeyboardCloseListener(new OnSoftKeyboardCloseListener() {
@@ -967,7 +969,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
     }
 
     private void checkRatingOrNot() {
-        if(mAuth.getCurrentUser() != null) {
+        if (mAuth.getCurrentUser() != null) {
             mDatabaseRatings.child(product_id).child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -998,7 +1000,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
 
     private void getAverageRating() {
 
-        if(mAuth.getCurrentUser() != null) {
+        if (mAuth.getCurrentUser() != null) {
             //average ratings change listener
             mDatabaseRatings.child(product_id).addValueEventListener(new ValueEventListener() {
                 @Override
@@ -1045,9 +1047,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                     Log.e(TAG, "Failed to get value.", error.toException());
                 }
             });
-        }
-        else
-        {
+        } else {
             Snackbar snackbar = Snackbar.make(activity_product_detail_layout, "Haven't logged in.", Snackbar.LENGTH_LONG);
             snackbar.show();
         }
@@ -1290,7 +1290,8 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         // the chart.
 
 //        colorPie.setCenterTextTypeface(mTfLight);
-        colorPie.setCenterTextColor(ColorTemplate.getHoloBlue());
+        int centerTextColor = android.graphics.Color.argb(255, 57, 197, 193);
+        colorPie.setCenterTextColor(centerTextColor);
 
         PieDataSet dataSet = new PieDataSet(entries, "");
         dataSet.setSliceSpace(3f);
@@ -1298,11 +1299,11 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
 
         // add a lot of colors
         ArrayList<Integer> colors = new ArrayList<Integer>();
-        colors.add(Color.argb(100, 0, 185, 245));
+        colors.add(Color.argb(120, 57, 197, 193));
         colorPie.setCenterText(value + "");
         colorPie.setCenterTextSize(30);
 
-        colors.add(Color.argb(80, 214, 214, 214));
+        colors.add(Color.argb(100, 214, 214, 214));
         dataSet.setColors(colors);
 
         PieData data = new PieData(dataSet);
@@ -1401,4 +1402,5 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
 
         return data;
     }
+
 }
