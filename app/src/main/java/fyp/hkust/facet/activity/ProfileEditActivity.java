@@ -287,7 +287,7 @@ public class ProfileEditActivity extends AppCompatActivity {
         final String user_id = mAuth.getCurrentUser().getUid();
         final String aboutMe = aboutMeEdittext.getText().toString();
 
-        if (!TextUtils.isEmpty(name) && mImageUri != null) {
+        if (!TextUtils.isEmpty(name)) {
             mProgress = new ProgressDialog(this);
             mProgress.setMessage("Finishing Setup ...");
             mProgress.show();

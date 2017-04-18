@@ -27,7 +27,9 @@
             android:layout_marginBottom="15dp"
             android:layout_marginRight="15dp"
             android:layout_marginTop="15dp"
-            android:src="@mipmap/ic_account_multiple_black_18dp" />
+            android:src="@mipmap/ic_account_multiple_black_18dp"
+            app:civ_border_color="@color/pale_white_border_color"
+            app:civ_border_width="1dp"/>
 
         <TextView
             android:id="@+id/comment_username"

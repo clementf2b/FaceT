@@ -102,7 +102,7 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
                 @Override
                 public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                     if (firebaseAuth.getCurrentUser() == null) {
-                        Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                        Intent loginIntent = new Intent(getActivity(), LoginActivity.class);
                         loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(loginIntent);
                         // User is signed out

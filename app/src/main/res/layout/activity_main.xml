@@ -58,10 +58,10 @@
                     android:layout_height="wrap_content"
                     android:background="@color/colorPrimary"
                     app:tabGravity="fill"
-                    app:tabIndicatorColor="@color/tab_selected_color"
-                    app:tabIndicatorHeight="2dp"
+                    app:tabIndicatorColor="@color/white"
+                    app:tabIndicatorHeight="3dp"
                     app:tabMode="scrollable"
-                    app:tabSelectedTextColor="@color/tab_selected_color"
+                    app:tabSelectedTextColor="@color/white"
                     app:tabTextColor="#88FFFFFF"
                     />
 

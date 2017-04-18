@@ -454,7 +454,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                 makeup_product_list.setVisibility(View.GONE);
                 makeup_color_list.setVisibility(View.GONE);
                 eyeshadow_method_layout.setVisibility(View.GONE);
-
+                alpha_seekBar.setVisibility(View.GONE);
                 show_hide_layout_button.setImageResource(R.mipmap.ic_expand_more_black_24dp);
                 checkExpend = false;
             }
@@ -695,17 +695,17 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                     case 0:
                         // type select
                         viewControl(makeup_select_layout, makeup_product_list, makeup_color_list, 0);
-                        eyeshadow_method_layout.setVisibility(View.GONE);
+                        alpha_seekBar.setVisibility(View.GONE);
                         break;
                     case 1:
                         //product select
                         viewControl(makeup_select_layout, makeup_product_list, makeup_color_list, 0);
-                        eyeshadow_method_layout.setVisibility(View.GONE);
+                        alpha_seekBar.setVisibility(View.GONE);
                         break;
                     case 2:
                         //color select layout
                         viewControl(makeup_product_list, makeup_color_list, makeup_select_layout, 1);
-                        eyeshadow_method_layout.setVisibility(View.GONE);
+                        alpha_seekBar.setVisibility(View.GONE);
                         break;
                 }
             }
@@ -717,6 +717,8 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         view1.setVisibility(View.VISIBLE);
         view2.setVisibility(View.GONE);
         view3.setVisibility(View.GONE);
+        eyeshadow_method_layout.setVisibility(View.GONE);
+        alpha_seekBar.setVisibility(View.GONE);
         stepCount = step;
     }
 
@@ -2690,6 +2692,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                     makeup_color_list.setVisibility(View.VISIBLE);
                     makeup_select_layout.setVisibility(View.GONE);
                     makeup_product_list.setVisibility(View.GONE);
+                    eyeshadow_method_layout.setVisibility(View.GONE);
                     stepCount = 2;
                 }
             });

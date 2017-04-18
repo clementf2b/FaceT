@@ -626,7 +626,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                 }
             });
         } else {
-            Snackbar snackbar = Snackbar.make(activity_product_detail_layout, "Haven't logged in", Snackbar.LENGTH_LONG);
+            Snackbar snackbar = Snackbar.make(activity_product_detail_layout, "Haven't logged in", Snackbar.LENGTH_SHORT);
             snackbar.show();
         }
 
@@ -704,7 +704,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                 .setOnEmojiPopupShownListener(new OnEmojiPopupShownListener() {
                     @Override
                     public void onEmojiPopupShown() {
-                        emojiButton.setBackground(ContextCompat.getDrawable(ProductDetailActivity.this,R.drawable.ic_keyboard));
+                        emojiButton.setBackground(ContextCompat.getDrawable(ProductDetailActivity.this, R.drawable.ic_keyboard));
                     }
                 })
                 .setOnSoftKeyboardOpenListener(new OnSoftKeyboardOpenListener() {
@@ -716,7 +716,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                 .setOnEmojiPopupDismissListener(new OnEmojiPopupDismissListener() {
                     @Override
                     public void onEmojiPopupDismiss() {
-                        emojiButton.setBackground(ContextCompat.getDrawable(ProductDetailActivity.this,R.drawable.emoji_one_category_people));
+                        emojiButton.setBackground(ContextCompat.getDrawable(ProductDetailActivity.this, R.drawable.emoji_one_category_people));
                     }
                 })
                 .setOnSoftKeyboardCloseListener(new OnSoftKeyboardCloseListener() {
@@ -842,50 +842,52 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                     }
                 });
 
-                viewHolder.mView.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
+                if (mAuth.getCurrentUser().getUid().equals(user_id)) {
+                    viewHolder.mView.setOnLongClickListener(new View.OnLongClickListener() {
+                        @Override
+                        public boolean onLongClick(View v) {
 
-                        AlertDialog.Builder builder = new AlertDialog.Builder(ProductDetailActivity.this, R.style.Theme_AppCompat_Light_Dialog_Alert);
-                        builder.setTitle("Delete Comments?");
-                        builder.setMessage("Confirm delete");
-                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                mDatabaseComments.child(product_id).addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        if (dataSnapshot.getValue() != null) {
-                                            Map<String, Comment> temp = (HashMap<String, Comment>) dataSnapshot.getValue();
-                                            for (String key : temp.keySet()) {
-                                                if (key == comment_id) {
-                                                    mDatabaseComments.child(product_id).child(comment_id).removeValue();
-                                                    Log.d(" remove comment " + comment_id, key);
+                            AlertDialog.Builder builder = new AlertDialog.Builder(ProductDetailActivity.this, R.style.Theme_AppCompat_Light_Dialog_Alert);
+                            builder.setTitle("Delete Comments?");
+                            builder.setMessage("Confirm delete");
+                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    mDatabaseComments.child(product_id).addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            if (dataSnapshot.getValue() != null) {
+                                                Map<String, Comment> temp = (HashMap<String, Comment>) dataSnapshot.getValue();
+                                                for (String key : temp.keySet()) {
+                                                    if (key == comment_id) {
+                                                        mDatabaseComments.child(product_id).child(comment_id).removeValue();
+                                                        Log.d(" remove comment " + comment_id, key);
+                                                    }
                                                 }
                                             }
                                         }
-                                    }
 
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
 
-                                    }
-                                });
-                                Toast.makeText(getApplicationContext(), "您按下OK按鈕", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        //設定Negative按鈕資料
-                        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                //按下按鈕時顯示快顯
-                                Toast.makeText(getApplicationContext(), "您按下Cancel按鈕", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        builder.show();
-                        return true;
-                    }
-                });
+                                        }
+                                    });
+                                    Toast.makeText(getApplicationContext(), "您按下OK按鈕", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                            //設定Negative按鈕資料
+                            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //按下按鈕時顯示快顯
+                                    Toast.makeText(getApplicationContext(), "您按下Cancel按鈕", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                            builder.show();
+                            return true;
+                        }
+                    });
+                }
 
                 Snackbar snackbar = Snackbar.make(activity_product_detail_layout, "Loaded comments successful.", Snackbar.LENGTH_LONG);
                 snackbar.show();

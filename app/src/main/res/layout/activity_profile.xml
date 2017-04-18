@@ -13,7 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/cardview_light_background"
-        tools:context="fyp.hkust.facet.activity.MainActivity">
+        tools:context="fyp.hkust.facet.activity.MainActivity"
+        >
 
         <!-- your content layout -->
 
@@ -51,10 +52,12 @@
                         android:layout_height="100dp"
                         android:layout_centerVertical="true"
                         android:layout_marginBottom="40dp"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginTop="80dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="40dp"
                         android:elevation="6dp"
                         android:src="@mipmap/app_icon"
+                        app:civ_border_color="@color/pale_white_border_color"
+                        app:civ_border_width="3dp"
                         app:layout_collapseMode="parallax" />
 
                     <Button
@@ -73,19 +76,19 @@
                         android:contextClickable="true"
                         android:scaleType="fitCenter"
                         android:text="@string/edit_btn_text"
-                        android:textColor="@color/font_color_pirmary" />
+                        android:textColor="@color/colorPrimary" />
 
                     <TextView
                         android:id="@+id/profile_username"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentTop="true"
-                        android:layout_marginLeft="20dp"
+                        android:layout_marginLeft="15dp"
                         android:layout_marginTop="107dp"
                         android:layout_toEndOf="@+id/profile_picture"
                         android:layout_toStartOf="@+id/btn_edit"
                         android:text="@string/profile_username"
-                        android:textColor="@color/profile_email_text_color"
+                        android:textColor="@color/profile_name_text_color"
                         android:textSize="18sp" />
 
                     <TextView
@@ -95,11 +98,25 @@
                         android:layout_below="@+id/profile_username"
                         android:layout_toEndOf="@+id/profile_picture"
                         android:layout_toStartOf="@+id/btn_edit"
-                        android:paddingLeft="20dp"
+                        android:paddingLeft="15dp"
                         android:paddingTop="15dp"
                         android:text="@string/profile_email"
                         android:textColor="@color/profile_email_text_color"
                         android:textSize="12sp" />
+
+                    <com.vanniktech.emoji.EmojiTextView
+                        android:id="@+id/profile_aboutme"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/description_label"
+                        android:textColor="@color/profile_email_text_color"
+                        android:textIsSelectable="true"
+                        android:textSize="16dp"
+                        app:emojiSize="16dp"
+                        android:layout_margin="15dp"
+                        android:layout_below="@+id/profile_picture"
+                        android:layout_centerHorizontal="true"
+                         />  
 
                     <android.support.v7.widget.Toolbar
                         android:id="@+id/toolbar"
@@ -114,15 +131,15 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
-                        android:layout_below="@+id/profile_picture"
+                        android:layout_below="@+id/profile_aboutme"
                         android:background="@color/colorPrimary"
+                        android:layout_marginTop="5dp"
                         app:tabGravity="fill"
                         app:tabIndicatorColor="@color/white"
                         app:tabIndicatorHeight="2dp"
                         app:tabMode="fixed"
                         app:tabSelectedTextColor="@color/tab_selected_color"
-                        app:tabTextColor="#88FFFFFF"
-                        />
+                        app:tabTextColor="#88FFFFFF" />
 
                 </RelativeLayout>
 
