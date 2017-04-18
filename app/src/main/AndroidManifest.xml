@@ -147,6 +147,10 @@
             android:value="@string/google_maps_key" />
 
         <activity
+            android:name=".activity.NearbyLocationActivity"
+            android:label="@string/title_activity_nearby_location"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".activity.ShopLocationActivity"
             android:label="@string/title_activity_shop_location"
             android:screenOrientation="portrait" />

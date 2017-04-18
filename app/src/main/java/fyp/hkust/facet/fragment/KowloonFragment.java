@@ -47,7 +47,7 @@ public class KowloonFragment extends Fragment {
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_kowloon);
 
-        mAdapter = new ShopsAdapter(shopList);
+        mAdapter = new ShopsAdapter(shopList, getActivity());
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(view.getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -60,7 +60,7 @@ public class KowloonFragment extends Fragment {
         shopList = shopList_kl;
         Log.d("FragmentKL_shopList_kl", ""+shopList_kl.size());
         Log.d("FragmentKL_shopList", ""+shopList.size());
-        mAdapter = new ShopsAdapter(shopList);
+        mAdapter = new ShopsAdapter(shopList, getActivity());
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(view.getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());

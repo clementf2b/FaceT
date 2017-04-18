@@ -216,12 +216,15 @@
     <string name="after_text">After</string>
     <string name="before_text">Before</string>
 
-    <!--activity_shop_location-->
-    <string name="title_activity_shop_location">Map</string>
+    <!--activity_nearby_location-->
+    <string name="title_activity_nearby_location">Nearby Shops</string>
     <string name="shop_title">Shop : </string>
     <string name="shop_phone_text">Phone :</string>
     <string name="Hour_title">Hours :</string>
     <string name="rationale_location_contacts">This app needs access to your location and contacts to know where and who you are.</string>
+
+    <!--activity_shop_location-->
+    <string name="title_activity_shop_location">Shops Location</string>
 
     <!--product_refine_layout-->
     <string name="refine_text">REFINE</string>

@@ -3,11 +3,9 @@ package fyp.hkust.facet.activity;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
@@ -22,26 +20,20 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import fyp.hkust.facet.R;
-import fyp.hkust.facet.model.Shop;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
-/**
- * Created by bentley on 17/4/2017.
- */
-
-public class ShopLocationActivity extends FragmentActivity implements OnMapReadyCallback {
+public class NearbyLocationActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private ImageButton normal_map_button, shop_location_button, my_location_button;
     private String shop_id = null;
     private static final int RC_LOCATION_PERM = 124;
-    private Shop shop;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_shop_location);
+        setContentView(R.layout.activity_nearby_location);
         init();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -62,37 +54,35 @@ public class ShopLocationActivity extends FragmentActivity implements OnMapReady
     }
 
     private void init() {
-        Intent intent = getIntent();
-        Bundle bundle = intent.getExtras();
-        shop = (Shop) bundle.getSerializable("shop");
 
-//        normal_map_button = (ImageButton) findViewById(R.id.normal_map_button);
+        Intent intent = this.getIntent();
+        shop_id = intent.getStringExtra("shop_id");
+
+        normal_map_button = (ImageButton) findViewById(R.id.normal_map_button);
         shop_location_button = (ImageButton) findViewById(R.id.shop_location_button);
         my_location_button = (ImageButton) findViewById(R.id.my_location_button);
 
-//        normal_map_button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //normal map
-//                mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-//            }
-//        });
+        normal_map_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //normal map
+                mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            }
+        });
 
         shop_location_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                LatLng shopLocation = new LatLng(shop.getLatitude(), shop.getLongitude());
-                Marker shopLocationMarker = mMap.addMarker(new MarkerOptions().position(shopLocation).title("Shop is here")
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-//                mMap.moveCamera(CameraUpdateFactory.newLatLng(shopLocation));
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(shopLocation, 17), 2000, null);
+                LatLng shopLocation = new LatLng(22.337586, 114.265288);
+                Marker shopLocationMarker = mMap.addMarker(new MarkerOptions().position(shopLocation).title("Shop is here").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(shopLocation));
+                mMap.animateCamera(CameraUpdateFactory.newLatLng(shopLocation));
                 shopLocationMarker.showInfoWindow();
 
                 CircleOptions circleOptions = new CircleOptions();
                 circleOptions.center(shopLocation);
-                circleOptions.radius(20);
-                circleOptions.strokeColor(Color.argb(150, 89, 214, 214));
+                circleOptions.radius(800);
                 mMap.addCircle(circleOptions);
             }
         });
@@ -100,10 +90,9 @@ public class ShopLocationActivity extends FragmentActivity implements OnMapReady
         my_location_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (ContextCompat.checkSelfPermission(ShopLocationActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
+                if (ContextCompat.checkSelfPermission(NearbyLocationActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
                         == PackageManager.PERMISSION_GRANTED) {
-//                    mMap.setMyLocationEnabled(true);
-                        mMap.setMyLocationEnabled(true);
+                    mMap.setMyLocationEnabled(true);
                 } else {
                     // Show rationale and request permission.
                     locationTask();
@@ -124,19 +113,17 @@ public class ShopLocationActivity extends FragmentActivity implements OnMapReady
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        // Add a marker in place and move the camera
-        LatLng shopLocation = new LatLng(shop.getLatitude(), shop.getLongitude());
-        Marker shopLocationMarker = mMap.addMarker(new MarkerOptions().position(shopLocation).title("Shop is here")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(shopLocation, 10));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(shopLocation, 17), 2000, null);
-        shopLocationMarker.showInfoWindow();
 
+        // Add a marker in place and move the camera
+        LatLng shopLocation = new LatLng(22.337586, 114.265288);
+        Marker shopLocationMarker = mMap.addMarker(new MarkerOptions().position(shopLocation).title("Shop is here").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(shopLocation));
+        mMap.animateCamera(CameraUpdateFactory.newLatLng(shopLocation));
+        shopLocationMarker.showInfoWindow();
 
         CircleOptions circleOptions = new CircleOptions();
         circleOptions.center(shopLocation);
-        circleOptions.radius(20);
-        circleOptions.strokeColor(Color.argb(150, 89, 214, 214));
+        circleOptions.radius(800);
         mMap.addCircle(circleOptions);
     }
 }

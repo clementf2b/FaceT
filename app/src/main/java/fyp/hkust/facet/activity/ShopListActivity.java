@@ -10,7 +10,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -161,9 +160,15 @@ public class ShopListActivity extends AppCompatActivity {
     }
 
     public void findNearbyStore(View view) {
-        Intent intent = new Intent(this, ShopLocationActivity.class);
+        Intent intent = new Intent(this, NearbyLocationActivity.class);
         startActivity(intent);
     }
+
+//    public void itemOnclick(){
+//        Intent intent = new Intent(this, ShopLocationActivity.class);
+//        //based on item add info to intent
+//        startActivity(intent);
+//    }
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());

@@ -1,10 +1,12 @@
 package fyp.hkust.facet.model;
 
+import java.io.Serializable;
+
 /**
  * Created by bentley on 5/4/2017.
  */
 
-public class Shop {
+public class Shop implements Serializable{
 
     private String name, address, district, area, brandID, image;
     private Double latitude, longitude;

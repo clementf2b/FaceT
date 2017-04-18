@@ -212,7 +212,7 @@ public class MainMenuActivity extends AppCompatActivity {
         builder.setCancelable(true);
 
         final String[] items = new String[]{"From Gallery", "Take Photo"};
-        final Integer[] icons = new Integer[]{R.mipmap.app_icon, R.mipmap.app_icon};
+        final Integer[] icons = new Integer[]{R.drawable.colorful_gallery, R.drawable.colorful_camera};
         ListAdapter adapter = new ArrayAdapterWithIcon(getApplication(), items, icons);
 
         builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
@@ -247,7 +247,7 @@ public class MainMenuActivity extends AppCompatActivity {
         builder.setCancelable(true);
 
         final String[] items = new String[]{"From Gallery", "Take Photo"};
-        final Integer[] icons = new Integer[]{R.mipmap.app_icon, R.mipmap.app_icon};
+        final Integer[] icons = new Integer[]{R.drawable.colorful_gallery, R.drawable.colorful_camera};
         ListAdapter adapter = new ArrayAdapterWithIcon(getApplication(), items, icons);
 
         builder.setAdapter(adapter, new DialogInterface.OnClickListener() {

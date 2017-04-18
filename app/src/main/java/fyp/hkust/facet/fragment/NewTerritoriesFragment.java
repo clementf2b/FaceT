@@ -48,7 +48,7 @@ public class NewTerritoriesFragment extends Fragment {
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_nTerritories);
 
-        mAdapter = new ShopsAdapter(shopList);
+        mAdapter = new ShopsAdapter(shopList, getActivity());
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(view.getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());

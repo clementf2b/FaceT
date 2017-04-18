@@ -10,20 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.adapter.ShopsAdapter;
-import fyp.hkust.facet.model.Brand;
 import fyp.hkust.facet.model.Shop;
 
 /**
@@ -54,7 +45,7 @@ public class HongKongIslandFragment extends Fragment {
 
         view = inflater.inflate(R.layout.fragment_hong_kong_island, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_hkIsland);
-        mAdapter = new ShopsAdapter(shopList);
+        mAdapter = new ShopsAdapter(shopList, getActivity());
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(view.getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -67,7 +58,7 @@ public class HongKongIslandFragment extends Fragment {
         shopList = shopList_hk;
         Log.d("FragmentHK_shopList_hk", ""+shopList_hk.size());
         Log.d("FragmentHK_shopList", ""+shopList.size());
-        mAdapter = new ShopsAdapter(shopList);
+        mAdapter = new ShopsAdapter(shopList, getActivity());
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(view.getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -154,4 +145,6 @@ public class HongKongIslandFragment extends Fragment {
         super.onResume();
         Log.d(TAG, " onResume");
     }
+
+
 }
