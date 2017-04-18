@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -37,6 +38,7 @@ public class ShopLocationActivity extends FragmentActivity implements OnMapReady
     private String shop_id = null;
     private static final int RC_LOCATION_PERM = 124;
     private Shop shop;
+    private TextView currentShopName, currentShopAddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,10 +68,14 @@ public class ShopLocationActivity extends FragmentActivity implements OnMapReady
         Bundle bundle = intent.getExtras();
         shop = (Shop) bundle.getSerializable("shop");
 
+
 //        normal_map_button = (ImageButton) findViewById(R.id.normal_map_button);
         shop_location_button = (ImageButton) findViewById(R.id.shop_location_button);
         my_location_button = (ImageButton) findViewById(R.id.my_location_button);
-
+        currentShopName = (TextView) findViewById(R.id.current_shop_name);
+        currentShopAddress = (TextView) findViewById(R.id.current_shop_address);
+        currentShopName.setText(shop.getName());
+        currentShopAddress.setText(shop.getAddress());
 //        normal_map_button.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {

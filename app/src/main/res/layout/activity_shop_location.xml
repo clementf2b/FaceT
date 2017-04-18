@@ -115,43 +115,44 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/Hour_title"
+                    android:text="@string/shop_address"
                     android:textColor="@color/white"/>
 
                 <TextView
-                    android:id="@+id/current_shop_hour"
+                    android:id="@+id/current_shop_address"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Mon - Sun , 8 a.m. - 11 p.m."
-                    android:textColor="@color/white"/>
+                    android:text="9F, ABC Building, Hong Kong"
+                    android:textColor="@color/white"
+                    android:lines="3"/>
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/shop_phone_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/shop_hour_layout"
-                android:layout_marginBottom="4dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="5dp"
-                android:orientation="horizontal">
+            <!--<LinearLayout-->
+                <!--android:id="@+id/shop_phone_layout"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_below="@+id/shop_hour_layout"-->
+                <!--android:layout_marginBottom="4dp"-->
+                <!--android:layout_marginLeft="10dp"-->
+                <!--android:layout_marginRight="5dp"-->
+                <!--android:orientation="horizontal">-->
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/shop_phone_text"
-                    android:textColor="@color/white"/>
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:text="@string/shop_phone_text"-->
+                    <!--android:textColor="@color/white"/>-->
 
-                <TextView
-                    android:id="@+id/current_shop_phone"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="+852 1234 5678"
-                    android:textColor="@color/white"/>
-            </LinearLayout>
+                <!--<TextView-->
+                    <!--android:id="@+id/current_shop_phone"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:text="+852 1234 5678"-->
+                    <!--android:textColor="@color/white"/>-->
+            <!--</LinearLayout>-->
 
         </RelativeLayout>
 
