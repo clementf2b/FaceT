@@ -737,6 +737,23 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            //back press
+            case android.R.id.home:
+                // app icon in action bar clicked; goto parent activity.
+                this.finish();
+                return true;
+            case R.id.product_apply:
+                Log.d(TAG," product apply");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+    }
+
     private void addNotification(String action) {
 
         mProgress = new ProgressDialog(this);
@@ -1214,23 +1231,6 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         }
 
         super.onStop();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            //back press
-            case android.R.id.home:
-                // app icon in action bar clicked; goto parent activity.
-                this.finish();
-                return true;
-            case R.id.product_apply:
-                Log.d(TAG," product apply");
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-
     }
 
     private void checkUserExist() {

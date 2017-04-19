@@ -6,5 +6,5 @@
         android:orderInCategory="100"
         android:icon="@mipmap/vmakeup"
         android:title="@string/action_settings"
-        app:showAsAction="never" />
+        app:showAsAction="always" />
 </menu>

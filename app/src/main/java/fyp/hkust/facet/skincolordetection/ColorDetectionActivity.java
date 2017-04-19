@@ -12,6 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -52,7 +54,9 @@ import java.util.List;
 import java.util.Random;
 
 import fyp.hkust.facet.R;
+import fyp.hkust.facet.activity.ColorizeFaceActivity;
 import fyp.hkust.facet.activity.MainMenuActivity;
+import fyp.hkust.facet.activity.ProductRecommentationActivity;
 import fyp.hkust.facet.util.FontManager;
 
 public class ColorDetectionActivity extends AppCompatActivity implements OnChartValueSelectedListener {
@@ -105,6 +109,7 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
     protected static final int STOP = 0x10000;
 
     private PieChart rPieChart,gPieChart,bPieChart;
+    private Button report_btn;
 
     public ColorDetectionActivity() {
         Log.i(TAG, "Instantiated new " + this.getClass());
@@ -129,7 +134,15 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
         rPieChart = (PieChart) findViewById(R.id.r_chart);
         gPieChart = (PieChart) findViewById(R.id.g_chart);
         bPieChart = (PieChart) findViewById(R.id.b_chart);
-
+        report_btn = (Button) findViewById(R.id.report_btn);
+        report_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent();
+                i.setClass(ColorDetectionActivity.this,ProductRecommentationActivity.class);
+                startActivity(i);
+            }
+        });
 //        color_result_text.setVisibility(View.INVISIBLE);
 
 //        mTfLight = Typeface.createFromAsset(getAssets(), "OpenSans-Light.ttf");

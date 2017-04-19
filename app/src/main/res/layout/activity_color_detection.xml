@@ -57,7 +57,7 @@
                 <com.github.mikephil.charting.charts.PieChart
                     android:id="@+id/r_chart"
                     android:layout_width="match_parent"
-                    android:layout_height="170dp"
+                    android:layout_height="180dp"
                     />
 
                 <!--<View-->
@@ -90,7 +90,7 @@
                 <com.github.mikephil.charting.charts.PieChart
                     android:id="@+id/g_chart"
                     android:layout_width="match_parent"
-                    android:layout_height="170dp" />
+                    android:layout_height="180dp" />
 
 
             </RelativeLayout>
@@ -109,7 +109,7 @@
                 <com.github.mikephil.charting.charts.PieChart
                     android:id="@+id/b_chart"
                     android:layout_width="match_parent"
-                    android:layout_height="170dp"  />
+                    android:layout_height="180dp"  />
             </RelativeLayout>
         </LinearLayout>
     </LinearLayout>

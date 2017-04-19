@@ -401,7 +401,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
                 AlertDialog.Builder builder = new AlertDialog.Builder(CaptureActivity.this, R.style.Theme_AppCompat_Light_Dialog_Alert);
                 builder.setTitle("Are you sure?");
                 builder.setMessage("effect " + selectPhoto + " is the most suitable?");
-                builder.setPositiveButton("Yes,start it!", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         saveImageAndIntent();

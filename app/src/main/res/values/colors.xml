@@ -54,4 +54,5 @@
 
     <color name="map_container_transparent">#f0ffffff</color>
     <color name="pale_white_border_color">#DDDDDD</color>
+    <color name="recommendation_text_background">#FAFAFA</color>
 </resources>

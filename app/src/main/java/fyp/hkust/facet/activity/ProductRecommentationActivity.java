@@ -3,6 +3,7 @@ package fyp.hkust.facet.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
@@ -12,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
@@ -52,7 +54,6 @@ public class ProductRecommentationActivity extends AppCompatActivity {
 
     private static final String TAG = "ProductRecommentationActivity ";
     private static View activity_main_layout;
-    private RecyclerView mProductList;
 
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
@@ -64,9 +65,13 @@ public class ProductRecommentationActivity extends AppCompatActivity {
     private Map<String, Brand> mBrand = new HashMap<String, Brand>();
     private List<String> brandList = new ArrayList<>();
     private List<String> brandIDList = new ArrayList<>();
-    private RecyclerView recommend_product_list;
+    private RecyclerView recommend_product_list_1, recommend_product_list_2, recommend_product_list_3, recommend_product_list_4;
     private GridLayoutManager mgr;
-
+    private ProductAdapter mProductAdapter1, mProductAdapter2, mProductAdapter3, mProductAdapter4;
+    private Map<String, Product> mFoundationProducts = new HashMap<String, Product>();
+    private Map<String, Product> mBlushProducts = new HashMap<String, Product>();
+    private Map<String, Product> mEyshadowProducts = new HashMap<String, Product>();
+    private Map<String, Product> mLipstickProducts = new HashMap<String, Product>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +84,7 @@ public class ProductRecommentationActivity extends AppCompatActivity {
 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Recommendation");
 
         Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
         FontManager.markAsIconContainer(findViewById(R.id.activity_product_recommendation_layout), fontType);
@@ -94,10 +100,14 @@ public class ProductRecommentationActivity extends AppCompatActivity {
         mDatabaseRatings.keepSynced(true);
         Log.d(TAG + "mDatabaseRatings", mDatabaseRatings.toString());
 
-        recommend_product_list = (RecyclerView) findViewById(R.id.recommend_product_list);
-        mgr = new GridLayoutManager(this, 2);
-        mProductList.setLayoutManager(mgr);
-        mProductList.setItemAnimator(new DefaultItemAnimator());
+        recommend_product_list_1 = (RecyclerView) findViewById(R.id.recommend_product_list_1);
+        recommend_product_list_2 = (RecyclerView) findViewById(R.id.recommend_product_list_2);
+        recommend_product_list_3 = (RecyclerView) findViewById(R.id.recommend_product_list_3);
+        recommend_product_list_4 = (RecyclerView) findViewById(R.id.recommend_product_list_4);
+        recommend_product_list_1.setItemAnimator(new DefaultItemAnimator());
+        recommend_product_list_2.setItemAnimator(new DefaultItemAnimator());
+        recommend_product_list_3.setItemAnimator(new DefaultItemAnimator());
+        recommend_product_list_4.setItemAnimator(new DefaultItemAnimator());
     }
 
     @Override
@@ -150,6 +160,9 @@ public class ProductRecommentationActivity extends AppCompatActivity {
                                     Log.d(" brand " + ds.getKey(), result.toString());
                                 }
 
+
+                                //sort product
+                                sortProduct();
                             }
 
                             @Override
@@ -171,6 +184,59 @@ public class ProductRecommentationActivity extends AppCompatActivity {
             }
 
         });
+    }
+
+    private void sortProduct() {
+
+        Resources res = getResources();
+        final String[] categoryArray = res.getStringArray(R.array.category_type_array);
+        List<Product> values = new ArrayList<>(mProducts.values());
+        List<String> keys = new ArrayList<>(mProducts.keySet());
+
+        for (int i = 0; i < keys.size(); i++) {
+            if (values.get(i) != null && values.get(i).getCategory().equals(categoryArray[1])) {
+                Log.d(TAG +  "1 sortProduct: ",    keys.get(i) + " "+ values.get(0).getProductName());
+                mFoundationProducts.put(keys.get(i), values.get(i));
+            }
+            if (values.get(i) != null && values.get(i).getCategory().equals(categoryArray[2])) {
+                Log.d(TAG +  "2 sortProduct: ",    keys.get(i) + " "+ values.get(0).getProductName());
+                mBlushProducts.put(keys.get(i), values.get(i));
+            }
+            if (values.get(i) != null && values.get(i).getCategory().equals(categoryArray[3])) {
+                Log.d(TAG +  "3 sortProduct: ",    keys.get(i) + " "+ values.get(0).getProductName());
+                mEyshadowProducts.put(keys.get(i), values.get(i));
+            }
+            if (values.get(i) != null && values.get(i).getCategory().equals(categoryArray[4])) {
+                Log.d(TAG +  "4 sortProduct: ",    keys.get(i) + " "+ values.get(0).getProductName());
+                mLipstickProducts.put(keys.get(i), values.get(i));
+            }
+
+        }
+
+        LinearLayoutManager layoutManager1 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager layoutManager2 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager layoutManager3 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager layoutManager4 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+
+        recommend_product_list_1.setLayoutManager(layoutManager1);
+        mProductAdapter1 = new ProductAdapter(mFoundationProducts, getApplicationContext());
+        recommend_product_list_1.setAdapter(mProductAdapter1);
+        mProductAdapter1.notifyDataSetChanged();
+
+        recommend_product_list_2.setLayoutManager(layoutManager2);
+        mProductAdapter2 = new ProductAdapter(mBlushProducts, getApplicationContext());
+        recommend_product_list_2.setAdapter(mProductAdapter2);
+        mProductAdapter2.notifyDataSetChanged();
+
+        recommend_product_list_3.setLayoutManager(layoutManager3);
+        mProductAdapter3 = new ProductAdapter(mEyshadowProducts, getApplicationContext());
+        recommend_product_list_3.setAdapter(mProductAdapter3);
+        mProductAdapter3.notifyDataSetChanged();
+
+        recommend_product_list_4.setLayoutManager(layoutManager4);
+        mProductAdapter4 = new ProductAdapter(mLipstickProducts, getApplicationContext());
+        recommend_product_list_4.setAdapter(mProductAdapter4);
+        mProductAdapter4.notifyDataSetChanged();
     }
 
     private static double doubleValue(Object value) {
