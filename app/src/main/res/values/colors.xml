@@ -52,7 +52,6 @@
     <color name="shop_list_background">#f0f0f0</color>
     <color name="shop_list_item_background">#fafafa</color>
 
-    <color name="map_container_transparent">#aa232323</color>
+    <color name="map_container_transparent">#f0ffffff</color>
     <color name="pale_white_border_color">#DDDDDD</color>
-
 </resources>

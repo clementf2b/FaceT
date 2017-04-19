@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:id="@+id/layout_shop_location"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="fyp.hkust.facet.activity.NearbyLocationActivity">
 
     <fragment
@@ -18,87 +20,99 @@
         android:layout_height="wrap_content">
 
         <!--<ImageButton-->
-            <!--android:id="@+id/normal_map_button"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:src="@mipmap/ic_map_black_24dp"-->
-            <!--android:tint="@color/white"-->
-            <!--android:backgroundTint="@color/map_container_transparent"/>-->
+        <!--android:id="@+id/normal_map_button"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:src="@mipmap/ic_map_black_24dp"-->
+        <!--android:tint="@color/white"-->
+        <!--android:backgroundTint="@color/map_container_transparent"/>-->
 
         <ImageButton
             android:id="@+id/shop_location_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
+            android:backgroundTint="@color/map_container_transparent"
             android:src="@mipmap/ic_location_on_black_24dp"
-            android:tint="@color/white"
-            android:backgroundTint="@color/map_container_transparent"/>
+            android:tint="@color/colorPrimary" />
 
         <ImageButton
             android:id="@+id/my_location_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
+            android:backgroundTint="@color/map_container_transparent"
             android:src="@mipmap/ic_my_location_black_24dp"
-            android:tint="@color/white"
-            android:backgroundTint="@color/map_container_transparent"/>
+            android:tint="@color/colorPrimary" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="160dp"
-        android:layout_above="@+id/temp"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
+        android:layout_height="90dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         android:background="@color/map_container_transparent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true">
 
-        <ImageView
-            android:id="@+id/current_shop_image"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="8dp"
-            android:paddingBottom="8dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:paddingTop="8dp"
-            android:src="@mipmap/app_icon"
-            android:background="#28000000"/>
+        <!--<ImageView-->
+        <!--android:id="@+id/current_shop_image"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="50dp"-->
+        <!--android:layout_marginBottom="8dp"-->
+        <!--android:layout_marginLeft="10dp"-->
+        <!--android:layout_marginRight="10dp"-->
+        <!--android:layout_marginTop="8dp"-->
+        <!--android:paddingBottom="8dp"-->
+        <!--android:paddingLeft="10dp"-->
+        <!--android:paddingRight="10dp"-->
+        <!--android:paddingTop="8dp"-->
+        <!--android:src="@mipmap/app_icon"-->
+        <!--android:background="#28000000"/>-->
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="5dp">
+            android:layout_height="match_parent">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/current_shop_image"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="8dp"
+                android:padding="5dp"
+                android:src="@mipmap/app_icon"
+                app:civ_border_color="@color/colorPrimary"
+                app:civ_border_width="1dp"
+                />
 
             <LinearLayout
                 android:id="@+id/shop_name_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="100dp"
                 android:layout_marginRight="5dp"
                 android:layout_marginTop="7dp"
                 android:orientation="horizontal">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/shop_title"
-                    android:textColor="@color/white"/>
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:text="@string/shop_title"-->
+                    <!--android:textColor="@color/white" />-->
 
                 <TextView
                     android:id="@+id/current_shop_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:layout_marginTop="6dp"
                     android:text="SaSa"
-                    android:textColor="@color/white" />
+                    android:textStyle="bold"
+                    android:textSize="18dp"
+                    android:textColor="@color/colorPrimary" />
             </LinearLayout>
 
             <LinearLayout
@@ -107,51 +121,53 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/shop_name_layout"
                 android:layout_marginBottom="5dp"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="100dp"
                 android:layout_marginRight="5dp"
                 android:orientation="horizontal">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/shop_address"
-                    android:textColor="@color/white"/>
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:text="@string/shop_address"-->
+                    <!--android:textColor="@color/white" />-->
 
                 <TextView
                     android:id="@+id/current_shop_address"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:lines="2"
+                    android:scrollbars="vertical"
                     android:text="9F, ABC Building, Hong Kong"
-                    android:textColor="@color/white"
-                    android:lines="3"/>
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="13dp"/>
             </LinearLayout>
 
             <!--<LinearLayout-->
-                <!--android:id="@+id/shop_phone_layout"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_below="@+id/shop_hour_layout"-->
-                <!--android:layout_marginBottom="4dp"-->
-                <!--android:layout_marginLeft="10dp"-->
-                <!--android:layout_marginRight="5dp"-->
-                <!--android:orientation="horizontal">-->
+            <!--android:id="@+id/shop_phone_layout"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_below="@+id/shop_hour_layout"-->
+            <!--android:layout_marginBottom="4dp"-->
+            <!--android:layout_marginLeft="10dp"-->
+            <!--android:layout_marginRight="5dp"-->
+            <!--android:orientation="horizontal">-->
 
-                <!--<TextView-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_weight="1"-->
-                    <!--android:text="@string/shop_phone_text"-->
-                    <!--android:textColor="@color/white"/>-->
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:text="@string/shop_phone_text"-->
+            <!--android:textColor="@color/white"/>-->
 
-                <!--<TextView-->
-                    <!--android:id="@+id/current_shop_phone"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_weight="1"-->
-                    <!--android:text="+852 1234 5678"-->
-                    <!--android:textColor="@color/white"/>-->
+            <!--<TextView-->
+            <!--android:id="@+id/current_shop_phone"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:text="+852 1234 5678"-->
+            <!--android:textColor="@color/white"/>-->
             <!--</LinearLayout>-->
 
         </RelativeLayout>

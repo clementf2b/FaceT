@@ -1,6 +1,7 @@
 package fyp.hkust.facet.activity;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -28,6 +29,7 @@ import fyp.hkust.facet.fragment.KowloonFragment;
 import fyp.hkust.facet.fragment.NewTerritoriesFragment;
 import fyp.hkust.facet.model.Brand;
 import fyp.hkust.facet.model.Shop;
+import fyp.hkust.facet.util.FontManager;
 
 public class ShopListActivity extends AppCompatActivity {
 
@@ -50,6 +52,9 @@ public class ShopListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shop_list);
+
+        Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
+        FontManager.markAsIconContainer(findViewById(R.id.activity_shop_layout), fontType);
 
         prepareShopData();
 
