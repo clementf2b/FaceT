@@ -52,7 +52,8 @@
         android:background="@color/map_container_transparent"
         android:orientation="vertical"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:id="@+id/bottom_info_panel_one_shop">
 
         <!--<ImageView-->
         <!--android:id="@+id/current_shop_image"-->
@@ -111,7 +112,7 @@
                     android:layout_marginTop="6dp"
                     android:text="SaSa"
                     android:textStyle="bold"
-                    android:textSize="18dp"
+                    android:textSize="20dp"
                     android:textColor="@color/colorPrimary" />
             </LinearLayout>
 
@@ -173,12 +174,5 @@
         </RelativeLayout>
 
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/temp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:text="" />
 
 </RelativeLayout>
