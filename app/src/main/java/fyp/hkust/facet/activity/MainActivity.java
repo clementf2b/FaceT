@@ -543,8 +543,11 @@ public class MainActivity extends AppCompatActivity {
                                 count++;
                             }
                             Log.d(" rating " + ratingDs.getKey(), ratingDs.getValue().toString());
-                            mProducts.get(ratingDs.getKey()).setRating((long) (totalRating / count));
-                            Log.d(" mProduct rating ", mProducts.get(ratingDs.getKey()).getRating() + "");
+                            Log.d(TAG + " totalRating / count " , totalRating + " " + count);
+                            if (count > 0 && mProducts.containsKey(ratingDs.getKey()))
+                                mProducts.get(ratingDs.getKey()).setRating((long) (totalRating / count));
+                            count = 0;
+                            totalRating = 0.0;
                         }
 
                         mDatabaseBrand.addValueEventListener(new ValueEventListener() {
@@ -753,23 +756,23 @@ public class MainActivity extends AppCompatActivity {
             case 3:
                 sortOperation.append("Sort by rating");
 
-                    Collections.sort(list, new Comparator<Map.Entry<String, Product>>() {
-                        public int compare(Map.Entry<String, Product> o1,
-                                           Map.Entry<String, Product> o2) {
-                            if( o1.getValue().getRating() != null && o2.getValue().getRating() != null) {
-                                if (order == 0) {
-                                    // sort by name a - z
-                                    Log.d(TAG, o1.getValue().getRating() + " " + o2.getValue().getRating());
-                                    return o1.getValue().getRating().compareTo(o2.getValue().getRating());
-                                } else {
-                                    // sort by name z - a
-                                    Log.d(TAG, o1.getValue().getRating() + " " + o2.getValue().getRating());
-                                    return o2.getValue().getRating().compareTo(o1.getValue().getRating());
-                                }
+                Collections.sort(list, new Comparator<Map.Entry<String, Product>>() {
+                    public int compare(Map.Entry<String, Product> o1,
+                                       Map.Entry<String, Product> o2) {
+                        if (o1.getValue().getRating() != null && o2.getValue().getRating() != null) {
+                            if (order == 0) {
+                                // sort by name a - z
+                                Log.d(TAG, o1.getValue().getRating() + " " + o2.getValue().getRating());
+                                return o1.getValue().getRating().compareTo(o2.getValue().getRating());
+                            } else {
+                                // sort by name z - a
+                                Log.d(TAG, o1.getValue().getRating() + " " + o2.getValue().getRating());
+                                return o2.getValue().getRating().compareTo(o1.getValue().getRating());
                             }
-                            return 0;
                         }
-                    });
+                        return 0;
+                    }
+                });
                 break;
 
         }

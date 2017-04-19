@@ -46,7 +46,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="300px"
+            android:layout_height="450px"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
             >

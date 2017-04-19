@@ -324,7 +324,7 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
                 mDetector.process(demo);
                 List<MatOfPoint> contours = mDetector.getContours();
                 Log.e(TAG, "Contours count: " + contours.size());
-                Imgproc.drawContours(demo, contours, -1, CONTOUR_COLOR);
+//                Imgproc.drawContours(demo, contours, -1, CONTOUR_COLOR);
 
                 Mat colorLabel = demo.submat(4, 68, 4, 68);
                 colorLabel.setTo(mBlobColorRgba);

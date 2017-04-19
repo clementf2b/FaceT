@@ -157,7 +157,7 @@
         <activity
             android:name=".activity.ShopListActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar_nav"></activity>
+            android:theme="@style/AppTheme.NoActionBar_nav" />
         <activity
             android:name=".activity.OtheruserProfileActivity"
             android:label="@string/app_name"
@@ -175,7 +175,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="fyp.hkust.facet.activity.MainMenuActivity" />
         </activity>
-        <activity android:name=".activity.AboutUsActivity"></activity>
+        <activity android:name=".activity.AboutUsActivity" />
+        <activity android:name=".activity.ProductRecommentationActivity"></activity>
     </application>
 
 </manifest>

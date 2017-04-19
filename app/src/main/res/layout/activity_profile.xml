@@ -41,7 +41,7 @@
 
                     <ImageView
                         android:layout_width="match_parent"
-                        android:layout_height="200dp"
+                        android:layout_height="wrap_content"
                         android:layout_above="@+id/tabs"
                         android:layout_below="@+id/toolbar"
                         android:background="@color/white" />
@@ -51,8 +51,8 @@
                         android:layout_width="100dp"
                         android:layout_height="100dp"
                         android:layout_centerVertical="true"
-                        android:layout_marginBottom="40dp"
-                        android:layout_marginLeft="15dp"
+                        android:layout_marginBottom="30dp"
+                        android:layout_marginLeft="10dp"
                         android:layout_marginTop="40dp"
                         android:elevation="6dp"
                         android:src="@mipmap/app_icon"
@@ -84,7 +84,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentTop="true"
                         android:layout_marginLeft="15dp"
-                        android:layout_marginTop="107dp"
+                        android:layout_marginTop="135dp"
                         android:layout_toEndOf="@+id/profile_picture"
                         android:layout_toStartOf="@+id/btn_edit"
                         android:text="@string/profile_username"
@@ -99,7 +99,7 @@
                         android:layout_toEndOf="@+id/profile_picture"
                         android:layout_toStartOf="@+id/btn_edit"
                         android:paddingLeft="15dp"
-                        android:paddingTop="15dp"
+                        android:paddingTop="5dp"
                         android:text="@string/profile_email"
                         android:textColor="@color/profile_email_text_color"
                         android:textSize="12sp" />
@@ -109,14 +109,15 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/description_label"
-                        android:textColor="@color/profile_email_text_color"
+                        android:textColor="@color/profile_name_text_color"
                         android:textIsSelectable="true"
                         android:textSize="16dp"
                         app:emojiSize="16dp"
-                        android:layout_margin="15dp"
+                        android:layout_marginTop="55dp"
+                        android:layout_marginBottom="21dp"
                         android:layout_below="@+id/profile_picture"
-                        android:layout_centerHorizontal="true"
-                         />  
+                        android:layout_alignStart="@+id/profile_picture"
+                        android:layout_alignEnd="@+id/btn_edit" />  
 
                     <android.support.v7.widget.Toolbar
                         android:id="@+id/toolbar"

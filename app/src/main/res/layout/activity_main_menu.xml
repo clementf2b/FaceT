@@ -112,7 +112,7 @@
                     android:layout_centerVertical="true"
                     android:layout_margin="10dp"
                     android:layout_toRightOf="@+id/vmake_button"
-                    android:text="@string/favourite_text"
+                    android:text="@string/vmakeup_text"
                     android:textColor="#FFFFFF"
                     android:textSize="16dp"
                     android:textStyle="bold" />

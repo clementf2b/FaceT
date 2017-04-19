@@ -24,6 +24,8 @@ import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -729,6 +731,12 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                 .build(commentEmojiconEditText);
     }
 
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.product_detail_menu, menu);
+        return true;
+    }
+
     private void addNotification(String action) {
 
         mProgress = new ProgressDialog(this);
@@ -1216,9 +1224,13 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                 // app icon in action bar clicked; goto parent activity.
                 this.finish();
                 return true;
+            case R.id.product_apply:
+                Log.d(TAG," product apply");
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+
     }
 
     private void checkUserExist() {

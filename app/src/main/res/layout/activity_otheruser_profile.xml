@@ -7,11 +7,6 @@
     android:layout_height="wrap_content"
     android:fitsSystemWindows="true">
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_above="@+id/tabs"
-        android:layout_below="@+id/toolbar" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/otheruser_profile_picture"
@@ -59,7 +54,7 @@
         android:layout_height="wrap_content"
         android:text="@string/description_label"
         android:textAlignment="center"
-        android:textColor="@color/profile_email_text_color"
+        android:textColor="@color/profile_name_text_color"
         android:textIsSelectable="true"
         android:textSize="16dp"
         app:emojiSize="16dp"
