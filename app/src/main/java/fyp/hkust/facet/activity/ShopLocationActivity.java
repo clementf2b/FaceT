@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -57,6 +58,7 @@ public class ShopLocationActivity extends FragmentActivity implements OnMapReady
     private CircleImageView currentImage;
     private GoogleApiClient mGoogleApiClient;
     private Location currentLocation;
+    private LinearLayout bottomPanel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +104,7 @@ public class ShopLocationActivity extends FragmentActivity implements OnMapReady
         currentShopName.setText(shop.getName());
         currentShopAddress.setText(shop.getAddress());
         Picasso.with(this).load(shop.getImage()).into(currentImage);
-
+        bottomPanel = (LinearLayout) findViewById(R.id.bottom_info_panel_one_shop);
 
 //        normal_map_button.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -117,6 +119,7 @@ public class ShopLocationActivity extends FragmentActivity implements OnMapReady
         shop_location_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                bottomPanel.setVisibility(View.VISIBLE);
 
                 LatLng shopLocation = new LatLng(shop.getLatitude(), shop.getLongitude());
                 Marker shopLocationMarker = mMap.addMarker(new MarkerOptions().position(shopLocation).title("Shop is here")
@@ -151,10 +154,11 @@ public class ShopLocationActivity extends FragmentActivity implements OnMapReady
                     currentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
                     if(currentLocation!=null) {
                         LatLng myCurrentLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-                        Marker shopLocationMarker = mMap.addMarker(new MarkerOptions().position(myCurrentLocation).title("You are here")
-                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+//                        Marker shopLocationMarker = mMap.addMarker(new MarkerOptions().position(myCurrentLocation).title("You are here")
+//                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myCurrentLocation, 17), 2000, null);
-                        shopLocationMarker.showInfoWindow();
+//                        shopLocationMarker.showInfoWindow();
+                        bottomPanel.setVisibility(View.GONE);
                     }
                 }
             }
