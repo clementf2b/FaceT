@@ -63,7 +63,7 @@
     <string name="remember_password_field">Remember Password</string>
 
     <!--activity_main_menu-->
-    <string name="store_text">Store</string>
+    <string name="store_text">Store Locator</string>
     <string name="favourite_text">Favourite</string>
     <string name="my_account_text">My Account</string>
     <string name="facet_match_text">FaceT Match</string>
@@ -78,9 +78,10 @@
         <item>Lipsticks</item>
     </string-array>
     <string-array name="sort_type_array">
-        <item>Time</item>
-        <item>Name</item>
+        <item>Latest</item>
+        <item>Product Name</item>
         <item>Category</item>
+        <item>Rating</item>
     </string-array>
 
     <!--activity_post-->

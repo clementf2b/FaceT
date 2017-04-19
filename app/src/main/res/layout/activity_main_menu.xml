@@ -71,7 +71,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:id="@+id/photo_camera_layout">
+                android:id="@+id/photo_camera_layout"
+                android:clickable="true">
 
                 <ImageButton
                     android:id="@+id/photo_camera"
@@ -101,7 +102,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:id="@+id/fav_layout">
+                android:id="@+id/vmakeup_layout"
+                android:clickable="true">
 
                 <TextView
                     android:id="@+id/fav_text"
@@ -109,20 +111,52 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_margin="10dp"
-                    android:layout_toRightOf="@+id/fav_button"
+                    android:layout_toRightOf="@+id/vmake_button"
                     android:text="@string/favourite_text"
                     android:textColor="#FFFFFF"
                     android:textSize="16dp"
                     android:textStyle="bold" />
 
                 <ImageButton
-                    android:id="@+id/fav_button"
+                    android:id="@+id/vmake_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="20dp"
+                    android:background="@drawable/main_menu_border"
+                    android:padding="5dp"
+                    android:src="@mipmap/vmakeup"
+                    />
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:id="@+id/product_layout"
+                android:clickable="true">
+
+                <TextView
+                    android:id="@+id/product_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="10dp"
+                    android:layout_toRightOf="@+id/shopping_button"
+                    android:text="@string/all_products_text"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+
+                <ImageButton
+                    android:id="@+id/shopping_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="20dp"
                     android:background="@drawable/main_menu_border"
                     android:padding="10dp"
-                    android:src="@mipmap/ic_favorite_white_36dp" />
+                    android:src="@mipmap/ic_shopping_basket_white_36dp" />
 
             </RelativeLayout>
 
@@ -130,7 +164,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:id="@+id/store_layout">
+                android:id="@+id/store_layout"
+                android:clickable="true">
 
                 <ImageButton
                     android:id="@+id/store_button"
@@ -159,7 +194,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:id="@+id/account_layout">
+                android:id="@+id/account_layout"
+                android:clickable="true">
 
                 <TextView
                     android:id="@+id/account_text"
@@ -182,35 +218,6 @@
                     android:background="@drawable/main_menu_border"
                     android:padding="10dp"
                     android:src="@mipmap/ic_account_circle_white_36dp" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:id="@+id/product_layout">
-
-                <TextView
-                    android:id="@+id/product_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_margin="10dp"
-                    android:layout_toRightOf="@+id/shopping_button"
-                    android:text="@string/all_products_text"
-                    android:textColor="#FFFFFF"
-                    android:textSize="16dp"
-                    android:textStyle="bold" />
-
-                <ImageButton
-                    android:id="@+id/shopping_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="20dp"
-                    android:background="@drawable/main_menu_border"
-                    android:padding="10dp"
-                    android:src="@mipmap/ic_shopping_basket_white_36dp" />
 
             </RelativeLayout>
 

@@ -39,6 +39,8 @@ import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
+import com.vanniktech.emoji.EmojiTextView;
+import com.vanniktech.emoji.emoji.Emoji;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import fyp.hkust.facet.R;
@@ -69,6 +71,7 @@ public class OtheruserProfileActivity extends AppCompatActivity {
     private ImageView otheruser_profile_picture;
     private TextView otheruser_profile_username;
     private TextView otheruser_profile_email;
+    private EmojiTextView otheruser_aboutme;
     private String userId;
 
     @Override
@@ -96,6 +99,7 @@ public class OtheruserProfileActivity extends AppCompatActivity {
         otheruser_profile_picture = (ImageView) findViewById(R.id.otheruser_profile_picture);
         otheruser_profile_username = (TextView) findViewById(R.id.otheruser_profile_username);
         otheruser_profile_email = (TextView) findViewById(R.id.otheruser_profile_email);
+        otheruser_aboutme = (EmojiTextView) findViewById(R.id.otheruser_aboutme);
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
@@ -154,6 +158,7 @@ public class OtheruserProfileActivity extends AppCompatActivity {
                     Log.e(user_data.getName(), "User data is null!");
                     otheruser_profile_username.setText(user_data.getName());
                     otheruser_profile_email.setText(mAuth.getCurrentUser().getEmail());
+                    otheruser_aboutme.setText(user_data.getAboutMe());
 
                     Picasso.with(getApplicationContext()).load(user_data.getImage()).networkPolicy(NetworkPolicy.OFFLINE).into(otheruser_profile_picture, new Callback() {
                         @Override

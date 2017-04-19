@@ -32,8 +32,7 @@ public class Product {
         this.rating = rating;
     }
 
-    public Product()
-    {
+    public Product() {
 
     }
 

@@ -59,10 +59,11 @@ public class MainMenuActivity extends AppCompatActivity {
     };
     private static final int REQUEST_CODE_PERMISSION = 2;
     private View activity_main_menu_layout;
-    private ImageButton shoppingBtn;
+    private ImageButton vmakeupBtn;
     private ImageButton photoCameraBtn;
     private ImageButton accountBtn;
     private ImageButton storeBtn;
+    private ImageButton shoppingBtn;
 
     private static final int GALLERY_REQUEST = 1;
     private static int OVERLAY_PERMISSION_REQ_CODE = 3;
@@ -71,7 +72,7 @@ public class MainMenuActivity extends AppCompatActivity {
     private String captureImageFullPath = null;
     private boolean doubleBackToExitPressedOnce = false;
     private TextView main_menu_title;
-    private RelativeLayout product_layout, account_layout, store_layout, fav_layout, photo_camera_layout;
+    private RelativeLayout product_layout, account_layout, store_layout, vmakeup_layout, photo_camera_layout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +90,7 @@ public class MainMenuActivity extends AppCompatActivity {
 
         activity_main_menu_layout = (RelativeLayout) findViewById(R.id.activity_main_menu_layout);
         photo_camera_layout = (RelativeLayout) findViewById(R.id.photo_camera_layout);
-        fav_layout = (RelativeLayout) findViewById(R.id.fav_layout);
+        vmakeup_layout = (RelativeLayout) findViewById(R.id.vmakeup_layout);
         store_layout = (RelativeLayout) findViewById(R.id.store_layout);
         account_layout = (RelativeLayout) findViewById(R.id.account_layout);
         product_layout = (RelativeLayout) findViewById(R.id.product_layout);
@@ -104,13 +105,13 @@ public class MainMenuActivity extends AppCompatActivity {
         shoppingBtn = (ImageButton) findViewById(R.id.shopping_button);
         accountBtn = (ImageButton) findViewById(R.id.account_button);
         storeBtn = (ImageButton) findViewById(R.id.store_button);
-        favBtn = (ImageButton) findViewById(R.id.fav_button);
+        vmakeupBtn = (ImageButton) findViewById(R.id.vmake_button);
 
-        YoYo.with(Techniques.SlideInDown).duration(800).playOn(findViewById(R.id.photo_camera_layout));
-        YoYo.with(Techniques.SlideInDown).duration(1200).playOn(findViewById(R.id.fav_layout));
+        YoYo.with(Techniques.SlideInDown).duration(1000).playOn(findViewById(R.id.photo_camera_layout));
+        YoYo.with(Techniques.SlideInDown).duration(1300).playOn(findViewById(R.id.vmakeup_layout));
         YoYo.with(Techniques.SlideInDown).duration(1600).playOn(findViewById(R.id.store_layout));
-        YoYo.with(Techniques.SlideInDown).duration(2000).playOn(findViewById(R.id.account_layout));
-        YoYo.with(Techniques.SlideInDown).duration(2400).playOn(findViewById(R.id.product_layout));
+        YoYo.with(Techniques.SlideInDown).duration(1900).playOn(findViewById(R.id.account_layout));
+        YoYo.with(Techniques.SlideInDown).duration(2100).playOn(findViewById(R.id.product_layout));
 
         photo_camera_layout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,7 +141,7 @@ public class MainMenuActivity extends AppCompatActivity {
             }
         });
 
-        fav_layout.setOnClickListener(new View.OnClickListener() {
+        vmakeup_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showMakeUpDialog();

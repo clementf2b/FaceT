@@ -137,6 +137,7 @@
             android:scaleType="fitCenter"
             android:text="@string/apply_text"
             android:textColor="@color/colorPrimaryDark"
+            android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"/>
 
         <Button
@@ -151,7 +152,8 @@
             android:scaleType="fitCenter"
             android:text="@string/clear_text"
             android:textColor="@color/white"
-            android:layout_marginLeft="10dp"/>
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"/>
 
     </LinearLayout>
 

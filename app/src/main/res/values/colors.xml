@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#39c5c1</color>
-    <color name="colorPrimaryDark">#33b2ae</color>
+    <color name="colorPrimaryDark">#32bebe</color>
     <color name="colorAccent">#FF4081</color>
     <color name="ripple">#97e6ed</color>
     <color name="primary_pressed">#39c5c1</color>
 
     <color name="gradient_start">#39c5c1</color>
-    <color name="gradient_end">#b3e1d8</color>
+    <color name="gradient_end">#1F92aa</color>
 
-    <color name="button_gradient_start">#19e7d7</color>
-    <color name="button_gradient_end">#42bcec</color>
+    <color name="button_gradient_start">#39c5c1</color>
+    <color name="button_gradient_end">#0092aa</color>
 
     <color name="colorPrimaryText">#212121</color>
     <color name="colorSecondaryText">#727272</color>
@@ -29,6 +29,7 @@
     <color name="font_color_pirmary">#85D9D2</color>
 
     <color name="profile_bg">#FAFAFA</color>
+    <color name="profile_name_text_color">#464441</color>
     <color name="profile_email_text_color">#B3B3B3</color>
 
     <color name="profile_edit_bg">#E0E0E0</color>
@@ -52,5 +53,5 @@
     <color name="shop_list_item_background">#fafafa</color>
 
     <color name="map_container_transparent">#f0ffffff</color>
-
+    <color name="pale_white_border_color">#DDDDDD</color>
 </resources>

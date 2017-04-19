@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -40,6 +41,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.Spinner;
+import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -117,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
     private List<String> brandIDList = new ArrayList<>();
     private PopupBubble new_product_popup_bubble;
     private Swipe swipe;
+    private NavigationView sort_view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -210,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
 
         setupTabLayout();
 
-        NavigationView sort_view = (NavigationView) findViewById(R.id.sort_navigation_view);
+        sort_view = (NavigationView) findViewById(R.id.sort_navigation_view);
         sort_view.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
@@ -354,7 +357,7 @@ public class MainActivity extends AppCompatActivity {
         View header = view.getHeaderView(0);
         final TextView usernameHeader = (TextView) header.findViewById(R.id.username_header);
         final TextView emailHeader = (TextView) header.findViewById(R.id.email_header);
-        final  CircleImageView headerphoto = (CircleImageView) header.findViewById(R.id.profile_image);
+        final CircleImageView headerphoto = (CircleImageView) header.findViewById(R.id.profile_image);
         headerphoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -407,7 +410,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupRightDrawer() {
+
         View sort_main_layout = (View) findViewById(R.id.sort_main_layout);
+        View header2 = sort_view.getHeaderView(0);
+        Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
+        TextView refine_title = (TextView) header2.findViewById(R.id.refine_title);
+        refine_title.setTypeface(fontType);
+
         Button apply_btn = (Button) sort_main_layout.findViewById(R.id.apply_btn);
         Button clear_btn = (Button) sort_main_layout.findViewById(R.id.clear_btn);
         final Button acensding_btn = (Button) sort_main_layout.findViewById(R.id.acensding_btn);
@@ -429,6 +438,7 @@ public class MainActivity extends AppCompatActivity {
                 sort = 0;
                 setupProductList();
                 drawerLayout.closeDrawer(GravityCompat.END);
+                tabLayout.getTabAt(0).select();
             }
         });
         acensding_btn.setOnClickListener(new View.OnClickListener() {
@@ -461,6 +471,8 @@ public class MainActivity extends AppCompatActivity {
         final ArrayAdapter<CharSequence> sortList = ArrayAdapter.createFromResource(MainActivity.this,
                 R.array.sort_type_array,
                 android.R.layout.simple_spinner_dropdown_item);
+        orderSpinner.getBackground().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+        sortList.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         orderSpinner.setSelection(order);
         orderSpinner.setAdapter(sortList);
 
@@ -509,6 +521,7 @@ public class MainActivity extends AppCompatActivity {
                     Product result = ds.getValue(Product.class);
                     if (result.getValidate() == 1) {
                         mProducts.put(ds.getKey(), result);
+                        mProducts.get(ds.getKey()).setRating(Long.valueOf(0));
                         Log.d(" product " + ds.getKey(), result.toString());
                     }
                 }
@@ -518,6 +531,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         int count = 0;
                         double totalRating = 0.0;
+
                         for (DataSnapshot ratingDs : dataSnapshot.getChildren()) {
                             Map<String, Long> td = (HashMap<String, Long>) ratingDs.getValue();
                             List<String> keys = new ArrayList<>(td.keySet());
@@ -532,7 +546,6 @@ public class MainActivity extends AppCompatActivity {
                             mProducts.get(ratingDs.getKey()).setRating((long) (totalRating / count));
                             Log.d(" mProduct rating ", mProducts.get(ratingDs.getKey()).getRating() + "");
                         }
-
 
                         mDatabaseBrand.addValueEventListener(new ValueEventListener() {
                             @Override
@@ -556,6 +569,8 @@ public class MainActivity extends AppCompatActivity {
 
                                     final ArrayAdapter<String> categoryList = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, brandList);
                                     filterSpinner.setSelection(brandResult);
+                                    categoryList.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                    filterSpinner.getBackground().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
                                     filterSpinner.setAdapter(categoryList);
 
                                     filterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -735,6 +750,28 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
                 break;
+            case 3:
+                sortOperation.append("Sort by rating");
+
+                    Collections.sort(list, new Comparator<Map.Entry<String, Product>>() {
+                        public int compare(Map.Entry<String, Product> o1,
+                                           Map.Entry<String, Product> o2) {
+                            if( o1.getValue().getRating() != null && o2.getValue().getRating() != null) {
+                                if (order == 0) {
+                                    // sort by name a - z
+                                    Log.d(TAG, o1.getValue().getRating() + " " + o2.getValue().getRating());
+                                    return o1.getValue().getRating().compareTo(o2.getValue().getRating());
+                                } else {
+                                    // sort by name z - a
+                                    Log.d(TAG, o1.getValue().getRating() + " " + o2.getValue().getRating());
+                                    return o2.getValue().getRating().compareTo(o1.getValue().getRating());
+                                }
+                            }
+                            return 0;
+                        }
+                    });
+                break;
+
         }
 
         if (order == 0) {
@@ -897,7 +934,7 @@ public class MainActivity extends AppCompatActivity {
             viewHolder.setImage(getApplicationContext(), model.getProductImage());
             viewHolder.setUid(model.getUid());
             if (model.getRating() == null)
-                viewHolder.setRating((long)0);
+                viewHolder.setRating((long) 0);
             else
                 viewHolder.setRating(model.getRating());
             viewHolder.mView.setOnClickListener(new View.OnClickListener() {
@@ -951,7 +988,7 @@ public class MainActivity extends AppCompatActivity {
             product_rating_bar.setRating(rating);
             SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(itemView.getContext());
             boolean ratingDisplayCheck = SP.getBoolean("ratingButton", true);
-            if(ratingDisplayCheck == false)
+            if (ratingDisplayCheck == false)
                 product_rating_bar.setVisibility(View.INVISIBLE);
             Log.d(TAG + " ratingDisplayCheck", ratingDisplayCheck + "");
         }
