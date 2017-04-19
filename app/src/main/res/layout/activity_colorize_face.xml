@@ -127,22 +127,22 @@
         android:background="@color/white"
         android:visibility="gone">
 
-        <Button
+        <ImageButton
             android:id="@+id/eyeshadow_method1"
             android:layout_width="60dp"
             android:layout_height="60dp" />
 
-        <Button
+        <ImageButton
             android:id="@+id/eyeshadow_method2"
             android:layout_width="60dp"
             android:layout_height="60dp" />
 
-        <Button
+        <ImageButton
             android:id="@+id/eyeshadow_method3"
             android:layout_width="60dp"
             android:layout_height="60dp" />
 
-        <Button
+        <ImageButton
             android:id="@+id/eyeshadow_method4"
             android:layout_width="60dp"
             android:layout_height="60dp" />

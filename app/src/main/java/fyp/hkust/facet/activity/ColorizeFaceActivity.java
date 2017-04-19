@@ -37,6 +37,7 @@ import android.os.HandlerThread;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
@@ -223,7 +224,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
     private String selectedFoundationID, selectedBrushID, selectedEyeshadowID, selectedLipstickID;
     private String selectedFoundationColor, selectedBrushColor, selectedLipstickColor;
     private int colorPosition;
-    private Button eyeshadow_method1, eyeshadow_method2, eyeshadow_method3, eyeshadow_method4;
+    private ImageButton eyeshadow_method1, eyeshadow_method2, eyeshadow_method3, eyeshadow_method4;
     private LinearLayout eyeshadow_method_layout;
     // number,bitmap
     private Map<Integer, Bitmap> saveBitmap = new HashMap<>();
@@ -454,7 +455,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                 makeup_product_list.setVisibility(View.GONE);
                 makeup_color_list.setVisibility(View.GONE);
                 eyeshadow_method_layout.setVisibility(View.GONE);
-                alpha_seekBar.setVisibility(View.GONE);
+                rouge_alpha_select.setVisibility(View.GONE);
                 show_hide_layout_button.setImageResource(R.mipmap.ic_expand_more_black_24dp);
                 checkExpend = false;
             }
@@ -608,7 +609,10 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
 
         makeup_select_layout = (LinearLayout) findViewById(R.id.makeup_select_layout);
         eyeshadow_method_layout = (LinearLayout) findViewById(R.id.eyeshadow_method_layout);
-        eyeshadow_method1 = (Button) findViewById(R.id.eyeshadow_method1);
+        rouge_alpha_select = (LinearLayout) findViewById(R.id.rouge_alpha_select);
+        alpha_seekBar = (SeekBar) findViewById(R.id.alpha_seekBar);
+
+        eyeshadow_method1 = (ImageButton) findViewById(R.id.eyeshadow_method1);
         eyeshadow_method1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -616,7 +620,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                 new LoadingMakeupAsyncTask().execute();
             }
         });
-        eyeshadow_method2 = (Button) findViewById(R.id.eyeshadow_method2);
+        eyeshadow_method2 = (ImageButton) findViewById(R.id.eyeshadow_method2);
         eyeshadow_method2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -624,7 +628,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                 new LoadingMakeupAsyncTask().execute();
             }
         });
-        eyeshadow_method3 = (Button) findViewById(R.id.eyeshadow_method3);
+        eyeshadow_method3 = (ImageButton) findViewById(R.id.eyeshadow_method3);
         eyeshadow_method3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -632,7 +636,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                 new LoadingMakeupAsyncTask().execute();
             }
         });
-        eyeshadow_method4 = (Button) findViewById(R.id.eyeshadow_method4);
+        eyeshadow_method4 = (ImageButton) findViewById(R.id.eyeshadow_method4);
         eyeshadow_method4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -695,17 +699,17 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                     case 0:
                         // type select
                         viewControl(makeup_select_layout, makeup_product_list, makeup_color_list, 0);
-                        alpha_seekBar.setVisibility(View.GONE);
+                        rouge_alpha_select.setVisibility(View.GONE);
                         break;
                     case 1:
                         //product select
                         viewControl(makeup_select_layout, makeup_product_list, makeup_color_list, 0);
-                        alpha_seekBar.setVisibility(View.GONE);
+                        rouge_alpha_select.setVisibility(View.GONE);
                         break;
                     case 2:
                         //color select layout
                         viewControl(makeup_product_list, makeup_color_list, makeup_select_layout, 1);
-                        alpha_seekBar.setVisibility(View.GONE);
+                        rouge_alpha_select.setVisibility(View.GONE);
                         break;
                 }
             }
@@ -718,7 +722,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         view2.setVisibility(View.GONE);
         view3.setVisibility(View.GONE);
         eyeshadow_method_layout.setVisibility(View.GONE);
-        alpha_seekBar.setVisibility(View.GONE);
+        rouge_alpha_select.setVisibility(View.GONE);
         stepCount = step;
     }
 
@@ -2084,12 +2088,12 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
             shapeColor = stringColorToARGB(savedEyeshadowColor.get(0), -60, 0, 0, 0);
             mPaint.setMaskFilter(new BlurMaskFilter(6f, BlurMaskFilter.Blur.NORMAL));
         } else {
-            color1 = stringColorToARGB(savedEyeshadowColor.get(0), -120, 0, 0, 0);
-            color2 = stringColorToARGB(savedEyeshadowColor.get(1), -120, 0, 0, 0);
-            color3 = stringColorToARGB(savedEyeshadowColor.get(2), -120, 0, 0, 0);
-            color4 = stringColorToARGB(savedEyeshadowColor.get(3), -120, 0, 0, 0);
-            shapeColor = stringColorToARGB(savedEyeshadowColor.get(0), -150, 0, 0, 0);
-//            mPaint.setMaskFilter(new BlurMaskFilter(5f, BlurMaskFilter.Blur.NORMAL));
+            color1 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
+            color2 = stringColorToARGB(savedEyeshadowColor.get(1), 0, 0, 0, 0);
+            color3 = stringColorToARGB(savedEyeshadowColor.get(2), 0, 0, 0, 0);
+            color4 = stringColorToARGB(savedEyeshadowColor.get(3), 0, 0, 0, 0);
+            shapeColor = stringColorToARGB(savedEyeshadowColor.get(0), -50, 0, 0, 0);
+            mPaint.setMaskFilter(new BlurMaskFilter(5f, BlurMaskFilter.Blur.NORMAL));
         }
 //        1.
         mPaint.setColor(color1);
@@ -2804,8 +2808,6 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                             Snackbar.LENGTH_SHORT)
                             .setAction("Action", null).show();
 
-                    rouge_alpha_select = (LinearLayout) findViewById(R.id.rouge_alpha_select);
-                    alpha_seekBar = (SeekBar) findViewById(R.id.alpha_seekBar);
                     if (categoryResult == 2) {
                         rouge_alpha_select.setVisibility(View.VISIBLE);
                         alpha_seekBar.setProgress(10);
@@ -3073,6 +3075,14 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                 }
             }
 
+            if(colorArray != null && colorArray.get(0).size() == 4)
+            {
+                eyeshadow_method_layout.setBackgroundColor(Color.WHITE);
+                eyeshadow_method1.setBackgroundResource(R.drawable.eyeshadow1s);
+                eyeshadow_method3.setBackgroundResource(R.drawable.eyeshadow3s);
+                eyeshadow_method4.setBackgroundResource(R.drawable.eyeshadow4s);
+            }
+
             viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -3087,8 +3097,10 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                     for (int i = 0; i < colorArray.get(position).size(); i++)
                         savedEyeshadowColor.add(colorArray.get(position).get(i));
 
-                    if (categoryResult == 3)
+                    if (categoryResult == 3) {
                         eyeshadow_method_layout.setVisibility(View.VISIBLE);
+                    }
+
 //                    drawEyeShadowWithOneColorMethod1(multipleColor);
                     Snackbar.make(v, "Click detected on item " + position + " : " + colorArray.get(position).toString(),
                             Snackbar.LENGTH_SHORT)

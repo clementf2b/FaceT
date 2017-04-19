@@ -38,6 +38,7 @@ import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
+import com.vanniktech.emoji.EmojiTextView;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import fyp.hkust.facet.R;
@@ -72,6 +73,7 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView profile_email;
     private com.melnykov.fab.FloatingActionButton add_product_fab;
     private RecyclerView mNotificaitonList;
+    private EmojiTextView profile_aboutme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,6 +165,7 @@ public class ProfileActivity extends AppCompatActivity {
         mOwnNameField = (TextView) findViewById(R.id.profile_username);
         profile_email = (TextView) findViewById(R.id.profile_email);
         btnEdit = (Button) findViewById(R.id.btn_edit);
+        profile_aboutme = (EmojiTextView) findViewById(R.id.profile_aboutme);
 
         View notification_bottom_layout = (View)findViewById(R.id.notification_bottom_layout);
         mNotificaitonList = (RecyclerView) notification_bottom_layout.findViewById(R.id.notification_list);
@@ -248,6 +251,7 @@ public class ProfileActivity extends AppCompatActivity {
                     Log.e(user_data.getName(), "User data is null!");
                     mOwnNameField.setText(user_data.getName());
                     profile_email.setText(mAuth.getCurrentUser().getEmail());
+                    profile_aboutme.setText(user_data.getAboutMe());
 
                     Picasso.with(getApplicationContext()).load(user_data.getImage()).networkPolicy(NetworkPolicy.OFFLINE).into(profilePic, new Callback() {
                         @Override

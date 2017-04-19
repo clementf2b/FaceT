@@ -37,6 +37,7 @@
     <string name="action_mark_all_read">Mark All as Read</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="title_activity_main2">Main2Activity</string>
+    <string name="product_apply">Apply</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_category">CategoryActivity</string>
 
@@ -64,7 +65,7 @@
 
     <!--activity_main_menu-->
     <string name="store_text">Store Locator</string>
-    <string name="favourite_text">Favourite</string>
+    <string name="vmakeup_text">Virtual Makeup</string>
     <string name="my_account_text">My Account</string>
     <string name="facet_match_text">FaceT Match</string>
     <string name="all_products_text">All Products</string>

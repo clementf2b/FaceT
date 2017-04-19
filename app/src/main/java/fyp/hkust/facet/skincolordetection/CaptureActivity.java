@@ -7,6 +7,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -22,6 +23,7 @@ import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -39,6 +41,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.nhaarman.supertooltips.ToolTip;
 import com.nhaarman.supertooltips.ToolTipRelativeLayout;
 import com.nhaarman.supertooltips.ToolTipView;
@@ -55,11 +60,15 @@ import org.opencv.imgproc.Imgproc;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.activity.MainMenuActivity;
+import fyp.hkust.facet.activity.ProductDetailActivity;
+import fyp.hkust.facet.model.Comment;
 import fyp.hkust.facet.util.FontManager;
 import fyp.hkust.facet.whiteBalance.algorithms.grayWorld.GrayWorld;
 import fyp.hkust.facet.whiteBalance.algorithms.histogramStretching.HistogramStretching;
@@ -389,36 +398,25 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
                 startActivity(intent);
                 return true;
             case R.id.apply_btn:
-                Snackbar.make(this.findViewById(android.R.id.content), "Click apply button =]", Snackbar.LENGTH_SHORT).show();
-                final SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE);
-                pDialog.setCancelable(true);
-                pDialog.setTitleText("Are you sure?")
-                        .setContentText("effect " + selectPhoto + " is the most suitable?")
-                        .setConfirmText("Yes,start it!")
-                        .setCancelText("No")
-                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                Snackbar.make(findViewById(android.R.id.content), "Cancel sweet alert", Snackbar.LENGTH_SHORT).show();
-                                pDialog.dismiss();
-                            }
-                        })
-                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sDialog) {
-                                sDialog
-                                        .setTitleText("Skin Color Detection")
-                                        .setContentText("Skin Color Detection will begin")
-                                        .setConfirmText("OK")
-                                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                            @Override
-                                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                                saveImageAndIntent();
-                                            }
-                                        })
-                                        .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
-                            }
-                        }).show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(CaptureActivity.this, R.style.Theme_AppCompat_Light_Dialog_Alert);
+                builder.setTitle("Are you sure?");
+                builder.setMessage("effect " + selectPhoto + " is the most suitable?");
+                builder.setPositiveButton("Yes,start it!", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        saveImageAndIntent();
+                        Toast.makeText(getApplicationContext(), "您按下OK按鈕", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                //設定Negative按鈕資料
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //按下按鈕時顯示快顯
+                        Toast.makeText(getApplicationContext(), "您按下No按鈕", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                builder.show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
