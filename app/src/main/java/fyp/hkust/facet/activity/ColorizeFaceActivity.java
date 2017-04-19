@@ -3079,6 +3079,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
             {
                 eyeshadow_method_layout.setBackgroundColor(Color.WHITE);
                 eyeshadow_method1.setBackgroundResource(R.drawable.eyeshadow1s);
+                eyeshadow_method2.setBackgroundResource(R.drawable.eyeshadow2s);
                 eyeshadow_method3.setBackgroundResource(R.drawable.eyeshadow3s);
                 eyeshadow_method4.setBackgroundResource(R.drawable.eyeshadow4s);
             }
