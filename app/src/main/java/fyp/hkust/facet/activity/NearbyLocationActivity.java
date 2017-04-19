@@ -120,7 +120,7 @@ public class NearbyLocationActivity extends FragmentActivity implements OnMapRea
                     target.setLatitude(shopList.get(i).getLatitude());
                     target.setLongitude(shopList.get(i).getLongitude());
                     Log.d("before_compare_location", ""+currentLocation.distanceTo(target));
-                    if(currentLocation.distanceTo(target) < 3000 ) {
+                    if(currentLocation.distanceTo(target) < 5000 ) {
                         shopLocationMarker.setVisible(true);
                         shopWithinRange.add(shopList.get(i));
                     }
