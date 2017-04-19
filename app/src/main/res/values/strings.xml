@@ -187,11 +187,10 @@
     <string name="about_me_text">About Me</string>
     <string name="save">Save</string>
     <string-array name="skin_type_array">
-        <item>雞腿飯</item>
-        <item>魯肉飯</item>
-        <item>排骨飯</item>
-        <item>水餃</item>
-        <item>陽春麵</item>
+        <item>Fair</item>
+        <item>Dry</item>
+        <item>Moisture</item>
+        <item>Unknown</item>
     </string-array>
 
     <!--activity_product_detail-->
