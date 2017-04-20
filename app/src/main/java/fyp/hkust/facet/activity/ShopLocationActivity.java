@@ -101,6 +101,7 @@ public class ShopLocationActivity extends FragmentActivity implements OnMapReady
         currentShopName = (TextView) findViewById(R.id.current_shop_name);
         currentShopAddress = (TextView) findViewById(R.id.current_shop_address);
         currentImage = (CircleImageView) findViewById(R.id.current_shop_image);
+
         currentShopName.setText(shop.getName());
         currentShopAddress.setText(shop.getAddress());
         Picasso.with(this).load(shop.getImage()).into(currentImage);

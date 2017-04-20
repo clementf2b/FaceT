@@ -1,13 +1,17 @@
 package fyp.hkust.facet.activity;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -46,6 +50,7 @@ public class ShopListActivity extends AppCompatActivity {
     private HongKongIslandFragment fragmentHK = new HongKongIslandFragment();
     private KowloonFragment fragmentKL = new KowloonFragment();
     private NewTerritoriesFragment fragmentNT = new NewTerritoriesFragment();
+    private Context context;
 
 
     @Override
@@ -165,15 +170,46 @@ public class ShopListActivity extends AppCompatActivity {
     }
 
     public void findNearbyStore(View view) {
-        Intent intent = new Intent(this, NearbyLocationActivity.class);
-        startActivity(intent);
+        boolean status = statusCheck();
+        if (status) {
+            Intent intent = new Intent(this, NearbyLocationActivity.class);
+            Bundle bundle = new Bundle();
+            for(int i = 0; i < shopList.size(); i++ ) {
+                bundle.putSerializable("shop" + i, shopList.get(i));
+            }
+            Log.d("BUNDLE",""+bundle.size());
+            intent.putExtras(bundle);
+            startActivity(intent);
+        }
     }
 
-//    public void itemOnclick(){
-//        Intent intent = new Intent(this, ShopLocationActivity.class);
-//        //based on item add info to intent
-//        startActivity(intent);
-//    }
+    public boolean statusCheck() {
+        final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            buildAlertMessageNoGps();
+            return false;
+        }
+        return true;
+    }
+
+    private void buildAlertMessageNoGps() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, final int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, final int id) {
+                        dialog.cancel();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
+    }
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
