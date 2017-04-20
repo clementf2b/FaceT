@@ -111,11 +111,7 @@ public class OwnProductFragment extends Fragment {
 
         mAuth = FirebaseAuth.getInstance();
 
-        if (getArguments() != null) {
-            userId = getArguments().getString("user_id");
-            Log.d(TAG + " user Id ", userId.toString());
-        } else if (userId == null && mAuth.getCurrentUser() != null)
-            userId = mAuth.getCurrentUser().getUid();
+        userId = mAuth.getCurrentUser().getUid();
 
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Product");
         mDatabase.keepSynced(true);
@@ -146,7 +142,7 @@ public class OwnProductFragment extends Fragment {
                 if (mAuth.getCurrentUser() != null) {
                     for (DataSnapshot ds : dataSnapshot.getChildren()) {
                         Product result = ds.getValue(Product.class);
-                        if (result.getUid() == userId) {
+                        if (result.getUid().equals(userId) ){
                             mOwnProducts.put(ds.getKey(), result);
                             Log.d(" product " + ds.getKey(), result.toString());
                         }
