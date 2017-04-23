@@ -91,7 +91,7 @@ public class OwnProductFragment extends Fragment {
     private Map<String, Brand> mBrand = new HashMap<String, Brand>();
     private List<String> brandList = new ArrayList<>();
     private List<String> brandIDList = new ArrayList<>();
-    private String userId;
+    private String userId = "";
     private TextView no_product_textview;
 
     public OwnProductFragment() {
@@ -111,7 +111,8 @@ public class OwnProductFragment extends Fragment {
 
         mAuth = FirebaseAuth.getInstance();
 
-        userId = mAuth.getCurrentUser().getUid();
+        if (mAuth.getCurrentUser() != null)
+            userId = mAuth.getCurrentUser().getUid();
 
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Product");
         mDatabase.keepSynced(true);
@@ -142,9 +143,11 @@ public class OwnProductFragment extends Fragment {
                 if (mAuth.getCurrentUser() != null) {
                     for (DataSnapshot ds : dataSnapshot.getChildren()) {
                         Product result = ds.getValue(Product.class);
-                        if (result.getUid().equals(userId) ){
-                            mOwnProducts.put(ds.getKey(), result);
-                            Log.d(" product " + ds.getKey(), result.toString());
+                        if (userId.length() > 0) {
+                            if (result.getUid().equals(userId)) {
+                                mOwnProducts.put(ds.getKey(), result);
+                                Log.d(" product " + ds.getKey(), result.toString());
+                            }
                         }
                     }
 

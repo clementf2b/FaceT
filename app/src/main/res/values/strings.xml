@@ -15,6 +15,7 @@
     <string name="closeDrawer">close_drawer</string>
 
     <!-- Navigation Drawer menu labels -->
+    <string name="nav_facet_match">FaceT Match</string>
     <string name="nav_vmakeup_label">Virtual Makeup</string>
     <string name="nav_product_label">Product</string>
     <string name="nav_store_location_label">Store Location</string>

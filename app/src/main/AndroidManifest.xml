@@ -88,10 +88,6 @@
             android:name=".activity.LoginActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.AccountActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar_nav" />
-        <activity
             android:name=".skincolordetection.ShowCameraViewActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait"

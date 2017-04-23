@@ -1194,13 +1194,17 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                     if (bitmapArray[x + y * bitmap.getWidth()] == Color.BLUE) {
                         float[] hsv = new float[3];
                         Color.RGBToHSV(Color.red(originalArray[x + y * bitmap.getWidth()]), Color.green(originalArray[x + y * bitmap.getWidth()]), Color.blue(originalArray[x + y * bitmap.getWidth()]), hsv);
-                        Log.d(TAG, "face[" + x + " , " + y + "] : " + hsv[0] + " , " + hsv[1] + " , " + hsv[2] + " ] " + foundationHSV[0] + " " + foundationHSV[1] + " " + foundationHSV[2]);
-                        if (foundationHSV[0] > 30f) {
+//                        Log.d(TAG, "face[" + x + " , " + y + "] : " + hsv[0] + " , " + hsv[1] + " , " + hsv[2] + " ] " + foundationHSV[0] + " " + foundationHSV[1] + " " + foundationHSV[2]);
+                        if (foundationHSV[0] > 28f) {
                             hsv[0] = (hsv[0] + foundationHSV[0]) / 2.2f;
                         } else
                             hsv[0] = foundationHSV[0];
 
-                        hsv[1] = (foundationHSV[1] + hsv[1]) / 2f;
+                        if( hsv[1] > foundationHSV[1]) {
+                            hsv[1] = foundationHSV[1];
+                            Log.d(TAG, "face[" + x + " , " + y + "] : " + hsv[0] + " , " + hsv[1] + " , " + hsv[2] + " ] " + foundationHSV[0] + " " + foundationHSV[1] + " " + foundationHSV[2]);
+                        }
+
 //                        hsv[1] = hsv[1] + Math.abs(foundationHSV[1] - hsv[1]);
 //                        Log.d(TAG + " hsv[0] = foundationHSV[0] ", hsv[0] + " " + foundationHSV[0]);
                         tempArray[x + y * bitmap.getWidth()] = Color.HSVToColor(hsv);

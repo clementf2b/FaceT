@@ -37,9 +37,10 @@
                         android:id="@+id/toolbar_title"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_gravity="center_vertical|center_horizontal"
-                        android:text="@string/app_name"
-                        android:textSize="22dp"/>
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/nav_store_location_label"
+                        android:textSize="18dp"
+                        android:textStyle="bold" />
 
                 </android.support.v7.widget.Toolbar>
 
@@ -54,20 +55,20 @@
                     android:id="@+id/button_nearby"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="5dp"
-                    android:paddingLeft="15dp"
-                    android:paddingRight="25dp"
-                    android:text="@string/nearby_button"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="false"
+                    android:background="@drawable/nearby_button_shadow"
                     android:drawableLeft="@mipmap/ic_location_on_white_24dp"
                     android:drawablePadding="12dp"
                     android:drawableTint="@color/colorPrimary"
-                    android:textSize="16sp"
+                    android:onClick="findNearbyStore"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="25dp"
+                    android:paddingTop="4dp"
+                    android:text="@string/nearby_button"
                     android:textColor="@color/colorPrimary"
-                    android:background="@drawable/nearby_button_shadow"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="false"
-                    android:onClick="findNearbyStore"/>
+                    android:textSize="16sp" />
 
             </RelativeLayout>
 
@@ -75,26 +76,26 @@
                 android:id="@+id/tabs_shop_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:tabMode="fixed"
-                app:tabGravity="fill"
                 android:background="@color/colorPrimary"
+                app:tabGravity="fill"
                 app:tabIndicatorColor="@color/white"
                 app:tabIndicatorHeight="2dp"
+                app:tabMode="fixed"
                 app:tabSelectedTextColor="@color/white"
-                app:tabTextColor="#88FFFFFF"
-                app:tabTextAppearance="@style/TabLayoutStyle"/>
+                app:tabTextAppearance="@style/TabLayoutStyle"
+                app:tabTextColor="#88FFFFFF" />
 
             <android.support.v4.view.ViewPager
                 android:id="@+id/viewpager_shop_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:fitsSystemWindows="true"
-                android:background="@color/shop_list_background"/>
+                android:background="@color/shop_list_background"
+                android:fitsSystemWindows="true" />
 
         </LinearLayout>
 
         <android.support.design.widget.NavigationView
-            android:id="@+id/navigation_view_shop_list"
+            android:id="@+id/navigation_view"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="start"

@@ -2,15 +2,21 @@ package fyp.hkust.facet.activity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -19,6 +25,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -39,6 +46,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TabHost;
@@ -58,9 +66,12 @@ import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.webianks.library.PopupBubble;
 
+import java.io.File;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -70,9 +81,12 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import fyp.hkust.facet.R;
+import fyp.hkust.facet.adapter.ArrayAdapterWithIcon;
 import fyp.hkust.facet.model.Brand;
 import fyp.hkust.facet.model.Product;
 import fyp.hkust.facet.model.User;
+import fyp.hkust.facet.skincolordetection.CaptureActivity;
+import fyp.hkust.facet.skincolordetection.ShowCameraViewActivity;
 import fyp.hkust.facet.util.CheckConnectivity;
 import fyp.hkust.facet.util.CustomTypeFaceSpan;
 import fyp.hkust.facet.util.FontManager;
@@ -81,6 +95,9 @@ public class MainActivity extends AppCompatActivity {
 
     private final static String TAG = "MainActivity";
     private static View activity_main_layout;
+    private static final int GALLERY_REQUEST = 1;
+    private static final int CAM_REQUEST = 3;
+
     private RecyclerView mProductList;
     private GridLayoutManager mgr;
     private DatabaseReference mDatabase;
@@ -120,6 +137,8 @@ public class MainActivity extends AppCompatActivity {
     private PopupBubble new_product_popup_bubble;
     private Swipe swipe;
     private NavigationView sort_view;
+    private String captureImageFullPath;
+    private int buttonNumber = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,26 +195,35 @@ public class MainActivity extends AppCompatActivity {
                 //Check to see which item was being clicked and perform appropriate action
                 switch (menuItem.getItemId()) {
                     //Replacing the main content with ContentFragment Which is our Inbox View;
-                    case R.id.nav_virtual_makeup:
+                    case R.id.nav_facet_match:
                         navItemId = 0;
+                        showAlertDialog();
+                        menuItem.setChecked(true);
+                        break;
+                    case R.id.nav_virtual_makeup:
+                        navItemId = 1;
+                        showMakeUpDialog();
                         menuItem.setChecked(true);
                         break;
                     case R.id.nav_product:
-                        navItemId = 1;
+                        navItemId = 2;
+                        startActivity(new Intent(MainActivity.this, MainActivity.class));
                         menuItem.setChecked(true);
                         break;
                     case R.id.nav_store_location:
-                        navItemId = 2;
+                        navItemId = 3;
+                        startActivity(new Intent(MainActivity.this, ShopListActivity.class));
                         menuItem.setChecked(true);
                         break;
                     case R.id.nav_profile:
-                        navItemId = 3;
+                        navItemId = 4;
+                        startActivity(new Intent(MainActivity.this, ProfileActivity.class));
                         menuItem.setChecked(true);
                         break;
                     case R.id.nav_setting:
-                        navItemId = 4;
-                        menuItem.setChecked(true);
+                        navItemId = 5;
                         startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                        menuItem.setChecked(true);
                         break;
                 }
 
@@ -361,7 +389,7 @@ public class MainActivity extends AppCompatActivity {
         headerphoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent accountIntent = new Intent(MainActivity.this, AccountActivity.class);
+                Intent accountIntent = new Intent(MainActivity.this, ProfileActivity.class);
                 accountIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(accountIntent);
             }
@@ -543,7 +571,7 @@ public class MainActivity extends AppCompatActivity {
                                 count++;
                             }
                             Log.d(" rating " + ratingDs.getKey(), ratingDs.getValue().toString());
-                            Log.d(TAG + " totalRating / count " , totalRating + " " + count);
+                            Log.d(TAG + " totalRating / count ", totalRating + " " + count);
                             if (count > 0 && mProducts.containsKey(ratingDs.getKey()))
                                 mProducts.get(ratingDs.getKey()).setRating((long) (totalRating / count));
                             count = 0;
@@ -874,6 +902,42 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri pickedImage = data.getData();
+            Log.d(TAG, "selected!!!" + " : " + pickedImage.getPath());
+            // Let's read picked image path using content resolver
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+            Cursor cursor = getContentResolver().query(pickedImage,
+                    filePathColumn, null, null, null);
+            cursor.moveToFirst();
+
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String picturePath = cursor.getString(columnIndex);
+            cursor.close();
+
+            Log.d(TAG + "Path:", picturePath);
+            Intent intent = new Intent();
+            if (buttonNumber == 1)
+                intent.setClass(MainActivity.this, CaptureActivity.class);
+            else if (buttonNumber == 2)
+                intent.setClass(MainActivity.this, ColorizeFaceActivity.class);
+            intent.putExtra("path", picturePath);
+            //intent.putExtra("color" , "" + mBlobColorHsv);
+            startActivity(intent);
+        } else if (requestCode == CAM_REQUEST) {
+            Intent intent = new Intent();
+            intent.setClass(MainActivity.this, ColorizeFaceActivity.class);
+            intent.putExtra("path", captureImageFullPath);
+            startActivity(intent);
+        }
+
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (item.getItemId() == R.id.action_refine) {
@@ -1033,5 +1097,90 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    private void showAlertDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose the way to get your selfie");
+
+        builder.setIcon(R.mipmap.app_icon);
+        builder.setCancelable(true);
+
+        final String[] items = new String[]{"From Gallery", "Take Photo"};
+        final Integer[] icons = new Integer[]{R.drawable.colorful_gallery, R.drawable.colorful_camera};
+        ListAdapter adapter = new ArrayAdapterWithIcon(getApplication(), items, icons);
+
+        builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                switch (item) {
+                    case 0: {
+                        buttonNumber = 1;
+                        Intent intent = new Intent(
+                                Intent.ACTION_PICK,
+                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        startActivityForResult(intent, GALLERY_REQUEST);
+                        break;
+                    }
+                    case 1: {
+                        Intent cameraViewIntent = new Intent(MainActivity.this, ShowCameraViewActivity.class);
+//                cameraViewIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(cameraViewIntent);
+                        break;
+                    }
+                }
+
+            }
+        }).show();
+    }
+
+    private void showMakeUpDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose the way to get your selfie");
+
+        builder.setIcon(R.mipmap.app_icon);
+        builder.setCancelable(true);
+
+        final String[] items = new String[]{"From Gallery", "Take Photo"};
+        final Integer[] icons = new Integer[]{R.drawable.colorful_gallery, R.drawable.colorful_camera};
+        ListAdapter adapter = new ArrayAdapterWithIcon(getApplication(), items, icons);
+
+        builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                switch (item) {
+                    case 0: {
+                        buttonNumber = 2;
+                        Intent intent = new Intent(
+                                Intent.ACTION_PICK,
+                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        startActivityForResult(intent, GALLERY_REQUEST);
+                        break;
+                    }
+                    case 1: {
+                        Intent cameraViewIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        File file = getFile();
+                        cameraViewIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+                        startActivityForResult(cameraViewIntent, CAM_REQUEST);
+                        break;
+                    }
+                }
+
+            }
+        }).show();
+    }
+
+    private File getFile() {
+
+        File folder = new File("sdcard/FaceT");
+
+        if (!folder.exists()) {
+            folder.mkdir();
+        }
+
+        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+        captureImageFullPath = folder + "/makeup_" + currentDateTimeString;
+        File imageFile = new File(captureImageFullPath);
+        return imageFile;
     }
 }

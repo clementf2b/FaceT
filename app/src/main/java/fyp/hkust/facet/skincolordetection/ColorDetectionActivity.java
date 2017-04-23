@@ -8,10 +8,12 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -363,10 +365,22 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
         }
     }
 
+
     @Override
-    public boolean onSupportNavigateUp(){
-        startActivity(new Intent(ColorDetectionActivity.this,MainMenuActivity.class));
-        return true;
+    public void onBackPressed() {
+        super.onBackPressed();
+        this.finish();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId())
+        {
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void seteffect(PieChart colorPie) {

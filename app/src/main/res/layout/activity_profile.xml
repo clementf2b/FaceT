@@ -13,8 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/cardview_light_background"
-        tools:context="fyp.hkust.facet.activity.MainActivity"
-        >
+        tools:context="fyp.hkust.facet.activity.MainActivity">
 
         <!-- your content layout -->
 
@@ -108,16 +107,16 @@
                         android:id="@+id/profile_aboutme"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_alignEnd="@+id/btn_edit"
+                        android:layout_alignStart="@+id/profile_picture"
+                        android:layout_below="@+id/profile_picture"
+                        android:layout_marginBottom="21dp"
+                        android:layout_marginTop="55dp"
                         android:text="@string/description_label"
                         android:textColor="@color/profile_name_text_color"
                         android:textIsSelectable="true"
                         android:textSize="16dp"
-                        app:emojiSize="16dp"
-                        android:layout_marginTop="55dp"
-                        android:layout_marginBottom="21dp"
-                        android:layout_below="@+id/profile_picture"
-                        android:layout_alignStart="@+id/profile_picture"
-                        android:layout_alignEnd="@+id/btn_edit" />  
+                        app:emojiSize="16dp" />  
 
                     <android.support.v7.widget.Toolbar
                         android:id="@+id/toolbar"
@@ -125,7 +124,20 @@
                         android:layout_height="?attr/actionBarSize"
                         android:minHeight="?attr/actionBarSize"
                         app:layout_collapseMode="pin"
-                        app:layout_scrollFlags="scroll|enterAlways" />
+                        app:layout_scrollFlags="scroll|enterAlways">
+
+                        <TextView
+                            android:id="@+id/toolbar_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical|center_horizontal"
+                            android:text="@string/nav_profile_label"
+                            android:textColor="@color/white"
+                            android:textSize="18dp"
+                            android:gravity="center_vertical"
+                            android:textStyle="bold" />
+
+                    </android.support.v7.widget.Toolbar>
 
                     <android.support.design.widget.TabLayout
                         android:id="@+id/tabs"
@@ -133,8 +145,8 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
                         android:layout_below="@+id/profile_aboutme"
-                        android:background="@color/colorPrimary"
                         android:layout_marginTop="5dp"
+                        android:background="@color/colorPrimary"
                         app:tabGravity="fill"
                         app:tabIndicatorColor="@color/white"
                         app:tabIndicatorHeight="2dp"

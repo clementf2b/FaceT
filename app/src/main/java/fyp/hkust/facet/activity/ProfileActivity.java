@@ -1,11 +1,14 @@
 package fyp.hkust.facet.activity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -13,10 +16,13 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,6 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,18 +47,28 @@ import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.vanniktech.emoji.EmojiTextView;
 
+import java.io.File;
+import java.text.DateFormat;
+import java.util.Date;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 import fyp.hkust.facet.R;
+import fyp.hkust.facet.adapter.ArrayAdapterWithIcon;
 import fyp.hkust.facet.adapter.ViewPagerAdapter;
 import fyp.hkust.facet.fragment.FavouriteProductFragment;
 import fyp.hkust.facet.fragment.OwnProductFragment;
 import fyp.hkust.facet.model.Notification;
 import fyp.hkust.facet.model.User;
+import fyp.hkust.facet.skincolordetection.ShowCameraViewActivity;
+import fyp.hkust.facet.util.CustomTypeFaceSpan;
 import fyp.hkust.facet.util.FontManager;
 
 public class ProfileActivity extends AppCompatActivity {
 
     private static final String TAG = ProfileActivity.class.getSimpleName();
+    private static final int GALLERY_REQUEST = 1;
+    private static final int CAM_REQUEST = 3;
+
     private TabLayout tabLayout;
     private ViewPager viewPager;
 
@@ -62,6 +79,7 @@ public class ProfileActivity extends AppCompatActivity {
     DrawerLayout drawerLayout;
     private int navItemId;
     private Toolbar toolbar;
+    private NavigationView view;
 
     private DatabaseReference mDatabase;
     private DatabaseReference mDatabaseUsers;
@@ -74,6 +92,8 @@ public class ProfileActivity extends AppCompatActivity {
     private com.melnykov.fab.FloatingActionButton add_product_fab;
     private RecyclerView mNotificaitonList;
     private EmojiTextView profile_aboutme;
+    private int buttonNumber = 0;
+    private String captureImageFullPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,14 +110,15 @@ public class ProfileActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
         changeTabsFont();
 
-
         //start
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setBackground(new ColorDrawable(Color.parseColor("#00000000")));
         setSupportActionBar(toolbar);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        NavigationView view = (NavigationView) findViewById(R.id.navigation_view);
+        view = (NavigationView) findViewById(R.id.navigation_view);
+        applyCustomFontToWholeMenu();
+
         view.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
@@ -109,6 +130,61 @@ public class ProfileActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+        //Setting Navigation View Item Selected Listener to handle the item click of the navigation menu
+        view.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+
+            // This method will trigger on item Click of navigation menu
+            @Override
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
+
+                //Check to see which item was being clicked and perform appropriate action
+                switch (menuItem.getItemId()) {
+                    //Replacing the main content with ContentFragment Which is our Inbox View;
+                    case R.id.nav_facet_match:
+                        navItemId = 0;
+                        showAlertDialog();
+                        menuItem.setChecked(true);
+                        break;
+                    case R.id.nav_virtual_makeup:
+                        navItemId = 1;
+                        showMakeUpDialog();
+                        menuItem.setChecked(true);
+                        break;
+                    case R.id.nav_product:
+                        navItemId = 2;
+                        startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+                        menuItem.setChecked(true);
+                        break;
+                    case R.id.nav_store_location:
+                        navItemId = 3;
+                        startActivity(new Intent(ProfileActivity.this, ShopListActivity.class));
+                        menuItem.setChecked(true);
+                        break;
+                    case R.id.nav_profile:
+                        navItemId = 4;
+                        startActivity(new Intent(ProfileActivity.this, ProfileActivity.class));
+                        menuItem.setChecked(true);
+                        break;
+                    case R.id.nav_setting:
+                        navItemId = 5;
+                        startActivity(new Intent(ProfileActivity.this, SettingsActivity.class));
+                        menuItem.setChecked(true);
+                        break;
+                }
+
+                //Checking if the item is in checked state or not, if not make it in checked state
+                if (menuItem.isChecked()) {
+                    menuItem.setChecked(false);
+                } else {
+                    menuItem.setChecked(true);
+                }
+                menuItem.setChecked(true);
+
+                return true;
+            }
+        });
+
         NavigationView notification_view = (NavigationView) findViewById(R.id.notification_navigation_view);
         notification_view.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -194,6 +270,7 @@ public class ProfileActivity extends AppCompatActivity {
         if(mAuth.getCurrentUser()!=null) {
             setupUserData();
             getUserData();
+            setupNavHeader();
         }
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -216,6 +293,67 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void setupNavHeader() {
+
+        View header = view.getHeaderView(0);
+        Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
+        final TextView usernameHeader = (TextView) header.findViewById(R.id.username_header);
+        final TextView emailHeader = (TextView) header.findViewById(R.id.email_header);
+        usernameHeader.setTypeface(fontType);
+        emailHeader.setTypeface(fontType);
+        final CircleImageView headerphoto = (CircleImageView) header.findViewById(R.id.profile_image);
+        headerphoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent accountIntent = new Intent(ProfileActivity.this, ProfileActivity.class);
+                accountIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(accountIntent);
+            }
+        });
+
+        if (mAuth.getCurrentUser() != null) {
+            mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    final User user_data = dataSnapshot.getValue(User.class);
+                    if (user_data != null) {
+
+                        Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
+                        usernameHeader.setTypeface(fontType);
+                        emailHeader.setTypeface(fontType);
+
+                        usernameHeader.setText(user_data.getName());
+                        if (user_data.getEmail() != null && user_data.getEmail().length() > 0)
+                            emailHeader.setText(user_data.getEmail());
+                        else if (user_data.getEmail() == null || user_data.getEmail().length() == 0)
+                            emailHeader.setText(mAuth.getCurrentUser().getEmail());
+
+                        Picasso.with(getApplicationContext()).load(user_data.getImage()).networkPolicy(NetworkPolicy.OFFLINE).into(headerphoto, new Callback() {
+                            @Override
+                            public void onSuccess() {
+                            }
+
+                            @Override
+                            public void onError() {
+                                Picasso.with(getApplicationContext())
+                                        .load(user_data.getImage())
+                                        .centerCrop()
+                                        .fit()
+                                        .into(headerphoto);
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+    }
+
 
     private void checkUserExist() {
 
@@ -472,5 +610,114 @@ public class ProfileActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    private void showAlertDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose the way to get your selfie");
+
+        builder.setIcon(R.mipmap.app_icon);
+        builder.setCancelable(true);
+
+        final String[] items = new String[]{"From Gallery", "Take Photo"};
+        final Integer[] icons = new Integer[]{R.drawable.colorful_gallery, R.drawable.colorful_camera};
+        ListAdapter adapter = new ArrayAdapterWithIcon(getApplication(), items, icons);
+
+        builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                switch (item) {
+                    case 0: {
+                        buttonNumber = 1;
+                        Intent intent = new Intent(
+                                Intent.ACTION_PICK,
+                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        startActivityForResult(intent, GALLERY_REQUEST);
+                        break;
+                    }
+                    case 1: {
+                        Intent cameraViewIntent = new Intent(ProfileActivity.this, ShowCameraViewActivity.class);
+//                cameraViewIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(cameraViewIntent);
+                        break;
+                    }
+                }
+
+            }
+        }).show();
+    }
+
+    private void showMakeUpDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose the way to get your selfie");
+
+        builder.setIcon(R.mipmap.app_icon);
+        builder.setCancelable(true);
+
+        final String[] items = new String[]{"From Gallery", "Take Photo"};
+        final Integer[] icons = new Integer[]{R.drawable.colorful_gallery, R.drawable.colorful_camera};
+        ListAdapter adapter = new ArrayAdapterWithIcon(getApplication(), items, icons);
+
+        builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                switch (item) {
+                    case 0: {
+                        buttonNumber = 2;
+                        Intent intent = new Intent(
+                                Intent.ACTION_PICK,
+                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        startActivityForResult(intent, GALLERY_REQUEST);
+                        break;
+                    }
+                    case 1: {
+                        Intent cameraViewIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        File file = getFile();
+                        cameraViewIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+                        startActivityForResult(cameraViewIntent, CAM_REQUEST);
+                        break;
+                    }
+                }
+
+            }
+        }).show();
+    }
+
+    private File getFile() {
+
+        File folder = new File("sdcard/FaceT");
+
+        if (!folder.exists()) {
+            folder.mkdir();
+        }
+
+        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+        captureImageFullPath = folder + "/makeup_" + currentDateTimeString;
+        File imageFile = new File(captureImageFullPath);
+        return imageFile;
+    }
+
+    private void applyCustomFontToWholeMenu() {
+        Menu m = view.getMenu();
+        for (int i = 0; i < m.size(); i++) {
+            MenuItem mi = m.getItem(i);
+//            //for applying a font to subMenu ...
+//            SubMenu subMenu = mi.getSubMenu();
+//            if (subMenu!=null && subMenu.size() >0 ) {
+//                for (int j=0; j <subMenu.size();j++) {
+//                    MenuItem subMenuItem = subMenu.getItem(j);
+//                    applyFontToMenuItem(subMenuItem);
+//                }
+//            }
+            //the method we have create in activity
+            applyFontToMenuItem(mi);
+        }
+    }
+
+    private void applyFontToMenuItem(MenuItem mi) {
+        Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
+        SpannableString mNewTitle = new SpannableString(mi.getTitle());
+        mNewTitle.setSpan(new CustomTypeFaceSpan("", fontType), 0, mNewTitle.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+        mi.setTitle(mNewTitle);
     }
 }
