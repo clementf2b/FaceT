@@ -1,7 +1,6 @@
 package fyp.hkust.facet.activity;
 
 import android.Manifest;
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
@@ -25,7 +24,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
@@ -55,7 +53,9 @@ public class MainMenuActivity extends AppCompatActivity {
     private static String[] PERMISSIONS_REQ = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.CAMERA
+            Manifest.permission.CAMERA,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
     };
     private static final int REQUEST_CODE_PERMISSION = 2;
     private View activity_main_menu_layout;
@@ -211,7 +211,7 @@ public class MainMenuActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Choose the way to get your selfie");
 
-        builder.setIcon(R.drawable.app_icon48);
+        builder.setIcon(R.drawable.app_icon_100);
         builder.setCancelable(true);
 
         final String[] items = new String[]{"From Gallery", "Take Photo"};
@@ -246,7 +246,7 @@ public class MainMenuActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Choose the way to get your selfie");
 
-        builder.setIcon(R.drawable.app_icon48);
+        builder.setIcon(R.drawable.app_icon_100);
         builder.setCancelable(true);
 
         final String[] items = new String[]{"From Gallery", "Take Photo"};
@@ -362,10 +362,14 @@ public class MainMenuActivity extends AppCompatActivity {
         int write_permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         int read_persmission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         int camera_permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA);
+        int map_access_permission1 = ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION);
+        int map_access_permission2 = ActivityCompat.checkSelfPermission(activity,Manifest.permission.ACCESS_COARSE_LOCATION);
 
         if (write_permission != PackageManager.PERMISSION_GRANTED ||
                 read_persmission != PackageManager.PERMISSION_GRANTED ||
-                camera_permission != PackageManager.PERMISSION_GRANTED) {
+                camera_permission != PackageManager.PERMISSION_GRANTED ||
+                map_access_permission1 != PackageManager.PERMISSION_GRANTED ||
+                map_access_permission2 != PackageManager.PERMISSION_GRANTED) {
             // We don't have permission so prompt the user
             ActivityCompat.requestPermissions(
                     activity,
