@@ -186,7 +186,7 @@ public class MakeupProductFragment extends DialogFragment {
 
             if (model.getCategory().equals("Foundation")) {
                 viewHolder.setProduct_color_image(model.getColor().get(foundationColorPostion));
-            } else if (model.getCategory().equals("Blush")) {
+            } else if (model.getCategory().equals("Brush")) {
                 viewHolder.setProduct_color_image(model.getColor().get(brushColorPostion));
             } else if (model.getCategory().equals("Eyeshadows")) {
                 viewHolder.setProduct_color_image(model.getColor().get(eyeshadowColorPostion));
