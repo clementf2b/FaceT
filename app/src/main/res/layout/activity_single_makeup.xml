@@ -12,9 +12,6 @@
         android:id="@+id/imageView1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/top_bar_layout"
         android:layout_above="@+id/makeup_color_list" />
 
     <Button

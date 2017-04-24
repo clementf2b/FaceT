@@ -955,7 +955,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
 
                                             }
                                         });
-                                        Toast.makeText(getApplicationContext(), "您按下OK按鈕", Toast.LENGTH_SHORT).show();
+//                                        Toast.makeText(getApplicationContext(), "您按下OK按鈕", Toast.LENGTH_SHORT).show();
                                     }
                                 });
                                 //設定Negative按鈕資料
@@ -963,7 +963,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         //按下按鈕時顯示快顯
-                                        Toast.makeText(getApplicationContext(), "您按下Cancel按鈕", Toast.LENGTH_SHORT).show();
+//                                        Toast.makeText(getApplicationContext(), "您按下Cancel按鈕", Toast.LENGTH_SHORT).show();
                                     }
                                 });
                                 builder.show();
@@ -972,8 +972,8 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                         });
                     }
 
-                    Snackbar snackbar = Snackbar.make(activity_product_detail_layout, "Loaded comments successful.", Snackbar.LENGTH_LONG);
-                    snackbar.show();
+//                    Snackbar snackbar = Snackbar.make(activity_product_detail_layout, "Loaded comments successful.", Snackbar.LENGTH_LONG);
+//                    snackbar.show();
                 }
             }
         };

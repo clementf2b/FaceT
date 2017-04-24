@@ -2765,9 +2765,9 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                     viewHolder.select_color_layout.setBackgroundResource(0);
                     notifyDataSetChanged();
                     new LoadingMakeupAsyncTask().execute(new Integer(position));
-                    Snackbar.make(v, "Click detected on item " + position + " : " + colorSet.get(position).toString(),
-                            Snackbar.LENGTH_SHORT)
-                            .setAction("Action", null).show();
+//                    Snackbar.make(v, "Click detected on item " + position + " : " + colorSet.get(position).toString(),
+//                            Snackbar.LENGTH_SHORT)
+//                            .setAction("Action", null).show();
 
                     if (categoryResult == 2) {
                         rouge_alpha_select.setVisibility(View.VISIBLE);
@@ -3086,9 +3086,9 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                     }
 
 //                    drawEyeShadowWithOneColorMethod1(multipleColor);
-                    Snackbar.make(v, "Click detected on item " + position + " : " + colorArray.get(position).toString(),
-                            Snackbar.LENGTH_SHORT)
-                            .setAction("Action", null).show();
+//                    Snackbar.make(v, "Click detected on item " + position + " : " + colorArray.get(position).toString(),
+//                            Snackbar.LENGTH_SHORT)
+//                            .setAction("Action", null).show();
 
                     //new一個intent物件，並指定Activity切換的class
 
