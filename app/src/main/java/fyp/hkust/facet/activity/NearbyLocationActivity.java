@@ -9,6 +9,7 @@ import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -18,7 +19,10 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -41,7 +45,7 @@ import fyp.hkust.facet.util.FontManager;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class NearbyLocationActivity extends FragmentActivity implements OnMapReadyCallback {
+public class NearbyLocationActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleMap mMap;
     private ImageButton normal_map_button, shop_location_button, my_location_button;
@@ -52,7 +56,10 @@ public class NearbyLocationActivity extends FragmentActivity implements OnMapRea
     private TextView currentShopName, currentShopAddress;
     private CircleImageView currentImage;
     private LinearLayout bottomPanel;
-    private Location currentLocation;
+    private Location mLastLocation;
+    private LocationRequest mLocationRequest;
+    private int initialize = 0;
+    private int shopFlag = 0 ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +71,8 @@ public class NearbyLocationActivity extends FragmentActivity implements OnMapRea
 
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addApi(LocationServices.API)
+                    .addApi(LocationServices.API).addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
                     .build();
         }
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -119,18 +127,32 @@ public class NearbyLocationActivity extends FragmentActivity implements OnMapRea
                     Location target = new Location("target");
                     target.setLatitude(shopList.get(i).getLatitude());
                     target.setLongitude(shopList.get(i).getLongitude());
-                    Log.d("before_compare_location", ""+currentLocation.distanceTo(target));
-                    if(currentLocation.distanceTo(target) < 5000 ) {
+                    Log.d("before_compare_location", "" + mLastLocation.distanceTo(target));
+                    if (mLastLocation.distanceTo(target) < 5000) {
                         shopLocationMarker.setVisible(true);
                         shopWithinRange.add(shopList.get(i));
                     }
                 }
-                LatLng myCurrentLatLng = new LatLng(shopWithinRange.get(2).getLatitude(), shopWithinRange.get(2).getLongitude());
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myCurrentLatLng, 13), 2000, null);
-                currentShopName.setText(shopWithinRange.get(2).getName());
-                currentShopAddress.setText(shopWithinRange.get(2).getAddress());
-                Picasso.with(getApplicationContext()).load(shopWithinRange.get(2).getImage()).into(currentImage);
-                bottomPanel.setVisibility(View.VISIBLE);
+                if(shopWithinRange.size()==0)
+                {
+                    Snackbar.make(v, "No shop is nearby", Snackbar.LENGTH_SHORT)
+                            .setAction("Action", null).show();
+                }else {
+                    LatLng myCurrentLatLng = new LatLng(shopWithinRange.get(shopFlag).getLatitude(), shopWithinRange.get(shopFlag).getLongitude());
+                    Marker currentMarker = mMap.addMarker(new MarkerOptions().position(myCurrentLatLng)
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
+                    currentMarker.setVisible(true);
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myCurrentLatLng, 16), 2000, null);
+                    currentShopName.setText(shopWithinRange.get(shopFlag).getName());
+                    currentShopAddress.setText(shopWithinRange.get(shopFlag).getAddress());
+                    Picasso.with(getApplicationContext()).load(shopWithinRange.get(shopFlag).getImage()).into(currentImage);
+                    bottomPanel.setVisibility(View.VISIBLE);
+                    if(shopFlag == (shopWithinRange.size()-1)){
+                        shopFlag = 0;
+                    }else{
+                        shopFlag = shopFlag +1;
+                    }
+                }
             }
         });
 
@@ -142,7 +164,6 @@ public class NearbyLocationActivity extends FragmentActivity implements OnMapRea
             }
         });
 
-//        locateYourself();
     }
 
     public void statusCheck() {
@@ -176,21 +197,113 @@ public class NearbyLocationActivity extends FragmentActivity implements OnMapRea
         statusCheck();
         if (ContextCompat.checkSelfPermission(NearbyLocationActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
-            mMap.setMyLocationEnabled(true);
-            mMap.getUiSettings().setMyLocationButtonEnabled(false);
+//            mMap.setMyLocationEnabled(true);
+//            mMap.getUiSettings().setMyLocationButtonEnabled(false);
         } else {
             // Show rationale and request permission.
             locationTask();
         }
 
         if (LocationServices.FusedLocationApi.getLocationAvailability(mGoogleApiClient).isLocationAvailable()) {
-            currentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            if (currentLocation != null) {
-                LatLng myCurrentLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myCurrentLocation, 17), 2000, null);
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            if (mLastLocation != null) {
+                LatLng myCurrentLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myCurrentLocation, 14), 3000, null);
                 bottomPanel.setVisibility(View.GONE);
             }
         }
+    }
+
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        Log.d("MYTAG", "GOOGLE API CONNECTED!");
+        statusCheck();
+        if (ContextCompat.checkSelfPermission(NearbyLocationActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            mLocationRequest = new LocationRequest();
+            mLocationRequest.setInterval(1);
+            mLocationRequest.setFastestInterval(1);
+            mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+            mLocationRequest.setSmallestDisplacement(0);
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            Log.d("onConnected", "here!!!!!!!!!!!!");
+
+
+//            if (mLastLocation != null) {
+//                Log.d("onConnected", "not null!!!!!!!!!!!!");
+////                LatLng newLocation = new LatLng(mLastLocation.getLongitude(),mLastLocation.getLatitude());
+////                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(newLocation, 9), 3000, null);
+//                initialize=1;
+//                if (LocationServices.FusedLocationApi.getLocationAvailability(mGoogleApiClient).isLocationAvailable()) {
+////                    currentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+////                    if (currentLocation != null) {
+//                        LatLng myCurrentLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+//                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myCurrentLocation, 14), 3000, null);
+//                        bottomPanel.setVisibility(View.GONE);
+////                    }
+//                }
+//
+//                List<Shop> shopWithinRange = new ArrayList<>();
+//                for (int i = 0; i < shopList.size(); i++) {
+//                    LatLng shopLocation = new LatLng(shopList.get(i).getLatitude(), shopList.get(i).getLongitude());
+//                    Marker shopLocationMarker = mMap.addMarker(new MarkerOptions().position(shopLocation)
+//                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+//                    shopLocationMarker.setVisible(false);
+//                    Location target = new Location("target");
+//                    target.setLatitude(shopList.get(i).getLatitude());
+//                    target.setLongitude(shopList.get(i).getLongitude());
+//                    Log.d("before_compare_location", "" + mLastLocation.distanceTo(target));
+//                    if (mLastLocation.distanceTo(target) < 3000) {
+//                        shopLocationMarker.setVisible(true);
+//                        shopWithinRange.add(shopList.get(i));
+//                    }
+//                }
+////                LatLng myCurrentLatLng = new LatLng(shopWithinRange.get(2).getLatitude(), shopWithinRange.get(2).getLongitude());
+////                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myCurrentLatLng, 13), 4000, null);
+//            }
+        }
+    }
+
+
+    @Override
+    public void onConnectionSuspended(int cause) {
+        Log.d("OnConnectionSuspended", "here!!!!!!");
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.d("OnLocationChanged", "here!!!!!!");
+//        mLastLocation = location;
+        if (initialize == 0) {
+            mLastLocation = location;
+            LatLng myCurrentLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myCurrentLocation, 13), 3000, null);
+
+            List<Shop> shopWithinRange = new ArrayList<>();
+            for (int i = 0; i < shopList.size(); i++) {
+                LatLng shopLocation = new LatLng(shopList.get(i).getLatitude(), shopList.get(i).getLongitude());
+                Marker shopLocationMarker = mMap.addMarker(new MarkerOptions().position(shopLocation)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                shopLocationMarker.setVisible(false);
+                Location target = new Location("target");
+                target.setLatitude(shopList.get(i).getLatitude());
+                target.setLongitude(shopList.get(i).getLongitude());
+                Log.d("before_compare_location", "" + mLastLocation.distanceTo(target));
+                if (mLastLocation.distanceTo(target) < 5000) {
+                    shopLocationMarker.setVisible(true);
+                    shopWithinRange.add(shopList.get(i));
+                }
+            }
+
+            initialize = 1;
+        }
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult result) {
+        Log.d("OnConnectionFailed", "here!!!!!!");
     }
 
     /**
@@ -205,42 +318,29 @@ public class NearbyLocationActivity extends FragmentActivity implements OnMapRea
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        if (ContextCompat.checkSelfPermission(NearbyLocationActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            mMap.setMyLocationEnabled(true);
+            mMap.getUiSettings().setMyLocationButtonEnabled(false);
+        }
         LatLng shopLocation = new LatLng(22.28552, 114.15769);
 //        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(shopLocation, 10));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(shopLocation, 9), 2000, null);
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(shopLocation, 10), 5000, null);
         // Add a marker in place and move the camera
+        Log.d("OnMapReady", "here!!!!!!");
     }
 
     protected void onStart() {
+        super.onStart();
         mGoogleApiClient.connect();
         Log.d("onstart", "yes");
-        super.onStart();
     }
 
     protected void onStop() {
+        super.onStop();
         mGoogleApiClient.disconnect();
         Log.d("onstop", "yes");
-        super.onStop();
     }
 }
 
-//        shop_location_button.setOnClickListener(new View.OnClickListener() {
-//@Override
-//public void onClick(View v) {
-//        bottomPanel.setVisibility(View.VISIBLE);
-//
-//        LatLng shopLocation = new LatLng(shop.getLatitude(), shop.getLongitude());
-//        Marker shopLocationMarker = mMap.addMarker(new MarkerOptions().position(shopLocation).title("Shop is here")
-//        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-////                mMap.moveCamera(CameraUpdateFactory.newLatLng(shopLocation));
-//        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(shopLocation, 17), 2000, null);
-//        shopLocationMarker.showInfoWindow();
-//
-//        CircleOptions circleOptions = new CircleOptions();
-//        circleOptions.center(shopLocation);
-//        circleOptions.radius(20);
-//        circleOptions.strokeColor(Color.argb(150, 89, 214, 214));
-//        mMap.addCircle(circleOptions);
-//        }
-//        });
 
