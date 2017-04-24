@@ -7,6 +7,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -52,6 +54,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.model.User;
 import fyp.hkust.facet.util.FontManager;
+import fyp.hkust.facet.util.TypefaceSpan;
 
 public class ProfileEditActivity extends AppCompatActivity {
 
@@ -91,6 +94,14 @@ public class ProfileEditActivity extends AppCompatActivity {
         rootView = findViewById(R.id.activity_profile_edit_layout);
         Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
         FontManager.markAsIconContainer(findViewById(R.id.activity_profile_edit_layout), fontType);
+
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        SpannableString s = new SpannableString("Edit Profile");
+        s.setSpan(new TypefaceSpan(ProfileEditActivity.this, FontManager.CUSTOM_FONT), 0, s.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        getSupportActionBar().setTitle(s);
 
         mAuth = FirebaseAuth.getInstance();
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
@@ -292,46 +303,46 @@ public class ProfileEditActivity extends AppCompatActivity {
             mProgress.setMessage("Finishing Setup ...");
             mProgress.show();
 
-            StorageReference filepath = mStorageProfileImage.child(mImageUri.getLastPathSegment());
+            if (mImageUri != null) {
+                StorageReference filepath = mStorageProfileImage.child(mImageUri.getLastPathSegment());
 
-            filepath.putFile(mImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                filepath.putFile(mImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                    String downloadUri = taskSnapshot.getDownloadUrl().toString();
-
-                    mDatabaseUsers.child(user_id).child("name").setValue(name);
-                    mDatabaseUsers.child(user_id).child("password").setValue(password);
-                    mDatabaseUsers.child(user_id).child("uid").setValue(mAuth.getCurrentUser().getUid());
-                    mDatabaseUsers.child(user_id).child("image").setValue(downloadUri);
-                    mDatabaseUsers.child(user_id).child("gender").setValue(gender_result);
-                    mDatabaseUsers.child(user_id).child("aboutMe").setValue(aboutMe);
-
-                    //change the password in the firebase
-                    String provider = user.getProviders().get(0);
-                    Log.d("provider", provider + " " + user.getProviders().size());
-                    if (password != null) {
-                        user.updatePassword(password)
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()) {
-                                            Log.d(TAG, "User password updated. new password: " + password);
-                                        }
-                                    }
-                                });
+                        String downloadUri = taskSnapshot.getDownloadUrl().toString();
+                        mDatabaseUsers.child(user_id).child("image").setValue(downloadUri);
                     }
+                });
+            }
+            mDatabaseUsers.child(user_id).child("name").setValue(name);
+            mDatabaseUsers.child(user_id).child("password").setValue(password);
+            mDatabaseUsers.child(user_id).child("uid").setValue(mAuth.getCurrentUser().getUid());
 
-                    mProgress.dismiss();
+            mDatabaseUsers.child(user_id).child("gender").setValue(gender_result);
+            mDatabaseUsers.child(user_id).child("aboutMe").setValue(aboutMe);
 
-                    Intent mainIntent = new Intent(ProfileEditActivity.this, ProfileActivity.class);
-                    mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(mainIntent);
-                }
-            });
+            //change the password in the firebase
+            String provider = user.getProviders().get(0);
+            Log.d("provider", provider + " " + user.getProviders().size());
+            if (password.length() > 0) {
+                user.updatePassword(password)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d(TAG, "User password updated. new password: " + password);
+                                }
+                            }
+                        });
+            }
+
+            mProgress.dismiss();
+
+            Intent mainIntent = new Intent(ProfileEditActivity.this, ProfileActivity.class);
+            mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(mainIntent);
         }
-
-
     }
 
     public void genderClickFunction(int result) {
@@ -410,6 +421,10 @@ public class ProfileEditActivity extends AppCompatActivity {
 
         if (item.getItemId() == R.id.save_btn) {
             saveData();
+        }
+        if (item.getItemId() == android.R.id.home) {
+            // app icon in action bar clicked; goto parent activity.
+            this.finish();
         }
         return super.onOptionsItemSelected(item);
     }

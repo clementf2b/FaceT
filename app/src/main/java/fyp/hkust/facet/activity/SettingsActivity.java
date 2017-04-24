@@ -21,7 +21,6 @@ import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.StyleSpan;
-import android.text.style.TypefaceSpan;
 import android.util.Log;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -34,6 +33,7 @@ import fyp.hkust.facet.MyApp;
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.util.CustomTypeFaceSpan;
 import fyp.hkust.facet.util.FontManager;
+import fyp.hkust.facet.util.TypefaceSpan;
 
 /**
  * Created by ClementNg on 2/4/2017.
@@ -54,7 +54,7 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
         super.onCreate(savedInstanceState);
         // 所的的值将会自动保存到SharePreferences
         SpannableString s = new SpannableString(getTitle().toString());
-        s.setSpan(new TypefaceSpan(FontManager.CUSTOM_FONT), 0, s.length(),
+        s.setSpan(new TypefaceSpan(SettingsActivity.this, FontManager.CUSTOM_FONT), 0, s.length(),
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         getDelegate().getSupportActionBar().setTitle(s);
 

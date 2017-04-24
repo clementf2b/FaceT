@@ -13,6 +13,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -47,6 +49,7 @@ import ernestoyaquello.com.verticalstepperform.fragments.BackConfirmationFragmen
 import ernestoyaquello.com.verticalstepperform.interfaces.VerticalStepperForm;
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.util.FontManager;
+import fyp.hkust.facet.util.TypefaceSpan;
 
 public class PostActivity extends AppCompatActivity implements VerticalStepperForm {
 
@@ -105,7 +108,11 @@ public class PostActivity extends AppCompatActivity implements VerticalStepperFo
         setSupportActionBar(toolbar);
 
         TextView toolbarTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        toolbarTitle.setTypeface(titleFontType);
+
+        SpannableString s = new SpannableString("Create New Product");
+        s.setSpan(new TypefaceSpan(PostActivity.this, FontManager.CUSTOM_FONT), 0, s.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        toolbarTitle.setText(s);
 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

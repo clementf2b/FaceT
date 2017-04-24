@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
         view.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
-                Toast.makeText(MainActivity.this, menuItem.getTitle() + " pressed", Toast.LENGTH_LONG).show();
+//                Toast.makeText(MainActivity.this, menuItem.getTitle() + " pressed", Toast.LENGTH_LONG).show();
                 navigateTo(menuItem);
 
                 drawerLayout.closeDrawer(GravityCompat.START);
@@ -245,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
         sort_view.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
-                Toast.makeText(MainActivity.this, menuItem.getTitle() + " pressed", Toast.LENGTH_LONG).show();
+//                Toast.makeText(MainActivity.this, menuItem.getTitle() + " pressed", Toast.LENGTH_LONG).show();
                 drawerLayout.closeDrawer(GravityCompat.END); /*Important Line*/
                 return true;
             }
@@ -324,23 +324,23 @@ public class MainActivity extends AppCompatActivity {
                 if (tabLayout.getSelectedTabPosition() == 0) {
                     categoryResult = 0;
                     setupProductList();
-                    Toast.makeText(MainActivity.this, "Tab " + tabLayout.getSelectedTabPosition(), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(MainActivity.this, "Tab " + tabLayout.getSelectedTabPosition(), Toast.LENGTH_SHORT).show();
                 } else if (tabLayout.getSelectedTabPosition() == 1) {
                     categoryResult = 1;
                     setupProductList();
-                    Toast.makeText(MainActivity.this, "Tab " + tabLayout.getSelectedTabPosition(), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(MainActivity.this, "Tab " + tabLayout.getSelectedTabPosition(), Toast.LENGTH_SHORT).show();
                 } else if (tabLayout.getSelectedTabPosition() == 2) {
                     categoryResult = 2;
                     setupProductList();
-                    Toast.makeText(MainActivity.this, "Tab " + tabLayout.getSelectedTabPosition(), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(MainActivity.this, "Tab " + tabLayout.getSelectedTabPosition(), Toast.LENGTH_SHORT).show();
                 } else if (tabLayout.getSelectedTabPosition() == 3) {
                     categoryResult = 3;
                     setupProductList();
-                    Toast.makeText(MainActivity.this, "Tab " + tabLayout.getSelectedTabPosition(), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(MainActivity.this, "Tab " + tabLayout.getSelectedTabPosition(), Toast.LENGTH_SHORT).show();
                 } else if (tabLayout.getSelectedTabPosition() == 4) {
                     categoryResult = 4;
                     setupProductList();
-                    Toast.makeText(MainActivity.this, "Tab " + tabLayout.getSelectedTabPosition(), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(MainActivity.this, "Tab " + tabLayout.getSelectedTabPosition(), Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -509,7 +509,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 TextView tmpView = (TextView) orderSpinner.getSelectedView().findViewById(android.R.id.text1);
                 tmpView.setTextColor(Color.WHITE);
-                Toast.makeText(MainActivity.this, "You choose " + sortString[position], Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MainActivity.this, "You choose " + sortString[position], Toast.LENGTH_SHORT).show();
                 sort = position;
             }
 
@@ -609,7 +609,7 @@ public class MainActivity extends AppCompatActivity {
                                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                                             TextView tmpView = (TextView) filterSpinner.getSelectedView().findViewById(android.R.id.text1);
                                             tmpView.setTextColor(Color.WHITE);
-                                            Toast.makeText(MainActivity.this, "You choose " + brandList.get(position), Toast.LENGTH_SHORT).show();
+//                                            Toast.makeText(MainActivity.this, "You choose " + brandList.get(position), Toast.LENGTH_SHORT).show();
                                             if (firstTime > 0) {
                                                 brandResult = position;
                                             }
@@ -1104,7 +1104,7 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Choose the way to get your selfie");
 
-        builder.setIcon(R.mipmap.app_icon);
+        builder.setIcon(R.drawable.app_icon_100);
         builder.setCancelable(true);
 
         final String[] items = new String[]{"From Gallery", "Take Photo"};
@@ -1139,7 +1139,7 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Choose the way to get your selfie");
 
-        builder.setIcon(R.mipmap.app_icon);
+        builder.setIcon(R.drawable.app_icon_100);
         builder.setCancelable(true);
 
         final String[] items = new String[]{"From Gallery", "Take Photo"};

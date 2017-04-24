@@ -62,6 +62,7 @@ import fyp.hkust.facet.model.User;
 import fyp.hkust.facet.skincolordetection.ShowCameraViewActivity;
 import fyp.hkust.facet.util.CustomTypeFaceSpan;
 import fyp.hkust.facet.util.FontManager;
+import fyp.hkust.facet.util.TypefaceSpan;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -88,6 +89,7 @@ public class ProfileActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
+    private TextView toolbar_title;
     private TextView profile_email;
     private com.melnykov.fab.FloatingActionButton add_product_fab;
     private RecyclerView mNotificaitonList;
@@ -110,6 +112,7 @@ public class ProfileActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
         changeTabsFont();
 
+        toolbar_title = (TextView) findViewById(R.id.toolbar_title);
         //start
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setBackground(new ColorDrawable(Color.parseColor("#00000000")));
@@ -243,7 +246,7 @@ public class ProfileActivity extends AppCompatActivity {
         btnEdit = (Button) findViewById(R.id.btn_edit);
         profile_aboutme = (EmojiTextView) findViewById(R.id.profile_aboutme);
 
-        View notification_bottom_layout = (View)findViewById(R.id.notification_bottom_layout);
+        View notification_bottom_layout = (View) findViewById(R.id.notification_bottom_layout);
         mNotificaitonList = (RecyclerView) notification_bottom_layout.findViewById(R.id.notification_list);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -267,7 +270,7 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         checkUserExist();
-        if(mAuth.getCurrentUser()!=null) {
+        if (mAuth.getCurrentUser() != null) {
             setupUserData();
             getUserData();
             setupNavHeader();
@@ -382,14 +385,20 @@ public class ProfileActivity extends AppCompatActivity {
         mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue() != null)
-                {
+                if (dataSnapshot.getValue() != null) {
                     Log.i("dataSnapshot.getValue()", dataSnapshot.getValue().toString());
                     final User user_data = dataSnapshot.getValue(User.class);
                     Log.e(user_data.getName(), "User data is null!");
                     mOwnNameField.setText(user_data.getName());
                     profile_email.setText(mAuth.getCurrentUser().getEmail());
                     profile_aboutme.setText(user_data.getAboutMe());
+
+                    //set up title
+                    SpannableString s = new SpannableString(user_data.getName());
+                    s.setSpan(new TypefaceSpan(ProfileActivity.this, FontManager.CUSTOM_FONT), 0, s.length(),
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    getSupportActionBar().setTitle(s);
+                    toolbar_title.setText(s);
 
                     Picasso.with(getApplicationContext()).load(user_data.getImage()).networkPolicy(NetworkPolicy.OFFLINE).into(profilePic, new Callback() {
                         @Override
@@ -526,7 +535,7 @@ public class ProfileActivity extends AppCompatActivity {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
 
-        if(mAuth.getCurrentUser()!=null) {
+        if (mAuth.getCurrentUser() != null) {
             final DatabaseReference currentUserNotification = mDatabaseNotifications.child(mAuth.getCurrentUser().getUid());
             FirebaseRecyclerAdapter<Notification, NotificationViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Notification, NotificationViewHolder>(
 
@@ -554,7 +563,7 @@ public class ProfileActivity extends AppCompatActivity {
                             productDetailIntent.putExtra("product_id", product_id);
                             Log.d(TAG + " product_id", product_id);
                             productDetailIntent.putExtra("colorNo", model.getColorNo());
-                            Log.d(TAG + " colorNo", model.getColorNo()+"");
+                            Log.d(TAG + " colorNo", model.getColorNo() + "");
                             startActivity(productDetailIntent);
                         }
                     });
@@ -617,7 +626,7 @@ public class ProfileActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Choose the way to get your selfie");
 
-        builder.setIcon(R.mipmap.app_icon);
+        builder.setIcon(R.drawable.app_icon_100);
         builder.setCancelable(true);
 
         final String[] items = new String[]{"From Gallery", "Take Photo"};
@@ -652,7 +661,7 @@ public class ProfileActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Choose the way to get your selfie");
 
-        builder.setIcon(R.mipmap.app_icon);
+        builder.setIcon(R.drawable.app_icon_100);
         builder.setCancelable(true);
 
         final String[] items = new String[]{"From Gallery", "Take Photo"};

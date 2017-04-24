@@ -208,8 +208,15 @@
                     android:layout_marginLeft="10dp"
                     android:layout_toEndOf="@+id/emoji_btn"
                     android:hint="@string/about_me_text"
-                    app:emojiSize="24sp"
+                    android:inputType="textMultiLine"
+                    android:lines="4"
                     android:maxLines="10"
+                    android:minLines="1"
+                    android:scrollHorizontally="false"
+                    android:scrollIndicators="right"
+                    android:scrollbars="vertical"
+                    android:textSize="16dp"
+                    app:emojiSize="20sp"
                     />
 
 

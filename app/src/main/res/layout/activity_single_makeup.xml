@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/single_makeup_layout"
+    tools:context="fyp.hkust.facet.activity.SingleMakeupActivity">
+
+
+    <fyp.hkust.facet.util.PinchImageView
+        android:id="@+id/imageView1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/top_bar_layout"
+        android:layout_above="@+id/makeup_color_list" />
+
+    <Button
+        android:id="@+id/compare_button"
+        android:layout_width="70dp"
+        android:layout_height="30dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/top_bar_layout"
+        android:layout_margin="10dp"
+        android:adjustViewBounds="true"
+        android:background="@drawable/border_button_white_bg"
+        android:clickable="true"
+        android:contextClickable="true"
+        android:scaleType="fitCenter"
+        android:text="@string/compare_btn_text"
+        android:textColor="@color/font_color_pirmary" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/makeup_color_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:background="@color/makeup_transparent_background_color"
+        android:padding="10dp" />
+
+
+    <LinearLayout
+        android:id="@+id/rouge_alpha_select"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/makeup_color_list"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Transparency"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/colorPrimaryDark" />
+
+        <SeekBar
+            android:id="@+id/alpha_seekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/checkBox"
+            android:layout_centerHorizontal="true"
+            android:max="20"
+            android:progress="10" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/eyeshadow_method_layout"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_above="@+id/makeup_color_list"
+        android:background="@color/white"
+        android:visibility="gone">
+
+        <ImageButton
+            android:id="@+id/eyeshadow_method1"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_margin="10dp" />
+
+        <ImageButton
+            android:id="@+id/eyeshadow_method2"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_margin="10dp" />
+
+        <ImageButton
+            android:id="@+id/eyeshadow_method3"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_margin="10dp" />
+
+        <ImageButton
+            android:id="@+id/eyeshadow_method4"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_margin="10dp" />
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -11,6 +11,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
@@ -30,6 +32,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.util.FontManager;
+import fyp.hkust.facet.util.TypefaceSpan;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -59,6 +62,11 @@ public class RegisterActivity extends AppCompatActivity {
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00000000")));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+
+        SpannableString s = new SpannableString("FaceT");
+        s.setSpan(new TypefaceSpan(RegisterActivity.this, FontManager.CUSTOM_FONT), 0, s.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        getSupportActionBar().setTitle(s);
 
         Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
         FontManager.markAsIconContainer(findViewById(R.id.activity_register_layout), fontType);

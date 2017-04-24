@@ -2,6 +2,7 @@ package fyp.hkust.facet.activity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -12,7 +13,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
@@ -71,6 +75,7 @@ import java.util.Arrays;
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.util.CheckConnectivity;
 import fyp.hkust.facet.util.FontManager;
+import fyp.hkust.facet.util.TypefaceSpan;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -126,6 +131,10 @@ public class LoginActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setLogo(R.mipmap.app_icon);
         getSupportActionBar().setDisplayUseLogoEnabled(true);
+        SpannableString s = new SpannableString("FaceT");
+        s.setSpan(new TypefaceSpan(LoginActivity.this, FontManager.CUSTOM_FONT), 0, s.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        getSupportActionBar().setTitle(s);
 
         Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
         FontManager.markAsIconContainer(findViewById(R.id.activity_login_layout), fontType);
@@ -178,6 +187,8 @@ public class LoginActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     Log.d(TAG, "check box is Checked");
+                    Snackbar snackbar = Snackbar.make(activity_login_layout, "Login data will be stored", Snackbar.LENGTH_LONG);
+                    snackbar.show();
                 }
             }
         });
@@ -266,6 +277,7 @@ public class LoginActivity extends AppCompatActivity {
                         handleFacebookAccessToken(accessToken);
                         Log.d("FB", "access token got : " + accessToken);
                         //send request and call graph api
+                        final String[] fbname = {""};
                         GraphRequest request = GraphRequest.newMeRequest(
                                 accessToken,
 
@@ -282,6 +294,7 @@ public class LoginActivity extends AppCompatActivity {
                                         Log.d("FB", object.optString("id"));
                                         Log.d("FB", object.optString("email"));
                                         Log.d("FB", object.optString("birthday"));
+                                        fbname[0] = object.optString("name");
                                     }
                                 });
                         //包入你想要得到的資料 送出request
@@ -289,21 +302,20 @@ public class LoginActivity extends AppCompatActivity {
                         parameters.putString("fields", "id,name,link,email,birthday,gender,picture");
                         request.setParameters(parameters);
                         request.executeAsync();
-                        mProgress.dismiss();
+//                        mProgress.dismiss();
+                        dialog("Login Success Message", " Welcome to FaceT  " + fbname[0] );
                     }
 
                     @Override
                     public void onCancel() {
-                        Snackbar snackbar = Snackbar.make(activity_login_layout, "Login Cancel", Snackbar.LENGTH_LONG);
-                        snackbar.show();
-                        mProgress.dismiss();
+//                        dialog("Login Error Message","Login Cancel");
+//                        mProgress.dismiss();
                     }
 
                     @Override
                     public void onError(FacebookException exception) {
-                        Snackbar snackbar = Snackbar.make(activity_login_layout, exception.getMessage(), Snackbar.LENGTH_LONG);
-                        snackbar.show();
-                        mProgress.dismiss();
+//                        dialog("Login Error Message",exception.getMessage());
+//                        mProgress.dismiss();
                     }
                 });
 
@@ -311,8 +323,8 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //Facebook Login
-                mProgress.setMessage("Starting Sign in ...");
-                mProgress.show();
+//                mProgress.setMessage("Starting Sign in ...");
+//                mProgress.show();
                 LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList(
                         "public_profile", "email", "user_birthday", "user_friends"));
             }
@@ -327,8 +339,6 @@ public class LoginActivity extends AppCompatActivity {
             editor.putString("email", mLoginEmailField.getText().toString());
             editor.putString("password", mLoginPasswordField.getText().toString());
             editor.commit();
-            Snackbar snackbar = Snackbar.make(activity_login_layout, "Login data is remember", Snackbar.LENGTH_LONG);
-            snackbar.show();
         }
     }
 
@@ -394,6 +404,21 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
+    protected void dialog(String title,String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+        builder.setMessage(message);
+        builder.setTitle(title);
+        builder.setIcon(R.drawable.ic_error_black_24px);
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+//                LoginActivity.this.finish();
+            }
+        });
+        builder.create().show();
+    }
+
     private void handleFacebookAccessToken(AccessToken token) {
         Log.d(TAG, "handleFacebookAccessToken:" + token);
 
@@ -434,7 +459,7 @@ public class LoginActivity extends AppCompatActivity {
     private void checklogin() {
 
         String email = mLoginEmailField.getText().toString().trim();
-        String password = mLoginPasswordField.getText().toString().trim();
+        final String password = mLoginPasswordField.getText().toString().trim();
 
         if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
             mProgress.setMessage("Checking Login ...");
@@ -453,9 +478,15 @@ public class LoginActivity extends AppCompatActivity {
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
+
                             mProgress.dismiss();
-                            Snackbar snackbar = Snackbar.make(activity_login_layout, e.toString(), Snackbar.LENGTH_SHORT);
-                            snackbar.show();
+//                            Log.d(TAG, e.toString() + " / " + e.getMessage() + " / " + e.getLocalizedMessage());
+                            if (password.length() < 6) {
+                                dialog("Login Error Message",  "Password should be at least 6 characters");
+                            } else {
+                                String errorMsg = e.getMessage();
+                                dialog("Login Error Message",  errorMsg);
+                            }
                         }
                     });
         }
@@ -470,12 +501,13 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.hasChild(user_id)) {
-                        Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
-                        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(mainIntent);
+//                        Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+////                        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                        startActivity(mainIntent);
+                        LoginActivity.this.finish();
                     } else {
                         Intent setupIntent = new Intent(LoginActivity.this, ProfileEditActivity.class);
-                        setupIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                        setupIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(setupIntent);
                     }
                 }

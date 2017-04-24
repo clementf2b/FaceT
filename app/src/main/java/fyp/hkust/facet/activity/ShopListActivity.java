@@ -464,7 +464,7 @@ public class ShopListActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Choose the way to get your selfie");
 
-        builder.setIcon(R.mipmap.app_icon);
+        builder.setIcon(R.drawable.app_icon_100);
         builder.setCancelable(true);
 
         final String[] items = new String[]{"From Gallery", "Take Photo"};
@@ -499,7 +499,7 @@ public class ShopListActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Choose the way to get your selfie");
 
-        builder.setIcon(R.mipmap.app_icon);
+        builder.setIcon(R.drawable.app_icon_100);
         builder.setCancelable(true);
 
         final String[] items = new String[]{"From Gallery", "Take Photo"};

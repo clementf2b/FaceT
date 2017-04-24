@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -20,6 +21,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
@@ -37,6 +40,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.Scroller;
@@ -103,20 +107,25 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import fyp.hkust.facet.R;
+import fyp.hkust.facet.adapter.ArrayAdapterWithIcon;
 import fyp.hkust.facet.fragment.MultipleColorFragment;
 import fyp.hkust.facet.model.Brand;
 import fyp.hkust.facet.model.Comment;
+import fyp.hkust.facet.model.Product;
 import fyp.hkust.facet.model.ProductTypeOne;
 import fyp.hkust.facet.model.ProductTypeTwo;
 import fyp.hkust.facet.model.User;
+import fyp.hkust.facet.skincolordetection.CaptureActivity;
 import fyp.hkust.facet.util.CheckConnectivity;
 import fyp.hkust.facet.util.FontManager;
+import fyp.hkust.facet.util.TypefaceSpan;
 
 public class ProductDetailActivity extends AppCompatActivity implements OnChartValueSelectedListener {
 
     private final static String TAG = "ProductDetailActivity";
     private static final int CAM_REQUEST = 3;
     private static final int GALLERY_REQUEST = 1;
+    private int GALLERY_REQUEST_2 = 2;
     public final int[] CUSTOM_COLOR = {Color.rgb(23, 188, 247), Color.rgb(57, 197, 193),
             Color.rgb(179, 225, 215), Color.rgb(255, 226, 210), Color.rgb(255, 174, 182)};
 
@@ -375,21 +384,21 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
             }
         });
 
-
-        mDatabaseFavourite.child(product_id).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    if (ds.getKey().contains(mAuth.getCurrentUser().getUid()))
-                        likeButton.setLiked(true);
+        if (mAuth.getCurrentUser() != null) {
+            mDatabaseFavourite.child(product_id).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        if (ds.getKey().contains(mAuth.getCurrentUser().getUid()))
+                            likeButton.setLiked(true);
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+        }
         likeButton.setOnLikeListener(new OnLikeListener() {
             @Override
             public void liked(LikeButton likeButton) {
@@ -465,8 +474,13 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                     Log.i("product type two dataSnapshot.getValue()", dataSnapshot.getValue().toString());
                     Log.i("product type two", colorNo + "");
                     product_data_two = dataSnapshot.getValue(ProductTypeTwo.class);
-                    if (product_data_two.getProductName() != null)
+                    if (product_data_two.getProductName() != null) {
                         product_name_text.setText(product_data_two.getProductName());
+                        SpannableString s = new SpannableString(product_data_two.getProductName());
+                        s.setSpan(new TypefaceSpan(ProductDetailActivity.this, FontManager.CUSTOM_FONT), 0, s.length(),
+                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        getSupportActionBar().setTitle(s);
+                    }
                     if (product_data_two.getBrandID() != null)
                         brand_name_text.setText(product_data_two.getBrandID());
                     if (product_data_two.getDescription() != null)
@@ -509,8 +523,14 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                     Log.i("product type two dataSnapshot.getValue()", dataSnapshot.getValue().toString());
                     Log.i("product type two", colorNo + "");
                     product_data_two = dataSnapshot.getValue(ProductTypeTwo.class);
-                    if (product_data_two.getProductName() != null)
+                    if (product_data_two.getProductName() != null) {
                         product_name_text.setText(product_data_two.getProductName());
+                        SpannableString s = new SpannableString(product_data_two.getProductName());
+                        s.setSpan(new TypefaceSpan(ProductDetailActivity.this, FontManager.CUSTOM_FONT), 0, s.length(),
+                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                        getSupportActionBar().setTitle(s);
+                    }
                     if (product_data_two.getBrandID() != null)
                         brand_name_text.setText(product_data_two.getBrandID());
                     if (product_data_two.getDescription() != null)
@@ -737,6 +757,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         return true;
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -747,11 +768,47 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                 return true;
             case R.id.product_apply:
                 Log.d(TAG, " product apply");
+                showMakeUpDialog();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
 
+    }
+
+    private void showMakeUpDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose the way to get your selfie");
+
+        builder.setIcon(R.drawable.app_icon_100);
+        builder.setCancelable(true);
+
+        final String[] items = new String[]{"From Gallery", "Take Photo"};
+        final Integer[] icons = new Integer[]{R.drawable.colorful_gallery, R.drawable.colorful_camera};
+        ListAdapter adapter = new ArrayAdapterWithIcon(getApplication(), items, icons);
+
+        builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                switch (item) {
+                    case 0: {
+                        Intent intent = new Intent(
+                                Intent.ACTION_PICK,
+                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        startActivityForResult(intent, GALLERY_REQUEST_2);
+                        break;
+                    }
+                    case 1: {
+                        Intent cameraViewIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        File file = getFile();
+                        cameraViewIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+                        startActivityForResult(cameraViewIntent, CAM_REQUEST);
+                        break;
+                    }
+                }
+
+            }
+        }).show();
     }
 
     private void addNotification(String action) {
@@ -867,7 +924,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                     }
                 });
 
-                if (mAuth.getCurrentUser() != null && user_id.length() > 0) {
+                if (mAuth.getCurrentUser() != null) {
                     if (mAuth.getCurrentUser().getUid().equals(user_id)) {
                         viewHolder.mView.setOnLongClickListener(new View.OnLongClickListener() {
                             @Override
@@ -1123,6 +1180,39 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
             preview_textview.setVisibility(View.VISIBLE);
             image_preview.setVisibility(View.VISIBLE);
         }
+
+        if (requestCode == GALLERY_REQUEST_2 && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri pickedImage = data.getData();
+            Log.d(TAG, "selected!!!" + " : " + pickedImage.getPath());
+            // Let's read picked image path using content resolver
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+            Cursor cursor = getContentResolver().query(pickedImage,
+                    filePathColumn, null, null, null);
+            cursor.moveToFirst();
+
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String picturePath = cursor.getString(columnIndex);
+            cursor.close();
+
+            Log.d(TAG + "Path:", picturePath);
+            Intent intent = new Intent();
+            intent.setClass(ProductDetailActivity.this, SingleMakeupActivity.class);
+            intent.putExtra("path", picturePath);
+            intent.putExtra("makeupType", product_data_two.getCategory());
+            if (product_data_two.getCategory().equals("Eyeshadows")) {
+                intent.putExtra("colorArrayArray", product_data_two.getColor());
+            } else
+                intent.putStringArrayListExtra("colorArray", (ArrayList<String>) colorSet);
+            //intent.putExtra("color" , "" + mBlobColorHsv);
+            startActivity(intent);
+        } else if (requestCode == CAM_REQUEST) {
+            Intent intent = new Intent();
+            intent.setClass(ProductDetailActivity.this, SingleMakeupActivity.class);
+            intent.putExtra("path", captureImageFullPath);
+            startActivity(intent);
+        }
+
     }
 
     private File getFile() {

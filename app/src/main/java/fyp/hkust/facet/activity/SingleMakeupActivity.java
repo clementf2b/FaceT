@@ -1,13 +1,8 @@
 package fyp.hkust.facet.activity;
 
-import android.app.Activity;
-import android.app.FragmentManager;
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -22,69 +17,40 @@ import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
 import android.graphics.Shader;
 import android.graphics.Typeface;
 import android.graphics.Xfermode;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.pwittchen.swipe.library.Swipe;
-import com.github.pwittchen.swipe.library.SwipeEvent;
-import com.github.pwittchen.swipe.library.SwipeListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.melnykov.fab.FloatingActionButton;
-import com.rtugeek.android.colorseekbar.ColorSeekBar;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
 import com.tzutalin.dlib.Constants;
 import com.tzutalin.dlib.FaceDet;
 import com.tzutalin.dlib.VisionDetRet;
@@ -95,55 +61,31 @@ import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfRect;
-import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import fyp.hkust.facet.R;
-
-import fyp.hkust.facet.fragment.ColorSelectFragment;
-import fyp.hkust.facet.fragment.MakeupProductFragment;
-import fyp.hkust.facet.fragment.MultipleColorFragment;
-import fyp.hkust.facet.model.ProductTypeTwo;
 import fyp.hkust.facet.util.FontManager;
-import fyp.hkust.facet.util.MyItemTouchHelperCallback;
 import fyp.hkust.facet.util.PinchImageView;
-
+import fyp.hkust.facet.util.TypefaceSpan;
 import id.zelory.compressor.Compressor;
 import me.shaohui.advancedluban.Luban;
 
-/**
- * A simple demo, get a picture form your phone<br />
- * Use the facepp api to detect<br />
- * Find all face on the picture, and mark them out.
- *
- * @author moon5ckq
- */
-public class ColorizeFaceActivity extends AppCompatActivity implements ColorSelectFragment.OnDataPass {
+public class SingleMakeupActivity extends AppCompatActivity {
 
-    private static final String TAG = ColorizeFaceActivity.class.getSimpleName();
+    private static final String TAG = SingleMakeupActivity.class.getSimpleName();
 
     private File mCascadeFile;
     private CascadeClassifier mJavaDetector;
@@ -155,49 +97,23 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
     private PinchImageView imageView = null;
     private Bitmap originalImg = null;
     private Bitmap temp = null, temp2 = null, bitmap = null;
-    private ImageButton show_hide_layout_button;
-    private Button foundation_button, eyeshadow_button, blush_button, lipstick_button;
-    private boolean checkExpend = true;
 
-    private String face_id = null;
-    private List<String> landmark_pt_label = new ArrayList<>();
     private List<Float> landmark_pt_x = new ArrayList<>();
     private List<Float> landmark_pt_y = new ArrayList<>();
     private List<Float> extra_landmark_pt_x = new ArrayList<>();
     private List<Float> extra_landmark_pt_y = new ArrayList<>();
-    private int j = 0;
-    private int counter = 40;
-    //    private PorterDuff.Mode mPorterDuffMode = PorterDuff.Mode.SCREEN;
-//    private PorterDuff.Mode mPorterDuffMode = PorterDuff.Mode.SRC_OVER;
-    //    private PorterDuff.Mode mPorterDuffMode = PorterDuff.Mode.XOR;
-//    private PorterDuff.Mode mPorterDuffMode = PorterDuff.Mode.ADD;
-    private PorterDuff.Mode mPorterDuffMode = PorterDuff.Mode.OVERLAY;
-    private Xfermode mXfermode = new PorterDuffXfermode(mPorterDuffMode);
-    private PorterDuff.Mode mPorterDuffScreenMode = PorterDuff.Mode.SCREEN;
-    private Xfermode mXferScreenmode = new PorterDuffXfermode(mPorterDuffScreenMode);
-    // Storage Permissions
+
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
-    private static String[] PERMISSIONS_STORAGE = {
-            android.Manifest.permission.READ_EXTERNAL_STORAGE,
-            android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-    };
     private ProgressDialog progressDialog;
     private Mat mRgbMat;
     private Mat mHsvMat;
     private Mat mMaskMat;
     private int channelCount = 3;
     private Mat mDilatedMat;
+    private Mat hierarchy;
+
     private List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
 
-    private Mat hierarchy;
-    private int iLineThickness = 5;
-    private org.opencv.core.Scalar colorGreen = new Scalar(0, 255, 0, 0);
-    private static double mMinContourArea = 0.30;
-    private List<MatOfPoint> mMaxContours = new ArrayList<MatOfPoint>();
-    private Intent intent;
-    private String path;
-    private LinearLayout makeup_select_layout;
-    private Swipe swipe;
     private HandlerThread mThread;
     private Handler mThreadHandler;
     private int[] tempArray;
@@ -207,62 +123,29 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
     private int newWidth;
     private int newHeight;
     FaceDet mFaceDet;
-    private RelativeLayout foundation_layout, blush_layout, eyeshadow_layout, lipstick_layout;
-    private RecyclerView makeup_product_list, makeup_color_list;
-    private int categoryResult;
-    private int stepCount = 0;
-    private DatabaseReference mDatabase;
-    private Map<String, ProductTypeTwo> mProducts = new HashMap<>();
-    private Map<String, ProductTypeTwo> mSortedProducts = new HashMap<>();
-    private ProductAdapter mProductAdapter;
-    private Long colorNo;
-    private String selectedProductID;
-    private Button compare_button;
-    private List<String> colorSet = new ArrayList<>();
-    private Boolean firstTime = true;
-    private String selectedFoundationID, selectedBrushID, selectedEyeshadowID, selectedLipstickID;
-    private String selectedFoundationColor, selectedBrushColor, selectedLipstickColor;
-    private int colorPosition;
+
     private ImageButton eyeshadow_method1, eyeshadow_method2, eyeshadow_method3, eyeshadow_method4;
     private LinearLayout eyeshadow_method_layout;
-    // number,bitmap
-    private Map<Integer, Bitmap> saveBitmap = new HashMap<>();
-    // number,color position
-    private Map<String, Integer> saveBitmapColorList = new HashMap<>();
-    // number,(ID,category)
-    private Map<Integer, List<String>> saveBitmapList = new HashMap<>();
-    // category , number
-    private Map<String, Integer> saveMakeupList = new HashMap<>();
-    private int makeupCount = 0;
-    private ImageButton back_button, undo_button, redo_button, save_button, apply_list_button;
-    private RelativeLayout activity_colorize_face_layout;
-    private ArrayList<String> savedEyeshadowColor = new ArrayList<>();
+
+    private PorterDuff.Mode mPorterDuffMode = PorterDuff.Mode.OVERLAY;
+    private Xfermode mXfermode = new PorterDuffXfermode(mPorterDuffMode);
+
+    private Button compare_button;
+
+    private String makeupType = "";
+    private int categoryResult = 1;
     private int methodNumber = 1;
+    private List<String> colorArray = new ArrayList<>();
     private boolean doubleBackToExitPressedOnce = false;
+    private Intent intent;
+    private String path;
     private LinearLayout rouge_alpha_select;
     private SeekBar alpha_seekBar;
     private int alphaValueRouge = 10;
-
-    /**
-     * Checks if the app has permission to write to device storage
-     * <p>
-     * If the app does not has permission then the user will be prompted to grant permissions
-     *
-     * @param activity
-     */
-    public static void verifyStoragePermissions(Activity activity) {
-        // Check if we have write permission
-        int permission = ActivityCompat.checkSelfPermission(activity, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            // We don't have permission so prompt the user
-            ActivityCompat.requestPermissions(
-                    activity,
-                    PERMISSIONS_STORAGE,
-                    REQUEST_EXTERNAL_STORAGE
-            );
-        }
-    }
+    private ArrayList<String> savedEyeshadowColor = new ArrayList<>();
+    private ArrayList<ArrayList<String>> data = new ArrayList<>();
+    private RecyclerView makeup_color_list;
+    private RelativeLayout single_makeup_layout;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -296,22 +179,31 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         }
     }
 
+
+    public static Bitmap RotateBitmap(Bitmap source, float angle) {
+        Matrix matrix = new Matrix();
+        //rotate if the phone come from taking photo
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
+    }
+
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        remove status bar
-        if (Build.VERSION.SDK_INT < 16) {
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        }
+        setContentView(R.layout.activity_single_makeup);
 
-        setContentView(R.layout.activity_colorize_face);
-
-        verifyStoragePermissions(this);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //set up photo first
         intent = this.getIntent();
         path = intent.getStringExtra("path");
+        makeupType = intent.getStringExtra("makeupType");
+
+        SpannableString s = new SpannableString(makeupType);
+        s.setSpan(new TypefaceSpan(SingleMakeupActivity.this, FontManager.CUSTOM_FONT), 0, s.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        getSupportActionBar().setTitle(s);
 
 //        Display display = getWindowManager().getDefaultDisplay();
 //        Point size = new Point();
@@ -337,7 +229,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                 .asObservable()                             // generate Observable
                 .subscribe();      // subscribe the compress result
 
-        basicImg = new Compressor.Builder(ColorizeFaceActivity.this)
+        basicImg = new Compressor.Builder(SingleMakeupActivity.this)
                 .setMaxWidth(width)
                 .setMaxHeight(height)
                 .setQuality(80)
@@ -364,101 +256,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         temp = originalImg.copy(bitmapConfig, true);
         bitmap = originalImg.copy(bitmapConfig, true);
 
-        databaseGetData();
         setup();
-
-        swipe = new Swipe();
-        swipe.addListener(new SwipeListener() {
-            @Override
-            public void onSwipingLeft(final MotionEvent event) {
-            }
-
-            @Override
-            public void onSwipedLeft(final MotionEvent event) {
-            }
-
-            @Override
-            public void onSwipingRight(final MotionEvent event) {
-            }
-
-            @Override
-            public void onSwipedRight(MotionEvent event) {
-
-            }
-
-            @Override
-            public void onSwipingUp(MotionEvent event) {
-
-            }
-
-            @Override
-            public void onSwipedUp(final MotionEvent event) {
-//                Log.d(TAG, "SWIPED_UP");
-                switch (stepCount) {
-                    case 0:
-                        // type select
-                        makeup_select_layout.animate()
-                                .translationY(0)
-                                .alpha(1.0f)
-                                .start();
-                        makeup_select_layout.setVisibility(View.VISIBLE);
-                        makeup_product_list.setVisibility(View.GONE);
-                        makeup_color_list.setVisibility(View.GONE);
-                        eyeshadow_method_layout.setVisibility(View.GONE);
-                        break;
-                    case 1:
-                        //product select
-                        makeup_product_list.animate()
-                                .translationY(0)
-                                .alpha(1.0f)
-                                .start();
-                        makeup_select_layout.setVisibility(View.GONE);
-                        makeup_product_list.setVisibility(View.VISIBLE);
-                        makeup_color_list.setVisibility(View.GONE);
-                        eyeshadow_method_layout.setVisibility(View.GONE);
-                        break;
-                    case 2:
-                        //color select layout
-                        makeup_color_list.animate()
-                                .translationY(0)
-                                .alpha(1.0f)
-                                .start();
-                        makeup_select_layout.setVisibility(View.GONE);
-                        makeup_product_list.setVisibility(View.GONE);
-                        makeup_color_list.setVisibility(View.VISIBLE);
-                        if (categoryResult == 3)
-                            eyeshadow_method_layout.setVisibility(View.VISIBLE);
-                        else
-                            eyeshadow_method_layout.setVisibility(View.GONE);
-                        break;
-                }
-
-                Log.d(TAG, stepCount + "");
-                show_hide_layout_button.setImageResource(R.mipmap.ic_expand_less_black_24dp);
-                checkExpend = true;
-            }
-
-            @Override
-            public void onSwipingDown(final MotionEvent event) {
-//                Log.d(TAG, "SWIPING_DOWN");
-            }
-
-            @Override
-            public void onSwipedDown(final MotionEvent event) {
-//                Log.d(TAG, "SWIPED_DOWN");
-                makeup_select_layout.animate()
-                        .translationY(0)
-                        .alpha(0.0f)
-                        .start();
-                makeup_select_layout.setVisibility(View.GONE);
-                makeup_product_list.setVisibility(View.GONE);
-                makeup_color_list.setVisibility(View.GONE);
-                eyeshadow_method_layout.setVisibility(View.GONE);
-                rouge_alpha_select.setVisibility(View.GONE);
-                show_hide_layout_button.setImageResource(R.mipmap.ic_expand_more_black_24dp);
-                checkExpend = false;
-            }
-        });
 
         compare_button = (Button) findViewById(R.id.compare_button);
         compare_button.setOnTouchListener(new View.OnTouchListener() {
@@ -483,7 +281,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
             }
         });
 
-        progressDialog = new ProgressDialog(ColorizeFaceActivity.this);
+        progressDialog = new ProgressDialog(SingleMakeupActivity.this);
         progressDialog.setCancelable(false);
         progressDialog.setTitle("Please Wait..");
         progressDialog.setMessage("Getting landmark result ...");
@@ -493,282 +291,55 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         mThread.start();
         mThreadHandler = new Handler(mThread.getLooper());
         mThreadHandler.post(landmarkDetection);
-    }
 
-    private void setup() {
-        Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
-        FontManager.markAsIconContainer(findViewById(R.id.makeup_select_layout), fontType);
-        activity_colorize_face_layout = (RelativeLayout) findViewById(R.id.activity_colorize_face_layout);
-        //toolbar button
-        back_button = (ImageButton) findViewById(R.id.back_button);
-        back_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
+        if (makeupType.equals("Foundation")) {
+            categoryResult = 1;
+            colorArray = getIntent().getStringArrayListExtra("colorArray");
+            makeup_color_list.setAdapter(new ColorRecyclerAdapter());
+            Log.d(TAG + "  colorArray size", colorArray.size() + " " + colorArray.toString());
+
+        } else if (makeupType.equals("Brush")) {
+            categoryResult = 2;
+            colorArray = getIntent().getStringArrayListExtra("colorArray");
+            makeup_color_list.setAdapter(new ColorRecyclerAdapter());
+            Log.d(TAG + "  colorArray size", colorArray.size() + " " + colorArray.toString());
+        } else if (makeupType.equals("Eyeshadows")) {
+            categoryResult = 3;
+            data = (ArrayList<ArrayList<String>>) getIntent().getSerializableExtra("colorArrayArray");
+            Log.d(TAG + " data ", data.toString());
+            makeup_color_list.setAdapter(new MultipleColorAdapter(SingleMakeupActivity.this, data));
+
+            if (data != null && data.get(0).size() == 1) {
+                eyeshadow_method_layout.setBackgroundColor(Color.WHITE);
+                eyeshadow_method1.setBackgroundResource(R.drawable.eyeshadow1c1);
+                eyeshadow_method2.setBackgroundResource(R.drawable.eyeshadow1c2);
+                eyeshadow_method3.setBackgroundResource(R.drawable.eyeshadow1c3);
+                eyeshadow_method4.setBackgroundResource(R.drawable.eyeshadow1c4);
+            } else if (data != null && data.get(0).size() == 2) {
+                eyeshadow_method_layout.setBackgroundColor(Color.WHITE);
+                eyeshadow_method1.setBackgroundResource(R.drawable.eyeshadow2c1);
+                eyeshadow_method2.setBackgroundResource(R.drawable.eyeshadow2c2);
+                eyeshadow_method3.setBackgroundResource(R.drawable.eyeshadow2c3);
+                eyeshadow_method4.setBackgroundResource(R.drawable.eyeshadow2c4);
+            } else if (data != null && data.get(0).size() == 3) {
+                eyeshadow_method_layout.setBackgroundColor(Color.WHITE);
+                eyeshadow_method1.setBackgroundResource(R.drawable.eyeshadow3c1);
+                eyeshadow_method2.setBackgroundResource(R.drawable.eyeshadow3c2);
+                eyeshadow_method3.setBackgroundResource(R.drawable.eyeshadow3c3);
+                eyeshadow_method4.setBackgroundResource(R.drawable.eyeshadow3c4);
+            } else if (data != null && data.get(0).size() == 4) {
+                eyeshadow_method_layout.setBackgroundColor(Color.WHITE);
+                eyeshadow_method1.setBackgroundResource(R.drawable.eyeshadow1s);
+                eyeshadow_method2.setBackgroundResource(R.drawable.eyeshadow2s);
+                eyeshadow_method3.setBackgroundResource(R.drawable.eyeshadow3s);
+                eyeshadow_method4.setBackgroundResource(R.drawable.eyeshadow4s);
             }
-        });
-        undo_button = (ImageButton) findViewById(R.id.undo_button);
-        undo_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (makeupCount - 1 > 0) {
-                    makeupCount--;
-                    temp = saveBitmap.get(makeupCount).copy(temp.getConfig(), true);
-                    imageView.setImageBitmap(temp);
-                    Log.d(TAG + " undo ", saveBitmap.size() + " " + makeupCount);
-                }
-            }
-        });
-
-        redo_button = (ImageButton) findViewById(R.id.redo_button);
-        redo_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (makeupCount + 1 < saveBitmap.size()) {
-                    makeupCount++;
-                    temp = saveBitmap.get(makeupCount).copy(temp.getConfig(), true);
-                    imageView.setImageBitmap(temp);
-                    Log.d(TAG + " redo ", saveBitmap.size() + " " + makeupCount);
-                }
-            }
-        });
-
-        save_button = (ImageButton) findViewById(R.id.save_button);
-        save_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final View item = LayoutInflater.from(ColorizeFaceActivity.this).inflate(R.layout.save_image_layout, null);
-                final EditText editText = (EditText) item.findViewById(R.id.save_edittext);
-                String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
-                editText.setText("MakeupImage_" + timeStamp);
-                ImageView save_imageview = (ImageView) item.findViewById(R.id.save_imageview);
-                save_imageview.setImageBitmap(temp);
-                new AlertDialog.Builder(ColorizeFaceActivity.this)
-                        .setTitle("Set Image Name")
-                        .setView(item)
-                        .setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                storeImage(temp, editText.getText().toString().trim());
-                            }
-                        })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .show();
-            }
-        });
-        apply_list_button = (ImageButton) findViewById(R.id.apply_list_button);
-        apply_list_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MakeupProductFragment multipleColorFragment = new MakeupProductFragment();//Get Fragment Instance
-                Resources res = getResources();
-                final String[] categoryArray = res.getStringArray(R.array.category_type_array);
-                Bundle data = new Bundle();
-                if (selectedFoundationID != null && saveBitmapColorList.get(categoryArray[1]) != null) {
-                    data.putString("selectedFoundationID", selectedFoundationID);
-                    data.putInt("foundationColorPosition", saveBitmapColorList.get(categoryArray[1]).intValue());
-                }
-                if (selectedBrushID != null && saveBitmapColorList.get(categoryArray[2]) != null) {
-                    data.putString("selectedBrushID", selectedBrushID);
-                    data.putInt("blushColorPosition", saveBitmapColorList.get(categoryArray[2]).intValue());
-                    Log.d(TAG + "selectedBrushID", selectedBrushID + " " + saveBitmapColorList.get(categoryArray[2]).intValue());
-                }
-                if (selectedEyeshadowID != null && saveBitmapColorList.get(categoryArray[3]) != null) {
-                    data.putString("selectedEyeshadowID", selectedEyeshadowID);
-                    data.putInt("eyeshadowColorPosition", saveBitmapColorList.get(categoryArray[3]).intValue());
-                }
-                if (selectedLipstickID != null && saveBitmapColorList.get(categoryArray[4]) != null) {
-                    data.putString("selectedLipstickID", selectedLipstickID);
-                    data.putInt("lipstickColorPosition", saveBitmapColorList.get(categoryArray[4]).intValue());
-                }
-                data.putParcelable("temp", temp);
-                data.putParcelable("basicImg", basicImg);
-                multipleColorFragment.setArguments(data);//Finally set argument bundle to fragment
-                final FragmentManager fm = getFragmentManager();
-                multipleColorFragment.show(getFragmentManager(), "Apply Makeup List");
-            }
-        });
-        //bottom
-        makeup_color_list = (RecyclerView) findViewById(R.id.makeup_color_list);
-        LinearLayoutManager llm = new LinearLayoutManager(this);
-        llm.setOrientation(LinearLayoutManager.HORIZONTAL);
-        makeup_color_list.setLayoutManager(llm);
-        makeup_color_list.setItemAnimator(new DefaultItemAnimator());
-
-        makeup_product_list = (RecyclerView) findViewById(R.id.makeup_product_list);
-        LinearLayoutManager llm2 = new LinearLayoutManager(this);
-        llm2.setOrientation(LinearLayoutManager.HORIZONTAL);
-        makeup_product_list.setLayoutManager(llm2);
-        makeup_product_list.setItemAnimator(new DefaultItemAnimator());
-
-        makeup_select_layout = (LinearLayout) findViewById(R.id.makeup_select_layout);
-        eyeshadow_method_layout = (LinearLayout) findViewById(R.id.eyeshadow_method_layout);
-        rouge_alpha_select = (LinearLayout) findViewById(R.id.rouge_alpha_select);
-        alpha_seekBar = (SeekBar) findViewById(R.id.alpha_seekBar);
-
-        eyeshadow_method1 = (ImageButton) findViewById(R.id.eyeshadow_method1);
-        eyeshadow_method1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                methodNumber = 1;
-                new LoadingMakeupAsyncTask().execute();
-            }
-        });
-        eyeshadow_method2 = (ImageButton) findViewById(R.id.eyeshadow_method2);
-        eyeshadow_method2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                methodNumber = 2;
-                new LoadingMakeupAsyncTask().execute();
-            }
-        });
-        eyeshadow_method3 = (ImageButton) findViewById(R.id.eyeshadow_method3);
-        eyeshadow_method3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                methodNumber = 3;
-                new LoadingMakeupAsyncTask().execute();
-            }
-        });
-        eyeshadow_method4 = (ImageButton) findViewById(R.id.eyeshadow_method4);
-        eyeshadow_method4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                methodNumber = 4;
-                new LoadingMakeupAsyncTask().execute();
-            }
-        });
-
-        foundation_button = (Button) this.findViewById(R.id.foundation_button);
-        foundation_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                categoryResult = 1;
-                setupProductAdapter();
-                viewControl(makeup_product_list, makeup_color_list, makeup_select_layout, 1);
-                eyeshadow_method_layout.setVisibility(View.GONE);
-            }
-        });
-
-        blush_button = (Button) this.findViewById(R.id.blush_button);
-        blush_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                categoryResult = 2;
-                setupProductAdapter();
-                viewControl(makeup_product_list, makeup_color_list, makeup_select_layout, 1);
-                eyeshadow_method_layout.setVisibility(View.GONE);
-            }
-        });
-
-        eyeshadow_button = (Button) this.findViewById(R.id.eyeshadow_button);
-        eyeshadow_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                categoryResult = 3;
-                setupProductAdapter();
-                viewControl(makeup_product_list, makeup_color_list, makeup_select_layout, 1);
-                eyeshadow_method_layout.setVisibility(View.VISIBLE);
-            }
-        });
-
-        lipstick_button = (Button) this.findViewById(R.id.lipstick_button);
-        lipstick_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                categoryResult = 4;
-                setupProductAdapter();
-                viewControl(makeup_product_list, makeup_color_list, makeup_select_layout, 1);
-                eyeshadow_method_layout.setVisibility(View.GONE);
-            }
-        });
-
-        show_hide_layout_button = (ImageButton) this.findViewById(R.id.show_hide_layout_button);
-        viewControl(makeup_select_layout, makeup_product_list, makeup_color_list, 0);
-
-        show_hide_layout_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch (stepCount) {
-                    case 0:
-                        // type select
-                        viewControl(makeup_select_layout, makeup_product_list, makeup_color_list, 0);
-                        rouge_alpha_select.setVisibility(View.GONE);
-                        break;
-                    case 1:
-                        //product select
-                        viewControl(makeup_select_layout, makeup_product_list, makeup_color_list, 0);
-                        rouge_alpha_select.setVisibility(View.GONE);
-                        break;
-                    case 2:
-                        //color select layout
-                        viewControl(makeup_product_list, makeup_color_list, makeup_select_layout, 1);
-                        rouge_alpha_select.setVisibility(View.GONE);
-                        break;
-                }
-            }
-        });
-
-    }
-
-    private void viewControl(View view1, View view2, View view3, int step) {
-        view1.setVisibility(View.VISIBLE);
-        view2.setVisibility(View.GONE);
-        view3.setVisibility(View.GONE);
-        eyeshadow_method_layout.setVisibility(View.GONE);
-        rouge_alpha_select.setVisibility(View.GONE);
-        stepCount = step;
-    }
-
-    private void setupProductAdapter() {
-        if (mProducts.size() > 0) {
-            mSortedProducts = filterProduct(mProducts, categoryResult);
-
-            mProductAdapter = new ProductAdapter(mSortedProducts, getApplicationContext());
-            makeup_product_list.setAdapter(mProductAdapter);
-            mProductAdapter.notifyDataSetChanged();
+        } else if (makeupType.equals("Lipsticks")) {
+            categoryResult = 4;
+            colorArray = getIntent().getStringArrayListExtra("colorArray");
+            makeup_color_list.setAdapter(new ColorRecyclerAdapter());
+            Log.d(TAG + "  colorArray size", colorArray.size() + " " + colorArray.toString());
         }
-    }
-
-    private void databaseGetData() {
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("Product");
-        mDatabase.keepSynced(true);
-
-        mDatabase.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    ProductTypeTwo result = ds.getValue(ProductTypeTwo.class);
-                    if (result.getValidate() == 1) {
-                        mProducts.put(ds.getKey(), result);
-                        Log.d(" product " + ds.getKey(), result.toString());
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-
-        });
-
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        // TODO Auto-generated method stub
-        return super.onTouchEvent(event);
-    }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-        swipe.dispatchTouchEvent(event);
-        return super.dispatchTouchEvent(event);
     }
 
     private Runnable landmarkDetection = new Runnable() {
@@ -850,57 +421,6 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         Bitmap resizedBitmap = Bitmap.createScaledBitmap(bm, newWidth, newHeight, true);
         bm.recycle();
         return resizedBitmap;
-    }
-
-    private void lipLayer() {
-        Canvas drawCanvas = new Canvas(temp);
-        Paint mPaint = new Paint();
-        mPaint.setXfermode(mXfermode);
-
-        int rougeLayer = 0xEEFAFAFA;
-        mPaint.setColor(rougeLayer);
-        mPaint.setStyle(Paint.Style.FILL);
-        mPaint.setStrokeJoin(Paint.Join.ROUND);    // set the join to round you want
-        mPaint.setStrokeCap(Paint.Cap.ROUND);      // set the paint cap to round too
-        mPaint.setPathEffect(new CornerPathEffect(50));
-        mPaint.setStrokeWidth(1f);
-
-        int sc = drawCanvas.saveLayer(0, 0, temp.getWidth(), temp.getHeight(), null, Canvas.ALL_SAVE_FLAG);
-        mPaint.setMaskFilter(new BlurMaskFilter(60f, BlurMaskFilter.Blur.OUTER));
-
-        Path path = new Path();
-        path.reset();
-        path.moveTo(landmark_pt_x.get(48), landmark_pt_y.get(48));
-
-        for (int i = 49; i < 55; i++)
-            path.lineTo(landmark_pt_x.get(i), landmark_pt_y.get(i) + 2f);
-
-        path.lineTo(landmark_pt_x.get(64), landmark_pt_y.get(64) - 2f);
-        path.lineTo(landmark_pt_x.get(63), landmark_pt_y.get(63) - 2f);
-        path.lineTo(landmark_pt_x.get(62), landmark_pt_y.get(62) - 2f);
-        path.lineTo(landmark_pt_x.get(60), landmark_pt_y.get(60) - 2f);
-        path.lineTo(landmark_pt_x.get(48), landmark_pt_y.get(48) - 2f);
-
-        path.close();
-        drawCanvas.drawPath(path, mPaint);
-
-        path.reset();
-        path.moveTo(landmark_pt_x.get(48), landmark_pt_y.get(48));
-        path.lineTo(landmark_pt_x.get(59), landmark_pt_y.get(59) + 2f);
-        path.lineTo(landmark_pt_x.get(58), landmark_pt_y.get(58) + 2f);
-        path.lineTo(landmark_pt_x.get(57), landmark_pt_y.get(57) + 2f);
-        path.lineTo(landmark_pt_x.get(56), landmark_pt_y.get(56) + 2f);
-        path.lineTo(landmark_pt_x.get(55), landmark_pt_y.get(55) + 2f);
-        path.lineTo(landmark_pt_x.get(54), landmark_pt_y.get(54) + 2f);
-
-        for (int i = 64; i < 68; i++)
-            path.lineTo(landmark_pt_x.get(i), landmark_pt_y.get(i) - 2f);
-
-        path.lineTo(landmark_pt_x.get(60), landmark_pt_y.get(60) - 2f);
-        path.lineTo(landmark_pt_x.get(48), landmark_pt_y.get(48) - 2f);
-
-        path.close();
-        drawCanvas.drawPath(path, mPaint);
     }
 
     private void detectRegion() {
@@ -1178,11 +698,59 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         temp.getPixels(tempArray, 0, temp.getWidth(), 0, 0, temp.getWidth(), temp.getHeight());
     }
 
+    private void setup() {
+        Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
+        FontManager.markAsIconContainer(findViewById(R.id.single_makeup_layout), fontType);
+        single_makeup_layout = (RelativeLayout) findViewById(R.id.single_makeup_layout);
+        //toolbar button
+
+        makeup_color_list = (RecyclerView) findViewById(R.id.makeup_color_list);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        llm.setOrientation(LinearLayoutManager.HORIZONTAL);
+        makeup_color_list.setLayoutManager(llm);
+        makeup_color_list.setItemAnimator(new DefaultItemAnimator());
+
+        eyeshadow_method_layout = (LinearLayout) findViewById(R.id.eyeshadow_method_layout);
+        rouge_alpha_select = (LinearLayout) findViewById(R.id.rouge_alpha_select);
+        alpha_seekBar = (SeekBar) findViewById(R.id.alpha_seekBar);
+
+        eyeshadow_method1 = (ImageButton) findViewById(R.id.eyeshadow_method1);
+        eyeshadow_method1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                methodNumber = 1;
+                new LoadingMakeupAsyncTask().execute();
+            }
+        });
+        eyeshadow_method2 = (ImageButton) findViewById(R.id.eyeshadow_method2);
+        eyeshadow_method2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                methodNumber = 2;
+                new LoadingMakeupAsyncTask().execute();
+            }
+        });
+        eyeshadow_method3 = (ImageButton) findViewById(R.id.eyeshadow_method3);
+        eyeshadow_method3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                methodNumber = 3;
+                new LoadingMakeupAsyncTask().execute();
+            }
+        });
+        eyeshadow_method4 = (ImageButton) findViewById(R.id.eyeshadow_method4);
+        eyeshadow_method4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                methodNumber = 4;
+                new LoadingMakeupAsyncTask().execute();
+            }
+        });
+    }
+
     private void setupFoundation(String foundationColor, Bitmap getBitmap) {
 
         try {
-            selectedFoundationColor = foundationColor;
-            Log.d(TAG + " selectedFoundationColor ", selectedFoundationColor);
             int color = stringColorRGBToARGB(foundationColor, 150, 0, 0, 0);
             float[] foundationHSV = new float[3];
             Color.colorToHSV(color, foundationHSV);
@@ -1198,7 +766,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                         } else
                             hsv[0] = foundationHSV[0];
 
-                        if( hsv[1] > foundationHSV[1]) {
+                        if (hsv[1] > foundationHSV[1]) {
                             hsv[1] = foundationHSV[1];
                             Log.d(TAG, "face[" + x + " , " + y + "] : " + hsv[0] + " , " + hsv[1] + " , " + hsv[2] + " ] " + foundationHSV[0] + " " + foundationHSV[1] + " " + foundationHSV[2]);
                         }
@@ -1225,45 +793,11 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        if (doubleBackToExitPressedOnce) {
-            super.onBackPressed();
-            return;
-        }
-
-        this.doubleBackToExitPressedOnce = true;
-        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
-
-        new Handler().postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                doubleBackToExitPressedOnce = false;
-            }
-        }, 2000);
-    }
-
-    public void drawpoint(float x, float y, Bitmap bitmap, Canvas canvas) {
-        Paint paint = new Paint();
-        paint.setColor(Color.GREEN);
-        paint.setStrokeWidth(Math.max(originalImg.getWidth(), originalImg.getHeight()) / 100f);
-        paint.setAntiAlias(true);
-        paint.setDither(true);
-        canvas.drawCircle(x, y, 2, paint);
-//        canvas.drawText(j+"",x, y, paint);
-    }
-
-    public void drawLocation(Bitmap bitmap, Canvas canvas) {
-        Paint paint = new Paint();
-        paint.setColor(Color.RED);
-        paint.setAntiAlias(true);
-        paint.setDither(true);
-        paint.setStrokeWidth(Math.max(originalImg.getWidth(), originalImg.getHeight()) / 100f);
-        canvas.drawCircle(landmark_pt_x.get(j), landmark_pt_y.get(j), 2, paint);
+        this.finish();
     }
 
     public void changeLipColor(String lipstickColor, Bitmap getBitmap) {
 
-        selectedLipstickColor = lipstickColor;
         int color = stringColorRGBToARGB(lipstickColor, 255, 0, 0, 0);
         float[] lipstickHSV = new float[3];
         Color.colorToHSV(color, lipstickHSV);
@@ -1393,26 +927,26 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         mPaint.setPathEffect(new CornerPathEffect(70));
         mPaint.setXfermode(mXfermode);
 
-        int size = savedEyeshadowColor.size();
+        int size = colorArray.size();
         int color1 = 0, color2 = 0, color3 = 0, color4 = 0;
         if (size == 1) {
-            color1 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
-            color2 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 60, 60, 60);
-            color3 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
-            color4 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 60, 60, 60);
+            color1 = stringColorToARGB(colorArray.get(0), 0, 0, 0, 0);
+            color2 = stringColorToARGB(colorArray.get(0), 0, 60, 60, 60);
+            color3 = stringColorToARGB(colorArray.get(0), 0, 0, 0, 0);
+            color4 = stringColorToARGB(colorArray.get(0), 0, 60, 60, 60);
             mPaint.setMaskFilter(new BlurMaskFilter(2.5f, BlurMaskFilter.Blur.NORMAL));
         } else if (size == 3) {
-            color1 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
-            color2 = stringColorToARGB(savedEyeshadowColor.get(1), 0, 0, 0, 0);
-            color3 = stringColorToARGB(savedEyeshadowColor.get(2), 0, 0, 0, 0);
-            color4 = stringColorToARGB(savedEyeshadowColor.get(2), 0, 50, 50, 50);
+            color1 = stringColorToARGB(colorArray.get(0), 0, 0, 0, 0);
+            color2 = stringColorToARGB(colorArray.get(1), 0, 0, 0, 0);
+            color3 = stringColorToARGB(colorArray.get(2), 0, 0, 0, 0);
+            color4 = stringColorToARGB(colorArray.get(2), 0, 50, 50, 50);
             mPaint.setMaskFilter(new BlurMaskFilter(2.5f, BlurMaskFilter.Blur.NORMAL));
         }
         if (size == 4) {
-            color1 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
-            color2 = stringColorToARGB(savedEyeshadowColor.get(1), 0, 0, 0, 0);
-            color3 = stringColorToARGB(savedEyeshadowColor.get(2), 0, 0, 0, 0);
-            color4 = stringColorToARGB(savedEyeshadowColor.get(3), 0, 0, 0, 0);
+            color1 = stringColorToARGB(colorArray.get(0), 0, 0, 0, 0);
+            color2 = stringColorToARGB(colorArray.get(1), 0, 0, 0, 0);
+            color3 = stringColorToARGB(colorArray.get(2), 0, 0, 0, 0);
+            color4 = stringColorToARGB(colorArray.get(3), 0, 0, 0, 0);
             mPaint.setMaskFilter(new BlurMaskFilter(2.5f, BlurMaskFilter.Blur.NORMAL));
         }
 
@@ -1583,27 +1117,27 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         mPaint.setPathEffect(new CornerPathEffect(70));
         mPaint.setXfermode(mXfermode);
 
-        int size = savedEyeshadowColor.size();
+        int size = colorArray.size();
         int color1 = 0, color2 = 0, color3 = 0, color4 = 0;
         if (size == 1) {
-            color2 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
-            color3 = stringColorToARGB(savedEyeshadowColor.get(0), -100, 30, 30, 30);
-            color4 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
+            color2 = stringColorToARGB(colorArray.get(0), 0, 0, 0, 0);
+            color3 = stringColorToARGB(colorArray.get(0), -100, 30, 30, 30);
+            color4 = stringColorToARGB(colorArray.get(0), 0, 0, 0, 0);
         } else if (size == 2) {
-            color1 = stringColorToARGB(savedEyeshadowColor.get(1), 0, 0, 0, 0);
-            color2 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
-            color3 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
-            color4 = stringColorToARGB(savedEyeshadowColor.get(1), 0, 0, 0, 0);
+            color1 = stringColorToARGB(colorArray.get(1), 0, 0, 0, 0);
+            color2 = stringColorToARGB(colorArray.get(0), 0, 0, 0, 0);
+            color3 = stringColorToARGB(colorArray.get(0), 0, 0, 0, 0);
+            color4 = stringColorToARGB(colorArray.get(1), 0, 0, 0, 0);
         } else if (size == 3) {
-            color1 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
-            color2 = stringColorToARGB(savedEyeshadowColor.get(1), 0, 0, 0, 0);
-            color3 = stringColorToARGB(savedEyeshadowColor.get(2), 0, 0, 0, 0);
-            color4 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
+            color1 = stringColorToARGB(colorArray.get(0), 0, 0, 0, 0);
+            color2 = stringColorToARGB(colorArray.get(1), 0, 0, 0, 0);
+            color3 = stringColorToARGB(colorArray.get(2), 0, 0, 0, 0);
+            color4 = stringColorToARGB(colorArray.get(0), 0, 0, 0, 0);
         } else if (size == 4) {
-            color1 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
-            color2 = stringColorToARGB(savedEyeshadowColor.get(1), 0, 0, 0, 0);
-            color3 = stringColorToARGB(savedEyeshadowColor.get(2), 0, 0, 0, 0);
-            color4 = stringColorToARGB(savedEyeshadowColor.get(3), 0, 0, 0, 0);
+            color1 = stringColorToARGB(colorArray.get(0), 0, 0, 0, 0);
+            color2 = stringColorToARGB(colorArray.get(1), 0, 0, 0, 0);
+            color3 = stringColorToARGB(colorArray.get(2), 0, 0, 0, 0);
+            color4 = stringColorToARGB(colorArray.get(3), 0, 0, 0, 0);
         }
 //        1.
         mPaint.setColor(color1);
@@ -1831,27 +1365,27 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         mPaint.setPathEffect(new CornerPathEffect(70));
         mPaint.setXfermode(mXfermode);
 
-        int size = savedEyeshadowColor.size();
+        int size = colorArray.size();
         int color1 = 0, color2 = 0, color3 = 0, color4 = 0, shapeColor = 0;
         if (size == 2) {
-            shapeColor = stringColorToARGB(savedEyeshadowColor.get(1), -60, 0, 0, 0);
-            color1 = stringColorToARGB(savedEyeshadowColor.get(1), 0, 0, 0, 0);
-            color2 = stringColorToARGB(savedEyeshadowColor.get(1), 0, 0, 0, 0);
-            color3 = stringColorToARGB(savedEyeshadowColor.get(0), 0, -40, -40, -40);
-            color4 = stringColorToARGB(savedEyeshadowColor.get(0), 0, -20, -20, -20);
+            shapeColor = stringColorToARGB(colorArray.get(1), -60, 0, 0, 0);
+            color1 = stringColorToARGB(colorArray.get(1), 0, 0, 0, 0);
+            color2 = stringColorToARGB(colorArray.get(1), 0, 0, 0, 0);
+            color3 = stringColorToARGB(colorArray.get(0), 0, -40, -40, -40);
+            color4 = stringColorToARGB(colorArray.get(0), 0, -20, -20, -20);
         }
         if (size == 3) {
-            shapeColor = stringColorToARGB(savedEyeshadowColor.get(0), -60, 0, 0, 0);
-            color1 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
-            color2 = stringColorToARGB(savedEyeshadowColor.get(1), 0, 0, 0, 0);
-            color3 = stringColorToARGB(savedEyeshadowColor.get(2), 0, 0, 0, 0);
-            color4 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
+            shapeColor = stringColorToARGB(colorArray.get(0), -60, 0, 0, 0);
+            color1 = stringColorToARGB(colorArray.get(0), 0, 0, 0, 0);
+            color2 = stringColorToARGB(colorArray.get(1), 0, 0, 0, 0);
+            color3 = stringColorToARGB(colorArray.get(2), 0, 0, 0, 0);
+            color4 = stringColorToARGB(colorArray.get(0), 0, 0, 0, 0);
         } else if (size == 4) {
-            shapeColor = stringColorToARGB(savedEyeshadowColor.get(0), -120, 0, 0, 0);
-            color1 = stringColorToARGB(savedEyeshadowColor.get(0), -80, 0, 0, 0);
-            color2 = stringColorToARGB(savedEyeshadowColor.get(1), -80, 0, 0, 0);
-            color3 = stringColorToARGB(savedEyeshadowColor.get(2), -80, 0, 0, 0);
-            color4 = stringColorToARGB(savedEyeshadowColor.get(3), -80, 0, 0, 0);
+            shapeColor = stringColorToARGB(colorArray.get(0), -120, 0, 0, 0);
+            color1 = stringColorToARGB(colorArray.get(0), -80, 0, 0, 0);
+            color2 = stringColorToARGB(colorArray.get(1), -80, 0, 0, 0);
+            color3 = stringColorToARGB(colorArray.get(2), -80, 0, 0, 0);
+            color4 = stringColorToARGB(colorArray.get(3), -80, 0, 0, 0);
         }
 
 //        1.
@@ -2045,32 +1579,32 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         mPaint.setPathEffect(new CornerPathEffect(100));
         mPaint.setXfermode(mXfermode);
 
-        int size = savedEyeshadowColor.size();
+        int size = colorArray.size();
         int color1 = 0, color2 = 0, color3 = 0, color4 = 0, shapeColor = 0;
         if (size == 1) {
-            color2 = stringColorToARGB(savedEyeshadowColor.get(0), -150, 20, 20, 20);
-            color3 = stringColorToARGB(savedEyeshadowColor.get(0), -160, 0, 0, 0);
-            color4 = stringColorToARGB(savedEyeshadowColor.get(0), -170, 0, 0, 0);
+            color2 = stringColorToARGB(colorArray.get(0), -150, 20, 20, 20);
+            color3 = stringColorToARGB(colorArray.get(0), -160, 0, 0, 0);
+            color4 = stringColorToARGB(colorArray.get(0), -170, 0, 0, 0);
             mPaint.setMaskFilter(new BlurMaskFilter(3f, BlurMaskFilter.Blur.NORMAL));
         } else if (size == 2) {
-            color2 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
-            color3 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
-            color4 = stringColorToARGB(savedEyeshadowColor.get(1), 0, 0, 0, 0);
-            shapeColor = stringColorToARGB(savedEyeshadowColor.get(1), -60, 0, 0, 0);
+            color2 = stringColorToARGB(colorArray.get(0), 0, 0, 0, 0);
+            color3 = stringColorToARGB(colorArray.get(0), 0, 0, 0, 0);
+            color4 = stringColorToARGB(colorArray.get(1), 0, 0, 0, 0);
+            shapeColor = stringColorToARGB(colorArray.get(1), -60, 0, 0, 0);
             mPaint.setMaskFilter(new BlurMaskFilter(3f, BlurMaskFilter.Blur.NORMAL));
         } else if (size == 3) {
-            color1 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
-            color2 = stringColorToARGB(savedEyeshadowColor.get(2), 0, 0, 0, 0);
-            color3 = stringColorToARGB(savedEyeshadowColor.get(1), 0, 0, 0, 0);
-            color4 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
-            shapeColor = stringColorToARGB(savedEyeshadowColor.get(0), -60, 0, 0, 0);
+            color1 = stringColorToARGB(colorArray.get(0), 0, 0, 0, 0);
+            color2 = stringColorToARGB(colorArray.get(2), 0, 0, 0, 0);
+            color3 = stringColorToARGB(colorArray.get(1), 0, 0, 0, 0);
+            color4 = stringColorToARGB(colorArray.get(0), 0, 0, 0, 0);
+            shapeColor = stringColorToARGB(colorArray.get(0), -60, 0, 0, 0);
             mPaint.setMaskFilter(new BlurMaskFilter(3f, BlurMaskFilter.Blur.NORMAL));
         } else {
-            color1 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
-            color2 = stringColorToARGB(savedEyeshadowColor.get(1), 0, 0, 0, 0);
-            color3 = stringColorToARGB(savedEyeshadowColor.get(2), 0, 0, 0, 0);
-            color4 = stringColorToARGB(savedEyeshadowColor.get(3), 0, 0, 0, 0);
-            shapeColor = stringColorToARGB(savedEyeshadowColor.get(0), -50, 0, 0, 0);
+            color1 = stringColorToARGB(colorArray.get(0), 0, 0, 0, 0);
+            color2 = stringColorToARGB(colorArray.get(1), 0, 0, 0, 0);
+            color3 = stringColorToARGB(colorArray.get(2), 0, 0, 0, 0);
+            color4 = stringColorToARGB(colorArray.get(3), 0, 0, 0, 0);
+            shapeColor = stringColorToARGB(colorArray.get(0), -50, 0, 0, 0);
             mPaint.setMaskFilter(new BlurMaskFilter(2.5f, BlurMaskFilter.Blur.NORMAL));
         }
 //        1.
@@ -2253,14 +1787,14 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         mPaint.setXfermode(mXfermode);
         mPaint.setMaskFilter(new BlurMaskFilter(3f, BlurMaskFilter.Blur.NORMAL));
 
-        int size = savedEyeshadowColor.size();
+        int size = colorArray.size();
         int color1 = 0, color2 = 0;
         if (size == 1) {
-            color1 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
-            color2 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 60, 60, 60);
+            color1 = stringColorToARGB(colorArray.get(0), 0, 0, 0, 0);
+            color2 = stringColorToARGB(colorArray.get(0), 0, 60, 60, 60);
         } else if (size == 2) {
-            color1 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
-            color2 = stringColorToARGB(savedEyeshadowColor.get(1), 0, 0, 0, 0);
+            color1 = stringColorToARGB(colorArray.get(0), 0, 0, 0, 0);
+            color2 = stringColorToARGB(colorArray.get(1), 0, 0, 0, 0);
         }
 
         mPaint.setShader(new LinearGradient(
@@ -2342,14 +1876,14 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         mPaint.setPathEffect(new CornerPathEffect(70));
         mPaint.setXfermode(mXfermode);
 
-        int size = savedEyeshadowColor.size();
+        int size = colorArray.size();
         int color1 = 0, color2 = 0;
         if (size == 1) {
-            color1 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
-            color2 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
+            color1 = stringColorToARGB(colorArray.get(0), 0, 0, 0, 0);
+            color2 = stringColorToARGB(colorArray.get(0), 0, 0, 0, 0);
         } else if (size == 2) {
-            color1 = stringColorToARGB(savedEyeshadowColor.get(0), 0, 0, 0, 0);
-            color2 = stringColorToARGB(savedEyeshadowColor.get(1), 0, 0, 0, 0);
+            color1 = stringColorToARGB(colorArray.get(0), 0, 0, 0, 0);
+            color2 = stringColorToARGB(colorArray.get(1), 0, 0, 0, 0);
         }
 
 //        int sc = drawCanvas.saveLayer(0, 0, temp.getWidth(), temp.getHeight(), null, Canvas.ALL_SAVE_FLAG);
@@ -2452,8 +1986,6 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
 
     private void drawRouge(String blushColor, Bitmap getBitmap) {
 
-        selectedBrushColor = blushColor;
-        Log.d(TAG + " selectedBlushColor ", selectedBrushColor);
         Canvas drawCanvas = new Canvas(getBitmap);
         Paint mPaint = new Paint();
 
@@ -2518,20 +2050,6 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         drawCanvas.setBitmap(getBitmap);
     }
 
-
-    public void getFaceid(JSONObject result) {
-        try {
-            face_id = result.getJSONArray("face").getJSONObject(0).getString("face_id");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            ColorizeFaceActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    Log.d(TAG + " error", " Error.");
-                }
-            });
-        }
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 //        getMenuInflater().inflate(R.menu.activity_main, menu);
@@ -2541,181 +2059,229 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
     @Override
     protected void onPause() {
         super.onPause();
-        progressDialog.dismiss();
     }
 
     protected void onDestroy() {
         super.onDestroy();
-        progressDialog.dismiss();
     }
 
+    class LoadingMakeupAsyncTask extends AsyncTask<Integer, Integer, Integer> {
+        @Override
+        protected Integer doInBackground(Integer... position) {
+            switch (categoryResult) {
+                case 1:
+                    temp = temp2.copy(temp2.getConfig(), true);
+                    setupFoundation(colorArray.get(0), temp);
+                    break;
+                case 2:
+                    temp = temp2.copy(temp2.getConfig(), true);
+                    drawRouge(colorArray.get(0), temp);
+                    break;
+                case 3:
+                    temp = temp2.copy(temp.getConfig(), true);
+                    eyeshadowMethodSelect();
+                    break;
+                case 4:
+                    temp = temp2.copy(temp2.getConfig(), true);
+                    changeLipColor(colorArray.get(0), temp);
+//                    lipLayer();
+                    break;
+            }
+            return null;
+        }
 
-    private Map<String, ProductTypeTwo> filterProduct(Map<String, ProductTypeTwo> unsortMap, int categoryResult) {
-        List<Map.Entry<String, ProductTypeTwo>> temp = new LinkedList<Map.Entry<String, ProductTypeTwo>>(unsortMap.entrySet());
-        //compare temp
-        List<Map.Entry<String, ProductTypeTwo>> temp2 = new LinkedList<Map.Entry<String, ProductTypeTwo>>(unsortMap.entrySet());
-
-        int tempSize = temp2.size();
-        List<String> removeList = new ArrayList<>();
-        Resources res = getResources();
-        final String[] categoryArray = res.getStringArray(R.array.category_type_array);
-
-        if (categoryResult >= 0) {
-            for (int i = 0; i < tempSize; i++) {
-                if (!categoryArray[categoryResult].equals(temp2.get(i).getValue().getCategory())) {
-                    Log.d(TAG + " remove : " + temp2.get(i).getKey(), categoryArray[categoryResult] + " : " + temp2.get(i).getValue().getCategory());
-                    removeList.add(temp2.get(i).getKey());
+        private void eyeshadowMethodSelect() {
+            if (colorArray.size() == 1) {
+                switch (methodNumber) {
+                    case 1:
+                        drawEyeShadowWithFourColorMethod1(temp2);
+                        break;
+                    case 2:
+                        drawEyeShadowWithTwoColorMethod1(temp2);
+                        break;
+                    case 3:
+                        drawEyeShadowWithFourColorMethod2(temp2);
+                        break;
+                    case 4:
+                        drawEyeShadowWithFourColorMethod4(temp2);
+                        break;
+                }
+            } else if (colorArray.size() == 2) {
+                switch (methodNumber) {
+                    case 1:
+                        drawEyeShadowWithTwoColorMethod1(temp2);
+                        break;
+                    case 2:
+                        drawEyeShadowWithFourColorMethod2(temp2);
+                        break;
+                    case 3:
+                        drawEyeShadowWithFourColorMethod3(temp2);
+                        break;
+                    case 4:
+                        drawEyeShadowWithFourColorMethod4(temp2);
+                        break;
+                }
+            } else if (colorArray.size() == 3) {
+                switch (methodNumber) {
+                    case 1:
+                        drawEyeShadowWithFourColorMethod1(temp2);
+                        break;
+                    case 2:
+                        drawEyeShadowWithFourColorMethod2(temp2);
+                        break;
+                    case 3:
+                        drawEyeShadowWithFourColorMethod3(temp2);
+                        break;
+                    case 4:
+                        drawEyeShadowWithFourColorMethod4(temp2);
+                        break;
                 }
             }
-        }
-        Log.d("Filtered ", "Map");
-        // Maintaining insertion order with the help of LinkedList
-        Map<String, ProductTypeTwo> filteredMap = new LinkedHashMap<>();
-        for (Map.Entry<String, ProductTypeTwo> entry : temp) {
-            if (!removeList.contains(entry.getKey())) {
-                filteredMap.put(entry.getKey(), entry.getValue());
-                Log.d(entry.getKey(), entry.getValue().getProductName() + " : " + entry.getValue().getCategory());
+            if (colorArray.size() == 4) {
+                switch (methodNumber) {
+                    case 1:
+                        drawEyeShadowWithFourColorMethod1(temp2);
+                        break;
+                    case 2:
+                        drawEyeShadowWithFourColorMethod2(temp2);
+                        break;
+                    case 3:
+                        drawEyeShadowWithFourColorMethod3(temp2);
+                        break;
+                    case 4:
+                        drawEyeShadowWithFourColorMethod4(temp2);
+                        break;
+                }
             }
-        }
 
-        return filteredMap;
-    }
-
-    public class ProductAdapter extends RecyclerView.Adapter<ProductViewHolder> {
-
-        private Map<String, ProductTypeTwo> mResultProducts = new HashMap<>();
-        // Allows to remember the last item shown on screen
-        private int lastPosition = -1;
-        private Context context;
-
-        public ProductAdapter(Map<String, ProductTypeTwo> mProducts, Context c) {
-            this.context = c;
-            this.mResultProducts = mProducts;
-            notifyDataSetChanged();
+            Log.d(TAG, " method number : " + methodNumber + " data.size(): " + data.size());
+            temp = temp2.copy(temp2.getConfig(), true);
+            temp2 = basicImg.copy(temp.getConfig(), true);
         }
 
         @Override
-        public ProductViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            Context context = parent.getContext();
-            View view = getLayoutInflater().inflate(R.layout.makeup_product_row, parent, false);
-            ProductViewHolder viewHolder = new ProductViewHolder(view);
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(SingleMakeupActivity.this);
+            progressDialog.setCancelable(false);
+            progressDialog.setTitle("Please Wait..");
+            Resources res = getResources();
+            final String[] categoryArray = res.getStringArray(R.array.category_type_array);
+            progressDialog.setMessage("Setting up " + categoryArray[categoryResult] + " ...");
+            progressDialog.show();
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            super.onPostExecute(result);
+            progressDialog.dismiss();
+            imageView.setImageBitmap(temp);
+        }
+    }
+
+    public class MultipleColorAdapter extends RecyclerView.Adapter<MultipleColorHolder> {
+
+        private final static String TAG = " MakeupProductAdapter ";
+        private final Context c;
+        public int selectedColorItemPosition = 0;
+        public ArrayList<ArrayList<String>> multipleColor = new ArrayList<>();
+
+
+        public MultipleColorAdapter(Context c, ArrayList<ArrayList<String>> multipleColor) {
+            this.c = c;
+            this.multipleColor = multipleColor;
+        }
+
+        @Override
+        public MultipleColorHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+            View v = LayoutInflater.from(viewGroup.getContext())
+                    .inflate(R.layout.makeup_product_color_layout, viewGroup, false);
+            MultipleColorHolder viewHolder = new MultipleColorHolder(v);
             return viewHolder;
         }
 
         @Override
-        public void onBindViewHolder(ProductViewHolder viewHolder, final int position) {
-            List<ProductTypeTwo> values = new ArrayList<>(mResultProducts.values());
-            final ProductTypeTwo model = values.get(position);
-            final List<String> keys = new ArrayList<>(mResultProducts.keySet());
-            final String product_id = keys.get(position);
-
-            Log.d(TAG + " product_id", product_id);
-            Log.d(TAG + " product name", model.getProductName());
-
-            Log.d(TAG, "loading view " + position);
-
-//            Log.d(TAG + " product id ", product_id);
-            viewHolder.setProductName(model.getProductName());
-            viewHolder.setImage(getApplicationContext(), model.getProductImage());
-//            viewHolder.setUid(model.getUid());
+        public void onBindViewHolder(final MultipleColorHolder viewHolder, final int position) {
+            Log.d(TAG + " onBindViewHolder position", position + "");
+            Log.d(TAG + " data ", data.toString());
+            for (int i = 0; i < data.get(position).size(); i++) {
+                if (multipleColor.get(position).get(i) != null) {
+                    final int sdk = android.os.Build.VERSION.SDK_INT;
+                    if (position == selectedColorItemPosition) {
+                        if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                            viewHolder.select_color_layout.setBackgroundDrawable(getResources().getDrawable(R.drawable.square_rounded_border));
+                        } else {
+                            viewHolder.select_color_layout.setBackground(getResources().getDrawable(R.drawable.square_rounded_border));
+                        }
+                    } else {
+                        viewHolder.select_color_layout.setBackgroundResource(0);
+                    }
+                    Log.d(TAG + " onBindViewHolder", data.get(position).get(i).toString());
+                    viewHolder.makeup_product_color_image[i].setColorFilter(Color.parseColor(data.get(position).get(i)));
+                    viewHolder.makeup_product_color_image[i].setVisibility(View.VISIBLE);
+                }
+            }
 
             viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d(TAG, "Click product_id = " + product_id + " colorNo = " + colorNo);
-                    colorNo = model.getColorNo();
-                    selectedProductID = keys.get(position);
-                    switch (categoryResult) {
-                        case 1:
-                            selectedFoundationID = product_id;
-                            break;
-                        case 2:
-                            selectedBrushID = product_id;
-                            break;
-                        case 3:
-                            selectedEyeshadowID = product_id;
-                            break;
-                        case 4:
-                            selectedLipstickID = product_id;
-                            break;
+                    selectedColorItemPosition = position;
+                    notifyDataSetChanged();
+
+                    Log.d(TAG, " selectedColorItemPosition :" + selectedColorItemPosition);
+
+                    colorArray.clear();
+                    colorArray = new ArrayList<>();
+                    for (int i = 0; i < data.get(position).size(); i++)
+                        colorArray.add(data.get(position).get(i));
+
+                    if (categoryResult == 3) {
+                        eyeshadow_method_layout.setVisibility(View.VISIBLE);
                     }
-                    if (colorNo == 0 && categoryResult != 3) {
-                        colorSet.clear();
-                        for (int i = 0; i < mSortedProducts.get(selectedProductID).getColor().size(); i++) {
-                            for (int j = 0; j < mSortedProducts.get(selectedProductID).getColor().get(i).size(); j++) {
-                                colorSet.add(mSortedProducts.get(selectedProductID).getColor().get(i).get(j));
-                            }
-                        }
-                        makeup_color_list.setAdapter(new ColorRecyclerAdapter());
-                        mProductAdapter.notifyDataSetChanged();
-                        viewControl(makeup_color_list, makeup_select_layout, makeup_select_layout, 2);
-                        Log.d(TAG, mSortedProducts.get(selectedProductID).getColor().toString());
-                    } else {
-                        makeup_color_list.setAdapter(new MultipleColorAdapter(ColorizeFaceActivity.this, model.getColor()));
-                        viewControl(makeup_color_list, makeup_select_layout, makeup_select_layout, 2);
-                    }
-                    makeup_color_list.setVisibility(View.VISIBLE);
-                    makeup_select_layout.setVisibility(View.GONE);
-                    makeup_product_list.setVisibility(View.GONE);
-                    eyeshadow_method_layout.setVisibility(View.GONE);
-                    stepCount = 2;
+
+//                    drawEyeShadowWithOneColorMethod1(multipleColor);
+                    Snackbar.make(v, "Click detected on item " + position + " : " + data.get(position).toString(),
+                            Snackbar.LENGTH_SHORT)
+                            .setAction("Action", null).show();
                 }
             });
-            setAnimation(viewHolder.itemView, position);
-            Log.d(TAG, "finish loading view");
-
-        }
-
-        private void setAnimation(View viewToAnimate, int position) {
-            // If the bound view wasn't previously displayed on screen, it's animated
-            if (position > lastPosition) {
-                Animation animation = AnimationUtils.loadAnimation(context, android.R.anim.fade_in);
-                animation.setDuration(500);
-                viewToAnimate.startAnimation(animation);
-                lastPosition = position;
-            }
         }
 
         @Override
         public int getItemCount() {
-            return mResultProducts == null ? 0 : mResultProducts.size();
+            return data.size();
         }
+
     }
 
-    public static class ProductViewHolder extends RecyclerView.ViewHolder {
+    public class MultipleColorHolder extends RecyclerView.ViewHolder {
 
+        private LinearLayout select_color_layout;
         View mView;
-        private Typeface customTypeface = Typeface.createFromAsset(itemView.getContext().getAssets(), FontManager.APP_FONT);
+        public int currentItem;
+        public CircleImageView[] makeup_product_color_image = new CircleImageView[8];
+        public CardView makeup_product_color_card;
 
-        public ProductViewHolder(View itemView) {
+        public MultipleColorHolder(View itemView) {
             super(itemView);
             mView = itemView;
-        }
+            makeup_product_color_card = (CardView) itemView.findViewById(R.id.makeup_product_color_card);
+            makeup_product_color_card.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            select_color_layout = (LinearLayout) itemView.findViewById(R.id.select_color_layout);
 
-        public void setProductName(String productName) {
-            TextView makeup_product_name = (TextView) mView.findViewById(R.id.makeup_product_name);
-            makeup_product_name.setText(productName);
-            makeup_product_name.setTypeface(customTypeface, Typeface.BOLD);
-        }
-
-        public void setImage(final Context ctx, final String image) {
-            final ImageView makeup_product_image = (ImageView) mView.findViewById(R.id.makeup_product_image);
-            Picasso.with(ctx).load(image).networkPolicy(NetworkPolicy.OFFLINE).into(makeup_product_image, new Callback() {
-                @Override
-                public void onSuccess() {
-                    Log.d(TAG, "image loading success !");
-                }
-
-                @Override
-                public void onError() {
-                    Log.d(TAG, "image loading error !");
-                    Picasso.with(ctx)
-                            .load(image)
-                            .resize(100, 100)
-                            .centerCrop()
-                            .into(makeup_product_image);
-                }
-            });
+            makeup_product_color_image[0] = (CircleImageView) itemView.findViewById(R.id.makeup_product_color_image1);
+            makeup_product_color_image[1] = (CircleImageView) itemView.findViewById(R.id.makeup_product_color_image2);
+            makeup_product_color_image[2] = (CircleImageView) itemView.findViewById(R.id.makeup_product_color_image3);
+            makeup_product_color_image[3] = (CircleImageView) itemView.findViewById(R.id.makeup_product_color_image4);
+            makeup_product_color_image[4] = (CircleImageView) itemView.findViewById(R.id.makeup_product_color_image5);
+            makeup_product_color_image[5] = (CircleImageView) itemView.findViewById(R.id.makeup_product_color_image6);
+            makeup_product_color_image[6] = (CircleImageView) itemView.findViewById(R.id.makeup_product_color_image7);
+            makeup_product_color_image[7] = (CircleImageView) itemView.findViewById(R.id.makeup_product_color_image8);
         }
     }
 
@@ -2747,7 +2313,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
 
         @Override
         public void onBindViewHolder(final ColorRecyclerAdapter.ColorViewHolder viewHolder, final int position) {
-            viewHolder.colorImage.setColorFilter(Color.parseColor(colorSet.get(position)));
+            viewHolder.colorImage.setColorFilter(Color.parseColor(colorArray.get(position)));
             final int sdk = android.os.Build.VERSION.SDK_INT;
             viewHolder.select_color_layout.setBackgroundResource(0);
             if (position == selectedColorItemPosition) {
@@ -2765,7 +2331,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                     viewHolder.select_color_layout.setBackgroundResource(0);
                     notifyDataSetChanged();
                     new LoadingMakeupAsyncTask().execute(new Integer(position));
-                    Snackbar.make(v, "Click detected on item " + position + " : " + colorSet.get(position).toString(),
+                    Snackbar.make(v, "Click detected on item " + position + " : " + colorArray.get(position).toString(),
                             Snackbar.LENGTH_SHORT)
                             .setAction("Action", null).show();
 
@@ -2802,370 +2368,23 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
 
         @Override
         public int getItemCount() {
-            Log.d(TAG + " product_size", colorSet.size() + "");
-            return colorSet.size();
-        }
-    }
-
-    private void errorDialogEvent(String title, String message) {
-        new AlertDialog.Builder(ColorizeFaceActivity.this)
-                .setTitle(title)
-                .setMessage(message)
-                .setNegativeButton(R.string.cancel_text, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                })
-                .show();
-    }
-
-    class LoadingMakeupAsyncTask extends AsyncTask<Integer, Integer, Integer> {
-        @Override
-        protected Integer doInBackground(Integer... position) {
-            switch (categoryResult) {
-                case 1:
-                    colorPosition = position[0];
-                    setupFoundation(colorSet.get(position[0]), temp);
-                    break;
-                case 2:
-                    colorPosition = position[0];
-                    if (selectedFoundationColor != null)
-                        setupFoundation(selectedFoundationColor, temp2);
-
-                    if (selectedLipstickColor != null) {
-                        changeLipColor(selectedLipstickColor, temp2);
-//                        lipLayer();
-                    }
-
-                    if (savedEyeshadowColor != null)
-                        eyeshadowMethodSelect();
-
-                    drawRouge(colorSet.get(position[0]), temp);
-                    break;
-                case 3:
-                    if (selectedFoundationColor != null)
-                        setupFoundation(selectedFoundationColor, temp2);
-
-                    if (selectedBrushColor != null)
-                        drawRouge(selectedBrushColor, temp2);
-
-                    if (selectedLipstickColor != null) {
-                        changeLipColor(selectedLipstickColor, temp2);
-//                        lipLayer();
-                    }
-
-                    eyeshadowMethodSelect();
-                    break;
-                case 4:
-                    colorPosition = position[0];
-                    changeLipColor(colorSet.get(position[0]), temp);
-//                    lipLayer();
-                    break;
-            }
-            return null;
-        }
-
-        private void eyeshadowMethodSelect() {
-            if (savedEyeshadowColor.size() == 1) {
-                switch (methodNumber) {
-                    case 1:
-                        drawEyeShadowWithFourColorMethod1(temp2);
-                        break;
-                    case 2:
-                        drawEyeShadowWithTwoColorMethod1(temp2);
-                        break;
-                    case 3:
-                        drawEyeShadowWithFourColorMethod2(temp2);
-                        break;
-                    case 4:
-                        drawEyeShadowWithFourColorMethod4(temp2);
-                        break;
-                }
-            } else if (savedEyeshadowColor.size() == 2) {
-                switch (methodNumber) {
-                    case 1:
-                        drawEyeShadowWithTwoColorMethod1(temp2);
-                        break;
-                    case 2:
-                        drawEyeShadowWithFourColorMethod2(temp2);
-                        break;
-                    case 3:
-                        drawEyeShadowWithFourColorMethod3(temp2);
-                        break;
-                    case 4:
-                        drawEyeShadowWithFourColorMethod4(temp2);
-                        break;
-                }
-            } else if (savedEyeshadowColor.size() == 3) {
-                switch (methodNumber) {
-                    case 1:
-                        drawEyeShadowWithFourColorMethod1(temp2);
-                        break;
-                    case 2:
-                        drawEyeShadowWithFourColorMethod2(temp2);
-                        break;
-                    case 3:
-                        drawEyeShadowWithFourColorMethod3(temp2);
-                        break;
-                    case 4:
-                        drawEyeShadowWithFourColorMethod4(temp2);
-                        break;
-                }
-            }
-            if (savedEyeshadowColor.size() == 4) {
-                switch (methodNumber) {
-                    case 1:
-                        drawEyeShadowWithFourColorMethod1(temp2);
-                        break;
-                    case 2:
-                        drawEyeShadowWithFourColorMethod2(temp2);
-                        break;
-                    case 3:
-                        drawEyeShadowWithFourColorMethod3(temp2);
-                        break;
-                    case 4:
-                        drawEyeShadowWithFourColorMethod4(temp2);
-                        break;
-                }
-            }
-
-            Log.d(TAG, " method number : " + methodNumber + " selectedColor.size(): " + savedEyeshadowColor.size());
-            temp = temp2.copy(temp2.getConfig(), true);
-            temp2 = basicImg.copy(temp.getConfig(), true);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progressDialog = new ProgressDialog(ColorizeFaceActivity.this);
-            progressDialog.setCancelable(false);
-            progressDialog.setTitle("Please Wait..");
-            Resources res = getResources();
-            final String[] categoryArray = res.getStringArray(R.array.category_type_array);
-            progressDialog.setMessage("Setting up " + categoryArray[categoryResult] + " ...");
-            progressDialog.show();
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-        }
-
-        @Override
-        protected void onPostExecute(Integer result) {
-            super.onPostExecute(result);
-            progressDialog.dismiss();
-//             number,bitmap
-//            private Map<Integer,Bitmap> saveBitmap = new HashMap<>();
-//             number,(color,ID,category)
-//            private Map<Integer,List<String>> saveBitmapList = new HashMap<>();
-//             category , bitmap number
-//            private Map<String,Integer> saveMakeupList = new HashMap<>();
-            ++makeupCount;
-            List<String> data = new ArrayList<>();
-            data.clear();
-            Resources res = getResources();
-            final String[] categoryArray = res.getStringArray(R.array.category_type_array);
-            saveBitmap.put(makeupCount, temp);
-            data.add(categoryArray[categoryResult]);
-            switch (categoryResult) {
-                case 1:
-                    data.add(selectedFoundationID);
-                    saveMakeupList.put(categoryArray[categoryResult], makeupCount);
-                    break;
-                case 2:
-                    data.add(selectedBrushID);
-                    saveMakeupList.put(categoryArray[categoryResult], makeupCount);
-                    break;
-                case 3:
-                    data.add(selectedEyeshadowID);
-                    saveMakeupList.put(categoryArray[categoryResult], makeupCount);
-                    break;
-                case 4:
-                    data.add(selectedLipstickID);
-                    saveMakeupList.put(categoryArray[categoryResult], makeupCount);
-                    break;
-            }
-            saveBitmapColorList.put(categoryArray[categoryResult], colorPosition);
-            saveBitmapList.put(makeupCount, data);
-            Log.d(TAG + " saveMakeupList.size : saveBitmap.size ", saveMakeupList.size() + " : " + saveBitmap.size());
-            Log.d(TAG + " saveBitmapList.get(makeupCount) ", saveBitmapList.get(makeupCount).get(0) + " " + saveBitmapList.get(makeupCount).get(1));
-            imageView.setImageBitmap(temp);
-
-        }
-    }
-
-    public class MultipleColorAdapter extends RecyclerView.Adapter<MultipleColorHolder> {
-
-        private final static String TAG = " MakeupProductAdapter ";
-        private final Context c;
-        public int selectedColorItemPosition = 0;
-        public ArrayList<ArrayList<String>> colorArray;
-
-
-        public MultipleColorAdapter(Context c, ArrayList<ArrayList<String>> colorArray) {
-            this.c = c;
-            this.colorArray = colorArray;
-        }
-
-        @Override
-        public MultipleColorHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-            View v = LayoutInflater.from(viewGroup.getContext())
-                    .inflate(R.layout.makeup_product_color_layout, viewGroup, false);
-            MultipleColorHolder viewHolder = new MultipleColorHolder(v);
-            return viewHolder;
-        }
-
-        @Override
-        public void onBindViewHolder(final MultipleColorHolder viewHolder, final int position) {
-            Log.d(TAG + " onBindViewHolder position", position + "");
-            Log.d(TAG + " data ", colorArray.toString());
-            for (int i = 0; i < colorArray.get(position).size(); i++) {
-                if (colorArray.get(position).get(i) != null) {
-                    final int sdk = android.os.Build.VERSION.SDK_INT;
-                    if (position == selectedColorItemPosition) {
-                        if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                            viewHolder.select_color_layout.setBackgroundDrawable(getResources().getDrawable(R.drawable.square_rounded_border));
-                        } else {
-                            viewHolder.select_color_layout.setBackground(getResources().getDrawable(R.drawable.square_rounded_border));
-                        }
-                    } else {
-                        viewHolder.select_color_layout.setBackgroundResource(0);
-                    }
-                    Log.d(TAG + " onBindViewHolder", colorArray.get(position).get(i).toString());
-                    viewHolder.makeup_product_color_image[i].setColorFilter(Color.parseColor(colorArray.get(position).get(i)));
-                    viewHolder.makeup_product_color_image[i].setVisibility(View.VISIBLE);
-                }
-            }
-            if(colorArray != null && colorArray.get(0).size() == 1) {
-                eyeshadow_method_layout.setBackgroundColor(Color.WHITE);
-                eyeshadow_method1.setBackgroundResource(R.drawable.eyeshadow1c1);
-                eyeshadow_method2.setBackgroundResource(R.drawable.eyeshadow1c2);
-                eyeshadow_method3.setBackgroundResource(R.drawable.eyeshadow1c3);
-                eyeshadow_method4.setBackgroundResource(R.drawable.eyeshadow1c4);
-            }
-            else if (colorArray != null && colorArray.get(0).size() == 2) {
-                eyeshadow_method_layout.setBackgroundColor(Color.WHITE);
-                eyeshadow_method1.setBackgroundResource(R.drawable.eyeshadow2c1);
-                eyeshadow_method2.setBackgroundResource(R.drawable.eyeshadow2c2);
-                eyeshadow_method3.setBackgroundResource(R.drawable.eyeshadow2c3);
-                eyeshadow_method4.setBackgroundResource(R.drawable.eyeshadow2c4);
-            }
-            else if (colorArray != null && colorArray.get(0).size() == 3) {
-                eyeshadow_method_layout.setBackgroundColor(Color.WHITE);
-                eyeshadow_method1.setBackgroundResource(R.drawable.eyeshadow3c1);
-                eyeshadow_method2.setBackgroundResource(R.drawable.eyeshadow3c2);
-                eyeshadow_method3.setBackgroundResource(R.drawable.eyeshadow3c3);
-                eyeshadow_method4.setBackgroundResource(R.drawable.eyeshadow3c4);
-            }
-            else if (colorArray != null && colorArray.get(0).size() == 4) {
-                eyeshadow_method_layout.setBackgroundColor(Color.WHITE);
-                eyeshadow_method1.setBackgroundResource(R.drawable.eyeshadow1s);
-                eyeshadow_method2.setBackgroundResource(R.drawable.eyeshadow2s);
-                eyeshadow_method3.setBackgroundResource(R.drawable.eyeshadow3s);
-                eyeshadow_method4.setBackgroundResource(R.drawable.eyeshadow4s);
-            }
-
-
-            viewHolder.mView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    selectedColorItemPosition = position;
-                    viewHolder.select_color_layout.setBackgroundResource(0);
-                    notifyDataSetChanged();
-
-                    Log.d(TAG, " selectedColorItemPosition :" + selectedColorItemPosition);
-
-                    savedEyeshadowColor.clear();
-                    savedEyeshadowColor = new ArrayList<>();
-                    for (int i = 0; i < colorArray.get(position).size(); i++)
-                        savedEyeshadowColor.add(colorArray.get(position).get(i));
-
-                    if (categoryResult == 3) {
-                        eyeshadow_method_layout.setVisibility(View.VISIBLE);
-                    }
-
-//                    drawEyeShadowWithOneColorMethod1(multipleColor);
-                    Snackbar.make(v, "Click detected on item " + position + " : " + colorArray.get(position).toString(),
-                            Snackbar.LENGTH_SHORT)
-                            .setAction("Action", null).show();
-
-                    //new一個intent物件，並指定Activity切換的class
-
-//                    ColorSelectFragment colorSelectFragment  = new ColorSelectFragment();//Get Fragment Instance
-//                    Bundle data = new Bundle();
-//                    data.putSerializable("selectedColor", savedEyeshadowColor);
-//                    colorSelectFragment .setArguments(data);//Finally set argument bundle to fragment
-//                    final FragmentManager fm = getFragmentManager();
-//                    colorSelectFragment .show(getFragmentManager(), "Select Color");
-                }
-            });
-
-        }
-
-        @Override
-        public int getItemCount() {
+            Log.d(TAG + " product_size", colorArray.size() + "");
             return colorArray.size();
-        }
-
-    }
-
-    public class MultipleColorHolder extends RecyclerView.ViewHolder {
-
-        private LinearLayout select_color_layout;
-        View mView;
-        public int currentItem;
-        public CircleImageView[] makeup_product_color_image = new CircleImageView[8];
-        public CardView makeup_product_color_card;
-
-        public MultipleColorHolder(View itemView) {
-            super(itemView);
-            mView = itemView;
-            makeup_product_color_card = (CardView) itemView.findViewById(R.id.makeup_product_color_card);
-            makeup_product_color_card.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            select_color_layout = (LinearLayout) itemView.findViewById(R.id.select_color_layout);
-
-            makeup_product_color_image[0] = (CircleImageView) itemView.findViewById(R.id.makeup_product_color_image1);
-            makeup_product_color_image[1] = (CircleImageView) itemView.findViewById(R.id.makeup_product_color_image2);
-            makeup_product_color_image[2] = (CircleImageView) itemView.findViewById(R.id.makeup_product_color_image3);
-            makeup_product_color_image[3] = (CircleImageView) itemView.findViewById(R.id.makeup_product_color_image4);
-            makeup_product_color_image[4] = (CircleImageView) itemView.findViewById(R.id.makeup_product_color_image5);
-            makeup_product_color_image[5] = (CircleImageView) itemView.findViewById(R.id.makeup_product_color_image6);
-            makeup_product_color_image[6] = (CircleImageView) itemView.findViewById(R.id.makeup_product_color_image7);
-            makeup_product_color_image[7] = (CircleImageView) itemView.findViewById(R.id.makeup_product_color_image8);
-        }
-    }
-
-    private void storeImage(Bitmap image, String imageName) {
-        FileOutputStream fOut;
-        try {
-            File dir = new File("/sdcard/faceT/");
-            if (!dir.exists()) {
-                dir.mkdir();
-            }
-            String mImageName = imageName;
-            String tmp = "/sdcard/faceT/" + mImageName + ".jpg";
-            fOut = new FileOutputStream(tmp);
-            image.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
-            Snackbar snackbar = Snackbar.make(activity_colorize_face_layout, "Save bitmap suceesfullly in " + tmp, Snackbar.LENGTH_SHORT);
-            snackbar.show();
-            try {
-                fOut.flush();
-                fOut.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         }
     }
 
     @Override
-    public void onDataPass(List<String> data) {
-        savedEyeshadowColor.clear();
-        savedEyeshadowColor = new ArrayList<>();
-        for (int i = 0; i < data.size(); i++)
-            savedEyeshadowColor.add(data.get(i));
-        Log.d("LOG", "hello " + savedEyeshadowColor.toString());
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            //back press
+            case android.R.id.home:
+                // app icon in action bar clicked; goto parent activity.
+                this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
     }
+
 }

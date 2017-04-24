@@ -15,6 +15,7 @@
         android:background="@color/cardview_light_background"
         tools:context="fyp.hkust.facet.activity.MainActivity">
 
+
         <!-- your content layout -->
 
         <android.support.design.widget.AppBarLayout
@@ -23,6 +24,27 @@
             android:layout_height="wrap_content"
             android:theme="@style/AppTheme.AppBarOverlay"
             app:elevation="0dp">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:minHeight="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                app:layout_scrollFlags="scroll|enterAlways">
+
+                <TextView
+                    android:id="@+id/toolbar_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    android:gravity="center_vertical"
+                    android:text="@string/nav_profile_label"
+                    android:textColor="@color/white"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+
+            </android.support.v7.widget.Toolbar>
 
             <android.support.design.widget.CollapsingToolbarLayout
                 android:id="@+id/collapsing_toolbar"
@@ -36,108 +58,88 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:background="@color/white">
 
-                    <ImageView
+                    <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_above="@+id/tabs"
-                        android:layout_below="@+id/toolbar"
-                        android:background="@color/white" />
+                        android:id="@+id/profile_personal_layout"
+                        android:background="@color/white">
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/profile_picture"
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
-                        android:layout_centerVertical="true"
-                        android:layout_marginBottom="30dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginTop="40dp"
-                        android:elevation="6dp"
-                        android:src="@mipmap/app_icon"
-                        app:civ_border_color="@color/pale_white_border_color"
-                        app:civ_border_width="3dp"
-                        app:layout_collapseMode="parallax" />
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/profile_picture"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:layout_centerVertical="true"
+                            android:layout_marginBottom="10dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginTop="30dp"
+                            android:elevation="6dp"
+                            android:src="@mipmap/app_icon"
+                            app:civ_border_color="@color/pale_white_border_color"
+                            app:civ_border_width="3dp"
+                            app:layout_collapseMode="parallax" />
 
-                    <Button
-                        android:id="@+id/btn_edit"
-                        android:layout_width="60dp"
-                        android:layout_height="35dp"
-                        android:layout_alignBottom="@+id/profile_email"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginBottom="5dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="20dp"
-                        android:adjustViewBounds="true"
-                        android:background="@drawable/border_button_no_bg"
-                        android:clickable="true"
-                        android:contextClickable="true"
-                        android:scaleType="fitCenter"
-                        android:text="@string/edit_btn_text"
-                        android:textColor="@color/colorPrimary" />
+                        <Button
+                            android:id="@+id/btn_edit"
+                            android:layout_width="60dp"
+                            android:layout_height="35dp"
+                            android:layout_alignBottom="@+id/profile_email"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginBottom="5dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="20dp"
+                            android:adjustViewBounds="true"
+                            android:background="@drawable/border_button_no_bg"
+                            android:clickable="true"
+                            android:contextClickable="true"
+                            android:scaleType="fitCenter"
+                            android:text="@string/edit_btn_text"
+                            android:textColor="@color/colorPrimary" />
 
-                    <TextView
-                        android:id="@+id/profile_username"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginLeft="15dp"
-                        android:layout_marginTop="135dp"
-                        android:layout_toEndOf="@+id/profile_picture"
-                        android:layout_toStartOf="@+id/btn_edit"
-                        android:text="@string/profile_username"
-                        android:textColor="@color/profile_name_text_color"
-                        android:textSize="18sp" />
+                        <TextView
+                            android:id="@+id/profile_username"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:layout_marginLeft="15dp"
+                            android:layout_marginTop="50dp"
+                            android:layout_toEndOf="@+id/profile_picture"
+                            android:layout_toStartOf="@+id/btn_edit"
+                            android:text="@string/profile_username"
+                            android:textColor="@color/profile_name_text_color"
+                            android:textSize="18sp" />
 
-                    <TextView
-                        android:id="@+id/profile_email"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/profile_username"
-                        android:layout_toEndOf="@+id/profile_picture"
-                        android:layout_toStartOf="@+id/btn_edit"
-                        android:paddingLeft="15dp"
-                        android:paddingTop="5dp"
-                        android:text="@string/profile_email"
-                        android:textColor="@color/profile_email_text_color"
-                        android:textSize="12sp" />
+                        <TextView
+                            android:id="@+id/profile_email"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/profile_username"
+                            android:layout_toEndOf="@+id/profile_picture"
+                            android:layout_toStartOf="@+id/btn_edit"
+                            android:paddingLeft="15dp"
+                            android:paddingTop="5dp"
+                            android:text="@string/profile_email"
+                            android:textColor="@color/profile_email_text_color"
+                            android:textSize="12sp" />
+
+
+                    </RelativeLayout>
 
                     <com.vanniktech.emoji.EmojiTextView
                         android:id="@+id/profile_aboutme"
+                        android:layout_below="@+id/profile_personal_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignEnd="@+id/btn_edit"
-                        android:layout_alignStart="@+id/profile_picture"
-                        android:layout_below="@+id/profile_picture"
-                        android:layout_marginBottom="21dp"
-                        android:layout_marginTop="55dp"
+                        android:layout_margin="15dp"
                         android:text="@string/description_label"
                         android:textColor="@color/profile_name_text_color"
                         android:textIsSelectable="true"
                         android:textSize="16dp"
-                        app:emojiSize="16dp" />  
-
-                    <android.support.v7.widget.Toolbar
-                        android:id="@+id/toolbar"
-                        android:layout_width="match_parent"
-                        android:layout_height="?attr/actionBarSize"
-                        android:minHeight="?attr/actionBarSize"
-                        app:layout_collapseMode="pin"
-                        app:layout_scrollFlags="scroll|enterAlways">
-
-                        <TextView
-                            android:id="@+id/toolbar_title"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="center_vertical|center_horizontal"
-                            android:text="@string/nav_profile_label"
-                            android:textColor="@color/white"
-                            android:textSize="18dp"
-                            android:gravity="center_vertical"
-                            android:textStyle="bold" />
-
-                    </android.support.v7.widget.Toolbar>
+                        app:emojiSize="16dp"
+                        />  
 
                     <android.support.design.widget.TabLayout
                         android:id="@+id/tabs"
