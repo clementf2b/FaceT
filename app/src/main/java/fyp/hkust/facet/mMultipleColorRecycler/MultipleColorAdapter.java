@@ -47,7 +47,6 @@ public class MultipleColorAdapter extends RecyclerView.Adapter<MultipleColorHold
                 viewHolder.product_color_image[i].setVisibility(View.VISIBLE);
             }
         }
-
     }
 
     @Override

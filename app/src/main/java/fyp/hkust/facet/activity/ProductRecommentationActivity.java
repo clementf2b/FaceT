@@ -5,12 +5,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.Typeface;
-import android.os.Handler;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,13 +20,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.RatingBar;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -45,9 +39,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.model.Brand;
 import fyp.hkust.facet.model.Product;
+import fyp.hkust.facet.model.ProductTypeTwo;
 import fyp.hkust.facet.util.FontManager;
 
 public class ProductRecommentationActivity extends AppCompatActivity {
@@ -61,17 +57,20 @@ public class ProductRecommentationActivity extends AppCompatActivity {
     private DatabaseReference mDatabaseUsers;
     private DatabaseReference mDatabaseRatings;
 
-    private Map<String, Product> mProducts = new HashMap<String, Product>();
+    private Map<String, ProductTypeTwo> mProducts = new HashMap<>();
     private Map<String, Brand> mBrand = new HashMap<String, Brand>();
     private List<String> brandList = new ArrayList<>();
     private List<String> brandIDList = new ArrayList<>();
     private RecyclerView recommend_product_list_1, recommend_product_list_2, recommend_product_list_3, recommend_product_list_4;
     private GridLayoutManager mgr;
     private ProductAdapter mProductAdapter1, mProductAdapter2, mProductAdapter3, mProductAdapter4;
-    private Map<String, Product> mFoundationProducts = new HashMap<String, Product>();
-    private Map<String, Product> mBlushProducts = new HashMap<String, Product>();
-    private Map<String, Product> mEyshadowProducts = new HashMap<String, Product>();
-    private Map<String, Product> mLipstickProducts = new HashMap<String, Product>();
+    private Map<String, ProductTypeTwo> mFoundationProducts = new HashMap<>();
+    private Map<String, ProductTypeTwo> mBlushProducts = new HashMap<>();
+    private Map<String, ProductTypeTwo> mEyshadowProducts = new HashMap<>();
+    private Map<String, ProductTypeTwo> mLipstickProducts = new HashMap<>();
+    private double[] detectedRGBvalue = new double[3];
+    private Map<String, List<String>> matchColorList = new HashMap();
+    private List<String> colorMatchTemp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +84,9 @@ public class ProductRecommentationActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Recommendation");
+
+        detectedRGBvalue = getIntent().getDoubleArrayExtra("detectedRGBvalue");
+        Log.d(TAG + " detectedRGBvalue ", detectedRGBvalue[0] + " , " + detectedRGBvalue[1] + " , " + detectedRGBvalue[2]);
 
         Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
         FontManager.markAsIconContainer(findViewById(R.id.activity_product_recommendation_layout), fontType);
@@ -118,65 +120,36 @@ public class ProductRecommentationActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    Product result = ds.getValue(Product.class);
+                    ProductTypeTwo result = ds.getValue(ProductTypeTwo.class);
                     if (result.getValidate() == 1) {
                         mProducts.put(ds.getKey(), result);
-                        mProducts.get(ds.getKey()).setRating(Long.valueOf(0));
                         Log.d(" product " + ds.getKey(), result.toString());
                     }
                 }
-
-                mDatabaseRatings.addValueEventListener(new ValueEventListener() {
+                mDatabaseBrand.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        int count = 0;
-                        double totalRating = 0.0;
-
-                        for (DataSnapshot ratingDs : dataSnapshot.getChildren()) {
-                            Map<String, Long> td = (HashMap<String, Long>) ratingDs.getValue();
-                            List<String> keys = new ArrayList<>(td.keySet());
-                            List<Long> values = new ArrayList<>(td.values());
-                            for (int i = 0; i < values.size(); i++) {
-                                double temp = doubleValue(values.get(i));
-                                Log.d(TAG + " temp", temp + "");
-                                totalRating += temp;
-                                count++;
-                            }
-                            Log.d(" rating " + ratingDs.getKey(), ratingDs.getValue().toString());
-                            mProducts.get(ratingDs.getKey()).setRating((long) (totalRating / count));
-                            Log.d(" mProduct rating ", mProducts.get(ratingDs.getKey()).getRating() + "");
+                        brandIDList.clear();
+                        brandList.clear();
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            Brand result = ds.getValue(Brand.class);
+                            mBrand.put(ds.getKey(), result);
+                            brandIDList.add(ds.getKey());
+                            brandList.add(result.getBrand());
+                            Log.d(" brand " + ds.getKey(), result.toString());
                         }
 
-                        mDatabaseBrand.addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                brandIDList.clear();
-                                brandList.clear();
-                                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                                    Brand result = ds.getValue(Brand.class);
-                                    mBrand.put(ds.getKey(), result);
-                                    brandIDList.add(ds.getKey());
-                                    brandList.add(result.getBrand());
-                                    Log.d(" brand " + ds.getKey(), result.toString());
-                                }
 
-
-                                //sort product
-                                sortProduct();
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                            }
-                        });
+                        //sort product
+                        sortProduct();
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError error) {
-                        // Failed to read value
-                        Log.e(TAG, "Failed to get value.", error.toException());
+                    public void onCancelled(DatabaseError databaseError) {
                     }
                 });
+
+
             }
 
             @Override
@@ -190,27 +163,43 @@ public class ProductRecommentationActivity extends AppCompatActivity {
 
         Resources res = getResources();
         final String[] categoryArray = res.getStringArray(R.array.category_type_array);
-        List<Product> values = new ArrayList<>(mProducts.values());
+        List<ProductTypeTwo> values = new ArrayList<>(mProducts.values());
         List<String> keys = new ArrayList<>(mProducts.keySet());
-
+        double[] temp = new double[3];
         for (int i = 0; i < keys.size(); i++) {
             if (values.get(i) != null && values.get(i).getCategory().equals(categoryArray[1])) {
-                Log.d(TAG +  "1 sortProduct: ",    keys.get(i) + " "+ values.get(0).getProductName());
-                mFoundationProducts.put(keys.get(i), values.get(i));
-            }
-            if (values.get(i) != null && values.get(i).getCategory().equals(categoryArray[2])) {
-                Log.d(TAG +  "2 sortProduct: ",    keys.get(i) + " "+ values.get(0).getProductName());
+                Log.d(TAG + "1 sortProduct: ", keys.get(i) + " " + values.get(0).getProductName());
+                int color1 = 0, b = 0, g = 0, r = 0;
+                colorMatchTemp = new ArrayList<>();
+                for (int j = 0; j < values.get(i).getColor().size(); j++) {
+                    color1 = Color.parseColor(values.get(i).getColor().get(j).get(0));
+                    b = (color1) & 0xFF;
+                    g = (color1 >> 8) & 0xFF;
+                    r = (color1 >> 16) & 0xFF;
+                    Log.d(TAG + " stringColorRGBToRGB  , r ,g ,b ", " " + r + " " + g + " " + b + "");
+                    temp[0] = r;
+                    temp[1] = g;
+                    temp[2] = b;
+                    if (similarTo(detectedRGBvalue, temp)) {
+                        mFoundationProducts.put(keys.get(i), values.get(i));
+                        colorMatchTemp.add(values.get(i).getColor().get(j).get(0));
+                    }
+                }
+
+                if (colorMatchTemp.size() > 0) {
+                    matchColorList.put(keys.get(i), colorMatchTemp);
+                    Log.d("    matchColorList.put(keys.get(i), colorMatchTemp)", keys.get(i).toString() + " : " + colorMatchTemp.toString());
+                }
+            } else if (values.get(i) != null && values.get(i).getCategory().equals(categoryArray[2])) {
+                Log.d(TAG + "2 sortProduct: ", keys.get(i) + " " + values.get(0).getProductName());
                 mBlushProducts.put(keys.get(i), values.get(i));
-            }
-            if (values.get(i) != null && values.get(i).getCategory().equals(categoryArray[3])) {
-                Log.d(TAG +  "3 sortProduct: ",    keys.get(i) + " "+ values.get(0).getProductName());
+            } else if (values.get(i) != null && values.get(i).getCategory().equals(categoryArray[3])) {
+                Log.d(TAG + "3 sortProduct: ", keys.get(i) + " " + values.get(0).getProductName());
                 mEyshadowProducts.put(keys.get(i), values.get(i));
-            }
-            if (values.get(i) != null && values.get(i).getCategory().equals(categoryArray[4])) {
-                Log.d(TAG +  "4 sortProduct: ",    keys.get(i) + " "+ values.get(0).getProductName());
+            } else if (values.get(i) != null && values.get(i).getCategory().equals(categoryArray[4])) {
+                Log.d(TAG + "4 sortProduct: ", keys.get(i) + " " + values.get(0).getProductName());
                 mLipstickProducts.put(keys.get(i), values.get(i));
             }
-
         }
 
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -237,6 +226,17 @@ public class ProductRecommentationActivity extends AppCompatActivity {
         mProductAdapter4 = new ProductAdapter(mLipstickProducts, getApplicationContext());
         recommend_product_list_4.setAdapter(mProductAdapter4);
         mProductAdapter4.notifyDataSetChanged();
+    }
+
+    private boolean similarTo(double[] color1, double[] color2) {
+        double distance = (color1[0] - color2[0]) * (color1[0] - color2[0]) + (color1[1] - color2[1]) * (color1[1] - color2[1]) + (color1[2] - color2[2]) * (color1[2] - color2[2]);
+        Log.d(TAG + " distance ", distance + "");
+
+        if (distance < 500.0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private static double doubleValue(Object value) {
@@ -267,31 +267,31 @@ public class ProductRecommentationActivity extends AppCompatActivity {
         }
     }
 
-    public class ProductAdapter extends RecyclerView.Adapter<MainActivity.ProductViewHolder> {
+    public class ProductAdapter extends RecyclerView.Adapter<ProductViewHolder> {
 
-        private Map<String, Product> mResultProducts = new HashMap<>();
+        private Map<String, ProductTypeTwo> mResultProducts = new HashMap<>();
         // Allows to remember the last item shown on screen
         private int lastPosition = -1;
         private Context context;
 
-        public ProductAdapter(Map<String, Product> mProducts, Context c) {
+        public ProductAdapter(Map<String, ProductTypeTwo> mProducts, Context c) {
             this.context = c;
             this.mResultProducts = mProducts;
             notifyDataSetChanged();
         }
 
         @Override
-        public MainActivity.ProductViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ProductViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             Context context = parent.getContext();
-            View view = getLayoutInflater().inflate(R.layout.product_row, parent, false);
-            MainActivity.ProductViewHolder viewHolder = new MainActivity.ProductViewHolder(view);
+            View view = getLayoutInflater().inflate(R.layout.recommendation_product_row, parent, false);
+            ProductViewHolder viewHolder = new ProductViewHolder(view);
             return viewHolder;
         }
 
         @Override
-        public void onBindViewHolder(MainActivity.ProductViewHolder viewHolder, int position) {
-            List<Product> values = new ArrayList<>(mResultProducts.values());
-            final Product model = values.get(position);
+        public void onBindViewHolder(ProductViewHolder viewHolder, int position) {
+            List<ProductTypeTwo> values = new ArrayList<>(mResultProducts.values());
+            final ProductTypeTwo model = values.get(position);
             List<String> keys = new ArrayList<>(mResultProducts.keySet());
             final String product_id = keys.get(position);
 
@@ -300,6 +300,7 @@ public class ProductRecommentationActivity extends AppCompatActivity {
             Log.d(TAG + " product name", model.getProductName());
             Log.d(TAG + " product category", model.getCategory());
             Log.d(TAG, "loading view " + position);
+            Log.d(TAG, "matchColorList.containsKey(product_id) " + matchColorList.containsKey(product_id));
 
 //            Log.d(TAG + " product id ", product_id);
             viewHolder.setProductName(model.getProductName());
@@ -307,10 +308,20 @@ public class ProductRecommentationActivity extends AppCompatActivity {
                 viewHolder.setBrandName(mBrand.get(model.getBrandID()).getBrand());
             viewHolder.setImage(getApplicationContext(), model.getProductImage());
             viewHolder.setUid(model.getUid());
-            if (model.getRating() == null)
-                viewHolder.setRating((long) 0);
-            else
-                viewHolder.setRating(model.getRating());
+            if (matchColorList.size() > 0) {
+                if (matchColorList.containsKey(product_id)) {
+                    Log.d(TAG, "setColorFilter " + " " + matchColorList.size() + matchColorList.toString());
+                    for (int i = 0; i < matchColorList.get(product_id).size(); i++) {
+                        viewHolder.product_color_image[i].setColorFilter(Color.parseColor(matchColorList.get(product_id).get(i)));
+                        viewHolder.product_color_image[i].setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+
+//            if (model.getRating() == null)
+            viewHolder.setRating((long) 0);
+//            else
+//                viewHolder.setRating(model.getRating());
             viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -351,20 +362,31 @@ public class ProductRecommentationActivity extends AppCompatActivity {
 
         View mView;
         private Typeface customTypeface = Typeface.createFromAsset(itemView.getContext().getAssets(), FontManager.APP_FONT);
+        public CircleImageView[] product_color_image = new CircleImageView[8];
 
         public ProductViewHolder(View itemView) {
             super(itemView);
             mView = itemView;
+
+            product_color_image[0] = (CircleImageView) itemView.findViewById(R.id.product_color_image1);
+            product_color_image[1] = (CircleImageView) itemView.findViewById(R.id.product_color_image2);
+            product_color_image[2] = (CircleImageView) itemView.findViewById(R.id.product_color_image3);
+            product_color_image[3] = (CircleImageView) itemView.findViewById(R.id.product_color_image4);
+            product_color_image[4] = (CircleImageView) itemView.findViewById(R.id.product_color_image5);
+            product_color_image[5] = (CircleImageView) itemView.findViewById(R.id.product_color_image6);
+            product_color_image[6] = (CircleImageView) itemView.findViewById(R.id.product_color_image7);
+            product_color_image[7] = (CircleImageView) itemView.findViewById(R.id.product_color_image8);
+
         }
 
         public void setRating(Long rating) {
             RatingBar product_rating_bar = (RatingBar) mView.findViewById(R.id.product_rating_bar);
-            product_rating_bar.setRating(rating);
-            SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(itemView.getContext());
-            boolean ratingDisplayCheck = SP.getBoolean("ratingButton", true);
-            if (ratingDisplayCheck == false)
-                product_rating_bar.setVisibility(View.INVISIBLE);
-            Log.d(TAG + " ratingDisplayCheck", ratingDisplayCheck + "");
+            product_rating_bar.setVisibility(View.GONE);
+//            SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(itemView.getContext());
+//            boolean ratingDisplayCheck = SP.getBoolean("ratingButton", true);
+//            if (ratingDisplayCheck == false)
+//                product_rating_bar.setVisibility(View.INVISIBLE);
+//            Log.d(TAG + " ratingDisplayCheck", ratingDisplayCheck + "");
         }
 
         public void setProductName(String productName) {

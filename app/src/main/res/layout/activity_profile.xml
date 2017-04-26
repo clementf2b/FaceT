@@ -110,7 +110,8 @@
                             android:layout_toStartOf="@+id/btn_edit"
                             android:text="@string/profile_username"
                             android:textColor="@color/profile_name_text_color"
-                            android:textSize="18sp" />
+                            android:textSize="18sp"
+                            />
 
                         <TextView
                             android:id="@+id/profile_email"
@@ -133,12 +134,16 @@
                         android:layout_below="@+id/profile_personal_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="15dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginRight="15dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="20dp"
                         android:text="@string/description_label"
                         android:textColor="@color/profile_name_text_color"
                         android:textIsSelectable="true"
                         android:textSize="16dp"
                         app:emojiSize="16dp"
+                        android:gravity="center"
                         />  
 
                     <android.support.design.widget.TabLayout

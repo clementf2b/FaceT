@@ -111,6 +111,8 @@ dependencies {
     compile 'pub.devrel:easypermissions:0.3.0'
     // new post PopupBubble
     compile 'com.webianks.library:popup-bubble:1.0.3'
+    //progressdialog
+    compile 'com.taishi-y:flipprogressdialog:0.1.0'
     testCompile 'junit:junit:4.12'
 }
 apply plugin: 'com.google.gms.google-services'

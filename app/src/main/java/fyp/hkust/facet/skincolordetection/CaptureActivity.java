@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.Typeface;
@@ -20,7 +21,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
@@ -41,13 +41,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.nhaarman.supertooltips.ToolTip;
 import com.nhaarman.supertooltips.ToolTipRelativeLayout;
 import com.nhaarman.supertooltips.ToolTipView;
 import com.roger.gifloadinglibrary.GifLoadingView;
+import com.taishi.flipprogressdialog.FlipProgressDialog;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
@@ -60,15 +58,11 @@ import org.opencv.imgproc.Imgproc;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Random;
 
-import cn.pedant.SweetAlert.SweetAlertDialog;
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.activity.MainMenuActivity;
-import fyp.hkust.facet.activity.ProductDetailActivity;
-import fyp.hkust.facet.model.Comment;
 import fyp.hkust.facet.util.FontManager;
 import fyp.hkust.facet.whiteBalance.algorithms.grayWorld.GrayWorld;
 import fyp.hkust.facet.whiteBalance.algorithms.histogramStretching.HistogramStretching;
@@ -114,7 +108,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
     private ToolTipView mBlueToolTipView;
     private ToolTipRelativeLayout toolTipRelativeLayout;
     private int n;
-    private GifLoadingView mView;
+//    private GifLoadingView mView;
     private Handler handler; // declared before onCreate
     private Runnable myRunnable;
 
@@ -123,6 +117,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
+    private FlipProgressDialog fpd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -224,13 +219,31 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
             /*recycling unused objects in order to
             make the memory they currently occupy available for quick reuse.*/
             System.gc();
-            int id = getResources().getIdentifier("num" + n, "drawable", getPackageName());
-            mView = new GifLoadingView();
-            mView.setBackgroundResource(id);
-            mView.show(getFragmentManager(), "");
-            mView.setCancelable(false);
-            mView.setDimming(true);
-            mView.setRadius(1);
+            fpd = new FlipProgressDialog();
+            List<Integer> imageList = new ArrayList<Integer>();
+            imageList.add(R.drawable.app_icon_100);
+            fpd.setImageList(imageList);                              // *Set a imageList* [Have to. Transparent background png recommended]
+            fpd.setCanceledOnTouchOutside(false);// If true, the dialog will be dismissed when user touch outside of the dialog. If false, the dialog won't be dismissed.
+            fpd.setImageMargin(10);
+            fpd.setMinAlpha(1.0f);                                    // Set an alpha when flipping ratation start and end
+            fpd.setMaxAlpha(1.0f);
+            fpd.setDimAmount(80.0f);
+            fpd.setOrientation("rotationY");                          // Set a flipping rotation
+            fpd.setDuration(1000);
+            fpd.setImageSize(170);
+            fpd.setStartAngle(0.0f);                                  // Set an angle when flipping ratation start
+            fpd.setEndAngle(360.0f);
+            fpd.setBackgroundColor(Color.parseColor("#3b393d"));     // Set a background color of dialog
+            fpd.setBackgroundAlpha(0.8f);
+            fpd.setCornerRadius(10);
+            fpd.show(getFragmentManager(),"Loading ...");
+//            int id = getResources().getIdentifier("num" + n, "drawable", getPackageName());
+//            mView = new GifLoadingView();
+//            mView.setBackgroundResource(id);
+//            mView.show(getFragmentManager(), "");
+//            mView.setCancelable(false);
+//            mView.setDimming(true);
+//            mView.setRadius(1);
 
             final MyTask myTask1 = new MyTask(this, 1);
             myTask1.execute();
@@ -541,17 +554,18 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
                 selectEffect(imageButtons[0], textViews[0]);
                 switch (number) {
                     case 1:
-                        imageButtons[1].setImageBitmap(convertedBitmaps.get(taskCounter - 1));
-                        mView.dismiss();
+                        imageButtons[3].setImageBitmap(convertedBitmaps.get(taskCounter - 1));
+//                        mView.dismiss();
 //                    convertNumber.add(taskCounter-1);
                         break;
                     case 2:
                         imageButtons[2].setImageBitmap(convertedBitmaps.get(taskCounter - 1));
+                        fpd.dismiss();
 //                    convertNumber.add(taskCounter-1);
 
                         break;
                     case 3:
-                        imageButtons[3].setImageBitmap(convertedBitmaps.get(taskCounter - 1));
+                        imageButtons[1].setImageBitmap(convertedBitmaps.get(taskCounter - 1));
 //                    convertNumber.add(taskCounter-1);
                         break;
                 }

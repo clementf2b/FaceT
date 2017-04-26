@@ -1,6 +1,5 @@
 package fyp.hkust.facet.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
@@ -29,7 +28,6 @@ import android.view.ViewGroup;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-import fyp.hkust.facet.MyApp;
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.util.CustomTypeFaceSpan;
 import fyp.hkust.facet.util.FontManager;

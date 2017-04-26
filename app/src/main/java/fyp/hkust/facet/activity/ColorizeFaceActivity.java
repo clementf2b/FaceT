@@ -3,7 +3,6 @@ package fyp.hkust.facet.activity;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,29 +21,21 @@ import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
 import android.graphics.Shader;
 import android.graphics.Typeface;
 import android.graphics.Xfermode;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -54,34 +45,26 @@ import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.pwittchen.swipe.library.Swipe;
-import com.github.pwittchen.swipe.library.SwipeEvent;
 import com.github.pwittchen.swipe.library.SwipeListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.melnykov.fab.FloatingActionButton;
-import com.rtugeek.android.colorseekbar.ColorSeekBar;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -95,8 +78,6 @@ import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfRect;
@@ -105,7 +86,6 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -122,15 +102,11 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import fyp.hkust.facet.R;
-
 import fyp.hkust.facet.fragment.ColorSelectFragment;
 import fyp.hkust.facet.fragment.MakeupProductFragment;
-import fyp.hkust.facet.fragment.MultipleColorFragment;
 import fyp.hkust.facet.model.ProductTypeTwo;
 import fyp.hkust.facet.util.FontManager;
-import fyp.hkust.facet.util.MyItemTouchHelperCallback;
 import fyp.hkust.facet.util.PinchImageView;
-
 import id.zelory.compressor.Compressor;
 import me.shaohui.advancedluban.Luban;
 
@@ -242,6 +218,8 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
     private LinearLayout rouge_alpha_select;
     private SeekBar alpha_seekBar;
     private int alphaValueRouge = 10;
+    private LinearLayout makeup_color_layout;
+    private ImageButton makeup_color_arror_left, makeup_color_arror_right;
 
     /**
      * Checks if the app has permission to write to device storage
@@ -403,7 +381,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                                 .start();
                         makeup_select_layout.setVisibility(View.VISIBLE);
                         makeup_product_list.setVisibility(View.GONE);
-                        makeup_color_list.setVisibility(View.GONE);
+                        makeup_color_layout.setVisibility(View.GONE);
                         eyeshadow_method_layout.setVisibility(View.GONE);
                         break;
                     case 1:
@@ -414,7 +392,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                                 .start();
                         makeup_select_layout.setVisibility(View.GONE);
                         makeup_product_list.setVisibility(View.VISIBLE);
-                        makeup_color_list.setVisibility(View.GONE);
+                        makeup_color_layout.setVisibility(View.GONE);
                         eyeshadow_method_layout.setVisibility(View.GONE);
                         break;
                     case 2:
@@ -425,7 +403,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                                 .start();
                         makeup_select_layout.setVisibility(View.GONE);
                         makeup_product_list.setVisibility(View.GONE);
-                        makeup_color_list.setVisibility(View.VISIBLE);
+                        makeup_color_layout.setVisibility(View.VISIBLE);
                         if (categoryResult == 3)
                             eyeshadow_method_layout.setVisibility(View.VISIBLE);
                         else
@@ -452,7 +430,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                         .start();
                 makeup_select_layout.setVisibility(View.GONE);
                 makeup_product_list.setVisibility(View.GONE);
-                makeup_color_list.setVisibility(View.GONE);
+                makeup_color_layout.setVisibility(View.GONE);
                 eyeshadow_method_layout.setVisibility(View.GONE);
                 rouge_alpha_select.setVisibility(View.GONE);
                 show_hide_layout_button.setImageResource(R.mipmap.ic_expand_more_black_24dp);
@@ -595,10 +573,53 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         });
         //bottom
         makeup_color_list = (RecyclerView) findViewById(R.id.makeup_color_list);
-        LinearLayoutManager llm = new LinearLayoutManager(this);
+        final LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.HORIZONTAL);
         makeup_color_list.setLayoutManager(llm);
         makeup_color_list.setItemAnimator(new DefaultItemAnimator());
+
+        makeup_color_layout = (LinearLayout) findViewById(R.id.makeup_color_layout);
+        makeup_color_arror_left = (ImageButton) findViewById(R.id.makeup_color_arror_left);
+        makeup_color_arror_right = (ImageButton) findViewById(R.id.makeup_color_arror_right);
+        makeup_color_arror_left.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                makeup_color_list.scrollToPosition(0);
+            }
+        });
+        makeup_color_arror_right.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                makeup_color_list.scrollToPosition(makeup_color_list.getAdapter().getItemCount() - 1);
+            }
+        });
+        makeup_color_list.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+//                RecyclerView.canScrollVertically(1)的值表示是否能向下滚动，false表示已经滚动到底部
+//                RecyclerView.canScrollVertically(-1)的值表示是否能向上滚动，false表示已经滚动到顶部
+                if (!recyclerView.canScrollHorizontally(-1)) {
+//                    Toast.makeText(ColorizeFaceActivity.this, "At the Left of the page", Toast.LENGTH_SHORT).show();
+                    makeup_color_arror_left.setVisibility(View.INVISIBLE);
+                } else if(recyclerView.canScrollHorizontally(-1))
+                    makeup_color_arror_left.setVisibility(View.VISIBLE);
+
+                if (!recyclerView.canScrollHorizontally(1)) {
+//                    Toast.makeText(ColorizeFaceActivity.this, "At the bottom of the page", Toast.LENGTH_SHORT).show();
+                    makeup_color_arror_right.setVisibility(View.INVISIBLE);
+                } else if(recyclerView.canScrollHorizontally(1))
+                    makeup_color_arror_right.setVisibility(View.VISIBLE);
+
+                Log.d(TAG + " dx , dy " ,dx + " , " + dy);
+            }
+
+        });
 
         makeup_product_list = (RecyclerView) findViewById(R.id.makeup_product_list);
         LinearLayoutManager llm2 = new LinearLayoutManager(this);
@@ -650,7 +671,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
             public void onClick(View v) {
                 categoryResult = 1;
                 setupProductAdapter();
-                viewControl(makeup_product_list, makeup_color_list, makeup_select_layout, 1);
+                viewControl(makeup_product_list, makeup_color_layout, makeup_select_layout, 1);
                 eyeshadow_method_layout.setVisibility(View.GONE);
             }
         });
@@ -661,7 +682,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
             public void onClick(View v) {
                 categoryResult = 2;
                 setupProductAdapter();
-                viewControl(makeup_product_list, makeup_color_list, makeup_select_layout, 1);
+                viewControl(makeup_product_list, makeup_color_layout, makeup_select_layout, 1);
                 eyeshadow_method_layout.setVisibility(View.GONE);
             }
         });
@@ -672,7 +693,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
             public void onClick(View v) {
                 categoryResult = 3;
                 setupProductAdapter();
-                viewControl(makeup_product_list, makeup_color_list, makeup_select_layout, 1);
+                viewControl(makeup_product_list, makeup_color_layout, makeup_select_layout, 1);
                 eyeshadow_method_layout.setVisibility(View.VISIBLE);
             }
         });
@@ -683,13 +704,13 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
             public void onClick(View v) {
                 categoryResult = 4;
                 setupProductAdapter();
-                viewControl(makeup_product_list, makeup_color_list, makeup_select_layout, 1);
+                viewControl(makeup_product_list, makeup_color_layout, makeup_select_layout, 1);
                 eyeshadow_method_layout.setVisibility(View.GONE);
             }
         });
 
         show_hide_layout_button = (ImageButton) this.findViewById(R.id.show_hide_layout_button);
-        viewControl(makeup_select_layout, makeup_product_list, makeup_color_list, 0);
+        viewControl(makeup_select_layout, makeup_product_list, makeup_color_layout, 0);
 
         show_hide_layout_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -697,17 +718,17 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                 switch (stepCount) {
                     case 0:
                         // type select
-                        viewControl(makeup_select_layout, makeup_product_list, makeup_color_list, 0);
+                        viewControl(makeup_select_layout, makeup_product_list, makeup_color_layout, 0);
                         rouge_alpha_select.setVisibility(View.GONE);
                         break;
                     case 1:
                         //product select
-                        viewControl(makeup_select_layout, makeup_product_list, makeup_color_list, 0);
+                        viewControl(makeup_select_layout, makeup_product_list, makeup_color_layout, 0);
                         rouge_alpha_select.setVisibility(View.GONE);
                         break;
                     case 2:
                         //color select layout
-                        viewControl(makeup_product_list, makeup_color_list, makeup_select_layout, 1);
+                        viewControl(makeup_product_list, makeup_color_layout, makeup_select_layout, 1);
                         rouge_alpha_select.setVisibility(View.GONE);
                         break;
                 }
@@ -830,6 +851,8 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                         @Override
                         public void run() {
                             Toast.makeText(getApplicationContext(), "No face", Toast.LENGTH_SHORT).show();
+                            dialog("Oops","Your photo is not good enough to detect face.");
+
                         }
                     });
                 }
@@ -845,6 +868,22 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
             }
         }
     };
+
+    protected void dialog(String title,String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ColorizeFaceActivity.this);
+        builder.setMessage(message);
+        builder.setTitle(title);
+        builder.setIcon(R.drawable.ic_error_black_24px);
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                ColorizeFaceActivity.this.finish();
+            }
+        });
+        builder.create().show();
+    }
+
 
     protected Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
         Bitmap resizedBitmap = Bitmap.createScaledBitmap(bm, newWidth, newHeight, true);
@@ -1194,11 +1233,11 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                         Color.RGBToHSV(Color.red(originalArray[x + y * bitmap.getWidth()]), Color.green(originalArray[x + y * bitmap.getWidth()]), Color.blue(originalArray[x + y * bitmap.getWidth()]), hsv);
 //                        Log.d(TAG, "face[" + x + " , " + y + "] : " + hsv[0] + " , " + hsv[1] + " , " + hsv[2] + " ] " + foundationHSV[0] + " " + foundationHSV[1] + " " + foundationHSV[2]);
                         if (foundationHSV[0] > 28f) {
-                            hsv[0] = (hsv[0] + foundationHSV[0]) / 2.2f;
+                            hsv[0] = (hsv[0] + foundationHSV[0]) / 2f;
                         } else
                             hsv[0] = foundationHSV[0];
 
-                        if( hsv[1] > foundationHSV[1]) {
+                        if (hsv[1] > foundationHSV[1]) {
                             hsv[1] = foundationHSV[1];
                             Log.d(TAG, "face[" + x + " , " + y + "] : " + hsv[0] + " , " + hsv[1] + " , " + hsv[2] + " ] " + foundationHSV[0] + " " + foundationHSV[1] + " " + foundationHSV[2]);
                         }
@@ -2648,13 +2687,13 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                         }
                         makeup_color_list.setAdapter(new ColorRecyclerAdapter());
                         mProductAdapter.notifyDataSetChanged();
-                        viewControl(makeup_color_list, makeup_select_layout, makeup_select_layout, 2);
+                        viewControl(makeup_color_layout, makeup_select_layout, makeup_select_layout, 2);
                         Log.d(TAG, mSortedProducts.get(selectedProductID).getColor().toString());
                     } else {
                         makeup_color_list.setAdapter(new MultipleColorAdapter(ColorizeFaceActivity.this, model.getColor()));
-                        viewControl(makeup_color_list, makeup_select_layout, makeup_select_layout, 2);
+                        viewControl(makeup_color_layout, makeup_select_layout, makeup_select_layout, 2);
                     }
-                    makeup_color_list.setVisibility(View.VISIBLE);
+                    makeup_color_layout.setVisibility(View.VISIBLE);
                     makeup_select_layout.setVisibility(View.GONE);
                     makeup_product_list.setVisibility(View.GONE);
                     eyeshadow_method_layout.setVisibility(View.GONE);
@@ -3037,28 +3076,25 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                     viewHolder.makeup_product_color_image[i].setVisibility(View.VISIBLE);
                 }
             }
-            if(colorArray != null && colorArray.get(0).size() == 1) {
+            if (colorArray != null && colorArray.get(0).size() == 1) {
                 eyeshadow_method_layout.setBackgroundColor(Color.WHITE);
                 eyeshadow_method1.setBackgroundResource(R.drawable.eyeshadow1c1);
                 eyeshadow_method2.setBackgroundResource(R.drawable.eyeshadow1c2);
                 eyeshadow_method3.setBackgroundResource(R.drawable.eyeshadow1c3);
                 eyeshadow_method4.setBackgroundResource(R.drawable.eyeshadow1c4);
-            }
-            else if (colorArray != null && colorArray.get(0).size() == 2) {
+            } else if (colorArray != null && colorArray.get(0).size() == 2) {
                 eyeshadow_method_layout.setBackgroundColor(Color.WHITE);
                 eyeshadow_method1.setBackgroundResource(R.drawable.eyeshadow2c1);
                 eyeshadow_method2.setBackgroundResource(R.drawable.eyeshadow2c2);
                 eyeshadow_method3.setBackgroundResource(R.drawable.eyeshadow2c3);
                 eyeshadow_method4.setBackgroundResource(R.drawable.eyeshadow2c4);
-            }
-            else if (colorArray != null && colorArray.get(0).size() == 3) {
+            } else if (colorArray != null && colorArray.get(0).size() == 3) {
                 eyeshadow_method_layout.setBackgroundColor(Color.WHITE);
                 eyeshadow_method1.setBackgroundResource(R.drawable.eyeshadow3c1);
                 eyeshadow_method2.setBackgroundResource(R.drawable.eyeshadow3c2);
                 eyeshadow_method3.setBackgroundResource(R.drawable.eyeshadow3c3);
                 eyeshadow_method4.setBackgroundResource(R.drawable.eyeshadow3c4);
-            }
-            else if (colorArray != null && colorArray.get(0).size() == 4) {
+            } else if (colorArray != null && colorArray.get(0).size() == 4) {
                 eyeshadow_method_layout.setBackgroundColor(Color.WHITE);
                 eyeshadow_method1.setBackgroundResource(R.drawable.eyeshadow1s);
                 eyeshadow_method2.setBackgroundResource(R.drawable.eyeshadow2s);
