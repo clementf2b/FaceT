@@ -1,10 +1,9 @@
 package fyp.hkust.facet.activity;
 
 import android.graphics.Typeface;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.view.WindowManager;
 
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.util.FontManager;

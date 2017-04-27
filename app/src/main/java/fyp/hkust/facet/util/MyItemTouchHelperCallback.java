@@ -3,8 +3,6 @@ package fyp.hkust.facet.util;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
-import fyp.hkust.facet.adapter.SelectColorRecyclerAdapter;
-
 /**
  * Created by ClementNg on 12/4/2017.
  */

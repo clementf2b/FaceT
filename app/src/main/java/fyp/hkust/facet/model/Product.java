@@ -1,7 +1,5 @@
 package fyp.hkust.facet.model;
 
-import java.util.ArrayList;
-
 /**
  * Created by ClementNg on 1/10/2016.
  */

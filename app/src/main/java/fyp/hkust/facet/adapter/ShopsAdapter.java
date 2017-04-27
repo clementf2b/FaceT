@@ -19,7 +19,6 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import fyp.hkust.facet.R;
-import fyp.hkust.facet.activity.NearbyLocationActivity;
 import fyp.hkust.facet.activity.ShopLocationActivity;
 import fyp.hkust.facet.model.Shop;
 

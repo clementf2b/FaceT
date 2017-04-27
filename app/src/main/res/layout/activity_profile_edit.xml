@@ -13,7 +13,7 @@
         android:layout_height="match_parent"
         android:background="@color/profile_edit_bg"
         android:orientation="vertical"
-        android:paddingTop="@dimen/activity_vertical_margin">
+        android:paddingTop="10dp">
 
         <LinearLayout
             android:id="@+id/require_data_layout"
@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:orientation="horizontal"
-            android:layout_marginTop="5dp">
+            android:layout_marginTop="4dp">
 
             <RelativeLayout
                 android:id="@+id/require_data_layout_left"
@@ -111,23 +111,24 @@
         <LinearLayout
             android:id="@+id/optional_data_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
             android:background="@color/white"
             android:orientation="horizontal"
-            android:paddingBottom="20dp">
+            >
 
             <RelativeLayout
                 android:id="@+id/optional_data_layout_inner"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent"
+                android:paddingBottom="30dp">
 
                 <TextView
                     android:id="@+id/gendertext"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="10dp"
-                    android:paddingTop="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"
                     android:text="@string/gender_text"
                     android:textSize="16dp" />
 
@@ -140,7 +141,7 @@
                     android:orientation="horizontal"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
-                    android:layout_marginTop="10dp">
+                    android:layout_marginTop="5dp">
 
                     <Button
                         android:id="@+id/male_btn"
@@ -176,7 +177,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/gender_layout"
-                    android:paddingBottom="10dp"
+                    android:paddingBottom="5dp"
                     android:paddingLeft="10dp"
                     android:paddingTop="5dp"
                     android:text="@string/skin_type_text"
@@ -197,19 +198,18 @@
                     android:layout_below="@+id/skin_type_spinner"
                     android:layout_marginLeft="10dp"
                     android:padding="4dp"
-                    android:src="@mipmap/smiley" />
+                    android:layout_marginTop="5dp"
+                    android:src="@mipmap/smiley"
+                    android:layout_centerVertical="true"/>
 
                 <com.vanniktech.emoji.EmojiEditText
                     android:id="@+id/about_me_edittext"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/emoji_btn"
-                    android:layout_alignParentEnd="true"
+                    android:layout_height="match_parent"
                     android:layout_marginLeft="10dp"
-                    android:layout_toEndOf="@+id/emoji_btn"
                     android:hint="@string/about_me_text"
                     android:inputType="textMultiLine"
-                    android:lines="4"
+                    android:lines="3"
                     android:maxLines="10"
                     android:minLines="1"
                     android:scrollHorizontally="false"
@@ -217,8 +217,9 @@
                     android:scrollbars="vertical"
                     android:textSize="16dp"
                     app:emojiSize="20sp"
-                    />
-
+                    android:layout_toEndOf="@+id/emoji_btn"
+                    android:layout_below="@+id/skin_type_spinner"
+                    android:layout_alignParentBottom="true" />
 
             </RelativeLayout>
 

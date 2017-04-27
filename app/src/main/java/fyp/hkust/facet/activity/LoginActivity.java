@@ -29,7 +29,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -303,7 +302,7 @@ public class LoginActivity extends AppCompatActivity {
                         request.setParameters(parameters);
                         request.executeAsync();
 //                        mProgress.dismiss();
-                        dialog("Login Success Message", " Welcome to FaceT  " + fbname[0] );
+                        dialog("Login Successful", " Welcome to FaceT  " + fbname[0] );
                     }
 
                     @Override
@@ -482,10 +481,10 @@ public class LoginActivity extends AppCompatActivity {
                             mProgress.dismiss();
 //                            Log.d(TAG, e.toString() + " / " + e.getMessage() + " / " + e.getLocalizedMessage());
                             if (password.length() < 6) {
-                                dialog("Login Error Message",  "Password should be at least 6 characters");
+                                dialog("Login Error",  "Password should be at least 6 characters");
                             } else {
                                 String errorMsg = e.getMessage();
-                                dialog("Login Error Message",  errorMsg);
+                                dialog("Login Error",  errorMsg);
                             }
                         }
                     });

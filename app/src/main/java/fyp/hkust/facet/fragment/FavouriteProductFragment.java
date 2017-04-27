@@ -39,7 +39,6 @@ import fyp.hkust.facet.R;
 import fyp.hkust.facet.activity.ProductDetailActivity;
 import fyp.hkust.facet.activity.ProfileEditActivity;
 import fyp.hkust.facet.model.Brand;
-import fyp.hkust.facet.model.Favourite;
 import fyp.hkust.facet.model.Product;
 import fyp.hkust.facet.util.FontManager;
 

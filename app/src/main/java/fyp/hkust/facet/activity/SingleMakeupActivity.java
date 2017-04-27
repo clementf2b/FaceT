@@ -21,13 +21,11 @@ import android.graphics.Shader;
 import android.graphics.Typeface;
 import android.graphics.Xfermode;
 import android.os.AsyncTask;
-import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -42,8 +40,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -51,12 +47,12 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import com.github.pwittchen.swipe.library.Swipe;
+import com.github.pwittchen.swipe.library.SwipeListener;
 import com.tzutalin.dlib.Constants;
 import com.tzutalin.dlib.FaceDet;
 import com.tzutalin.dlib.VisionDetRet;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
@@ -146,6 +142,9 @@ public class SingleMakeupActivity extends AppCompatActivity {
     private ArrayList<ArrayList<String>> data = new ArrayList<>();
     private RecyclerView makeup_color_list;
     private RelativeLayout single_makeup_layout;
+    private LinearLayout makeup_color_layout;
+    private ImageButton makeup_color_arror_left, makeup_color_arror_right;
+    private Swipe swipe;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -710,6 +709,47 @@ public class SingleMakeupActivity extends AppCompatActivity {
         makeup_color_list.setLayoutManager(llm);
         makeup_color_list.setItemAnimator(new DefaultItemAnimator());
 
+        makeup_color_layout = (LinearLayout) findViewById(R.id.makeup_color_layout);
+        makeup_color_arror_left = (ImageButton) findViewById(R.id.makeup_color_arror_left);
+        makeup_color_arror_right = (ImageButton) findViewById(R.id.makeup_color_arror_right);
+        makeup_color_arror_left.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                makeup_color_list.scrollToPosition(0);
+            }
+        });
+        makeup_color_arror_right.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                makeup_color_list.scrollToPosition(makeup_color_list.getAdapter().getItemCount() - 1);
+            }
+        });
+        makeup_color_list.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+//                RecyclerView.canScrollVertically(1)的值表示是否能向下滚动，false表示已经滚动到底部
+//                RecyclerView.canScrollVertically(-1)的值表示是否能向上滚动，false表示已经滚动到顶部
+                if (!recyclerView.canScrollHorizontally(-1)) {
+                    makeup_color_arror_left.setVisibility(View.INVISIBLE);
+                } else if (recyclerView.canScrollHorizontally(-1))
+                    makeup_color_arror_left.setVisibility(View.VISIBLE);
+
+                if (!recyclerView.canScrollHorizontally(1)) {
+                    makeup_color_arror_right.setVisibility(View.INVISIBLE);
+                } else if (recyclerView.canScrollHorizontally(1))
+                    makeup_color_arror_right.setVisibility(View.VISIBLE);
+
+                Log.d(TAG + " dx , dy ", dx + " , " + dy);
+            }
+
+        });
+
         eyeshadow_method_layout = (LinearLayout) findViewById(R.id.eyeshadow_method_layout);
         rouge_alpha_select = (LinearLayout) findViewById(R.id.rouge_alpha_select);
         alpha_seekBar = (SeekBar) findViewById(R.id.alpha_seekBar);
@@ -746,6 +786,51 @@ public class SingleMakeupActivity extends AppCompatActivity {
                 new LoadingMakeupAsyncTask().execute();
             }
         });
+
+        swipe = new Swipe();
+        swipe.addListener(new SwipeListener() {
+            @Override
+            public void onSwipingLeft(final MotionEvent event) {
+            }
+
+            @Override
+            public void onSwipedLeft(final MotionEvent event) {
+            }
+
+            @Override
+            public void onSwipingRight(final MotionEvent event) {
+            }
+
+            @Override
+            public void onSwipedRight(MotionEvent event) {
+
+            }
+
+            @Override
+            public void onSwipingUp(MotionEvent event) {
+
+            }
+
+            @Override
+            public void onSwipedUp(final MotionEvent event) {
+//                Log.d(TAG, "SWIPED_UP");
+                makeup_color_layout.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onSwipingDown(final MotionEvent event) {
+//                Log.d(TAG, "SWIPING_DOWN");
+            }
+
+            @Override
+            public void onSwipedDown(final MotionEvent event) {
+//                Log.d(TAG, "SWIPED_DOWN");
+                makeup_color_layout.setVisibility(View.INVISIBLE);
+                eyeshadow_method_layout.setVisibility(View.INVISIBLE);
+                rouge_alpha_select.setVisibility(View.INVISIBLE);
+            }
+        });
+
     }
 
     private void setupFoundation(String foundationColor, Bitmap getBitmap) {

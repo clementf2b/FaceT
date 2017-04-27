@@ -1,6 +1,7 @@
 package fyp.hkust.facet.skincolordetection;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,6 +10,7 @@ import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -64,19 +66,19 @@ import fyp.hkust.facet.util.FontManager;
 public class ColorDetectionActivity extends AppCompatActivity implements OnChartValueSelectedListener {
 
     private static final String TAG = "ColorDetectionActivity";
-    private static final Scalar FACE_RECT_COLOR     = new Scalar(0, 255, 0, 255);
-    public static final int        JAVA_DETECTOR       = 0;
+    private static final Scalar FACE_RECT_COLOR = new Scalar(0, 255, 0, 255);
+    public static final int JAVA_DETECTOR = 0;
 
     private Bitmap originalBitmap;
 
-    private int                    mDetectorType       = JAVA_DETECTOR;
+    private int mDetectorType = JAVA_DETECTOR;
     private File mCascadeFile;
-    private File                   mHaarCascadeEyeFile;
+    private File mHaarCascadeEyeFile;
     private CascadeClassifier mJavaDetector;
 
     private CascadeClassifier mJavaEyeDetector;
 
-//    private TextView color_result_text;
+    //    private TextView color_result_text;
     private ImageView gray_image;
 
     private int scaledHeight = 0;
@@ -85,17 +87,18 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
     private Bitmap scaledBitmap;
     private Bitmap convertedBitmap;
 
-    private float                  mRelativeFaceSize   = 0.2f;
-    private int                    mAbsoluteFaceSize   = 0;
+    private float mRelativeFaceSize = 0.2f;
+    private int mAbsoluteFaceSize = 0;
 
-    private boolean              mIsColorSelected = false;
+    private boolean mIsColorSelected = false;
     private Mat mRgba;
-    private Scalar               mBlobColorRgba;
-    private Scalar               mBlobColorHsv;
-    private ColorBlobDetector    mDetector;
-    private Mat                  mSpectrum;
+    private Scalar mBlobColorRgba;
+    private double[] detectedRGBvalue = new double[3];
+    private Scalar mBlobColorHsv;
+    private ColorBlobDetector mDetector;
+    private Mat mSpectrum;
     private Size SPECTRUM_SIZE;
-    private Scalar               CONTOUR_COLOR;
+    private Scalar CONTOUR_COLOR;
 
     private int face_middle_x;
     private int face_middle_y;
@@ -110,7 +113,7 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
     private Typeface mTfLight;
     protected static final int STOP = 0x10000;
 
-    private PieChart rPieChart,gPieChart,bPieChart;
+    private PieChart rPieChart, gPieChart, bPieChart;
     private Button report_btn;
 
     public ColorDetectionActivity() {
@@ -141,7 +144,8 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
             @Override
             public void onClick(View v) {
                 Intent i = new Intent();
-                i.setClass(ColorDetectionActivity.this,ProductRecommentationActivity.class);
+                i.putExtra("detectedRGBvalue", detectedRGBvalue);
+                i.setClass(ColorDetectionActivity.this, ProductRecommentationActivity.class);
                 startActivity(i);
             }
         });
@@ -168,7 +172,7 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
             // eyes detect
             mJavaDetector = new CascadeClassifier(mCascadeFile.getAbsolutePath());
             //must add this line
-            mJavaDetector.load( mCascadeFile.getAbsolutePath() );
+            mJavaDetector.load(mCascadeFile.getAbsolutePath());
             if (mJavaDetector.empty()) {
                 Log.e(TAG, "Failed to load cascade classifier");
                 mJavaDetector = null;
@@ -220,7 +224,7 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
             // o_image.setImageBitmap(scaledBitmap);
             gray_image.setImageBitmap(convertedBitmap);
             Mat demo = new Mat();
-            Utils.bitmapToMat(convertedBitmap,demo);
+            Utils.bitmapToMat(convertedBitmap, demo);
             Mat gray_demo = new Mat();
             Imgproc.cvtColor(demo, gray_demo, Imgproc.COLOR_RGB2GRAY);
 
@@ -235,20 +239,19 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
             if (mJavaDetector != null) {
                 mJavaDetector.detectMultiScale(gray_demo, faces, 1.1, 2, 2, // TODO: objdetect.CV_HAAR_SCALE_IMAGE
                         new Size(mAbsoluteFaceSize, mAbsoluteFaceSize), new Size());
-                Log.d(TAG," yo1");
-            }
-            else {
+                Log.d(TAG, " yo1");
+            } else {
                 Log.e(TAG, "Detection method is not selected!");
             }
 
-            Log.d(TAG," yo2");
+            Log.d(TAG, " yo2");
             Rect[] facesArray = faces.toArray();
-            Log.d(TAG," yo3: " + facesArray.length);
+            Log.d(TAG, " yo3: " + facesArray.length);
             for (int i = 0; i < facesArray.length; i++) {
-                Imgproc.rectangle(demo, facesArray[i].tl(), facesArray[i].br(), FACE_RECT_COLOR, 3);
-                face_middle_x = (int)facesArray[i].tl().x + facesArray[i].width/2;
-                face_middle_y = (int)facesArray[i].tl().y + facesArray[i].height/2;
-                Log.d("face middle : " ,face_middle_x +"," + face_middle_y);
+                Imgproc.rectangle(demo, facesArray[i].tl(), facesArray[i].br(), FACE_RECT_COLOR, 2);
+                face_middle_x = (int) facesArray[i].tl().x + facesArray[i].width / 2;
+                face_middle_y = (int) facesArray[i].tl().y + facesArray[i].height / 2;
+                Log.d("face middle : ", face_middle_x + "," + face_middle_y);
                 Log.d(TAG, "faces array " + String.valueOf(i));
             }
 
@@ -278,7 +281,7 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
             mBlobColorRgba = new Scalar(255);
             mBlobColorHsv = new Scalar(255);
             SPECTRUM_SIZE = new Size(200, 64);
-            CONTOUR_COLOR = new Scalar(255,0,0,255);
+            CONTOUR_COLOR = new Scalar(255, 0, 0, 255);
 
             int cols = demo.cols();
             int rows = demo.rows();
@@ -290,19 +293,19 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
 //        int y = (int)event.getY() - yOffset;
 
 //the middle point of the face detection
-            int x = (int)face_middle_x;
-            int y = (int)face_middle_y;
-            Imgproc.circle(demo,new org.opencv.core.Point(x,y),10,FACE_RECT_COLOR);
+            int x = (int) face_middle_x;
+            int y = (int) face_middle_y;
+            Imgproc.circle(demo, new org.opencv.core.Point(x, y), 10, FACE_RECT_COLOR);
             Log.i(TAG, "Touch image coordinates: (" + x + ", " + y + ")");
             Log.i(TAG, "Offset coordinates: (" + xOffset + ", " + yOffset + ")");
 
             Rect touchedRect = new Rect();
 
-            touchedRect.x = (x>4) ? x-4 : 0;
-            touchedRect.y = (y>4) ? y-4 : 0;
+            touchedRect.x = (x > 4) ? x - 4 : 0;
+            touchedRect.y = (y > 4) ? y - 4 : 0;
 
-            touchedRect.width = (x+4 < cols) ? x + 4 - touchedRect.x : cols - touchedRect.x;
-            touchedRect.height = (y+4 < rows) ? y + 4 - touchedRect.y : rows - touchedRect.y;
+            touchedRect.width = (x + 4 < cols) ? x + 4 - touchedRect.x : cols - touchedRect.x;
+            touchedRect.height = (y + 4 < rows) ? y + 4 - touchedRect.y : rows - touchedRect.y;
 
             Mat touchedRegionRgba = demo.submat(touchedRect);
 
@@ -311,18 +314,22 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
 
             // Calculate average color of touched region
             mBlobColorHsv = Core.sumElems(touchedRegionHsv);
-            int pointCount = touchedRect.width*touchedRect.height;
+            int pointCount = touchedRect.width * touchedRect.height;
             for (int i = 0; i < mBlobColorHsv.val.length; i++)
                 mBlobColorHsv.val[i] /= pointCount;
 
             //Add a Toast to display the HSV color
-            Toast.makeText(this, "HSV = " + mBlobColorHsv , Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "HSV = " + mBlobColorHsv, Toast.LENGTH_SHORT).show();
             mBlobColorRgba = converScalarHsv2Rgba(mBlobColorHsv);
 
             //Add a Toast to display the HSV color
-            Log.i(TAG, "HSV = " + mBlobColorHsv.val[0] + " , " + mBlobColorHsv.val[1] + " , "+ mBlobColorHsv.val[2] + "");
+            Log.i(TAG, "HSV = " + mBlobColorHsv.val[0] + " , " + mBlobColorHsv.val[1] + " , " + mBlobColorHsv.val[2] + "");
             // show the average color in textview
 //            color_result_text.setText("HSV = [ " + mBlobColorHsv.val[0] + " , " + mBlobColorHsv.val[1] + " , "+ mBlobColorHsv.val[2] + " ]");
+
+            detectedRGBvalue[0] = mBlobColorRgba.val[0];
+            detectedRGBvalue[1] = mBlobColorRgba.val[1];
+            detectedRGBvalue[2] = mBlobColorRgba.val[2];
             Log.i(TAG, "Touched rgba color: (" + mBlobColorRgba.val[0] + ", " + mBlobColorRgba.val[1] +
                     ", " + mBlobColorRgba.val[2] + ", " + mBlobColorRgba.val[3] + ")");
 
@@ -338,25 +345,28 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
             if (mIsColorSelected) {
                 mDetector.process(demo);
                 List<MatOfPoint> contours = mDetector.getContours();
-                Log.e(TAG, "Contours count: " + contours.size());
+                if (contours.size() > 0) {
+                    Log.e(TAG, "Contours count: " + contours.size());
 //                Imgproc.drawContours(demo, contours, -1, CONTOUR_COLOR);
 
-                Mat colorLabel = demo.submat(4, 68, 4, 68);
-                colorLabel.setTo(mBlobColorRgba);
+                    Mat colorLabel = demo.submat(4, 68, 4, 68);
+                    colorLabel.setTo(mBlobColorRgba);
 
-                Mat spectrumLabel = demo.submat(4, 4 + mSpectrum.rows(), 70, 70 + mSpectrum.cols());
-                mSpectrum.copyTo(spectrumLabel);
+                    Mat spectrumLabel = demo.submat(4, 4 + mSpectrum.rows(), 70, 70 + mSpectrum.cols());
+                    mSpectrum.copyTo(spectrumLabel);
+                } else
+                    dialog("Oops", "Your photo is not good enough to detect face.");
             }
-            Utils.matToBitmap(demo,convertedBitmap);
+            Utils.matToBitmap(demo, convertedBitmap);
             gray_image.setImageBitmap(convertedBitmap);
 
             seteffect(rPieChart);
             seteffect(gPieChart);
             seteffect(bPieChart);
 
-            setData(rPieChart,0,(int) mBlobColorRgba.val[0]);
-            setData(gPieChart,1,(int) mBlobColorRgba.val[1]);
-            setData(bPieChart,2,(int) mBlobColorRgba.val[2]);
+            setData(rPieChart, 0, (int) mBlobColorRgba.val[0]);
+            setData(gPieChart, 1, (int) mBlobColorRgba.val[1]);
+            setData(bPieChart, 2, (int) mBlobColorRgba.val[2]);
             //end of the color detection and dismiss the progress bar
             mColorDetectView.dismiss();
 
@@ -365,6 +375,20 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
         }
     }
 
+    protected void dialog(String title, String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ColorDetectionActivity.this);
+        builder.setMessage(message);
+        builder.setTitle(title);
+        builder.setIcon(R.drawable.ic_error_black_24px);
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                ColorDetectionActivity.this.finish();
+            }
+        });
+        builder.create().show();
+    }
 
     @Override
     public void onBackPressed() {
@@ -374,10 +398,11 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId())
-        {
+        switch (item.getItemId()) {
             case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
+                Intent i = new Intent(ColorDetectionActivity.this, MainMenuActivity.class);
+                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(i);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -385,7 +410,7 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
 
     private void seteffect(PieChart colorPie) {
 
-        colorPie.animateXY(2000, 2000 ,Easing.EasingOption.EaseInBounce, Easing.EasingOption.EaseInBounce);
+        colorPie.animateXY(2000, 2000, Easing.EasingOption.EaseInBounce, Easing.EasingOption.EaseInBounce);
         colorPie.invalidate();
         colorPie.setDrawHoleEnabled(true);
         colorPie.setExtraOffsets(10, 10, 10, 10);
@@ -416,12 +441,12 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
 
     }
 
-    private void setData(PieChart colorPie,int order,int color) {
+    private void setData(PieChart colorPie, int order, int color) {
 
         ArrayList<PieEntry> entries = new ArrayList<PieEntry>();
-        float colorValue = color/255f;
+        float colorValue = color / 255f;
         entries.add(new PieEntry(colorValue, 0));
-        entries.add(new PieEntry(1-colorValue ,1));
+        entries.add(new PieEntry(1 - colorValue, 1));
         // NOTE: The order of the entries when being added to the entries array determines their position around the center of
         // the chart.
 
@@ -435,18 +460,17 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
         // add a lot of colors
         ArrayList<Integer> colors = new ArrayList<Integer>();
         colors.clear();
-        switch (order)
-        {
+        switch (order) {
             case 0:
-                colors.add(Color.argb(100,color, 0, 0));
+                colors.add(Color.argb(100, color, 0, 0));
                 colorPie.setCenterText("Red");
                 break;
             case 1:
-                colors.add(Color.argb(100,0,color, 0));
+                colors.add(Color.argb(100, 0, color, 0));
                 colorPie.setCenterText("Green");
                 break;
             case 2:
-                colors.add(Color.argb(100,0, 0,color));
+                colors.add(Color.argb(100, 0, 0, color));
                 colorPie.setCenterText("Blue");
                 break;
         }
@@ -517,13 +541,13 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
         Log.i(TAG, "bitmap width in dp: " + Integer.toString(widthImageDp));
         Log.i(TAG, "bitmap height in dp: " + Integer.toString(heightImageDp));
 
-        if(heightDisplay - 300 >= heightImage && widthDisplay >= widthImage) {
+        if (heightDisplay - 300 >= heightImage && widthDisplay >= widthImage) {
             scaledHeight = heightImage;
             scaledWidth = widthImage;
         } else {
             scaledHeight = heightDisplay - 300;
-            double ratio = (double)scaledHeight / (double)heightImage;
-            scaledWidth = (int)((double)widthImage * ratio);
+            double ratio = (double) scaledHeight / (double) heightImage;
+            scaledWidth = (int) ((double) widthImage * ratio);
         }
         Log.i(TAG, "scaled width: " + Integer.toString(scaledWidth));
         Log.i(TAG, "scaled height: " + Integer.toString(scaledHeight));
@@ -539,15 +563,15 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
         @Override
         public void onManagerConnected(int status) {
             switch (status) {
-                case LoaderCallbackInterface.SUCCESS:
-                {
+                case LoaderCallbackInterface.SUCCESS: {
                     Log.i(TAG, "OpenCV loaded successfully");
 
-                } break;
-                default:
-                {
+                }
+                break;
+                default: {
                     super.onManagerConnected(status);
-                } break;
+                }
+                break;
             }
         }
     };
