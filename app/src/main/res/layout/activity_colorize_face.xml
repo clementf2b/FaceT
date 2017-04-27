@@ -351,6 +351,6 @@
         android:layout_alignParentBottom="true"
         android:background="@color/makeup_transparent_background_color"
         android:padding="5dp"
-        android:src="@mipmap/ic_expand_less_black_24dp" />
+        android:src="@mipmap/ic_expand_more_black_24dp" />
 
 </RelativeLayout>

@@ -151,6 +151,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
     private PorterDuff.Mode mPorterDuffMode = PorterDuff.Mode.OVERLAY;
     private Xfermode mXfermode = new PorterDuffXfermode(mPorterDuffMode);
     private PorterDuff.Mode mPorterDuffScreenMode = PorterDuff.Mode.SCREEN;
+
     private Xfermode mXferScreenmode = new PorterDuffXfermode(mPorterDuffScreenMode);
     // Storage Permissions
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -414,7 +415,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                 }
 
                 Log.d(TAG, stepCount + "");
-                show_hide_layout_button.setImageResource(R.mipmap.ic_expand_less_black_24dp);
+                show_hide_layout_button.setImageResource(R.mipmap.ic_expand_more_black_24dp);
                 checkExpend = true;
             }
 
@@ -435,7 +436,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                 makeup_color_layout.setVisibility(View.GONE);
                 eyeshadow_method_layout.setVisibility(View.GONE);
                 rouge_alpha_select.setVisibility(View.GONE);
-                show_hide_layout_button.setImageResource(R.mipmap.ic_expand_more_black_24dp);
+                show_hide_layout_button.setImageResource(R.mipmap.ic_expand_less_black_24dp);
                 checkExpend = false;
             }
         });
@@ -523,7 +524,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         redo_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (makeupCount + 1 < saveBitmap.size()) {
+                if (makeupCount < saveBitmap.size()) {
                     makeupCount++;
                     temp = saveBitmap.get(makeupCount).copy(temp.getConfig(), true);
                     imageView.setImageBitmap(temp);
@@ -1254,8 +1255,8 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                         float[] hsv = new float[3];
                         Color.RGBToHSV(Color.red(originalArray[x + y * bitmap.getWidth()]), Color.green(originalArray[x + y * bitmap.getWidth()]), Color.blue(originalArray[x + y * bitmap.getWidth()]), hsv);
 //                        Log.d(TAG, "face[" + x + " , " + y + "] : " + hsv[0] + " , " + hsv[1] + " , " + hsv[2] + " ] " + foundationHSV[0] + " " + foundationHSV[1] + " " + foundationHSV[2]);
-                        if (foundationHSV[0] > 28f) {
-                            hsv[0] = (hsv[0] + foundationHSV[0]) / 2f;
+                        if (foundationHSV[0] > 30f) {
+                            hsv[0] = (hsv[0] + foundationHSV[0]) / 2.2f;
                         } else
                             hsv[0] = foundationHSV[0];
 
@@ -2518,7 +2519,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         Canvas drawCanvas = new Canvas(getBitmap);
         Paint mPaint = new Paint();
 
-        int rougeColor = stringColorRGBToARGB(blushColor, 35 + alphaValueRouge, 0, 0, 0);
+        int rougeColor = stringColorRGBToARGB(blushColor, 40 + alphaValueRouge, 0, 0, 0);
 
         mPaint.setColor(rougeColor);
         mPaint.setStyle(Paint.Style.FILL);
