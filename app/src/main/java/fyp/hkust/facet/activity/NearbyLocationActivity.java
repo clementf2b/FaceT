@@ -127,7 +127,7 @@ public class NearbyLocationActivity extends FragmentActivity implements OnMapRea
                     target.setLatitude(shopList.get(i).getLatitude());
                     target.setLongitude(shopList.get(i).getLongitude());
                     Log.d("before_compare_location", "" + mLastLocation.distanceTo(target));
-                    if (mLastLocation.distanceTo(target) < 5000) {
+                    if (mLastLocation.distanceTo(target) < 4000) {
                         shopLocationMarker.setVisible(true);
                         shopWithinRange.add(shopList.get(i));
                     }
@@ -142,6 +142,9 @@ public class NearbyLocationActivity extends FragmentActivity implements OnMapRea
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
                     currentMarker.setVisible(true);
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myCurrentLatLng, 16), 2000, null);
+
+
+
                     currentShopName.setText(shopWithinRange.get(shopFlag).getName());
                     currentShopAddress.setText(shopWithinRange.get(shopFlag).getAddress());
                     Picasso.with(getApplicationContext()).load(shopWithinRange.get(shopFlag).getImage()).into(currentImage);
@@ -290,12 +293,12 @@ public class NearbyLocationActivity extends FragmentActivity implements OnMapRea
                 target.setLatitude(shopList.get(i).getLatitude());
                 target.setLongitude(shopList.get(i).getLongitude());
                 Log.d("before_compare_location", "" + mLastLocation.distanceTo(target));
-                if (mLastLocation.distanceTo(target) < 5000) {
+                if (mLastLocation.distanceTo(target) < 4000) {
                     shopLocationMarker.setVisible(true);
                     shopWithinRange.add(shopList.get(i));
                 }
             }
-
+            bottomPanel.setVisibility(View.GONE);
             initialize = 1;
         }
     }
