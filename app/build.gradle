@@ -114,6 +114,8 @@ dependencies {
     //progressdialog
     compile 'com.taishi-y:flipprogressdialog:0.1.0'
     testCompile 'junit:junit:4.12'
+    //google direction path
+    compile 'com.github.jd-alexander:library:1.1.0'
 }
 apply plugin: 'com.google.gms.google-services'
 
