@@ -17,6 +17,7 @@ import java.util.List;
 import fyp.hkust.facet.R;
 import fyp.hkust.facet.adapter.ShopsAdapter;
 import fyp.hkust.facet.model.Shop;
+import fyp.hkust.facet.util.DividerItemDecoration;
 
 /**
  * Created by bentley on 3/4/2017.
@@ -50,6 +51,7 @@ public class KowloonFragment extends Fragment {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(view.getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
         recyclerView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
         return view;
