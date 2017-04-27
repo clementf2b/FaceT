@@ -1,5 +1,6 @@
 package fyp.hkust.facet.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
@@ -100,7 +101,7 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
                 @Override
                 public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                     if (firebaseAuth.getCurrentUser() == null) {
-                        Intent loginIntent = new Intent(getActivity(), LoginActivity.class);
+                        Intent loginIntent = new Intent(getContext(), LoginActivity.class);
                         loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(loginIntent);
                         // User is signed out

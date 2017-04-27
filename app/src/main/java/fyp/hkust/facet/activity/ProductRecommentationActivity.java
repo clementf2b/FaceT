@@ -56,6 +56,7 @@ public class ProductRecommentationActivity extends AppCompatActivity {
     private DatabaseReference mDatabaseBrand;
     private DatabaseReference mDatabaseUsers;
     private DatabaseReference mDatabaseRatings;
+    private DatabaseReference mDatabaseMatch;
 
     private Map<String, ProductTypeTwo> mProducts = new HashMap<>();
     private Map<String, Brand> mBrand = new HashMap<String, Brand>();
@@ -100,6 +101,7 @@ public class ProductRecommentationActivity extends AppCompatActivity {
         mDatabaseBrand = FirebaseDatabase.getInstance().getReference().child("Brand");
         mDatabaseRatings = FirebaseDatabase.getInstance().getReference().child("Ratings");
         mDatabaseRatings.keepSynced(true);
+        mDatabaseMatch = FirebaseDatabase.getInstance().getReference().child("Match");
         Log.d(TAG + "mDatabaseRatings", mDatabaseRatings.toString());
 
         recommend_product_list_1 = (RecyclerView) findViewById(R.id.recommend_product_list_1);
@@ -148,8 +150,6 @@ public class ProductRecommentationActivity extends AppCompatActivity {
                     public void onCancelled(DatabaseError databaseError) {
                     }
                 });
-
-
             }
 
             @Override
@@ -201,7 +201,7 @@ public class ProductRecommentationActivity extends AppCompatActivity {
                 mLipstickProducts.put(keys.get(i), values.get(i));
             }
         }
-
+        
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         LinearLayoutManager layoutManager2 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         LinearLayoutManager layoutManager3 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);

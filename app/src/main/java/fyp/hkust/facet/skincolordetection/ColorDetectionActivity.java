@@ -246,6 +246,7 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
 
             Log.d(TAG, " yo2");
             Rect[] facesArray = faces.toArray();
+
             Log.d(TAG, " yo3: " + facesArray.length);
             for (int i = 0; i < facesArray.length; i++) {
                 Imgproc.rectangle(demo, facesArray[i].tl(), facesArray[i].br(), FACE_RECT_COLOR, 2);
@@ -254,6 +255,8 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
                 Log.d("face middle : ", face_middle_x + "," + face_middle_y);
                 Log.d(TAG, "faces array " + String.valueOf(i));
             }
+            if (facesArray == null)
+                dialog("Oops", "Your photo is not good enough to detect face.");
 
             // detect the skin color area and turn it into white
 //        Mat ycbcr_image = new Mat();
@@ -345,17 +348,14 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
             if (mIsColorSelected) {
                 mDetector.process(demo);
                 List<MatOfPoint> contours = mDetector.getContours();
-                if (contours.size() > 0) {
-                    Log.e(TAG, "Contours count: " + contours.size());
+                Log.e(TAG, "Contours count: " + contours.size());
 //                Imgproc.drawContours(demo, contours, -1, CONTOUR_COLOR);
 
-                    Mat colorLabel = demo.submat(4, 68, 4, 68);
-                    colorLabel.setTo(mBlobColorRgba);
+                Mat colorLabel = demo.submat(4, 68, 4, 68);
+                colorLabel.setTo(mBlobColorRgba);
 
-                    Mat spectrumLabel = demo.submat(4, 4 + mSpectrum.rows(), 70, 70 + mSpectrum.cols());
-                    mSpectrum.copyTo(spectrumLabel);
-                } else
-                    dialog("Oops", "Your photo is not good enough to detect face.");
+                Mat spectrumLabel = demo.submat(4, 4 + mSpectrum.rows(), 70, 70 + mSpectrum.cols());
+                mSpectrum.copyTo(spectrumLabel);
             }
             Utils.matToBitmap(demo, convertedBitmap);
             gray_image.setImageBitmap(convertedBitmap);
@@ -393,7 +393,9 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        this.finish();
+        Intent i = new Intent(ColorDetectionActivity.this, MainMenuActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(i);
     }
 
     @Override

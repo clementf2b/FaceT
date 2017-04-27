@@ -214,6 +214,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         animFadein = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in);
 
         mAuth = FirebaseAuth.getInstance();
+
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -230,8 +231,10 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         colorNo = getIntent().getExtras().getLong("colorNo");
         Log.d(TAG + " product_id", product_id);
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Product");
+        mDatabase.keepSynced(true);
         Log.d(TAG + "mDatabase", mDatabase.toString());
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
+        mDatabaseUsers.keepSynced(true);
         mStorageProfileImage = FirebaseStorage.getInstance().getReference().child("Comment_images");
 
         Log.d(TAG + "mDatabaseUsers", mDatabaseUsers.toString());
@@ -374,8 +377,16 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                uploadRating();
-                addNotification("Rating");
+
+                if (mAuth.getCurrentUser() != null) {
+                    uploadRating();
+                    addNotification("Rating");
+                } else {
+                    Snackbar snackbar = Snackbar.make(activity_product_detail_layout, "Haven't logged in.", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                    mAuth.addAuthStateListener(mAuthListener);
+                    refresh();
+                }
             }
         });
 
@@ -397,9 +408,16 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         likeButton.setOnLikeListener(new OnLikeListener() {
             @Override
             public void liked(LikeButton likeButton) {
-                addFavourite();
-                likeButton.setLiked(true);
-                addNotification("new Notification");
+                if (mAuth.getCurrentUser() != null) {
+                    addFavourite();
+                    likeButton.setLiked(true);
+                    addNotification("new Notification");
+                } else {
+                    Snackbar snackbar = Snackbar.make(activity_product_detail_layout, "Haven't logged in.", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                    mAuth.addAuthStateListener(mAuthListener);
+                    refresh();
+                }
             }
 
             @Override
@@ -447,8 +465,15 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
             @Override
             public void onClick(View v) {
                 //upload the data to firebase
-                emojiPopup.dismiss();
-                uploadComment();
+                if (mAuth.getCurrentUser() != null) {
+                    emojiPopup.dismiss();
+                    uploadComment();
+                } else {
+                    Snackbar snackbar = Snackbar.make(activity_product_detail_layout, "Haven't logged in.", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                    mAuth.addAuthStateListener(mAuthListener);
+                    refresh();
+                }
             }
         });
 
@@ -457,7 +482,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mCommentList.setLayoutManager(layoutManager);
 
-        checkUserExist();
+//        checkUserExist();
 
         ProgressDialog dialog = ProgressDialog.show(ProductDetailActivity.this,
                 "Loading Product Data", "Please wait ...", true);
@@ -649,6 +674,11 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
 
         setUpEmojiPopup();
         checkUserExist();
+    }
+
+    private void refresh() {
+        finish();
+        startActivity(getIntent());
     }
 
     public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
@@ -876,8 +906,6 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
     protected void onStart() {
         super.onStart();
 
-        mAuth.addAuthStateListener(mAuthListener);
-
         FirebaseRecyclerAdapter<Comment, CommentViewHolder> firebaseCommentRecyclerAdapter = new FirebaseRecyclerAdapter<Comment, CommentViewHolder>(
                 Comment.class,
                 R.layout.comment_list_row,
@@ -1081,57 +1109,52 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
 
     private void getAverageRating() {
 
-        if (mAuth.getCurrentUser() != null) {
-            //average ratings change listener
-            mDatabaseRatings.child(product_id).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    int totalRating = 0;
-                    if (dataSnapshot.getValue() != null) {
-                        Log.d(TAG + " dataSnapshot.getChildren()", dataSnapshot.getValue().toString());
-                        Map<String, Long> td = (HashMap<String, Long>) dataSnapshot.getValue();
-                        List<String> keys = new ArrayList<>(td.keySet());
-                        List<Long> values = new ArrayList<>(td.values());
-                        if (keys.contains(mAuth.getCurrentUser().getUid())) {
-                            delete_rating.setVisibility(View.VISIBLE);
-                        }
-//                    Log.d(TAG + "  arraylist" , values.toString());
-                        for (int i = 0; i < values.size(); i++) {
-                            double temp = doubleValue(values.get(i));
-                            barRatingCount = countEachRating(temp);
-                            Log.d(TAG + " temp", temp + "");
-                            totalRating += temp;
-                        }
-                        ratingCount = values.size();
-                        Log.d(TAG + " total , ratingCount", totalRating + " , " + ratingCount);
-                        averageRating = totalRating / ratingCount;
-                        //round to 2 significant figures
-                        BigDecimal bd = new BigDecimal(averageRating);
-                        bd = bd.round(new MathContext(2));
-                        averageRating = bd.floatValue();
-
-                        Log.d(TAG + " average", averageRating + "");
-                        ratingChartBar.setData(getBarData());
-                        setData(ratingPieChart, averageRating);
-                        rating_textview.setText(averageRating + "");
-                        top_rating_bar.setRating(averageRating);
-                        rating_population_number_text.setText(ratingCount + "");
-                        Log.d("rating_population_number_text.setText(ratingCount)", ratingCount + "");
-                        ratingChartBar.invalidate();
-                        ratingPieChart.invalidate();
+        //average ratings change listener
+        mDatabaseRatings.child(product_id).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                int totalRating = 0;
+                if (dataSnapshot.getValue() != null) {
+                    Log.d(TAG + " dataSnapshot.getChildren()", dataSnapshot.getValue().toString());
+                    Map<String, Long> td = (HashMap<String, Long>) dataSnapshot.getValue();
+                    List<String> keys = new ArrayList<>(td.keySet());
+                    List<Long> values = new ArrayList<>(td.values());
+                    if (mAuth.getCurrentUser()!= null && keys.contains(mAuth.getCurrentUser().getUid())) {
+                        delete_rating.setVisibility(View.VISIBLE);
                     }
-                }
+//                    Log.d(TAG + "  arraylist" , values.toString());
+                    for (int i = 0; i < values.size(); i++) {
+                        double temp = doubleValue(values.get(i));
+                        barRatingCount = countEachRating(temp);
+                        Log.d(TAG + " temp", temp + "");
+                        totalRating += temp;
+                    }
+                    ratingCount = values.size();
+                    Log.d(TAG + " total , ratingCount", totalRating + " , " + ratingCount);
+                    averageRating = totalRating / ratingCount;
+                    //round to 2 significant figures
+                    BigDecimal bd = new BigDecimal(averageRating);
+                    bd = bd.round(new MathContext(2));
+                    averageRating = bd.floatValue();
 
-                @Override
-                public void onCancelled(DatabaseError error) {
-                    // Failed to read value
-                    Log.e(TAG, "Failed to get value.", error.toException());
+                    Log.d(TAG + " average", averageRating + "");
+                    ratingChartBar.setData(getBarData());
+                    setData(ratingPieChart, averageRating);
+                    rating_textview.setText(averageRating + "");
+                    top_rating_bar.setRating(averageRating);
+                    rating_population_number_text.setText(ratingCount + "");
+                    Log.d("rating_population_number_text.setText(ratingCount)", ratingCount + "");
+                    ratingChartBar.invalidate();
+                    ratingPieChart.invalidate();
                 }
-            });
-        } else {
-            Snackbar snackbar = Snackbar.make(activity_product_detail_layout, "Haven't logged in.", Snackbar.LENGTH_LONG);
-            snackbar.show();
-        }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.e(TAG, "Failed to get value.", error.toException());
+            }
+        });
     }
 
     private static double doubleValue(Object value) {

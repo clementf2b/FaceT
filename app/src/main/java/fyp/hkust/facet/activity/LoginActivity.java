@@ -302,7 +302,7 @@ public class LoginActivity extends AppCompatActivity {
                         request.setParameters(parameters);
                         request.executeAsync();
 //                        mProgress.dismiss();
-                        dialog("Login Successful", " Welcome to FaceT  " + fbname[0] );
+                        successDialog("Login Successful", " Welcome to FaceT =] ");
                     }
 
                     @Override
@@ -331,6 +331,21 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    protected void successDialog(String title, String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+        builder.setMessage(message);
+        builder.setTitle(title);
+        builder.setIcon(R.drawable.ic_person_black_24px);
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+//                LoginActivity.this.finish();
+            }
+        });
+        builder.create().show();
+    }
+
     private void saveLoginData() {
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("LoginData", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -343,7 +358,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-        startActivity(new Intent(LoginActivity.this, MainMenuActivity.class));
+        this.finish();
         return true;
     }
 
@@ -367,6 +382,7 @@ public class LoginActivity extends AppCompatActivity {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
+                successDialog("Login Successful", " Welcome to FaceT =] ");
             } else {
                 // Google Sign In failed, update UI appropriately
                 // ...
@@ -380,7 +396,7 @@ public class LoginActivity extends AppCompatActivity {
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
 
-        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        final AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -403,7 +419,7 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    protected void dialog(String title,String message) {
+    protected void alertDialog(String title, String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
         builder.setMessage(message);
         builder.setTitle(title);
@@ -449,8 +465,6 @@ public class LoginActivity extends AppCompatActivity {
                         mProgress.dismiss();
                         Snackbar snackbar = Snackbar.make(activity_login_layout, e.toString(), Snackbar.LENGTH_SHORT);
                         snackbar.show();
-                        YoYo.with(Techniques.Shake).playOn(findViewById(R.id.loginemailfield));
-                        YoYo.with(Techniques.Shake).playOn(findViewById(R.id.loginpasswordfield));
                     }
                 });
     }
@@ -469,6 +483,7 @@ public class LoginActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 mProgress.dismiss();
+                                successDialog("Login Successful", " Welcome to FaceT =] ");
                                 checkUserExist();
                             }
                         }
@@ -479,12 +494,16 @@ public class LoginActivity extends AppCompatActivity {
                         public void onFailure(@NonNull Exception e) {
 
                             mProgress.dismiss();
+                            YoYo.with(Techniques.Shake).playOn(findViewById(R.id.loginemailfield));
+                            YoYo.with(Techniques.Shake).playOn(findViewById(R.id.loginpasswordfield));
+                            YoYo.with(Techniques.Shake).playOn(findViewById(R.id.loginemailbg));
+                            YoYo.with(Techniques.Shake).playOn(findViewById(R.id.loginpwbg));
 //                            Log.d(TAG, e.toString() + " / " + e.getMessage() + " / " + e.getLocalizedMessage());
                             if (password.length() < 6) {
-                                dialog("Login Error",  "Password should be at least 6 characters");
+                                alertDialog("Login Error", "Password should be at least 6 characters");
                             } else {
                                 String errorMsg = e.getMessage();
-                                dialog("Login Error",  errorMsg);
+                                alertDialog("Login Error", errorMsg);
                             }
                         }
                     });

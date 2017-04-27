@@ -68,6 +68,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
+import com.taishi.flipprogressdialog.FlipProgressDialog;
 import com.tzutalin.dlib.Constants;
 import com.tzutalin.dlib.FaceDet;
 import com.tzutalin.dlib.VisionDetRet;
@@ -157,7 +158,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
             android.Manifest.permission.READ_EXTERNAL_STORAGE,
             android.Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
-    private ProgressDialog progressDialog;
+    //    private ProgressDialog progressDialog;
     private Mat mRgbMat;
     private Mat mHsvMat;
     private Mat mMaskMat;
@@ -220,6 +221,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
     private int alphaValueRouge = 10;
     private LinearLayout makeup_color_layout;
     private ImageButton makeup_color_arror_left, makeup_color_arror_right;
+    private FlipProgressDialog fpd;
 
     /**
      * Checks if the app has permission to write to device storage
@@ -461,11 +463,30 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
             }
         });
 
-        progressDialog = new ProgressDialog(ColorizeFaceActivity.this);
-        progressDialog.setCancelable(false);
-        progressDialog.setTitle("Please Wait..");
-        progressDialog.setMessage("Getting landmark result ...");
-        progressDialog.show();
+        fpd = new FlipProgressDialog();
+        List<Integer> imageList = new ArrayList<Integer>();
+        imageList.add(R.drawable.app_icon_100);
+        fpd.setImageList(imageList);                              // *Set a imageList* [Have to. Transparent background png recommended]
+        fpd.setCanceledOnTouchOutside(false);// If true, the dialog will be dismissed when user touch outside of the dialog. If false, the dialog won't be dismissed.
+        fpd.setImageMargin(10);
+        fpd.setMinAlpha(1.0f);                                    // Set an alpha when flipping ratation start and end
+        fpd.setMaxAlpha(1.0f);
+        fpd.setDimAmount(80.0f);
+        fpd.setOrientation("rotationY");                          // Set a flipping rotation
+        fpd.setDuration(1500);
+        fpd.setImageSize(170);
+        fpd.setStartAngle(0.0f);                                  // Set an angle when flipping ratation start
+        fpd.setEndAngle(360.0f);
+        fpd.setBackgroundColor(Color.parseColor("#3b393d"));     // Set a background color of dialog
+        fpd.setBackgroundAlpha(0.8f);
+        fpd.setCornerRadius(10);
+        fpd.show(getFragmentManager(),"Loading ...");
+
+//        progressDialog = new ProgressDialog(ColorizeFaceActivity.this);
+//        progressDialog.setCancelable(false);
+//        progressDialog.setTitle("Please Wait..");
+//        progressDialog.setMessage("Getting landmark result ...");
+//        progressDialog.show();
 
         mThread = new HandlerThread("name");
         mThread.start();
@@ -607,16 +628,16 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                 if (!recyclerView.canScrollHorizontally(-1)) {
 //                    Toast.makeText(ColorizeFaceActivity.this, "At the Left of the page", Toast.LENGTH_SHORT).show();
                     makeup_color_arror_left.setVisibility(View.INVISIBLE);
-                } else if(recyclerView.canScrollHorizontally(-1))
+                } else if (recyclerView.canScrollHorizontally(-1))
                     makeup_color_arror_left.setVisibility(View.VISIBLE);
 
                 if (!recyclerView.canScrollHorizontally(1)) {
 //                    Toast.makeText(ColorizeFaceActivity.this, "At the bottom of the page", Toast.LENGTH_SHORT).show();
                     makeup_color_arror_right.setVisibility(View.INVISIBLE);
-                } else if(recyclerView.canScrollHorizontally(1))
+                } else if (recyclerView.canScrollHorizontally(1))
                     makeup_color_arror_right.setVisibility(View.VISIBLE);
 
-                Log.d(TAG + " dx , dy " ,dx + " , " + dy);
+                Log.d(TAG + " dx , dy ", dx + " , " + dy);
             }
 
         });
@@ -851,7 +872,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                         @Override
                         public void run() {
                             Toast.makeText(getApplicationContext(), "No face", Toast.LENGTH_SHORT).show();
-                            dialog("Oops","Your photo is not good enough to detect face.");
+                            dialog("Oops", "Your photo is not good enough to detect face.");
 
                         }
                     });
@@ -860,7 +881,8 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
                     @Override
                     public void run() {
                         imageView.setImageBitmap(temp);
-                        progressDialog.dismiss();
+                        fpd.dismiss();
+//                        progressDialog.dismiss();
                     }
                 });
             } catch (Exception e) {
@@ -869,7 +891,7 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         }
     };
 
-    protected void dialog(String title,String message) {
+    protected void dialog(String title, String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(ColorizeFaceActivity.this);
         builder.setMessage(message);
         builder.setTitle(title);
@@ -2580,12 +2602,12 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
     @Override
     protected void onPause() {
         super.onPause();
-        progressDialog.dismiss();
+//        progressDialog.dismiss();
     }
 
     protected void onDestroy() {
         super.onDestroy();
-        progressDialog.dismiss();
+//        progressDialog.dismiss();
     }
 
 
@@ -2976,13 +2998,31 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog = new ProgressDialog(ColorizeFaceActivity.this);
-            progressDialog.setCancelable(false);
-            progressDialog.setTitle("Please Wait..");
-            Resources res = getResources();
-            final String[] categoryArray = res.getStringArray(R.array.category_type_array);
-            progressDialog.setMessage("Setting up " + categoryArray[categoryResult] + " ...");
-            progressDialog.show();
+            fpd = new FlipProgressDialog();
+            List<Integer> imageList = new ArrayList<Integer>();
+            imageList.add(R.drawable.app_icon_100);
+            fpd.setImageList(imageList);                              // *Set a imageList* [Have to. Transparent background png recommended]
+            fpd.setCanceledOnTouchOutside(false);// If true, the dialog will be dismissed when user touch outside of the dialog. If false, the dialog won't be dismissed.
+            fpd.setImageMargin(10);
+            fpd.setMinAlpha(1.0f);                                    // Set an alpha when flipping ratation start and end
+            fpd.setMaxAlpha(1.0f);
+            fpd.setDimAmount(80.0f);
+            fpd.setOrientation("rotationY");                          // Set a flipping rotation
+            fpd.setDuration(1500);
+            fpd.setImageSize(170);
+            fpd.setStartAngle(0.0f);                                  // Set an angle when flipping ratation start
+            fpd.setEndAngle(360.0f);
+            fpd.setBackgroundColor(Color.parseColor("#3b393d"));     // Set a background color of dialog
+            fpd.setBackgroundAlpha(0.8f);
+            fpd.setCornerRadius(10);
+            fpd.show(getFragmentManager(), "Loading ...");
+//            progressDialog = new ProgressDialog(ColorizeFaceActivity.this);
+//            progressDialog.setCancelable(false);
+//            progressDialog.setTitle("Please Wait..");
+//            Resources res = getResources();
+//            final String[] categoryArray = res.getStringArray(R.array.category_type_array);
+//            progressDialog.setMessage("Setting up " + categoryArray[categoryResult] + " ...");
+//            progressDialog.show();
         }
 
         @Override
@@ -2993,7 +3033,8 @@ public class ColorizeFaceActivity extends AppCompatActivity implements ColorSele
         @Override
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
-            progressDialog.dismiss();
+//            progressDialog.dismiss();
+            fpd.dismiss();
 //             number,bitmap
 //            private Map<Integer,Bitmap> saveBitmap = new HashMap<>();
 //             number,(color,ID,category)

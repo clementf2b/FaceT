@@ -62,9 +62,9 @@
                     android:background="@color/white">
 
                     <RelativeLayout
+                        android:id="@+id/profile_personal_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/profile_personal_layout"
                         android:background="@color/white">
 
                         <de.hdodenhof.circleimageview.CircleImageView
@@ -110,8 +110,8 @@
                             android:layout_toStartOf="@+id/btn_edit"
                             android:text="@string/profile_username"
                             android:textColor="@color/profile_name_text_color"
-                            android:textSize="18sp"
-                            />
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/profile_email"
@@ -131,20 +131,18 @@
 
                     <com.vanniktech.emoji.EmojiTextView
                         android:id="@+id/profile_aboutme"
-                        android:layout_below="@+id/profile_personal_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_below="@+id/profile_personal_layout"
+                        android:layout_marginBottom="20dp"
                         android:layout_marginLeft="15dp"
                         android:layout_marginRight="15dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="20dp"
+                        android:gravity="center"
                         android:text="@string/description_label"
                         android:textColor="@color/profile_name_text_color"
                         android:textIsSelectable="true"
                         android:textSize="16dp"
-                        app:emojiSize="16dp"
-                        android:gravity="center"
-                        />  
+                        app:emojiSize="16dp" />  
 
                     <android.support.design.widget.TabLayout
                         android:id="@+id/tabs"

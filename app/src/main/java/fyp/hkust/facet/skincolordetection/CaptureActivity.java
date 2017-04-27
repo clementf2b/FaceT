@@ -229,7 +229,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
             fpd.setMaxAlpha(1.0f);
             fpd.setDimAmount(80.0f);
             fpd.setOrientation("rotationY");                          // Set a flipping rotation
-            fpd.setDuration(1000);
+            fpd.setDuration(1500);
             fpd.setImageSize(170);
             fpd.setStartAngle(0.0f);                                  // Set an angle when flipping ratation start
             fpd.setEndAngle(360.0f);

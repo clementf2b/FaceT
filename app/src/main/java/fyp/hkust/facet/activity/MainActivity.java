@@ -12,9 +12,12 @@ import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -35,6 +38,7 @@ import android.text.SpannableString;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -46,9 +50,12 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.RatingBar;
 import android.widget.Spinner;
+import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.pwittchen.swipe.library.Swipe;
+import com.github.pwittchen.swipe.library.SwipeListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -100,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference mDatabaseRatings;
 
     private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
     private static final String NAV_ITEM_ID = "nav_index";
     DrawerLayout drawerLayout;
     private int navItemId;
@@ -272,6 +280,15 @@ public class MainActivity extends AppCompatActivity {
         //end
 
         mAuth = FirebaseAuth.getInstance();
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if (firebaseAuth.getCurrentUser() != null) {
+                    setupNavHeader();
+                }
+            }
+        };
+        mAuth.addAuthStateListener(mAuthListener);
 
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Product");
         mDatabase.keepSynced(true);
@@ -298,7 +315,6 @@ public class MainActivity extends AppCompatActivity {
         new_product_popup_bubble.setRecyclerView(mProductList);
 
         checkUserExist();
-        setupNavHeader();
     }
 
     private void setupTabLayout() {
@@ -535,10 +551,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        setupNavHeader();
 
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     Product result = ds.getValue(Product.class);
                     if (result.getValidate() == 1) {

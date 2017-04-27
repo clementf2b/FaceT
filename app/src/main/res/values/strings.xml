@@ -128,7 +128,7 @@
     <string name="new_product_text">New Product</string>
 
     <!--nav_header_main-->
-    <string name="nav_username_text">Peter</string>
+    <string name="nav_username_text">Guest</string>
     <string name="nav_email_text">abc@hallo.com</string>
 
     <!--product_row-->
