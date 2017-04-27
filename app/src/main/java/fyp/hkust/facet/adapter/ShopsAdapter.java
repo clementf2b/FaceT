@@ -83,6 +83,7 @@ public class ShopsAdapter extends RecyclerView.Adapter<ShopsAdapter.ShopViewHold
             public void onClick(View v) {
                 Intent intent = new Intent(context, ShopLocationActivity.class);
                 Bundle bundle = new Bundle();
+                bundle.putString("type", "shopItem");
                 bundle.putSerializable("shop", shop);
                 intent.putExtras(bundle);
                 context.startActivity(intent);

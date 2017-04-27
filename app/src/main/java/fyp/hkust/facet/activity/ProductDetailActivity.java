@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -114,6 +115,7 @@ import fyp.hkust.facet.model.Comment;
 import fyp.hkust.facet.model.Product;
 import fyp.hkust.facet.model.ProductTypeOne;
 import fyp.hkust.facet.model.ProductTypeTwo;
+import fyp.hkust.facet.model.Shop;
 import fyp.hkust.facet.model.User;
 import fyp.hkust.facet.skincolordetection.CaptureActivity;
 import fyp.hkust.facet.util.CheckConnectivity;
@@ -139,6 +141,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
     private DatabaseReference mDatabaseCommentsCurrentProduct;
     private DatabaseReference mDatabaseFavourite;
     private DatabaseReference mDatabaseNotifications;
+    private DatabaseReference mDatabaseShop;
 
     private ColorPickerDialog colorPickerDialog;
     private ExpandableTextView descTextview;
@@ -179,6 +182,9 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
     private TextView rating_textview;
     private RecyclerView mCommentList;
     private String current_username = "";
+
+    private List<Shop> brandShops = new ArrayList<>();
+    private String brandId;
     // Animation
     private Animation animFadein;
     private ProgressBar product_detail_loading_indicator;
@@ -257,6 +263,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         mDatabaseCommentsCurrentProduct.keepSynced(true);
         Log.d(TAG + "mDatabaseCommentsCurrentProduct", mDatabaseCommentsCurrentProduct.toString());
         mDatabaseBrand = FirebaseDatabase.getInstance().getReference().child("Brand");
+        mDatabaseShop = FirebaseDatabase.getInstance().getReference().child("Shop");
 
 //        product_color_imageview_1 = (CircleImageView) findViewById(R.id.product_color_1);
 //        product_color_imageview_1.setOnClickListener(new View.OnClickListener() {
@@ -368,13 +375,18 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         location_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent locationIntent = new Intent(ProductDetailActivity.this, NearbyLocationActivity.class);
-                locationIntent.putExtra("shop_id", "12345");
+                Intent locationIntent = new Intent(ProductDetailActivity.this, ShopLocationActivity.class);
+                Bundle locationBundle = new Bundle();
+                locationBundle.putString("type", "brandShops");
+                locationBundle.putInt("size", brandShops.size());
+                for(int i=0;i<brandShops.size();i++) {
+                    locationBundle.putSerializable("shops"+i, brandShops.get(i));
+                }
+                locationIntent.putExtras(locationBundle);
                 startActivity(locationIntent);
-
             }
         });
-
+//
         submitRatingButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -481,8 +493,10 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                         getSupportActionBar().setTitle(s);
                     }
-                    if (product_data_two.getBrandID() != null)
+                    if (product_data_two.getBrandID() != null) {
                         brand_name_text.setText(product_data_two.getBrandID());
+                        brandId = product_data_two.getBrandID();
+                    }
                     if (product_data_two.getDescription() != null)
                         descTextview.setText(product_data_two.getDescription());
                     if (product_data_two.getUid() != null)
@@ -531,8 +545,10 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
 
                         getSupportActionBar().setTitle(s);
                     }
-                    if (product_data_two.getBrandID() != null)
+                    if (product_data_two.getBrandID() != null) {
                         brand_name_text.setText(product_data_two.getBrandID());
+                        brandId = product_data_two.getBrandID();
+                    }
                     if (product_data_two.getDescription() != null)
                         descTextview.setText(product_data_two.getDescription());
                     if (product_data_two.getUid() != null)
@@ -593,12 +609,38 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                             brand_name_text.setText(mBrand.get(product_data_one.getBrandID()).getBrand());
                         if (product_data_two != null)
                             brand_name_text.setText(mBrand.get(product_data_two.getBrandID()).getBrand());
+
+                        mDatabaseShop.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Log.d("mDatabaseShop!!!!!!!!!!!!!!!!!!", "" + brandId);
+                                brandShops.clear();
+                                Log.d("mDatabaseShop!!!!!!!!!!!!!!!!!!", "" + dataSnapshot.getValue());
+                                for (DataSnapshot shopId : dataSnapshot.getChildren()) {
+                                    Log.d("mDatabaseShop!!!!!!!!!!!!!!!!!!", "" + shopId.getKey() + " = " + shopId.getValue());
+                                    if (brandId.equals(shopId.getKey())) {
+                                        for (DataSnapshot ds : shopId.getChildren()) {
+                                            Shop temp = ds.getValue(Shop.class);
+                                            temp.setImage(mBrand.get(shopId.getKey()).getImage());
+                                            brandShops.add(temp);
+                                        }
+                                    }
+                                }
+                                Log.d("brandShop size", "" + brandShops.size());
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                     }
                 });
+
 
             }
 
