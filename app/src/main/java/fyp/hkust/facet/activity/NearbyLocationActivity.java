@@ -79,6 +79,8 @@ public class NearbyLocationActivity extends FragmentActivity implements RoutingL
 
         Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
         FontManager.markAsIconContainer(findViewById(R.id.layout_nearby_location), fontType);
+        currentShopName = (TextView) findViewById(R.id.current_shop_name);
+        currentShopName.setTypeface(fontType, Typeface.BOLD);
 
         polylines = new ArrayList<>();
 
@@ -117,7 +119,6 @@ public class NearbyLocationActivity extends FragmentActivity implements RoutingL
 
         shop_location_button = (ImageButton) findViewById(R.id.shop_location_button);
         my_location_button = (ImageButton) findViewById(R.id.my_location_button);
-        currentShopName = (TextView) findViewById(R.id.current_shop_name);
         currentShopAddress = (TextView) findViewById(R.id.current_shop_address);
         currentImage = (CircleImageView) findViewById(R.id.current_shop_image);
         bottomPanel = (LinearLayout) findViewById(R.id.bottom_info_panel_nearby_shop);
