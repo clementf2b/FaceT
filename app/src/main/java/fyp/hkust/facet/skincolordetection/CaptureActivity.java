@@ -108,7 +108,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
     private ToolTipView mBlueToolTipView;
     private ToolTipRelativeLayout toolTipRelativeLayout;
     private int n;
-//    private GifLoadingView mView;
+    //    private GifLoadingView mView;
     private Handler handler; // declared before onCreate
     private Runnable myRunnable;
 
@@ -236,7 +236,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
             fpd.setBackgroundColor(Color.parseColor("#3b393d"));     // Set a background color of dialog
             fpd.setBackgroundAlpha(0.8f);
             fpd.setCornerRadius(10);
-            fpd.show(getFragmentManager(),"Loading ...");
+            fpd.show(getFragmentManager(), "Loading ...");
 //            int id = getResources().getIdentifier("num" + n, "drawable", getPackageName());
 //            mView = new GifLoadingView();
 //            mView.setBackgroundResource(id);
@@ -413,7 +413,11 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.apply_btn:
                 AlertDialog.Builder builder = new AlertDialog.Builder(CaptureActivity.this, R.style.Theme_AppCompat_Light_Dialog_Alert);
                 builder.setTitle("Are you sure?");
-                builder.setMessage("effect " + selectPhoto + " is the most suitable?");
+                if (selectPhoto == 0) {
+                    builder.setMessage("Original photo is the most suitable?");
+                } else {
+                    builder.setMessage("Effect " + selectPhoto + " is the most suitable?");
+                }
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
