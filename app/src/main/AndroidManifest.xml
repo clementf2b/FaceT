@@ -65,10 +65,8 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar_nav" />
         <activity
-            android:name=".activity.MainMenuActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar_Dark_nav">
+            android:name=".activity.SplashScreenActivity"
+            android:theme="@style/AppTheme.Splash">
             <intent-filter>
                 <action
                     android:name="android.intent.action.MAIN"
@@ -78,6 +76,21 @@
                     android:name="android.intent.category.LAUNCHER"
                     android:screenOrientation="portrait" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.MainMenuActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar_Dark_nav">
+            <!--<intent-filter>-->
+                <!--<action-->
+                    <!--android:name="android.intent.action.MAIN"-->
+                    <!--android:screenOrientation="portrait" />-->
+
+                <!--<category-->
+                    <!--android:name="android.intent.category.LAUNCHER"-->
+                    <!--android:screenOrientation="portrait" />-->
+            <!--</intent-filter>-->
         </activity>
         <activity
             android:name=".activity.RegisterActivity"
