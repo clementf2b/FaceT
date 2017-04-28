@@ -192,6 +192,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
     private TextView more_product_color_label;
     private ImageView delete_rating;
     private List<String> colorSet = new ArrayList<>();
+    private boolean favourite = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -251,7 +252,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         mDatabaseRatings.keepSynced(true);
         Log.d(TAG + "mDatabaseRatings", mDatabaseRatings.toString());
         mDatabaseFavourite = FirebaseDatabase.getInstance().getReference().child("Favourite");
-        mDatabaseFavourite.keepSynced(true);
+//        mDatabaseFavourite.keepSynced(true);
         Log.d(TAG + "mDatabaseFavourite", mDatabaseFavourite.toString());
         mDatabaseNotifications = FirebaseDatabase.getInstance().getReference().child("Notifications");
         mDatabaseNotifications.keepSynced(true);
@@ -377,8 +378,8 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                 Bundle locationBundle = new Bundle();
                 locationBundle.putString("type", "brandShops");
                 locationBundle.putInt("size", brandShops.size());
-                for(int i=0;i<brandShops.size();i++) {
-                    locationBundle.putSerializable("shops"+i, brandShops.get(i));
+                for (int i = 0; i < brandShops.size(); i++) {
+                    locationBundle.putSerializable("shops" + i, brandShops.get(i));
                 }
                 locationIntent.putExtras(locationBundle);
                 startActivity(locationIntent);
@@ -407,9 +408,13 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                        if (ds.getKey().contains(mAuth.getCurrentUser().getUid()))
+                        if (ds.getKey().contains(mAuth.getCurrentUser().getUid()) && favourite == false)
+                        {
+                            favourite = true;
                             likeButton.setLiked(true);
+                        }
                     }
+                    Log.d(TAG, "  mDatabaseFavourite.removeEventListener ");
                 }
 
                 @Override
@@ -417,12 +422,13 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                 }
             });
         }
+
         likeButton.setOnLikeListener(new OnLikeListener() {
             @Override
             public void liked(LikeButton likeButton) {
-                if (mAuth.getCurrentUser() != null) {
+                if (mAuth.getCurrentUser() != null && favourite == false) {
+                    favourite = true;
                     addFavourite();
-                    likeButton.setLiked(true);
                     addNotification("new Notification");
                 } else {
                     Snackbar snackbar = Snackbar.make(activity_product_detail_layout, "Haven't logged in.", Snackbar.LENGTH_LONG);
@@ -434,6 +440,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
 
             @Override
             public void unLiked(LikeButton likeButton) {
+                favourite = false;
                 removeFavourite();
             }
         });
@@ -1161,7 +1168,7 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
                     Map<String, Long> td = (HashMap<String, Long>) dataSnapshot.getValue();
                     List<String> keys = new ArrayList<>(td.keySet());
                     List<Long> values = new ArrayList<>(td.values());
-                    if (mAuth.getCurrentUser()!= null && keys.contains(mAuth.getCurrentUser().getUid())) {
+                    if (mAuth.getCurrentUser() != null && keys.contains(mAuth.getCurrentUser().getUid())) {
                         delete_rating.setVisibility(View.VISIBLE);
                     }
 //                    Log.d(TAG + "  arraylist" , values.toString());

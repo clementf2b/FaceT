@@ -302,7 +302,7 @@ public class LoginActivity extends AppCompatActivity {
                         request.setParameters(parameters);
                         request.executeAsync();
 //                        mProgress.dismiss();
-                        successDialog("Login Successful", " Welcome to FaceT =] ");
+//                        successDialog("Login Successful", " Welcome to FaceT =] ");
                     }
 
                     @Override
@@ -331,20 +331,20 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    protected void successDialog(String title, String message) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
-        builder.setMessage(message);
-        builder.setTitle(title);
-        builder.setIcon(R.drawable.ic_person_black_24px);
-        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-//                LoginActivity.this.finish();
-            }
-        });
-        builder.create().show();
-    }
+//    protected void successDialog(String title, String message) {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+//        builder.setMessage(message);
+//        builder.setTitle(title);
+//        builder.setIcon(R.drawable.ic_person_black_24px);
+//        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                dialog.dismiss();
+////                LoginActivity.this.finish();
+//            }
+//        });
+//        builder.create().show();
+//    }
 
     private void saveLoginData() {
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("LoginData", Context.MODE_PRIVATE);
@@ -382,7 +382,7 @@ public class LoginActivity extends AppCompatActivity {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
-                successDialog("Login Successful", " Welcome to FaceT =] ");
+//                successDialog("Login Successful", " Welcome to FaceT =] ");
             } else {
                 // Google Sign In failed, update UI appropriately
                 // ...
@@ -483,7 +483,7 @@ public class LoginActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 mProgress.dismiss();
-                                successDialog("Login Successful", " Welcome to FaceT =] ");
+//                                successDialog("Login Successful", " Welcome to FaceT =] ");
                                 checkUserExist();
                             }
                         }

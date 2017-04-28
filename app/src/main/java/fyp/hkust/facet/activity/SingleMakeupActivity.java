@@ -49,6 +49,7 @@ import android.widget.Toast;
 
 import com.github.pwittchen.swipe.library.Swipe;
 import com.github.pwittchen.swipe.library.SwipeListener;
+import com.taishi.flipprogressdialog.FlipProgressDialog;
 import com.tzutalin.dlib.Constants;
 import com.tzutalin.dlib.FaceDet;
 import com.tzutalin.dlib.VisionDetRet;
@@ -100,7 +101,7 @@ public class SingleMakeupActivity extends AppCompatActivity {
     private List<Float> extra_landmark_pt_y = new ArrayList<>();
 
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
-    private ProgressDialog progressDialog;
+//    private ProgressDialog progressDialog;
     private Mat mRgbMat;
     private Mat mHsvMat;
     private Mat mMaskMat;
@@ -145,6 +146,7 @@ public class SingleMakeupActivity extends AppCompatActivity {
     private LinearLayout makeup_color_layout;
     private ImageButton makeup_color_arror_left, makeup_color_arror_right;
     private Swipe swipe;
+    private FlipProgressDialog fpd;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -280,11 +282,30 @@ public class SingleMakeupActivity extends AppCompatActivity {
             }
         });
 
-        progressDialog = new ProgressDialog(SingleMakeupActivity.this);
-        progressDialog.setCancelable(false);
-        progressDialog.setTitle("Please Wait..");
-        progressDialog.setMessage("Getting landmark result ...");
-        progressDialog.show();
+//        progressDialog = new ProgressDialog(SingleMakeupActivity.this);
+//        progressDialog.setCancelable(false);
+//        progressDialog.setTitle("Please Wait..");
+//        progressDialog.setMessage("Getting landmark result ...");
+//        progressDialog.show();
+
+        fpd = new FlipProgressDialog();
+        List<Integer> imageList = new ArrayList<Integer>();
+        imageList.add(R.drawable.app_icon_100);
+        fpd.setImageList(imageList);                              // *Set a imageList* [Have to. Transparent background png recommended]
+        fpd.setCanceledOnTouchOutside(false);// If true, the dialog will be dismissed when user touch outside of the dialog. If false, the dialog won't be dismissed.
+        fpd.setImageMargin(10);
+        fpd.setMinAlpha(1.0f);                                    // Set an alpha when flipping ratation start and end
+        fpd.setMaxAlpha(1.0f);
+        fpd.setDimAmount(80.0f);
+        fpd.setOrientation("rotationY");                          // Set a flipping rotation
+        fpd.setDuration(1500);
+        fpd.setImageSize(170);
+        fpd.setStartAngle(0.0f);                                  // Set an angle when flipping ratation start
+        fpd.setEndAngle(360.0f);
+        fpd.setBackgroundColor(Color.parseColor("#3b393d"));     // Set a background color of dialog
+        fpd.setBackgroundAlpha(0.8f);
+        fpd.setCornerRadius(10);
+        fpd.show(getFragmentManager(),"Loading ...");
 
         mThread = new HandlerThread("name");
         mThread.start();
@@ -407,7 +428,8 @@ public class SingleMakeupActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         imageView.setImageBitmap(temp);
-                        progressDialog.dismiss();
+                        fpd.dismiss();
+//                        progressDialog.dismiss();
                     }
                 });
             } catch (Exception e) {
@@ -2247,13 +2269,31 @@ public class SingleMakeupActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog = new ProgressDialog(SingleMakeupActivity.this);
-            progressDialog.setCancelable(false);
-            progressDialog.setTitle("Please Wait..");
-            Resources res = getResources();
-            final String[] categoryArray = res.getStringArray(R.array.category_type_array);
-            progressDialog.setMessage("Setting up " + categoryArray[categoryResult] + " ...");
-            progressDialog.show();
+            fpd = new FlipProgressDialog();
+            List<Integer> imageList = new ArrayList<Integer>();
+            imageList.add(R.drawable.app_icon_100);
+            fpd.setImageList(imageList);                              // *Set a imageList* [Have to. Transparent background png recommended]
+            fpd.setCanceledOnTouchOutside(false);// If true, the dialog will be dismissed when user touch outside of the dialog. If false, the dialog won't be dismissed.
+            fpd.setImageMargin(10);
+            fpd.setMinAlpha(1.0f);                                    // Set an alpha when flipping ratation start and end
+            fpd.setMaxAlpha(1.0f);
+            fpd.setDimAmount(80.0f);
+            fpd.setOrientation("rotationY");                          // Set a flipping rotation
+            fpd.setDuration(1500);
+            fpd.setImageSize(170);
+            fpd.setStartAngle(0.0f);                                  // Set an angle when flipping ratation start
+            fpd.setEndAngle(360.0f);
+            fpd.setBackgroundColor(Color.parseColor("#3b393d"));     // Set a background color of dialog
+            fpd.setBackgroundAlpha(0.8f);
+            fpd.setCornerRadius(10);
+            fpd.show(getFragmentManager(),"Loading ...");
+//            progressDialog = new ProgressDialog(SingleMakeupActivity.this);
+//            progressDialog.setCancelable(false);
+//            progressDialog.setTitle("Please Wait..");
+//            Resources res = getResources();
+//            final String[] categoryArray = res.getStringArray(R.array.category_type_array);
+//            progressDialog.setMessage("Setting up " + categoryArray[categoryResult] + " ...");
+//            progressDialog.show();
         }
 
         @Override
@@ -2264,7 +2304,8 @@ public class SingleMakeupActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
-            progressDialog.dismiss();
+//            progressDialog.dismiss();
+            fpd.dismiss();
             imageView.setImageBitmap(temp);
         }
     }

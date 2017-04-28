@@ -418,7 +418,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         saveImageAndIntent();
-                        Toast.makeText(getApplicationContext(), "您按下OK按鈕", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getApplicationContext(), "您按下OK按鈕", Toast.LENGTH_SHORT).show();
                     }
                 });
                 //設定Negative按鈕資料
@@ -426,7 +426,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         //按下按鈕時顯示快顯
-                        Toast.makeText(getApplicationContext(), "您按下No按鈕", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getApplicationContext(), "您按下No按鈕", Toast.LENGTH_SHORT).show();
                     }
                 });
                 builder.show();
