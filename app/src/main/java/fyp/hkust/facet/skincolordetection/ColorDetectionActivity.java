@@ -322,7 +322,7 @@ public class ColorDetectionActivity extends AppCompatActivity implements OnChart
                 mBlobColorHsv.val[i] /= pointCount;
 
             //Add a Toast to display the HSV color
-            Toast.makeText(this, "HSV = " + mBlobColorHsv, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "HSV = " + mBlobColorHsv, Toast.LENGTH_SHORT).show();
             mBlobColorRgba = converScalarHsv2Rgba(mBlobColorHsv);
 
             //Add a Toast to display the HSV color
