@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -110,7 +111,11 @@ public class ProfileEditActivity extends AppCompatActivity {
 
         usernameEdittext = (MaterialEditText) findViewById(R.id.username_edittext);
         passwordEdittext = (MaterialEditText) findViewById(R.id.password_edittext);
+        passwordEdittext.setTransformationMethod(PasswordTransformationMethod.getInstance());
+
         confirmPasswordEdittext = (MaterialEditText) findViewById(R.id.confirm_password_edittext);
+        confirmPasswordEdittext.setTransformationMethod(PasswordTransformationMethod.getInstance());
+
         emailEdittext = (MaterialEditText) findViewById(R.id.email_edittext);
         maleButton = (Button) findViewById(R.id.male_btn);
         femaleButton = (Button) findViewById(R.id.female_btn);

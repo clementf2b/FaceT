@@ -70,8 +70,13 @@ public class ProductRecommentationActivity extends AppCompatActivity {
     private Map<String, ProductTypeTwo> mEyshadowProducts = new HashMap<>();
     private Map<String, ProductTypeTwo> mLipstickProducts = new HashMap<>();
     private double[] detectedRGBvalue = new double[3];
-    private Map<String, List<String>> matchColorList = new HashMap();
+    private Map<String, List<String>> matchColorList;
+    private Map<String, List<String>> otherMatchColorList;
     private List<String> colorMatchTemp;
+    private List<String> foundationMatchedColor;
+    private List<Map<String, List<String>>> matchResult;
+    private int matchNumber = -1;
+    private int counter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,8 +131,10 @@ public class ProductRecommentationActivity extends AppCompatActivity {
                     if (result.getValidate() == 1) {
                         mProducts.put(ds.getKey(), result);
                         Log.d(" product " + ds.getKey(), result.toString());
+                        compareColor();
                     }
                 }
+
                 mDatabaseBrand.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -140,10 +147,47 @@ public class ProductRecommentationActivity extends AppCompatActivity {
                             brandList.add(result.getBrand());
                             Log.d(" brand " + ds.getKey(), result.toString());
                         }
-
-
                         //sort product
-                        sortProduct();
+
+
+                        mDatabaseMatch.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                    Map<String, List<String>> matchColor = (Map<String, List<String>>) ds.getValue();
+                                    List<String> keys = new ArrayList<>(matchColor.keySet());
+                                    Log.d(TAG, matchColor.size() + " , " + matchColor.toString());
+
+                                    Log.d(TAG + " foundationMatchedColor", foundationMatchedColor.toString());
+                                    for (Map.Entry<String, List<String>> entry : matchColor.entrySet()) {
+                                        Log.d(TAG + "entry.getKey(), entry.getValue()", entry.getKey() + " , " + entry.getValue());
+                                        for (int j = 0; j < foundationMatchedColor.size(); j++) {
+                                            Log.d(TAG + " entry.getValue().contains(foundationMatchedColor.get(j) ",
+                                                    entry.getValue().contains(foundationMatchedColor.get(j)) + " , " + foundationMatchedColor.get(j));
+                                            if (entry.getValue().contains(foundationMatchedColor.get(j))) {
+                                                otherMatchColorList = (Map<String, List<String>>) ds.getValue();
+                                                Log.d(TAG + " counter , otherMatchColorList", counter + " , " + otherMatchColorList.toString());
+                                            }
+                                        }
+                                    }
+
+//                                    for (int i = 0; i < matchColor.size(); i++) {
+//                                        Log.d(TAG + " colorValues", colorValues.size() + " , " + colorValues.toString());
+//                                        if (colorValues.contains(foundationMatchedColor)) {
+//                                            otherMatchColorList = (Map<String, List<String>>) ds.getValue();
+//                                            Log.d(TAG + " counter , otherMatchColorList", counter + " , " + otherMatchColorList.toString());
+//                                        }
+//                                    }
+                                    counter++;
+//                                    Log.d(TAG + " matchColor", matchColor.toString());
+                                }
+                                sortProduct();
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                            }
+                        });
                     }
 
                     @Override
@@ -159,9 +203,10 @@ public class ProductRecommentationActivity extends AppCompatActivity {
         });
     }
 
-    private void sortProduct() {
-
+    private void compareColor() {
         Resources res = getResources();
+        matchColorList = new HashMap();
+        foundationMatchedColor = new ArrayList<>();
         final String[] categoryArray = res.getStringArray(R.array.category_type_array);
         List<ProductTypeTwo> values = new ArrayList<>(mProducts.values());
         List<String> keys = new ArrayList<>(mProducts.keySet());
@@ -183,6 +228,7 @@ public class ProductRecommentationActivity extends AppCompatActivity {
                     if (similarTo(detectedRGBvalue, temp)) {
                         mFoundationProducts.put(keys.get(i), values.get(i));
                         colorMatchTemp.add(values.get(i).getColor().get(j).get(0));
+                        foundationMatchedColor.add(values.get(i).getColor().get(j).get(0));
                     }
                 }
 
@@ -190,18 +236,31 @@ public class ProductRecommentationActivity extends AppCompatActivity {
                     matchColorList.put(keys.get(i), colorMatchTemp);
                     Log.d("    matchColorList.put(keys.get(i), colorMatchTemp)", keys.get(i).toString() + " : " + colorMatchTemp.toString());
                 }
-            } else if (values.get(i) != null && values.get(i).getCategory().equals(categoryArray[2])) {
+            }
+            Log.d(" color matched ", matchColorList.toString());
+        }
+
+    }
+
+    private void sortProduct() {
+
+        Resources res = getResources();
+        final String[] categoryArray = res.getStringArray(R.array.category_type_array);
+        List<ProductTypeTwo> values = new ArrayList<>(mProducts.values());
+        List<String> keys = new ArrayList<>(mProducts.keySet());
+
+        for (int i = 0; i < keys.size(); i++) {
+            if (otherMatchColorList.containsKey(keys.get(i)) && values.get(i) != null && values.get(i).getCategory().equals(categoryArray[2])) {
                 Log.d(TAG + "2 sortProduct: ", keys.get(i) + " " + values.get(0).getProductName());
                 mBlushProducts.put(keys.get(i), values.get(i));
             } else if (values.get(i) != null && values.get(i).getCategory().equals(categoryArray[3])) {
                 Log.d(TAG + "3 sortProduct: ", keys.get(i) + " " + values.get(0).getProductName());
                 mEyshadowProducts.put(keys.get(i), values.get(i));
-            } else if (values.get(i) != null && values.get(i).getCategory().equals(categoryArray[4])) {
+            } else if (otherMatchColorList.containsKey(keys.get(i)) && values.get(i) != null && values.get(i).getCategory().equals(categoryArray[4])) {
                 Log.d(TAG + "4 sortProduct: ", keys.get(i) + " " + values.get(0).getProductName());
                 mLipstickProducts.put(keys.get(i), values.get(i));
             }
         }
-        
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         LinearLayoutManager layoutManager2 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         LinearLayoutManager layoutManager3 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -316,6 +375,16 @@ public class ProductRecommentationActivity extends AppCompatActivity {
                         viewHolder.product_color_image[i].setVisibility(View.VISIBLE);
                     }
                 }
+
+                if(otherMatchColorList.containsKey(product_id))
+                {
+                    Log.d(TAG, "setColorFilter " + " " + otherMatchColorList.size() + otherMatchColorList.toString());
+                    for (int i = 0; i < otherMatchColorList.get(product_id).size(); i++) {
+                        viewHolder.product_color_image[i].setColorFilter(Color.parseColor(otherMatchColorList.get(product_id).get(i)));
+                        viewHolder.product_color_image[i].setVisibility(View.VISIBLE);
+                    }
+                }
+
             }
 
 //            if (model.getRating() == null)

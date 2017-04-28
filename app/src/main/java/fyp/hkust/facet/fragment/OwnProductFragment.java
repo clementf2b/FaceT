@@ -135,7 +135,7 @@ public class OwnProductFragment extends Fragment {
                 if (mAuth.getCurrentUser() != null) {
                     for (DataSnapshot ds : dataSnapshot.getChildren()) {
                         Product result = ds.getValue(Product.class);
-                        if (userId.length() > 0) {
+                        if (userId.length() > 0 && result.getValidate() == 1) {
                             if (result.getUid().equals(userId)) {
                                 mOwnProducts.put(ds.getKey(), result);
                                 Log.d(" product " + ds.getKey(), result.toString());
@@ -247,8 +247,8 @@ public class OwnProductFragment extends Fragment {
             Log.d(TAG, "loading view " + position);
 
             viewHolder.setProductName(model.getProductName());
-            if (mBrand != null)
-                viewHolder.setBrandName(mBrand.get(model.getBrandID()).getBrand());
+//            if (mBrand != null)
+//                viewHolder.setBrandName(mBrand.get(model.getBrandID()).getBrand());
             viewHolder.setImage(getContext(), model.getProductImage());
             if (model.getRating() == null)
                 viewHolder.setRating((long) 0);
