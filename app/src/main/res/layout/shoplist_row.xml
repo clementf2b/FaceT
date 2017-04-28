@@ -32,7 +32,7 @@
         android:layout_toRightOf="@+id/shop_image"
         android:maxLines="1"
         android:text="123"
-        android:textSize="18dp"
+        android:textSize="17dp"
         android:textColor="@color/shop_list_primary_text"/>
 
     <TextView

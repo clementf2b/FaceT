@@ -69,6 +69,10 @@ public class ShopLocationActivity extends FragmentActivity implements OnMapReady
         setContentView(R.layout.activity_shop_location);
         Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
         FontManager.markAsIconContainer(findViewById(R.id.layout_shop_location), fontType);
+        currentShopName = (TextView) findViewById(R.id.current_shop_name);
+        currentShopName.setTypeface(fontType ,Typeface.BOLD);
+
+
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
                     .addApi(LocationServices.API)
@@ -117,7 +121,6 @@ public class ShopLocationActivity extends FragmentActivity implements OnMapReady
 //        normal_map_button = (ImageButton) findViewById(R.id.normal_map_button);
         shop_location_button = (ImageButton) findViewById(R.id.shop_location_button);
         my_location_button = (ImageButton) findViewById(R.id.my_location_button);
-        currentShopName = (TextView) findViewById(R.id.current_shop_name);
         currentShopAddress = (TextView) findViewById(R.id.current_shop_address);
         currentImage = (CircleImageView) findViewById(R.id.current_shop_image);
         bottomPanel = (LinearLayout) findViewById(R.id.bottom_info_panel_one_shop);
@@ -152,17 +155,11 @@ public class ShopLocationActivity extends FragmentActivity implements OnMapReady
                 switch (type) {
                     case "shopItem":
                         LatLng shopLocation = new LatLng(shop.getLatitude(), shop.getLongitude());
-                        Marker shopLocationMarker = mMap.addMarker(new MarkerOptions().position(shopLocation).title("Shop is here")
-                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                        Marker shopLocationMarker = mMap.addMarker(new MarkerOptions().position(shopLocation)
+                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
 //                mMap.moveCamera(CameraUpdateFactory.newLatLng(shopLocation));
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(shopLocation, 17), 2000, null);
-                        shopLocationMarker.showInfoWindow();
-
-                        CircleOptions circleOptions = new CircleOptions();
-                        circleOptions.center(shopLocation);
-                        circleOptions.radius(20);
-                        circleOptions.strokeColor(Color.argb(150, 89, 214, 214));
-                        mMap.addCircle(circleOptions);
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(shopLocation, 15), 2000, null);
+//                        shopLocationMarker.showInfoWindow();
                         break;
                     case "brandShops":
                         for (int i = 0; i < brandShops.size(); i++) {
@@ -178,7 +175,7 @@ public class ShopLocationActivity extends FragmentActivity implements OnMapReady
                         Marker currentMarker = mMap.addMarker(new MarkerOptions().position(myCurrentLatLng)
                                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
                         currentMarker.setVisible(true);
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myCurrentLatLng, 16), 2000, null);
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myCurrentLatLng, 15), 2000, null);
                         currentShopName.setText(brandShops.get(shopFlag).getName());
                         currentShopAddress.setText(brandShops.get(shopFlag).getAddress());
                         Picasso.with(getApplicationContext()).load(brandShops.get(shopFlag).getImage()).into(currentImage);

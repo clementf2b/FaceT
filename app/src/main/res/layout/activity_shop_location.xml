@@ -112,7 +112,7 @@
                     android:layout_marginTop="6dp"
                     android:text="SaSa"
                     android:textStyle="bold"
-                    android:textSize="20dp"
+                    android:textSize="18dp"
                     android:textColor="@color/colorPrimary" />
             </LinearLayout>
 
@@ -142,7 +142,7 @@
                     android:scrollbars="vertical"
                     android:text="9F, ABC Building, Hong Kong"
                     android:textColor="@color/colorPrimary"
-                    android:textSize="13dp"/>
+                    android:textSize="12.5dp"/>
             </LinearLayout>
 
             <!--<LinearLayout-->

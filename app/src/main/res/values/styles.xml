@@ -70,4 +70,10 @@
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowCloseOnTouchOutside">true</item>
     </style>
+
+    <style name="AppTheme.Splash" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/myGreen</item>
+        <item name="colorPrimaryDark">@color/myGreen</item>
+    </style>
 </resources>

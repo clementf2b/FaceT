@@ -19,11 +19,17 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.directions.route.AbstractRouting;
+import com.directions.route.Route;
+import com.directions.route.RouteException;
+import com.directions.route.Routing;
+import com.directions.route.RoutingListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -32,6 +38,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -44,7 +52,7 @@ import fyp.hkust.facet.util.FontManager;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class NearbyLocationActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class NearbyLocationActivity extends FragmentActivity implements RoutingListener, OnMapReadyCallback, LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleMap mMap;
     private ImageButton normal_map_button, shop_location_button, my_location_button;
@@ -59,6 +67,10 @@ public class NearbyLocationActivity extends FragmentActivity implements OnMapRea
     private LocationRequest mLocationRequest;
     private int initialize = 0;
     private int shopFlag = 0 ;
+    private List<Polyline> polylines;
+    private Routing routing;
+    private static final int[] COLORS = new int[]{R.color.bar_chart_color_1,R.color.bar_chart_color_2,R.color.bar_chart_color_3,R.color.bar_chart_color_4,R.color.bar_chart_color_5};
+    private Context context = getBaseContext();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +79,10 @@ public class NearbyLocationActivity extends FragmentActivity implements OnMapRea
 
         Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
         FontManager.markAsIconContainer(findViewById(R.id.layout_nearby_location), fontType);
+        currentShopName = (TextView) findViewById(R.id.current_shop_name);
+        currentShopName.setTypeface(fontType, Typeface.BOLD);
+
+        polylines = new ArrayList<>();
 
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -103,7 +119,6 @@ public class NearbyLocationActivity extends FragmentActivity implements OnMapRea
 
         shop_location_button = (ImageButton) findViewById(R.id.shop_location_button);
         my_location_button = (ImageButton) findViewById(R.id.my_location_button);
-        currentShopName = (TextView) findViewById(R.id.current_shop_name);
         currentShopAddress = (TextView) findViewById(R.id.current_shop_address);
         currentImage = (CircleImageView) findViewById(R.id.current_shop_image);
         bottomPanel = (LinearLayout) findViewById(R.id.bottom_info_panel_nearby_shop);
@@ -137,18 +152,21 @@ public class NearbyLocationActivity extends FragmentActivity implements OnMapRea
                     Snackbar.make(v, "No shop is nearby", Snackbar.LENGTH_SHORT)
                             .setAction("Action", null).show();
                 }else {
-                    LatLng myCurrentLatLng = new LatLng(shopWithinRange.get(shopFlag).getLatitude(), shopWithinRange.get(shopFlag).getLongitude());
-                    Marker currentMarker = mMap.addMarker(new MarkerOptions().position(myCurrentLatLng)
+                    LatLng currentShopLatLng = new LatLng(shopWithinRange.get(shopFlag).getLatitude(), shopWithinRange.get(shopFlag).getLongitude());
+                    Marker currentMarker = mMap.addMarker(new MarkerOptions().position(currentShopLatLng)
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
                     currentMarker.setVisible(true);
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myCurrentLatLng, 16), 2000, null);
-
-
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentShopLatLng, 16), 2000, null);
 
                     currentShopName.setText(shopWithinRange.get(shopFlag).getName());
                     currentShopAddress.setText(shopWithinRange.get(shopFlag).getAddress());
                     Picasso.with(getApplicationContext()).load(shopWithinRange.get(shopFlag).getImage()).into(currentImage);
                     bottomPanel.setVisibility(View.VISIBLE);
+
+                    LatLng start = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+
+                    route(start, currentShopLatLng);
+
                     if(shopFlag == (shopWithinRange.size()-1)){
                         shopFlag = 0;
                     }else{
@@ -166,6 +184,109 @@ public class NearbyLocationActivity extends FragmentActivity implements OnMapRea
             }
         });
 
+    }
+
+    public void route(LatLng start, LatLng end)
+    {
+            Routing routing = new Routing.Builder()
+                    .travelMode(AbstractRouting.TravelMode.WALKING)
+                    .withListener(this)
+                    .alternativeRoutes(false)
+                    .waypoints(start, end)
+                    .build();
+            routing.execute();
+    }
+
+    @Override
+    public void onRoutingStart() {
+        // The Routing Request starts
+    }
+
+    @Override
+    public void onRoutingSuccess(ArrayList<Route> route, int j) {
+        if (polylines.size() > 0) {
+            for (Polyline poly : polylines) {
+                poly.remove();
+            }
+        }
+
+        polylines = new ArrayList<>();
+        //add route(s) to the map.
+        for (int i = 0; i < route.size(); i++) {
+
+            //In case of more than 5 alternative routes
+            int colorIndex = i % COLORS.length;
+
+            PolylineOptions polyOptions = new PolylineOptions();
+            polyOptions.color(getResources().getColor(COLORS[colorIndex]));
+            polyOptions.width(10 + i * 3);
+            polyOptions.addAll(route.get(i).getPoints());
+            Polyline polyline = mMap.addPolyline(polyOptions);
+            polylines.add(polyline);
+        }
+    }
+
+//    @Override
+//    public void onRoutingSuccess(List<Route> route, int shortestRouteIndex)
+//    {
+////        progressDialog.dismiss();
+////        CameraUpdate center = CameraUpdateFactory.newLatLng(start);
+////        CameraUpdate zoom = CameraUpdateFactory.zoomTo(16);
+////
+////        map.moveCamera(center);
+//
+//
+//        if(polylines.size()>0) {
+//            for (Polyline poly : polylines) {
+//                poly.remove();
+//            }
+//        }
+//
+//        polylines = new ArrayList<>();
+//        //add route(s) to the map.
+//        for (int i = 0; i <route.size(); i++) {
+//
+//            //In case of more than 5 alternative routes
+//            int colorIndex = i % COLORS.length;
+//
+//            PolylineOptions polyOptions = new PolylineOptions();
+//            polyOptions.color(getResources().getColor(COLORS[colorIndex]));
+//            polyOptions.width(10 + i * 3);
+//            polyOptions.addAll(route.get(i).getPoints());
+//            Polyline polyline = mMap.addPolyline(polyOptions);
+//            polylines.add(polyline);
+//
+////            Toast.makeText(getApplicationContext(),"Route "+ (i+1) +": distance - "+ route.get(i).getDistanceValue()+": duration - "+ route.get(i).getDurationValue(),Toast.LENGTH_SHORT).show();
+//        }
+//
+////         Start marker
+////        MarkerOptions options = new MarkerOptions();
+////        options.position(start);
+////        options.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue));
+////        mMap.addMarker(options);
+////
+////        // End marker
+////        options = new MarkerOptions();
+////        options.position(end);
+////        options.icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green));
+////        mMap.addMarker(options);
+//
+//    }
+
+    @Override
+    public void onRoutingFailure(RouteException e) {
+        // The Routing request failed
+//        progressDialog.dismiss();
+//        if(e != null) {
+//            Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+//        }else {
+//            Toast.makeText(this, "Something went wrong, Try again", Toast.LENGTH_SHORT).show();
+//        }
+    }
+
+    @Override
+    public void onRoutingCancelled() {
+        Log.i("LOG_TAG", "Routing was cancelled.");
     }
 
     public void statusCheck() {

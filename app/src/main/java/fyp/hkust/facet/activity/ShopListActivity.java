@@ -467,7 +467,7 @@ public class ShopListActivity extends AppCompatActivity {
         builder.setCancelable(true);
 
         final String[] items = new String[]{"From Gallery", "Take Photo"};
-        final Integer[] icons = new Integer[]{R.drawable.colorful_gallery, R.drawable.colorful_camera};
+        final Integer[] icons = new Integer[]{R.drawable.colorful_gallery_s, R.drawable.colorful_camera_s};
         ListAdapter adapter = new ArrayAdapterWithIcon(getApplication(), items, icons);
 
         builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
@@ -502,7 +502,7 @@ public class ShopListActivity extends AppCompatActivity {
         builder.setCancelable(true);
 
         final String[] items = new String[]{"From Gallery", "Take Photo"};
-        final Integer[] icons = new Integer[]{R.drawable.colorful_gallery, R.drawable.colorful_camera};
+        final Integer[] icons = new Integer[]{R.drawable.colorful_gallery_s, R.drawable.colorful_camera_s};
         ListAdapter adapter = new ArrayAdapterWithIcon(getApplication(), items, icons);
 
         builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
