@@ -8,6 +8,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,6 +35,7 @@ import fyp.hkust.facet.adapter.ViewPagerAdapter;
 import fyp.hkust.facet.fragment.OwnProductFragment;
 import fyp.hkust.facet.model.User;
 import fyp.hkust.facet.util.FontManager;
+import fyp.hkust.facet.util.TypefaceSpan;
 
 public class OtheruserProfileActivity extends AppCompatActivity {
 
@@ -64,8 +67,12 @@ public class OtheruserProfileActivity extends AppCompatActivity {
 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        SpannableString s = new SpannableString("FaceT");
+        s.setSpan(new TypefaceSpan(OtheruserProfileActivity.this, FontManager.CUSTOM_FONT), 0, s.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        getSupportActionBar().setTitle(s);
         Typeface fontType = FontManager.getTypeface(getApplicationContext(), FontManager.APP_FONT);
+
         FontManager.markAsIconContainer(findViewById(R.id.activity_profile), fontType);
 
         Intent intent = this.getIntent();

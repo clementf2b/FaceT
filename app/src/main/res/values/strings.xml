@@ -97,7 +97,7 @@
     <string name="vertical_form_stepper_form_confirm_button">Create Product</string>
 
     <string-array name="product_type_array">
-        <item>All</item>
+        <item>Product Category</item>
         <item>Foundation</item>
         <item>Brush</item>
         <item>Eyeshadows</item>

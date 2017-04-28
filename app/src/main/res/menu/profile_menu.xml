@@ -6,7 +6,7 @@
         android:id="@+id/action_notification"
         android:icon="@mipmap/ic_notifications_white_24dp"
         android:title="Notification"
-        app:showAsAction="always"
+        app:showAsAction="never"
         />
 
 </menu>
