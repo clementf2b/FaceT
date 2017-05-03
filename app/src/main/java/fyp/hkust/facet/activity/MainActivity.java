@@ -833,8 +833,8 @@ public class MainActivity extends AppCompatActivity {
             Log.d(entry.getKey(), entry.getValue().toString());
         }
 
-        Snackbar snackbar = Snackbar.make(activity_main_layout, sortOperation, Snackbar.LENGTH_SHORT);
-        snackbar.show();
+//        Snackbar snackbar = Snackbar.make(activity_main_layout, sortOperation, Snackbar.LENGTH_SHORT);
+//        snackbar.show();
 
         return sortedMap;
     }
