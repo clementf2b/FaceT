@@ -160,7 +160,7 @@ public class ProductRecommentationActivity extends AppCompatActivity {
 
                                     Log.d(TAG + " foundationMatchedColor", foundationMatchedColor.toString());
                                     for (Map.Entry<String, List<String>> entry : matchColor.entrySet()) {
-                                        Log.d(TAG + "entry.getKey(), entry.getValue()", entry.getKey() + " , " + entry.getValue());
+//                                        Log.d(TAG + "entry.getKey(), entry.getValue()", entry.getKey() + " , " + entry.getValue());
                                         for (int j = 0; j < foundationMatchedColor.size(); j++) {
                                             Log.d(TAG + " entry.getValue().contains(foundationMatchedColor.get(j) ",
                                                     entry.getValue().contains(foundationMatchedColor.get(j)) + " , " + foundationMatchedColor.get(j));
@@ -250,6 +250,7 @@ public class ProductRecommentationActivity extends AppCompatActivity {
         List<String> keys = new ArrayList<>(mProducts.keySet());
 
         for (int i = 0; i < keys.size(); i++) {
+            Log.d("otherMatchColorList.containsKey " , otherMatchColorList.size() +  " , " + i);
             if (otherMatchColorList.containsKey(keys.get(i)) && values.get(i) != null && values.get(i).getCategory().equals(categoryArray[2])) {
                 Log.d(TAG + "2 sortProduct: ", keys.get(i) + " " + values.get(0).getProductName());
                 mBlushProducts.put(keys.get(i), values.get(i));
@@ -290,8 +291,8 @@ public class ProductRecommentationActivity extends AppCompatActivity {
     private boolean similarTo(double[] color1, double[] color2) {
         double distance = (color1[0] - color2[0]) * (color1[0] - color2[0]) + (color1[1] - color2[1]) * (color1[1] - color2[1]) + (color1[2] - color2[2]) * (color1[2] - color2[2]);
         Log.d(TAG + " distance ", distance + "");
-
-        if (distance < 500.0) {
+// previous version distance: 500
+        if (distance < 10000.0) {
             return true;
         } else {
             return false;
