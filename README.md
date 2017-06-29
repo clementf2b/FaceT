@@ -1,5 +1,7 @@
 # <img src="https://github.com/clementf2b/FaceT/blob/master/app/src/main/res/mipmap-xxxhdpi/app_icon.png" width="40"> FaceT
 
+<h1>Demo video : https://www.youtube.com/watch?v=cF-4wesn37U<h1>
+
 The prime mission of the project was to develop an aesthetic and easy-to- use mobile app platform for enhancing women’s experience in shopping for cosmetic products. Different targets were set for each part when conducting the project.
 It was designed according to the following seven objectives for providing a good User Experience:
 
