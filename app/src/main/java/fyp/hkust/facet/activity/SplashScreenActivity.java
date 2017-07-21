@@ -3,6 +3,7 @@ package fyp.hkust.facet.activity;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -21,12 +22,11 @@ public class SplashScreenActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
+        Log.d("SplashScreenActivity " , " start");
         EasySplashScreen config = new EasySplashScreen(SplashScreenActivity.this)
                 .withFullScreen()
                 .withTargetActivity(MainMenuActivity.class)
-                .withSplashTimeOut(4500)
+                .withSplashTimeOut(4000)
                 .withBackgroundResource(R.color.myLightBlue)
                 .withHeaderText("")
                 .withFooterText("")

@@ -4,7 +4,7 @@ android {
     buildToolsVersion '25.0.2'
     defaultConfig {
         applicationId "fyp.hkust.facet"
-        minSdkVersion 17
+        minSdkVersion 21
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -25,6 +25,7 @@ android {
     dexOptions {
         jumboMode false
         javaMaxHeapSize "6g"
+        preDexLibraries = true
     }
     buildTypes {
         release {
@@ -39,7 +40,9 @@ android {
         // if true, if error, stop compile
         abortOnError false
     }
+
 }
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {

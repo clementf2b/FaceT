@@ -178,13 +178,13 @@ public class MainMenuActivity extends AppCompatActivity {
             }
         }
 
-        if (!isMyServiceRunning(MyService.class) && notificationCheck != false)
-            startService(new Intent(this, MyService.class));
-
-        if (notificationCheck == false) {
-            stopService(new Intent(this, MyService.class));
-            Log.d(TAG , " stopped Service ");
-        }
+//        if (!isMyServiceRunning(MyService.class) && notificationCheck != false)
+//            startService(new Intent(this, MyService.class));
+//
+//        if (notificationCheck == false) {
+//            stopService(new Intent(this, MyService.class));
+//            Log.d(TAG , " stopped Service ");
+//        }
     }
 
     @Override

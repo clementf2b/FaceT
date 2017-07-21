@@ -44,7 +44,6 @@ import android.widget.Toast;
 import com.nhaarman.supertooltips.ToolTip;
 import com.nhaarman.supertooltips.ToolTipRelativeLayout;
 import com.nhaarman.supertooltips.ToolTipView;
-import com.roger.gifloadinglibrary.GifLoadingView;
 import com.taishi.flipprogressdialog.FlipProgressDialog;
 
 import org.opencv.android.BaseLoaderCallback;
