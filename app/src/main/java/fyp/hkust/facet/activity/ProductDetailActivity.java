@@ -7,10 +7,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -80,11 +80,12 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.vanniktech.emoji.EmojiEditText;
+import com.vanniktech.emoji.EmojiImageView;
 import com.vanniktech.emoji.EmojiPopup;
 import com.vanniktech.emoji.EmojiTextView;
 import com.vanniktech.emoji.emoji.Emoji;
 import com.vanniktech.emoji.listeners.OnEmojiBackspaceClickListener;
-import com.vanniktech.emoji.listeners.OnEmojiClickedListener;
+import com.vanniktech.emoji.listeners.OnEmojiClickListener;
 import com.vanniktech.emoji.listeners.OnEmojiPopupDismissListener;
 import com.vanniktech.emoji.listeners.OnEmojiPopupShownListener;
 import com.vanniktech.emoji.listeners.OnSoftKeyboardCloseListener;
@@ -357,7 +358,9 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
         insert_image_btn = (ImageView) findViewById(R.id.insert_image_btn);
         commentView = findViewById(R.id.user_comment_edit_layout);
         emojiButton = (ImageView) findViewById(R.id.emoji_btn);
+        emojiButton.setColorFilter(ContextCompat.getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
         submitCommentButton = (ImageView) findViewById(R.id.submit_btn);
+        submitCommentButton.setColorFilter(ContextCompat.getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
 
         commentEmojiconEditText = (EmojiEditText) findViewById(R.id.comment_edittext);
         commentEmojiconEditText.setScroller(new Scroller(getApplicationContext()));
@@ -785,15 +788,12 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
     private void setUpEmojiPopup() {
         emojiPopup = EmojiPopup.Builder.fromRootView(activity_product_detail_layout)
                 .setOnEmojiBackspaceClickListener(new OnEmojiBackspaceClickListener() {
-                    @Override
-                    public void onEmojiBackspaceClicked(final View v) {
-                        emojiPopup.dismiss();
-//                        Log.d(TAG, "Clicked on Backspace");
+                    @Override public void onEmojiBackspaceClick(final View v) {
+                        Log.d(TAG, "Clicked on Backspace");
                     }
                 })
-                .setOnEmojiClickedListener(new OnEmojiClickedListener() {
-                    @Override
-                    public void onEmojiClicked(final Emoji emoji) {
+                .setOnEmojiClickListener(new OnEmojiClickListener() {
+                    @Override public void onEmojiClick(@NonNull final EmojiImageView imageView, @NonNull final Emoji emoji) {
                         Log.d(TAG, "Clicked on emoji");
                     }
                 })

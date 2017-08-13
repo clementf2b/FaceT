@@ -2,10 +2,12 @@ package fyp.hkust.facet.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -42,10 +44,11 @@ import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 import com.vanniktech.emoji.EmojiEditText;
+import com.vanniktech.emoji.EmojiImageView;
 import com.vanniktech.emoji.EmojiPopup;
 import com.vanniktech.emoji.emoji.Emoji;
 import com.vanniktech.emoji.listeners.OnEmojiBackspaceClickListener;
-import com.vanniktech.emoji.listeners.OnEmojiClickedListener;
+import com.vanniktech.emoji.listeners.OnEmojiClickListener;
 import com.vanniktech.emoji.listeners.OnEmojiPopupDismissListener;
 import com.vanniktech.emoji.listeners.OnEmojiPopupShownListener;
 import com.vanniktech.emoji.listeners.OnSoftKeyboardCloseListener;
@@ -128,6 +131,7 @@ public class ProfileEditActivity extends AppCompatActivity {
 
         aboutMeEdittext.setScroller(new Scroller(getApplicationContext()));
         aboutMeEdittext.setVerticalScrollBarEnabled(true);
+        emojiButton.setColorFilter(ContextCompat.getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
         emojiButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
@@ -250,15 +254,12 @@ public class ProfileEditActivity extends AppCompatActivity {
     private void setUpEmojiPopup() {
         emojiPopup = EmojiPopup.Builder.fromRootView(rootView)
                 .setOnEmojiBackspaceClickListener(new OnEmojiBackspaceClickListener() {
-                    @Override
-                    public void onEmojiBackspaceClicked(final View v) {
-                        emojiPopup.dismiss();
+                    @Override public void onEmojiBackspaceClick(final View v) {
                         Log.d(TAG, "Clicked on Backspace");
                     }
                 })
-                .setOnEmojiClickedListener(new OnEmojiClickedListener() {
-                    @Override
-                    public void onEmojiClicked(final Emoji emoji) {
+                .setOnEmojiClickListener(new OnEmojiClickListener() {
+                    @Override public void onEmojiClick(@NonNull final EmojiImageView imageView, @NonNull final Emoji emoji) {
                         Log.d(TAG, "Clicked on emoji");
                     }
                 })
