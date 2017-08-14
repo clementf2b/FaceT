@@ -45,8 +45,6 @@ import android.widget.RatingBar;
 import android.widget.Scroller;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.azeesoft.lib.colorpicker.ColorPickerDialog;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.HorizontalBarChart;
@@ -138,8 +136,6 @@ public class ProductDetailActivity extends AppCompatActivity implements OnChartV
     private DatabaseReference mDatabaseFavourite;
     private DatabaseReference mDatabaseNotifications;
     private DatabaseReference mDatabaseShop;
-
-    private ColorPickerDialog colorPickerDialog;
     private ExpandableTextView descTextview;
 
     private PieChart ratingPieChart;

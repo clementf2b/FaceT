@@ -58,4 +58,5 @@
 
     <color name="myLightBlue">#3cc2ffff</color>
     <color name="myGreen">#61c0bf</color>
+    <color name="white">#ffffff</color>
 </resources>
