@@ -1,0 +1,50 @@
+{
+  "project_info": {
+    "project_number": "1035340681132",
+    "firebase_url": "https://hkust-fyp.firebaseio.com",
+    "project_id": "hkust-fyp",
+    "storage_bucket": "hkust-fyp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1035340681132:android:055640f1f5bf62dd",
+        "android_client_info": {
+          "package_name": "fyp.hkust.facet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1035340681132-ogu972s2re1nbcnp5l9gfa9humn0jk7u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "fyp.hkust.facet",
+            "certificate_hash": "cae5322681b8917dbe8647be424cb07dbdb4a01b"
+          }
+        },
+        {
+          "client_id": "1035340681132-4c9kaq3llemk77kfkujkso9aj7ciio04.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKBD6dZLGB6oyFTNYIb5Ok-1GNkf6JhLE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
