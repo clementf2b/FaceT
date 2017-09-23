@@ -13,19 +13,13 @@
     <color name="button_gradient_end">#0092aa</color>
 
     <color name="colorPrimaryText">#212121</color>
-    <color name="colorSecondaryText">#727272</color>
-    <color name="colorDivider">#B6B6B6</color>
 
     <color name="transparentBlack">#2FFFFFFF</color>
 
     <color name="greenishBlue">#61C0BF</color>
     <color name="facebookBlue">#3d509f</color>
-    <color name="googleRed">#E83417</color>
-    <color name="sparkGreen">#00ce8e</color>
-    <color name="dark_transparent">#AF000000</color>
     <color name="ligth_grey">#9c98a5</color>
 
-    <color name="textColorPrimary">#FFFFFF</color>
     <color name="font_color_pirmary">#85D9D2</color>
 
     <color name="profile_bg">#FAFAFA</color>
@@ -41,7 +35,6 @@
     <color name="bar_chart_color_4">#FEE2D8</color>
     <color name="bar_chart_color_5">#FFAEB6</color>
     <color name="makeup_transparent_background_color">#FFFFFFFF</color>
-    <color name="makeup_background_color">#DDDDDD</color>
 
     <color name="sort_drawer_background">#39c5c1</color>
 
